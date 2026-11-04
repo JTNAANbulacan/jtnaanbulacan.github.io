@@ -1,1 +1,359 @@
-# jtnaanbulacan.github.io
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JTNAAN Bulacan – Church System</title>
+  
+  <!-- CDN Dependencies -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    #reader video { width: 100% !important; border-radius: 0.75rem; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col md:flex-row">
+
+  <!-- SIDEBAR -->
+  <aside class="w-full md:w-64 bg-slate-900 text-white flex-shrink-0 flex flex-col justify-between p-5">
+    <div>
+      <div class="flex items-center gap-3 pb-6 border-b border-slate-800">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-indigo-500/30">
+          <i class="ph-bold ph-church"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-bold tracking-wide">JTNAAN Bulacan</h1>
+          <p class="text-[11px] text-emerald-400 font-medium">● Free Hosting (No Limits)</p>
+        </div>
+      </div>
+
+      <nav class="mt-6 space-y-1">
+        <a href="#dashboard" onclick="showSection('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-indigo-600 text-white">
+          <i class="ph-bold ph-squares-four text-lg"></i> Dashboard
+        </a>
+        <a href="#members" onclick="showSection('members')" id="nav-members" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+          <i class="ph-bold ph-users text-lg"></i> Members & QR Codes
+        </a>
+        <a href="#attendance" onclick="showSection('attendance')" id="nav-attendance" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+          <i class="ph-bold ph-qr-code text-lg"></i> QR Attendance Scanner
+        </a>
+        <a href="#tithes" onclick="showSection('tithes')" id="nav-tithes" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+          <i class="ph-bold ph-hand-coins text-lg"></i> Tithes & Reports
+        </a>
+      </nav>
+    </div>
+
+    <div class="pt-6 border-t border-slate-800 space-y-2">
+      <div class="flex items-center justify-between text-xs">
+        <span class="text-slate-400">Database:</span>
+        <span id="db-status-badge" class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-semibold">Local Storage</span>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="exportBackupJSON()" title="Download Backup File" class="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-md flex items-center justify-center gap-1">
+          <i class="ph-bold ph-download-simple"></i> Backup
+        </button>
+        <button onclick="document.getElementById('importFile').click()" title="Restore from Backup" class="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-md flex items-center justify-center gap-1">
+          <i class="ph-bold ph-upload-simple"></i> Restore
+        </button>
+        <input type="file" id="importFile" class="hidden" accept=".json" onchange="importBackupJSON(event)" />
+      </div>
+      <button onclick="openModal('authModal')" class="w-full text-center text-[11px] text-slate-400 hover:text-white pt-1">
+        ⚙ Supabase Cloud Config
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 flex flex-col overflow-y-auto">
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+      <h2 id="page-title" class="text-xl font-bold text-slate-800">Church Overview</h2>
+      <div class="flex items-center gap-2">
+        <button onclick="openModal('memberModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition">
+          <i class="ph-bold ph-user-plus"></i> New Member
+        </button>
+        <button onclick="openModal('titheModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition">
+          <i class="ph-bold ph-hand-coins"></i> Record Giving
+        </button>
+      </div>
+    </header>
+
+    <div class="p-6 space-y-6">
+
+      <!-- SECTION: DASHBOARD -->
+      <section id="section-dashboard" class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase">Total Members</p>
+              <h3 id="stat-members-count" class="text-2xl font-black text-slate-800 mt-1">0</h3>
+            </div>
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-2xl">
+              <i class="ph-bold ph-users-three"></i>
+            </div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase">Today's Attendance</p>
+              <h3 id="stat-attendance-today" class="text-2xl font-black text-slate-800 mt-1">0</h3>
+            </div>
+            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-2xl">
+              <i class="ph-bold ph-calendar-check"></i>
+            </div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase">Total Offerings</p>
+              <h3 id="stat-tithes-total" class="text-2xl font-black text-emerald-600 mt-1">₱0</h3>
+            </div>
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-2xl">
+              <i class="ph-bold ph-currency-circle-dollar"></i>
+            </div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase">Location</p>
+              <h3 class="text-xl font-bold text-slate-800 mt-1">Bulacan</h3>
+            </div>
+            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-2xl">
+              <i class="ph-bold ph-map-pin"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+          <h3 class="font-bold text-slate-800 mb-3">Recent Check-In Activity</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-600">
+              <thead class="bg-slate-50 text-xs uppercase text-slate-400 border-b border-slate-100">
+                <tr>
+                  <th class="py-2.5 px-3">Member Name</th>
+                  <th class="py-2.5 px-3">Service</th>
+                  <th class="py-2.5 px-3">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-recent-attendance" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: MEMBERS -->
+      <section id="section-members" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200">
+          <div class="relative w-full sm:w-80">
+            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
+            <input type="text" id="memberSearchInput" oninput="filterMembers()" placeholder="Search members by name or code..." class="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+          <button onclick="openModal('memberModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
+            + Register Member
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase text-slate-400 border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4">Member Code</th>
+                <th class="py-3 px-4">Name</th>
+                <th class="py-3 px-4">Ministry</th>
+                <th class="py-3 px-4">Phone</th>
+                <th class="py-3 px-4 text-center">QR Pass</th>
+                <th class="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="membersTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION: ATTENDANCE SCANNER -->
+      <section id="section-attendance" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2 mb-1">
+              <i class="ph-bold ph-camera text-indigo-600"></i> Live Camera Check-in
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">Scan the member's QR code badge to mark Sunday attendance instantly.</p>
+            
+            <div class="mb-3">
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Service Type</label>
+              <select id="attendanceServiceType" class="w-full text-sm border border-slate-300 rounded-lg p-2 bg-white outline-none">
+                <option value="Sunday Worship (Morning)">Sunday Worship (Morning Service)</option>
+                <option value="Sunday Worship (Afternoon)">Sunday Worship (Afternoon Service)</option>
+                <option value="Midweek Prayer Meeting">Midweek Prayer Meeting</option>
+                <option value="Youth Fellowship">Youth Fellowship</option>
+              </select>
+            </div>
+
+            <div id="reader" class="overflow-hidden border border-slate-200 rounded-xl bg-slate-900 min-h-[260px] flex items-center justify-center text-white text-xs"></div>
+            
+            <div class="mt-4 flex gap-2">
+              <button id="btn-start-scan" onclick="startScanner()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm flex items-center justify-center gap-2">
+                <i class="ph-bold ph-play"></i> Start Camera
+              </button>
+              <button id="btn-stop-scan" onclick="stopScanner()" class="hidden flex-1 bg-rose-600 hover:bg-rose-700 text-white font-medium py-2 rounded-lg text-sm flex items-center justify-center gap-2">
+                <i class="ph-bold ph-stop"></i> Stop Camera
+              </button>
+            </div>
+            <div id="scan-feedback" class="mt-3 p-3 rounded-lg text-xs font-semibold text-center hidden"></div>
+          </div>
+
+          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-slate-800">Attendance Log</h3>
+                <span id="session-count-badge" class="px-2 py-0.5 bg-indigo-100 text-indigo-700 font-bold text-xs rounded-full">0 Checked</span>
+              </div>
+              <div class="overflow-y-auto max-h-[350px]">
+                <table class="w-full text-left text-sm text-slate-600">
+                  <thead class="bg-slate-50 text-xs uppercase text-slate-400">
+                    <tr>
+                      <th class="py-2 px-3">Name</th>
+                      <th class="py-2 px-3">Service</th>
+                      <th class="py-2 px-3">Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendanceSessionTable" class="divide-y divide-slate-100"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: TITHES & EXPORTS -->
+      <section id="section-tithes" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200">
+          <select id="titheFilterCategory" onchange="renderTithes()" class="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white outline-none w-full sm:w-auto">
+            <option value="All">All Giving Categories</option>
+            <option value="Tithe">Tithes</option>
+            <option value="Offering">Sunday Offering</option>
+            <option value="Building Fund">Building Fund</option>
+            <option value="Missions">Missions</option>
+          </select>
+
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-1.5 transition">
+              <i class="ph-bold ph-file-xls text-lg"></i> Export Excel
+            </button>
+            <button onclick="exportToPDF()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-1.5 transition">
+              <i class="ph-bold ph-file-pdf text-lg"></i> Export PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <table id="tithesTable" class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase text-slate-400 border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4">Member / Giver</th>
+                <th class="py-3 px-4">Category</th>
+                <th class="py-3 px-4">Amount</th>
+                <th class="py-3 px-4">Method</th>
+              </tr>
+            </thead>
+            <tbody id="tithesTableBody" class="divide-y divide-slate-100"></tbody>
+            <tfoot class="bg-slate-50 font-bold text-slate-800 border-t border-slate-200">
+              <tr>
+                <td colspan="3" class="py-3 px-4 text-right">Total:</td>
+                <td id="tithes-total-cell" class="py-3 px-4 text-emerald-600 font-extrabold text-base">₱0.00</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODALS -->
+  <div id="qrBadgeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl p-6 text-center shadow-2xl">
+      <h3 id="badge-name" class="font-extrabold text-lg text-slate-800">Member Pass</h3>
+      <p id="badge-code" class="text-xs text-indigo-600 font-mono font-semibold mt-0.5">JTNAAN-000</p>
+      <div id="badge-qrcode" class="my-5 flex items-center justify-center p-3 bg-white border border-slate-200 rounded-xl w-48 h-48 mx-auto shadow-inner"></div>
+      <button onclick="closeModal('qrBadgeModal')" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-lg">Close</button>
+    </div>
+  </div>
+
+  <div id="memberModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="font-bold text-lg text-slate-800">Register Member</h3>
+        <button onclick="closeModal('memberModal')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-lg"></i></button>
+      </div>
+      <form onsubmit="saveMember(event)" class="mt-4 space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name</label>
+          <input type="text" id="m_name" required placeholder="Bro / Sis. Full Name" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number</label>
+          <input type="tel" id="m_phone" placeholder="0917-000-0000" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Ministry</label>
+          <select id="m_ministry" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white outline-none">
+            <option value="Worship Team">Worship Team</option>
+            <option value="Youth Ministry">Youth Ministry</option>
+            <option value="Ushering & Hospitality">Ushering & Hospitality</option>
+            <option value="Kids Church">Kids Church</option>
+            <option value="Men's Ministry">Men's Ministry</option>
+            <option value="Women's Ministry">Women's Ministry</option>
+            <option value="General Member">General Member</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Bulacan Municipality</label>
+          <input type="text" id="m_address" placeholder="e.g., Malolos, Bulacan" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none" />
+        </div>
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="closeModal('memberModal')" class="flex-1 py-2 text-sm border border-slate-300 rounded-lg">Cancel</button>
+          <button type="submit" class="flex-1 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="titheModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="font-bold text-lg text-slate-800">Record Giving</h3>
+        <button onclick="closeModal('titheModal')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-lg"></i></button>
+      </div>
+      <form onsubmit="saveTithe(event)" class="mt-4 space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Member / Giver</label>
+          <input type="text" id="t_giver" required placeholder="Name or Anonymous" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Amount (PHP)</label>
+          <input type="number" id="t_amount" required step="any" placeholder="₱ Amount" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+          <select id="t_category" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white outline-none">
+            <option value="Tithe">Tithe (10%)</option>
+            <option value="Offering">Sunday Offering</option>
+            <option value="Building Fund">Building Fund</option>
+            <option value="Missions">Missions</option>
+          </select>
+        </div>
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="closeModal('titheModal')" class="flex-1 py-2 text-sm border border-slate-300 rounded-lg">Cancel</button>
+          <button type="submit" class="flex-1 py-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg">Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-cent
