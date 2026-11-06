@@ -3,9 +3,9 @@
 <title>JTNAAN Bulacan – Church Management</title>
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D"><meta name="theme-color" content="#0b0a3a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-badge-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="JTNAAN">
 
-<!-- Supabase Real-Time Cloud Client -->
+<!-- Supabase Real-Time Cloud SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- JSZip for 1-click backups -->
+<!-- JSZip for Backup Packages -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style id="bgcss"></style>
@@ -13,7 +13,7 @@
 :root{--bg:#0b0a3a;--card:#15145a;--tx:#fff;--mu:#b9bde6;--pr:#f2a93b;--bd:#3a3a9a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html{scroll-padding-top:70px;background:#0b0a3a}
 
-/* Background Layers */
+/* Background Backdrop Layer */
 body{margin:0;background:transparent;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;position:relative;min-height:100vh}
 #site-bg{
   position:fixed;top:-30px;left:-30px;right:-30px;bottom:-30px;z-index:-2;pointer-events:none;
@@ -25,41 +25,21 @@ body{margin:0;background:transparent;color:var(--tx);font:16px/1.5 system-ui,-ap
   background:radial-gradient(1000px 400px at 100% 0,rgba(42,42,168,0.45),transparent 60%),linear-gradient(rgba(11,10,58,0.72),rgba(11,10,58,0.86));
 }
 
-/* Header & Mobile Optimization */
-header{
-  display:flex;align-items:center;gap:8px;padding:8px 12px;position:sticky;top:0;z-index:10;
-  background:#0b0a3af7;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-}
+/* Header & Logo */
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:6;background:#0b0a3af2;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 #header-logo-container{
-  flex:0 0 42px !important;width:42px !important;height:42px !important;border-radius:50% !important;
-  background:#fff !important;border:2px solid var(--pr) !important;padding:0 !important;margin:0 !important;
+  flex:0 0 44px !important;width:44px !important;height:44px !important;min-width:44px !important;min-height:44px !important;
+  border-radius:50% !important;background:#fff !important;border:2px solid var(--pr) !important;padding:0 !important;margin:0 !important;
   overflow:hidden !important;display:flex !important;align-items:center !important;justify-content:center !important;
-  cursor:pointer !important;box-shadow:0 2px 8px rgba(0,0,0,.4) !important;box-sizing:border-box !important;
+  cursor:pointer !important;box-shadow:0 2px 10px rgba(0,0,0,.4) !important;transition:transform .2s !important;box-sizing:border-box !important;
 }
-#church-logo-render{width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden}
-#church-logo-render img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+#header-logo-container:hover{transform:scale(1.06)}
+#church-logo-render{width:100% !important;height:100% !important;display:flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden}
+#church-logo-render img{width:100% !important;height:100% !important;object-fit:cover !important;border-radius:50% !important;display:block !important}
 
-header>div{min-width:0;flex:1 1 auto;overflow:hidden}
-header b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.5px;font-size:13px;line-height:1.2}
-header small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--mu);font-size:11px}
-
-#hl{flex:none;display:flex;align-items:center;gap:.3rem;margin-left:auto}
-.hlu{font-size:.8rem;white-space:nowrap}
-.ib{
-  display:inline-flex;align-items:center;justify-content:center;width:2.2rem;height:2.2rem;
-  padding:0;border-radius:8px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);flex-shrink:0;
-}
-.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}
-.ib svg{width:1.15rem;height:1.15rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none !important}
-
-@media(max-width:768px){
-  header{padding:6px 10px;gap:6px}
-  .hlu{display:none !important} /* Hide text label so buttons never get pushed off-screen */
-  #header-logo-container{flex:0 0 36px !important;width:36px !important;height:36px !important}
-  header b{font-size:12px}
-  .ib{width:2rem;height:2rem}
-  .ib svg{width:1rem;height:1rem}
-}
+header>div{min-width:0;flex:1 1 auto}
+header b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:1px;font-size:14px;line-height:1.2}
+header small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--mu);font-size:12px}
 
 nav{display:flex;gap:4px;overflow-x:auto;padding:0 10px 8px;border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);background:#0b0a3af2;z-index:4}
 button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:7px 12px;background:transparent;color:var(--tx);white-space:nowrap}
@@ -78,8 +58,14 @@ input,textarea,select{width:100%;font:inherit;padding:8px;margin:3px 0;border:1p
 #modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:99;padding:14px}
 #modal>div{background:var(--card);padding:18px;border-radius:12px;width:100%;max-width:480px;max-height:90vh;overflow:auto}
 
-/* Drawer User Box for Mobile */
-#drawer-admin-box{padding:12px 10px;border-bottom:1px solid var(--bd);margin-bottom:8px;background:#ffffff0a;border-radius:8px}
+/* Cloud Status Notification Banner */
+.cloud-status-banner{
+  background:rgba(231,76,60,0.2);border:1px solid #e74c3c;border-radius:8px;padding:12px 16px;
+  margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.cloud-status-banner.online{
+  background:rgba(46,204,113,0.15);border-color:#2ecc71;
+}
 
 /* Text Edit Mode */
 .txe{outline:1px dashed #f2a93b99;outline-offset:2px;border-radius:3px;cursor:text}
@@ -89,7 +75,26 @@ body.txon main{padding-bottom:7rem}
 body.txon #txbar{display:flex}
 .txo{background:#ffffff0f;border-radius:6px;padding:6px 9px;font-size:.85rem;white-space:pre-wrap;word-break:break-word;color:var(--mu)}
 
-/* Trivia, Quiz, Feed */
+html{font-size:clamp(15px,.45vw + 13.3px,21px);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-size:1rem}
+button{padding:.45rem .75rem}.sm{padding:.25rem .55rem;font-size:.8rem}
+h2{font-size:clamp(1.3rem,1rem + 1.2vw,2.1rem)}h3{font-size:clamp(1.1rem,.95rem + .6vw,1.5rem)}
+.grid{grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:clamp(.6rem,1.2vw,1.25rem)}
+.card{padding:.75rem .9rem}.card img{height:clamp(9rem,12vw,16rem)}
+.stat{font-size:clamp(1.8rem,1.2rem + 2vw,3rem)}.mu{font-size:.875rem}
+#modal>div{max-width:min(36rem,100%);padding:clamp(.9rem,2vw,1.5rem)}
+img,svg,video,iframe{max-width:100%}table{font-size:.9rem}td,th{word-break:break-word}
+@media (max-width:480px){table{font-size:.8rem}td,th{padding:4px!important}}
+
+main:has(> .about){max-width:none}
+.about{width:100%}
+.about .lead{max-width:none;font-size:clamp(1rem,.9rem + .45vw,1.35rem);line-height:1.65;margin:.5rem 0 clamp(1rem,2vw,2rem)}
+.about .grid{grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr));gap:clamp(.75rem,1.6vw,1.75rem)}
+.about .card{padding:clamp(1rem,1.8vw,2rem) clamp(1rem,2vw,2.25rem);display:flex;flex-direction:column;gap:.5rem}
+.about .card b{font-size:clamp(1.1rem,.95rem + .6vw,1.6rem)}
+.about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word}
+
+/* Trivia & Quiz Container */
 .tvs{display:grid;gap:16px;max-width:44rem;margin:10px auto 26px}
 .tv{background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
 .tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
@@ -98,6 +103,7 @@ body.txon #txbar{display:flex}
 .tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
 .tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
 
+/* Question of the Day & Choice Colors */
 .tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
 .tqo{display:grid;gap:8px}
 .tqo button{display:flex;align-items:center;gap:10px;text-align:left;white-space:normal;width:100%;padding:10px 12px;border-radius:10px;background:#ffffff10;border:2px solid transparent;transition:all .18s}
@@ -118,6 +124,10 @@ body.txon #txbar{display:flex}
 .rx button{background:#3a3b3c;color:#e4e6eb}.rx button.on{background:#2d5bd0;font-weight:700}.rx button.on.ht{background:#c0395b}.rx .mu{margin-left:auto}
 .cm{padding:8px 12px 12px}
 
+.dtabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.qr{background:#ffffff0f;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.qr img{width:100%;max-width:18rem;height:auto;max-height:22rem;object-fit:contain;background:#fff;padding:8px;border-radius:10px;align-self:center}
+
 .shg{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:8px;margin:12px 0}
 .shg button{display:flex;align-items:center;gap:8px;padding:.6rem .75rem;border-radius:10px;font-weight:700;color:#fff;justify-content:flex-start}
 .shg .ic{width:1.6rem;height:1.6rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff3;font-size:.85rem;flex:none}
@@ -126,32 +136,33 @@ body.txon #txbar{display:flex}
 .appi{display:flex;gap:.9rem;align-items:center}.appi img{width:3.6rem;height:3.6rem;border-radius:22%;flex:none;box-shadow:0 4px 14px #0007}.appt{display:block;font-size:1.2rem;color:var(--pr)}
 .appl{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;list-style:none;padding:0;margin:.8rem 0}.appl li::before{content:"✓ ";color:var(--pr);font-weight:700}
 .appbt{display:flex;flex-wrap:wrap;gap:.6rem}.appd{display:flex;align-items:center;gap:.6rem;background:#000;border:1px solid #fff6;border-radius:10px;padding:.5rem 1.1rem;text-align:left;min-width:11rem}
+.appd small{display:block;font-size:.7rem;color:#ccc;line-height:1.1}.appd b{display:block;font-size:1.05rem;line-height:1.2}.appic{font-size:1.5rem;width:1.6rem;text-align:center}
 .appc{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.6rem;margin-top:.9rem}.appc>div{background:#ffffff12;border-radius:10px;padding:.5rem .8rem}.appc .stat{display:block;line-height:1.2}.appc .mu{font-size:.85rem}
+
+#hl{flex:none;display:flex;align-items:center;gap:.4rem}.hlu{font-size:.85rem;margin-right:.2rem;white-space:nowrap}
+.ib{display:inline-flex;align-items:center;justify-content:center;width:2.4rem;height:2.4rem;padding:0;border-radius:10px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);transition:background .2s}
+.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none !important}
 
 :root{--nw:min(16rem,78vw);--hh:4rem;--ez:cubic-bezier(.22,.61,.36,1)}
 html{overflow-x:hidden}body{overflow-x:clip}
-#mnb{flex:none;width:2.4rem;height:2.4rem;padding:0;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#ffffff14;border:1px solid var(--bd);transition:background .2s}
-#mnb i{display:block;width:1.2rem;height:2px;border-radius:2px;background:var(--tx);transition:transform .35s var(--ez),opacity .25s}
+#mnb{flex:none;width:2.6rem;height:2.6rem;padding:0;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#ffffff14;border:1px solid var(--bd);transition:background .2s}
+#mnb:hover{background:#ffffff24}
+#mnb i{display:block;width:1.25rem;height:2px;border-radius:2px;background:var(--tx);transition:transform .35s var(--ez),opacity .25s}
 body.mo #mnb i:nth-child(1){transform:translateY(7px) rotate(45deg)}body.mo #mnb i:nth-child(2){opacity:0}body.mo #mnb i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-
-nav#nav{
-  position:fixed;left:0;top:var(--hh);bottom:0;width:var(--nw);display:flex;flex-direction:column;gap:3px;
-  overflow-y:auto;overflow-x:hidden;padding:.75rem .6rem calc(1rem + env(safe-area-inset-bottom,0px));
-  border:0;border-right:1px solid var(--bd);background:#0b0a3af7;z-index:20;transform:translateX(-100%);
-  visibility:hidden;transition:transform .4s var(--ez),visibility 0s linear .4s;
-}
+nav#nav{position:fixed;left:0;top:var(--hh);bottom:0;width:var(--nw);display:flex;flex-direction:column;gap:3px;overflow-y:auto;overflow-x:hidden;padding:.75rem .6rem calc(1rem + env(safe-area-inset-bottom,0px));border:0;border-right:1px solid var(--bd);background:#0b0a3af7;z-index:5;transform:translateX(-100%);visibility:hidden;transition:transform .4s var(--ez),visibility 0s linear .4s}
 body.mo nav#nav{transform:none;visibility:visible;transition:transform .4s var(--ez),visibility 0s;box-shadow:6px 0 24px #0006}
 nav#nav button{text-align:left;width:100%;padding:.65rem .85rem;font-size:.8rem;border-radius:8px;flex:none}
 nav#nav button:hover{background:#ffffff14}nav#nav button.on{background:var(--pr);color:#241a00}
 main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s var(--ez)}
-@media(min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
-@media(max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
+@media (min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
+@media (max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
 </style>
 </head><body>
 
 <div id="site-bg"></div>
 <div id="site-bg-overlay"></div>
 
+<!-- Live Native Pickers -->
 <input type="file" id="bg-file-picker" accept="image/*" style="display:none" onchange="handleBgUpload(event)">
 <input type="file" id="logo-file-picker" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
 
@@ -161,12 +172,12 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
     <div id="church-logo-render"></div>
   </div>
   <div><b>JESUS THE NAME ABOVE ALL NAMES</b><small>JTNAAN Bulacan · Church Management</small></div>
-  <span id="hl"></span>
+  <span id="hl" style="margin-left:auto"></span>
 </header>
 <nav id="nav"></nav>
-<main id="main"><p class="mu">Loading Church Data…</p></main>
+<main id="main"><p class="mu">Connecting to Live Church Database…</p></main>
 
-<!-- Live Edit Bar for Admin Mart -->
+<!-- Live Action Bar for Admin Mart -->
 <div id="txbar">
   <b style="color:var(--pr)">✎ Admin Mart Live Edit</b>
   <span class="mu">Click any text to edit</span>
@@ -180,22 +191,62 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 
 <script>
 // ==========================================
-// SUPABASE REAL-TIME CLOUD CONFIGURATION
+// 1. SUPABASE REAL-TIME CLOUD CONFIGURATION
+// Enter your Project URL & Anon Public Key:
 // ==========================================
-let SUPABASE_URL = localStorage.getItem("jt_sp_url") || "";
-let SUPABASE_ANON = localStorage.getItem("jt_sp_key") || "";
-let supabaseClient = null;
+let SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL_HERE";
+let SUPABASE_ANON = "YOUR_SUPABASE_ANON_KEY_HERE";
 
+if(!SUPABASE_URL || SUPABASE_URL.includes("YOUR_SUPABASE")) {
+  SUPABASE_URL = localStorage.getItem("jt_sp_url") || "";
+}
+if(!SUPABASE_ANON || SUPABASE_ANON.includes("YOUR_SUPABASE")) {
+  SUPABASE_ANON = localStorage.getItem("jt_sp_key") || "";
+}
+
+let supabaseClient = null;
 function initSupabaseClient(){
-  if(SUPABASE_URL && SUPABASE_ANON && window.supabase){
+  if(SUPABASE_URL && SUPABASE_ANON && !SUPABASE_URL.includes("YOUR_SUPABASE") && window.supabase){
     try {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-      console.log("☁ Supabase Cloud Connected!");
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+        auth: { persistSession: false },
+        realtime: { params: { eventsPerSecond: 10 } }
+      });
       setupRealtimeSync();
     } catch(e) {
       console.warn("Supabase init error:", e);
+      showErrorNotification("Supabase connection failed: " + e.message);
     }
   }
+}
+
+function isCloudConnected(){
+  return !!supabaseClient;
+}
+
+// Visual error & success toast system
+function showErrorNotification(msg){
+  let t = document.getElementById("db-error-toast");
+  if(!t){
+    t = document.createElement("div");
+    t.id = "db-error-toast";
+    t.style.cssText = "position:fixed;bottom:20px;right:20px;z-index:99999;background:#c0392b;color:#fff;padding:12px 18px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.5);font-size:0.9rem;max-width:min(28rem,90vw);display:flex;align-items:center;gap:10px;";
+    document.body.appendChild(t);
+  }
+  t.innerHTML = `<span>⚠️ ${ex(msg)}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;margin-left:auto">&times;</button>`;
+  setTimeout(()=>{ if(t && t.parentElement) t.remove(); }, 8000);
+}
+
+function showSuccessNotification(msg){
+  let t = document.getElementById("db-success-toast");
+  if(!t){
+    t = document.createElement("div");
+    t.id = "db-success-toast";
+    t.style.cssText = "position:fixed;bottom:20px;right:20px;z-index:99999;background:#27ae60;color:#fff;padding:12px 18px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.5);font-size:0.9rem;max-width:min(28rem,90vw);display:flex;align-items:center;gap:10px;";
+    document.body.appendChild(t);
+  }
+  t.innerHTML = `<span>✓ ${ex(msg)}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;margin-left:auto">&times;</button>`;
+  setTimeout(()=>{ if(t && t.parentElement) t.remove(); }, 4000);
 }
 
 function menu(o){const b=document.body;o=o==null?!b.classList.contains("mo"):o;b.classList.toggle("mo",o);const m=document.getElementById("mnb");if(m){m.setAttribute("aria-expanded",o);m.setAttribute("aria-label",o?"Close sections menu":"Open sections menu")}}
@@ -308,7 +359,7 @@ const churchData = {
     }
   ],
   fbposts: [
-    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center ...", url:"https://www.facebook.com/profile.php?id=61556921121315"},
+    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center of our lives and church.", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb2", date:"2026-11-02", caption:"Sunday Worship Service \"Jesus Be the Center of Our Hearts\" [Jesus at the Center Series - Proverbs 4:20-23]", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb3", date:"2026-11-03", caption:"More than a team, we're a family united in worship. JTNAAN Worship Team Bonding", url:"https://www.facebook.com/profile.php?id=61556921121315"}
   ],
@@ -326,6 +377,7 @@ const churchData = {
   events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
 };
 
+// In-Memory Global State (Supabase is Single Source of Truth)
 let D = JSON.parse(JSON.stringify(churchData));
 let R = {"devotion:dv1": {like: 7, heart: 7}};
 let AL = defaultAdmins;
@@ -333,78 +385,126 @@ let AL = defaultAdmins;
 let savedSession = null;
 try {
   const raw = localStorage.getItem("jt_active_session");
-  if(raw !== null){
+  if(raw !== null && raw !== "null"){
     savedSession = JSON.parse(raw);
-  } else {
-    savedSession = defaultAdmins[0]; // Admin Mart default on first visit
-    localStorage.setItem("jt_active_session", JSON.stringify(savedSession));
   }
-} catch(e){
-  savedSession = defaultAdmins[0];
-}
+} catch(e){}
 
 let me = savedSession;
 let admin = !!(me && me.owner);
 let view = "dashboard", dsel="GCash";
 
-// Cloud Sync Engine
+// Single Source of Truth: Push directly to Supabase
 async function syncRecordToCloud(collection, id, dataObj){
-  if(!supabaseClient) return;
+  if(!supabaseClient){
+    showErrorNotification("Database is not connected. Update was not saved to the cloud.");
+    return false;
+  }
   try {
-    await supabaseClient.from('church_records').upsert({
+    const { error } = await supabaseClient.from('church_records').upsert({
       collection: collection,
       id: String(id),
       data: dataObj,
       updated_at: new Date().toISOString()
     });
+    if(error){
+      console.error("Supabase upsert error:", error);
+      showErrorNotification(`Failed to save to cloud: ${error.message}`);
+      return false;
+    }
+    return true;
   } catch(err) {
-    console.warn("Cloud sync error:", err);
+    console.error("Cloud sync exception:", err);
+    showErrorNotification("Cloud save failed: " + err.message);
+    return false;
   }
 }
 
 async function deleteRecordFromCloud(collection, id){
-  if(!supabaseClient) return;
+  if(!supabaseClient){
+    showErrorNotification("Database is not connected. Deletion could not be performed on the cloud.");
+    return false;
+  }
   try {
-    await supabaseClient.from('church_records').delete().match({
+    const { error } = await supabaseClient.from('church_records').delete().match({
       collection: collection,
       id: String(id)
     });
+    if(error){
+      console.error("Supabase delete error:", error);
+      showErrorNotification(`Failed to delete: ${error.message}`);
+      return false;
+    }
+    return true;
   } catch(err) {
-    console.warn("Cloud delete error:", err);
+    console.error("Cloud delete exception:", err);
+    showErrorNotification("Cloud delete error: " + err.message);
+    return false;
   }
 }
 
-async function fetchAllFromCloud(){
+// Fetch Latest Data Directly from Supabase (Zero Stale LocalStorage)
+async function fetchAllFromCloud(silent = false){
   if(!supabaseClient) return;
   try {
     const { data, error } = await supabaseClient.from('church_records').select('*');
-    if(error || !data || data.length === 0){
-      seedCloudDatabase();
+    if(error){
+      console.error("Supabase fetch error:", error);
+      if(!silent) showErrorNotification("Could not load data from cloud: " + error.message);
       return;
     }
+    
+    // First time project setup: seed initial records once
+    if(!data || data.length === 0){
+      await seedCloudDatabase();
+      return;
+    }
+
     const cloudD = {
       members: [], ministries: [], funds: [], fbposts: [], devotion: [],
       attendance: [], social: [], events: [], prayers: [], testimony: [],
-      donate: [], gallery: [], comments: [], settings: []
+      donate: [], gallery: [], comments: [], settings: [], admins: []
     };
+
+    const cloudR = {};
+
     data.forEach(row => {
-      if(row.collection && cloudD[row.collection] !== undefined){
+      if(row.collection === "reactions"){
+        cloudR[row.id] = row.data;
+      } else if(row.collection === "admins"){
+        cloudD.admins.push({ id: row.id, ...row.data });
+      } else if(row.collection && cloudD[row.collection] !== undefined){
         cloudD[row.collection].push({ id: row.id, ...row.data });
       }
     });
+
+    // Replace in-memory state cleanly from Supabase
     Object.keys(cloudD).forEach(k => {
-      if(cloudD[k].length > 0){
-        D[k] = cloudD[k];
-      }
+      D[k] = cloudD[k];
     });
+
+    if(Object.keys(cloudR).length > 0){
+      R = cloudR;
+    }
+
+    if(cloudD.admins.length > 0){
+      AL = cloudD.admins;
+      if(me){
+        const updatedMe = AL.find(a => a.username.toLowerCase() === me.username.toLowerCase());
+        if(updatedMe) me = updatedMe;
+      }
+    }
+
     applyBackground();
     renderLogo();
     render();
   } catch(e) {
     console.warn("Fetch cloud records error:", e);
+    if(!silent) showErrorNotification("Database query failed: " + e.message);
   }
 }
 
+// Seed the cloud database on initial connection
 async function seedCloudDatabase(){
   if(!supabaseClient) return;
   const rows = [];
@@ -418,30 +518,57 @@ async function seedCloudDatabase(){
       });
     });
   });
+
+  defaultAdmins.forEach(adm => {
+    rows.push({
+      collection: 'admins',
+      id: String(adm.id),
+      data: adm,
+      updated_at: new Date().toISOString()
+    });
+  });
+
   if(rows.length > 0){
     try {
-      await supabaseClient.from('church_records').upsert(rows);
-      console.log("☁ Church database seeded into Supabase!");
-    } catch(err) {}
+      const { error } = await supabaseClient.from('church_records').upsert(rows);
+      if(error){
+        console.error("Cloud seed error:", error);
+      } else {
+        showSuccessNotification("Cloud database initialized with church records!");
+        await fetchAllFromCloud(true);
+      }
+    } catch(err) {
+      console.warn("Seed error:", err);
+    }
   }
 }
 
+// Realtime Listener
 function setupRealtimeSync(){
   if(!supabaseClient) return;
-  supabaseClient.channel('church_live')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'church_records' }, () => {
-      fetchAllFromCloud();
-    })
-    .subscribe();
+  try {
+    supabaseClient.channel('realtime:church_records')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'church_records' }, () => {
+        fetchAllFromCloud(true);
+      })
+      .subscribe();
+  } catch(e){
+    console.warn("Realtime subscription setup failed:", e);
+  }
 }
 
-function saveState(){
-  try {
-    localStorage.setItem("jt_local_cache", JSON.stringify(D));
-    if(me) localStorage.setItem("jt_active_session", JSON.stringify(me));
-    else localStorage.setItem("jt_active_session", "null");
-  } catch(e){}
-}
+// Automatic polling & re-sync on device wake / tab focus
+document.addEventListener("visibilitychange", () => {
+  if(!document.hidden && supabaseClient){
+    fetchAllFromCloud(true);
+  }
+});
+window.addEventListener("focus", () => {
+  if(supabaseClient) fetchAllFromCloud(true);
+});
+setInterval(() => {
+  if(!document.hidden && supabaseClient) fetchAllFromCloud(true);
+}, 20000);
 
 const can = c => !!me && (me.owner || (me.perms || []).includes(okey(c == "donate" ? "support" : c == "fbposts" ? "dashboard" : c)));
 const accLabel = () => me ? (me.owner ? "Full access" : (me.perms || []).length + " sections") : "";
@@ -468,27 +595,26 @@ async function handleBgUpload(ev){
   const f = ev.target.files[0];
   if(!f) return;
   try {
-    const b64 = await upload(f, 1400, 0.78);
-    D.settings = (D.settings||[]).filter(x => x.id !== "bg").concat([{id:"bg", url: b64}]);
-    await syncRecordToCloud("settings", "bg", { url: b64 });
-    saveState();
+    const publicUrl = await uploadMediaToSupabase(f, "backgrounds", 1600, 0.82);
+    D.settings = (D.settings||[]).filter(x => x.id !== "bg").concat([{id:"bg", url: publicUrl}]);
+    await syncRecordToCloud("settings", "bg", { url: publicUrl });
     applyBackground();
     render();
-    alert("Site background updated across all devices!");
+    showSuccessNotification("Sanctuary background updated live across all devices!");
   } catch(err) {
-    alert("Error uploading background: " + err.message);
+    showErrorNotification("Background upload failed: " + err.message);
   }
 }
 
 async function resetBgToDefault(){
   D.settings = (D.settings||[]).filter(x => x.id !== "bg");
   await deleteRecordFromCloud("settings", "bg");
-  saveState();
   applyBackground();
   render();
-  alert("Default background restored.");
+  showSuccessNotification("Default background restored.");
 }
 
+// Logo handling
 function getChurchLogoUrl(){
   const custom = (D.settings||[]).find(x => x.id === "logo");
   return custom ? custom.url : "";
@@ -527,19 +653,51 @@ async function handleLogoUpload(ev){
   const f = ev.target.files[0];
   if(!f) return;
   try {
-    const b64 = await upload(f, 400, 0.85);
-    D.settings = (D.settings||[]).filter(x => x.id !== "logo").concat([{id:"logo", url: b64}]);
-    await syncRecordToCloud("settings", "logo", { url: b64 });
-    saveState();
+    const publicUrl = await uploadMediaToSupabase(f, "logos", 500, 0.85);
+    D.settings = (D.settings||[]).filter(x => x.id !== "logo").concat([{id:"logo", url: publicUrl}]);
+    await syncRecordToCloud("settings", "logo", { url: publicUrl });
     renderLogo();
     render();
-    alert("Church logo updated across all devices!");
+    showSuccessNotification("Church logo updated live across all devices!");
   } catch(err) {
-    alert("Error uploading logo: " + err.message);
+    showErrorNotification("Logo upload failed: " + err.message);
   }
 }
 
-async function upload(f, maxDim = 1200, quality = 0.75){
+// Media upload engine with client compression & Supabase Storage upload
+async function uploadMediaToSupabase(file, folder = "uploads", maxDim = 1200, quality = 0.78){
+  if(!supabaseClient){
+    showErrorNotification("Database is not connected. Media cannot be uploaded.");
+    throw new Error("Supabase is not connected.");
+  }
+  
+  // Clean client-side image compression
+  const blob = await compressImageToBlob(file, maxDim, quality);
+  const ext = file.name ? file.name.split('.').pop().toLowerCase() : 'jpg';
+  const cleanExt = (ext.length <= 4) ? ext : 'jpg';
+  const filePath = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2,7)}.${cleanExt}`;
+
+  const { data, error } = await supabaseClient.storage
+    .from('church-media')
+    .upload(filePath, blob, {
+      contentType: blob.type || 'image/jpeg',
+      upsert: true
+    });
+
+  if(error){
+    console.error("Supabase Storage Error:", error);
+    showErrorNotification(`Storage upload failed: ${error.message}. Ensure 'church-media' bucket exists and is public.`);
+    throw error;
+  }
+
+  const { data: publicUrlData } = supabaseClient.storage
+    .from('church-media')
+    .getPublicUrl(filePath);
+
+  return publicUrlData.publicUrl;
+}
+
+function compressImageToBlob(file, maxDim, quality){
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = ev => {
@@ -551,17 +709,21 @@ async function upload(f, maxDim = 1200, quality = 0.75){
         else if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
         cv.width = w; cv.height = h;
         const ctx = cv.getContext("2d");
-        ctx.drawImage(img, 0, 0, cv.width, cv.height);
-        resolve(cv.toDataURL("image/jpeg", quality));
+        ctx.drawImage(img, 0, 0, w, h);
+        cv.toBlob(b => {
+          if(b) resolve(b);
+          else reject(new Error("Image compression failed"));
+        }, "image/jpeg", quality);
       };
       img.onerror = reject;
       img.src = ev.target.result;
     };
     reader.onerror = reject;
-    reader.readAsDataURL(f);
+    reader.readAsDataURL(file);
   });
 }
 
+// Background AJAX Email Sender (Does not open Gmail)
 async function sendBackgroundEmail(formData, subject="Church Website Form Submission"){
   try{
     const res = await fetch("https://formsubmit.co/ajax/jtnaanbulacan030126@gmail.com", {
@@ -570,7 +732,10 @@ async function sendBackgroundEmail(formData, subject="Church Website Form Submis
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({ _subject: subject, ...formData })
+      body: JSON.stringify({
+        _subject: subject,
+        ...formData
+      })
     });
     return res.ok;
   }catch(err){
@@ -600,20 +765,21 @@ function tabs(){
   return T;
 }
 
+// Cloud Configuration Modal
 function openCloudConfigModal(){
   $("#mb").innerHTML = `
-    <h3 style="margin-top:0">☁ Supabase Cloud Sync</h3>
-    <p class="mu">Connect Supabase to automatically sync changes across all admins' phones and all visitors live.</p>
+    <h3 style="margin-top:0">☁ Supabase Cloud Database</h3>
+    <p class="mu">Connecting Supabase synchronizes changes across all devices automatically without requiring site redeployments.</p>
     <div>
       <label class="mu">Supabase Project URL:</label>
       <input id="sp_url_input" value="${e(SUPABASE_URL)}" placeholder="https://xyz.supabase.co">
     </div>
     <div style="margin-top:8px">
-      <label class="mu">Supabase Anon Key:</label>
+      <label class="mu">Supabase Anon Public Key:</label>
       <input id="sp_key_input" type="password" value="${e(SUPABASE_ANON)}" placeholder="eyJhbGciOi...">
     </div>
     <p>
-      <button class="btn gold" onclick="saveCloudConfig()">Connect & Sync</button>
+      <button class="btn gold" onclick="saveCloudConfig()">Connect & Sync Live</button>
       <button onclick="closeModal()">Cancel</button>
     </p>
   `;
@@ -631,14 +797,15 @@ async function saveCloudConfig(){
   initSupabaseClient();
   await fetchAllFromCloud();
   closeModal();
-  alert("Supabase Cloud Sync is now active!");
+  showSuccessNotification("Supabase Cloud Sync is now active!");
 }
 
+// Download Backup ZIP
 async function downloadZipBackup(){
   const zip = new JSZip();
   const root = zip.folder("JTNAAN-Bulacan");
   root.file("index.html", "<!DOCTYPE html>\n" + document.documentElement.outerHTML);
-  root.file("README.md", `# JTNAAN-Bulacan Church Management System Backup\nDownloaded: ${new Date().toLocaleString()}\nRepository: https://jtnaanbulacan.github.io`);
+  root.file("README.md", `# JTNAAN-Bulacan Church Management System Backup\nDownloaded: ${new Date().toLocaleString()}\nRepository: https://jtnaanbulacan.github.io\nStructure:\n├── index.html\n├── assets/\n├── images/\n├── css/style.css\n├── js/data.js\n├── js/app.js\n└── README.md`);
   root.folder("assets").file(".gitkeep", "");
   root.folder("images").file(".gitkeep", "");
   root.folder("css").file("style.css", document.querySelector("style") ? document.querySelector("style").innerText : "");
@@ -652,6 +819,7 @@ async function downloadZipBackup(){
   a.click();
 }
 
+// Arrange Sections
 let AO = [];
 function openArrangeModal(){
   AO = tabs().filter(t => t !== "admins");
@@ -690,22 +858,21 @@ function moveArr(i, dir){
 
 async function saveSectionOrder(){
   D.settings = (D.settings||[]).filter(x => x.id !== "order").concat([{id:"order", list: AO}]);
-  await syncRecordToCloud("settings", "order", { list: AO });
-  saveState();
+  const ok = await syncRecordToCloud("settings", "order", { list: AO });
   closeModal();
   render();
-  alert("New section order applied!");
+  if(ok) showSuccessNotification("New section order applied live across all devices!");
 }
 
 async function resetSectionOrder(){
   D.settings = (D.settings||[]).filter(x => x.id !== "order");
   await deleteRecordFromCloud("settings", "order");
-  saveState();
   closeModal();
   render();
-  alert("Restored to default order.");
+  showSuccessNotification("Restored to default order.");
 }
 
+// Text Editing Engine
 let TE = 0;
 function toggleTextEditMode(){
   TE = TE ? 0 : 1;
@@ -762,9 +929,18 @@ function openTextEditorModal(rawEncodedText){
   $("#modal").style.display = "flex";
 }
 
-function saveEditedText(){
+async function saveEditedText(){
   const newVal = $("#tx_new_val").value.trim();
   if(!newVal) return;
+  
+  // Persist text override in Supabase settings
+  let curMap = ((D.settings||[]).find(x => x.id === "texts") || {}).map || {};
+  curMap[activeEditTargetText] = newVal;
+  D.settings = (D.settings||[]).filter(x => x.id !== "texts").concat([{id:"texts", map: curMap}]);
+  
+  await syncRecordToCloud("settings", "texts", { map: curMap });
+
+  // Update in DOM
   const walker = document.createTreeWalker($("#main"), NodeFilter.SHOW_TEXT);
   let node;
   while(node = walker.nextNode()){
@@ -773,7 +949,7 @@ function saveEditedText(){
     }
   }
   closeModal();
-  alert("Text updated!");
+  showSuccessNotification("Text updated live across all devices!");
 }
 
 document.addEventListener("click", ev => {
@@ -791,6 +967,7 @@ function closeModal(){
   if(m) m.style.display = "none";
 }
 
+// Modal Add/Edit Form
 function openFormModal(c, id=""){
   const F = CF[c];
   const x = (D[c]||[]).find(y => y.id === id) || {};
@@ -816,7 +993,7 @@ function openFormModal(c, id=""){
       <input type="file" id="f_photo" accept="image/*">
     ` : ''}
     <p>
-      <button class="btn gold" onclick="saveFormData('${c}', '${id}')">Save & Sync</button>
+      <button class="btn gold" id="btn-save-form" onclick="saveFormData('${c}', '${id}')">Save & Sync Live</button>
       <button onclick="closeModal()">Cancel</button>
     </p>`;
   $("#modal").style.display = "flex";
@@ -824,45 +1001,56 @@ function openFormModal(c, id=""){
 
 async function saveFormData(c, id){
   const F = CF[c];
+  const btn = $("#btn-save-form");
+  if(btn){ btn.disabled = true; btn.textContent = "Uploading & Syncing..."; }
+
   const item = { id: id || "id_" + Date.now().toString(36) };
   F.f.forEach(([k]) => {
     const el = $("#f_" + k);
     if(el) item[k] = el.value.trim();
   });
   
-  if(c === 'gallery'){
-    const phInput = $("#f_photos");
-    if(phInput && phInput.files.length > 0){
-      const upList = [];
-      const files = Array.from(phInput.files).slice(0, 6);
-      for(const f of files){
-        upList.push(await upload(f, 1000, 0.75));
+  try {
+    // Multi-photo upload for Gallery using Supabase Storage
+    if(c === 'gallery'){
+      const phInput = $("#f_photos");
+      if(phInput && phInput.files.length > 0){
+        const upList = [];
+        const files = Array.from(phInput.files).slice(0, 6);
+        for(const f of files){
+          const pUrl = await uploadMediaToSupabase(f, 'gallery', 1200, 0.78);
+          upList.push(pUrl);
+        }
+        item.photos = upList;
+      } else if(id) {
+        const old = (D[c]||[]).find(y => y.id === id) || {};
+        item.photos = old.photos || [];
       }
-      item.photos = upList;
+    }
+
+    // Single photo upload using Supabase Storage
+    const ph = $("#f_photo");
+    if(ph && ph.files[0]){
+      item.photo = await uploadMediaToSupabase(ph.files[0], c, 1000, 0.78);
     } else if(id) {
       const old = (D[c]||[]).find(y => y.id === id) || {};
-      item.photos = old.photos || [];
+      if(old.photo) item.photo = old.photo;
     }
+    
+    D[c] = (D[c]||[]).filter(x => x.id !== item.id);
+    D[c].unshift(item);
+    
+    const ok = await syncRecordToCloud(c, item.id, item);
+    closeModal();
+    render();
+    if(ok) showSuccessNotification("Changes saved live to Supabase and synced across all devices!");
+  } catch(err) {
+    showErrorNotification("Save error: " + err.message);
+    if(btn){ btn.disabled = false; btn.textContent = "Save & Sync Live"; }
   }
-
-  const ph = $("#f_photo");
-  if(ph && ph.files[0]){
-    item.photo = await upload(ph.files[0], 900, 0.78);
-  } else if(id) {
-    const old = (D[c]||[]).find(y => y.id === id) || {};
-    if(old.photo) item.photo = old.photo;
-  }
-  
-  D[c] = (D[c]||[]).filter(x => x.id !== item.id);
-  D[c].unshift(item);
-  
-  await syncRecordToCloud(c, item.id, item);
-  saveState();
-  closeModal();
-  render();
-  alert("Saved and synced live across all devices!");
 }
 
+// Social Sharing Dialog
 function openShareModal(title, text, url=location.href){
   const T = encodeURIComponent(text);
   const U = encodeURIComponent(url);
@@ -875,7 +1063,7 @@ function openShareModal(title, text, url=location.href){
       <button style="background:#25d366" onclick="window.open('https://api.whatsapp.com/send?text=${T}%20${U}', '_blank')"><span class="ic">✆</span> WhatsApp</button>
       <button style="background:#d62976" onclick="copyAndOpenInstagram('${encodeURIComponent(text)}')"><span class="ic">◎</span> Instagram</button>
       <button style="background:#000" onclick="window.open('https://twitter.com/intent/tweet?text=${T}&url=${U}', '_blank')"><span class="ic">𝕏</span> X / Twitter</button>
-      <button style="background:#3b3bd0" onclick="navigator.clipboard.writeText('${url}');alert('Link copied to clipboard!')"><span class="ic">⧉</span> Copy Link</button>
+      <button style="background:#3b3bd0" onclick="navigator.clipboard.writeText('${url}');showSuccessNotification('Link copied to clipboard!')"><span class="ic">⧉</span> Copy Link</button>
     </div>
     <p><button onclick="closeModal()">Close</button></p>
   `;
@@ -884,7 +1072,7 @@ function openShareModal(title, text, url=location.href){
 
 function copyAndOpenInstagram(rawEncodedText){
   if(navigator.clipboard) navigator.clipboard.writeText(decodeURIComponent(rawEncodedText));
-  alert("Post text and link copied! Opening Instagram...");
+  showSuccessNotification("Caption & link copied! Opening Instagram...");
   window.open("https://www.instagram.com/", "_blank");
 }
 
@@ -892,7 +1080,7 @@ function render(){
   const T = tabs();
   if(!T.includes(view)) view = T[0];
   
-  // Render Navigation Drawer with User Profile & Logout at Top
+  // Mobile Drawer Navigation Header
   $("#nav").innerHTML = `
     ${me ? `
       <div id="drawer-admin-box">
@@ -908,9 +1096,9 @@ function render(){
     ${T.map(t => `<button class="${t==view?"on":""}" data-v="${t}">${TL[t]||t.toUpperCase()}</button>`).join("")}
   `;
   
-  // Header Buttons (Responsive & Never Overflow)
+  // Header Buttons
   $("#hl").innerHTML = me ? `
-    <span class="mu hlu">${ex(me.name)}</span>
+    <span class="mu hlu">${ex(me.name)} · ${accLabel()}</span>
     <button class="btn ib" onclick="downloadZipBackup()" title="Download Backup ZIP"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg></button>
     ${admin ? `
       <button class="btn ib" onclick="openArrangeModal()" title="Arrange sections"><svg viewBox="0 0 24 24"><path d="M7 4v16m0-16L3 8m4-4 4 4m6 12V4m0 16-4-4m4 4 4-4"/></svg></button>
@@ -944,7 +1132,23 @@ function dash(){
   const A = (D.attendance||[])[0];
   const logo = getChurchLogoUrl();
   const customBg = (D.settings||[]).find(x => x.id === "bg");
-  return `<h2>HOME DASHBOARD</h2>
+  const cloudOk = isCloudConnected();
+
+  return `
+  <!-- Live Cloud Database Status for Admins -->
+  ${admin ? `
+    <div class="cloud-status-banner ${cloudOk ? 'online' : ''}">
+      <div>
+        <b>${cloudOk ? '☁ Supabase Database: Live & Syncing to All Devices' : '⚠️ Cloud Database Not Connected (Using Offline Fallback)'}</b>
+        <div class="mu" style="font-size:.85rem;margin-top:2px">
+          ${cloudOk ? 'All updates saved here automatically appear in real time on mobile phones, tablets, and visitors worldwide.' : 'Edits are not yet broadcasting. Connect your Supabase keys to make changes visible to all phones and visitors.'}
+        </div>
+      </div>
+      <button class="btn sm ${cloudOk ? '' : 'gold'}" onclick="openCloudConfigModal()">${cloudOk ? 'Database Settings' : 'Connect Cloud Now'}</button>
+    </div>
+  ` : ''}
+
+  <h2>HOME DASHBOARD</h2>
   <div class="grid">
     <div class="card"><div class="stat">${(D.members||[]).length}</div>Members</div>
     <div class="card"><div class="stat">${(D.ministries||[]).length}</div>Ministries</div>
@@ -1001,7 +1205,7 @@ function appv(){
     </div>
     <ul class="appl"><li>No registration needed</li><li>Just install the app</li><li>Connect any Gmail account already on your phone</li></ul>
     <div class="appbt">
-      <button class="appd" onclick="alert('Downloading Android app package...')"><span class="appic">🤖</span><span><small>Download for</small><b>Android</b></span></button>
+      <button class="appd" onclick="alert('Downloading Android web app...')"><span class="appic">🤖</span><span><small>Download for</small><b>Android</b></span></button>
       <button class="appd" onclick="alert('To install on iPhone: Open Safari, tap Share ⬆, then tap Add to Home Screen.')"><span class="appic">📱</span><span><small>Download for</small><b>iPhone / iPad</b></span></button>
     </div>
     <div class="appc">
@@ -1015,7 +1219,7 @@ function appv(){
 function about(){
   return `<section class="about">
     <h2>ABOUT US</h2>
-    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship.</p>
+    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship, all in a welcoming community that encourages you to honor God and live out His Word in everyday life.</p>
     <div class="grid">
       <div class="card"><b>Mission</b><div class="mu">To proclaim the Good News of Jesus Christ and make disciples of all nations.</div></div>
       <div class="card"><b>Vision</b><div class="mu">To win the lost souls to Jesus Christ, nurture believers in the faith, and equip them to live for God’s glory.</div></div>
@@ -1071,18 +1275,19 @@ async function submitVisitRequest(target){
     }, `Visit Request: ${type} - ${name}`);
     if(ok){
       fb.innerHTML = `<span style="color:#7be38f">✓ Your visit request has been sent directly to the church's Gmail!</span>`;
-      alert("Visit request sent directly to the church email!");
+      showSuccessNotification("Visit request sent directly to the church email!");
     } else {
       submitVisitRequest('fb');
     }
   } else {
     const msg = `Church Visit Request: ${type}\nName: ${name}\nContact: ${contact}\nAddress: ${address}\nDate: ${date} ${time}\nNotes: ${notes}`;
     if(navigator.clipboard) navigator.clipboard.writeText(msg);
-    alert("Details copied! Opening Messenger...");
+    showSuccessNotification("Details copied! Opening Messenger...");
     window.open("https://m.me/61556921121315", "_blank");
   }
 }
 
+// Feed View (Trivia & Daily Quiz at TOP, Devotion Messages at BOTTOM)
 function feed(c){
   const F = CF[c];
   const L = D[c] || [];
@@ -1093,13 +1298,13 @@ function feed(c){
       <h2>DAILY DEVOTION</h2>
       <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership.</p>
 
-      <!-- 1. TRIVIA & QUIZ AT TOP -->
+      <!-- 1. BIBLE TRIVIA & DAILY QUESTION AT THE TOP -->
       <div class="tvs">
         ${trivia()}
         ${tquiz()}
       </div>
 
-      <!-- 2. DEVOTION MESSAGES AT BOTTOM -->
+      <!-- 2. DEVOTION MESSAGES SECTION AT THE BOTTOM -->
       <h2 style="margin-top:32px;font-style:italic">DEVOTION MESSAGES</h2>
       ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ New devotion</button></p>`:''}
       
@@ -1194,22 +1399,22 @@ async function submitTestimony(target){
     const ok = await sendBackgroundEmail({ Name: name, Contact: contact, Testimony: test }, `Life Testimony from ${name}`);
     if(ok){
       fb.innerHTML = `<span style="color:#7be38f">✓ Your testimony has been sent directly to the church's Gmail!</span>`;
-      alert("Testimony delivered to church email!");
+      showSuccessNotification("Testimony delivered to church email!");
     } else {
       submitTestimony('fb');
     }
   } else {
     const msg = `Life Testimony from ${name}\nContact: ${contact}\n\n${test}`;
     if(navigator.clipboard) navigator.clipboard.writeText(msg);
-    alert("Testimony copied! Opening Facebook...");
+    showSuccessNotification("Testimony copied! Opening Facebook...");
     window.open("https://m.me/61556921121315", "_blank");
   }
 }
 
-function toggleReaction(key, type){
+async function toggleReaction(key, type){
   if(!R[key]) R[key] = {like: 7, heart: 7};
   R[key][type] = (R[key][type] || 0) + 1;
-  saveState();
+  await syncRecordToCloud("reactions", key, R[key]);
   render();
 }
 
@@ -1230,14 +1435,10 @@ function triggerQuizConfetti(){
     const a = (fromL ? -60 : -120) * Math.PI / 180 + (Math.random() - .5) * .9;
     const v = 9 + Math.random() * 9;
     P.push({
-      x: fromL ? 0 : W,
-      y: H * .75,
-      vx: Math.cos(a) * v,
-      vy: Math.sin(a) * v,
-      w: 6 + Math.random() * 6,
-      h: 8 + Math.random() * 8,
-      r: Math.random() * 6,
-      vr: (Math.random() - .5) * .35,
+      x: fromL ? 0 : W, y: H * .75,
+      vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+      w: 6 + Math.random() * 6, h: 8 + Math.random() * 8,
+      r: Math.random() * 6, vr: (Math.random() - .5) * .35,
       c: C[i % C.length]
     });
   }
@@ -1526,10 +1727,9 @@ async function saveAttendanceRecord(){
   const rec = { id: date + "_" + svc.replace(/\W/g,""), date, svc, present };
   D.attendance = (D.attendance||[]).filter(x => x.id !== rec.id);
   D.attendance.unshift(rec);
-  await syncRecordToCloud("attendance", rec.id, rec);
-  saveState();
+  const ok = await syncRecordToCloud("attendance", rec.id, rec);
   render();
-  alert("Attendance record saved and synced to cloud!");
+  if(ok) showSuccessNotification("Attendance record saved live to cloud!");
 }
 
 function reportsv(){
@@ -1567,6 +1767,7 @@ function reportsv(){
   </div>`;
 }
 
+// Social Media with Live Cloud CRUD
 function socialv(){
   const L = D.social || [];
   return `<h2>SOCIAL MEDIA</h2>
@@ -1577,8 +1778,7 @@ function socialv(){
         <b style="font-size:1.15rem;color:var(--pr)">${e(s.platform)}</b>
         <div class="stat" style="font-size:2rem;margin-top:6px">${Number(s.followers).toLocaleString()}</div>
         <div class="mu">Followers</div>
-        <div style="margin-top:8px">Reach / Views: <b>${Number(s.reach||0).toLocaleString()}</b></div>
-        <div>Engagement: <b>${Number(s.engagement||0).toLocaleString()}</b></div>
+        <div style="margin-top:8px">Engagement: <b>${Number(s.engagement||0).toLocaleString()}</b></div>
         ${can("social")?`
           <div style="margin-top:10px">
             <button class="btn sm" onclick="openFormModal('social', '${s.id}')">Edit</button>
@@ -1590,6 +1790,7 @@ function socialv(){
   </div>`;
 }
 
+// Prayer Requests with auto-email and Messenger
 function prayersv(){
   const L = D.prayers || [];
   return `<h2>PRAYER REQUESTS (${L.length})</h2>
@@ -1658,16 +1859,15 @@ async function submitPrayerRequest(target){
       const item = { id: "pr_" + Date.now().toString(36), name: name + " (" + cat + ")", req: req, status: "Open" };
       D.prayers.unshift(item);
       await syncRecordToCloud("prayers", item.id, item);
-      saveState();
       render();
-      alert("Prayer request delivered directly to church email!");
+      showSuccessNotification("Prayer request saved and delivered to church email!");
     } else {
       submitPrayerRequest('fb');
     }
   } else {
     const msg = `Prayer Request: ${cat}\nName: ${name}\nContact: ${contact}\nPrayer For: ${forWhom}\nDetails: ${req}\nPrivacy: ${priv}`;
     if(navigator.clipboard) navigator.clipboard.writeText(msg);
-    alert("Prayer details copied! Opening Facebook Messenger...");
+    showSuccessNotification("Prayer details copied! Opening Facebook Messenger...");
     window.open("https://m.me/61556921121315", "_blank");
   }
 }
@@ -1697,7 +1897,7 @@ function supportv(){
             ${x.photo ? `<img src="${e(x.photo)}" alt="${e(x.method)} QR">` : ''}
             <b>${e(x.method)}</b>
             ${x.name ? `<div>Account name: ${e(x.name)}</div>` : ''}
-            ${x.number ? `<div>Number: <b>${e(x.number)}</b> <button class="btn sm" onclick="navigator.clipboard.writeText('${e(x.number)}');alert('Number copied!')">Copy</button></div>` : ''}
+            ${x.number ? `<div>Number: <b>${e(x.number)}</b> <button class="btn sm" onclick="navigator.clipboard.writeText('${e(x.number)}');showSuccessNotification('Number copied!')">Copy</button></div>` : ''}
             ${x.bank ? `<div>Bank: ${e(x.bank)}</div>` : ''}
             ${x.note ? `<div class="mu">${e(x.note)}</div>` : ''}
             ${can("support") ? `
@@ -1727,7 +1927,7 @@ function supportv(){
 function launchSupportMessenger(){
   const msg = "Hello! I would like to help support the church activities.";
   if(navigator.clipboard) navigator.clipboard.writeText(msg);
-  alert("Message copied! Opening Facebook Messenger...");
+  showSuccessNotification("Message copied! Opening Facebook Messenger...");
   window.open("https://m.me/61556921121315", "_blank");
 }
 
@@ -1772,18 +1972,19 @@ function adminsv(){
 async function deleteRecord(c, id){
   if(confirm("Are you sure you want to delete this record?")){
     D[c] = (D[c]||[]).filter(x => x.id !== id);
-    await deleteRecordFromCloud(c, id);
-    saveState();
+    const ok = await deleteRecordFromCloud(c, id);
     render();
+    if(ok) showSuccessNotification("Deleted live across all devices!");
   }
 }
 
-// Session System
+// Session Management
 async function handleLogout(){
   me = null;
   admin = false;
   localStorage.setItem("jt_active_session", "null");
   render();
+  showSuccessNotification("Logged out successfully.");
 }
 
 function loginForm(msg){
@@ -1815,18 +2016,9 @@ async function handleLoginSubmit(ev){
     localStorage.setItem("jt_active_session", JSON.stringify(found));
     closeModal();
     render();
+    showSuccessNotification(`Welcome back, ${found.name}!`);
   } else {
     $("#le").textContent = "Invalid username or password.";
-  }
-}
-
-// Deep links detection (#admin or #login)
-function handleHashRoute(){
-  const h = window.location.hash.toLowerCase();
-  if(h === "#admin" || h === "#login" || new URLSearchParams(window.location.search).get("login")){
-    if(!me){
-      loginForm();
-    }
   }
 }
 
@@ -1835,11 +2027,10 @@ document.addEventListener("click", ev => {
   if(d.v){ view = d.v; render(); menu(false); }
 });
 
-// Boot Application
+// Boot and connect to cloud database
 applyBackground();
 render();
 initSupabaseClient();
 fetchAllFromCloud();
-handleHashRoute();
 </script>
 </body></html>
