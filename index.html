@@ -1,690 +1,440 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JTNAAN Bulacan – Church System</title>
+<!DOCTYPE html><html lang="en" data-theme="dark" style="color-scheme: dark;"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JTNAAN Bulacan – Church Management</title>
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D"><meta name="theme-color" content="#0b0a3a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-badge-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="JTNAAN">
+<style>
+:root{--bg:#0b0a3a;--card:#15145a;--tx:#fff;--mu:#b9bde6;--pr:#f2a93b;--bd:#3a3a9a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:60px}
+body{margin:0;background:radial-gradient(1000px 400px at 100% 0,#2a2aa8,transparent 60%),var(--bg) fixed;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;align-items:center;gap:10px;padding:10px 14px}header img{width:44px;height:44px;border-radius:50%}header b{text-transform:uppercase;letter-spacing:1px;font-size:14px}header small{display:block;color:var(--mu)}
+nav{display:flex;gap:4px;overflow-x:auto;padding:0 10px 8px;border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);background:#0b0a3af2;z-index:4}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:7px 12px;background:transparent;color:var(--tx);white-space:nowrap}
+nav button{text-transform:uppercase;font-size:12px;letter-spacing:1px}nav button.on{background:var(--pr);color:#241a00;font-weight:700}
+.btn{background:#3b3bd0;font-weight:700}.gold{background:var(--pr);color:#241a00}.red{background:#c0392b}.sm{padding:4px 9px;font-size:13px}
+main{max-width:1800px;margin:auto;padding:16px}
+h2{font-style:italic;text-transform:uppercase;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{background:#ffffff0f;border-left:3px solid #fff;border-radius:4px;padding:12px 14px}
+.card img{width:100%;height:150px;object-fit:cover;border-radius:8px;margin-bottom:6px}.card img.mimg{height:clamp(4.5rem,7vw,6.5rem)}
+.stat{font-size:34px;font-weight:900;color:var(--pr)}.mu{color:var(--mu);font-size:14px}
+input,textarea,select{width:100%;font:inherit;padding:8px;margin:3px 0;border:1px solid var(--bd);border-radius:8px;background:#0b0a3a;color:#fff}
+.msd{margin:3px 0;border:1px solid var(--bd);border-radius:8px;background:#0b0a3a}.msd summary{cursor:pointer;padding:8px 10px;list-style:none;display:flex;justify-content:space-between;gap:8px}.msd summary::after{content:"▾";color:var(--mu)}.msd[open] summary::after{content:"▴"}.msd .ms-l{max-height:14rem;overflow:auto;padding:0 6px 6px}.msd .chk{margin:4px 0;padding:6px 10px;cursor:pointer}
+.chk{display:flex;gap:10px;align-items:center;padding:8px 12px;background:#ffffff0f;border-radius:6px;margin:5px 0}.chk input{width:auto}
+.arit{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:4px 0;border:1px solid var(--bd);border-radius:8px;background:#ffffff0d;user-select:none}.arit.drag{outline:2px solid var(--pr);background:#ffffff1f}.arh{cursor:grab;touch-action:none;font-size:20px;padding:2px 8px;color:var(--pr)}
+#modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:9;padding:14px}
+#modal>div{background:var(--card);padding:18px;border-radius:12px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
+body::before{content:"";position:fixed;inset:-24px;z-index:-1;background:linear-gradient(#0b0a3a80,#0b0a3ab3);filter:blur(9px)}
+
+html{font-size:clamp(15px,.45vw + 13.3px,21px);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-size:1rem}
+header{padding:.6rem clamp(.75rem,2.5vw,2.5rem);gap:.7rem}header img{width:2.75rem;height:2.75rem}header b{font-size:.9rem}header small{font-size:.8rem}
+nav{padding:0 clamp(.5rem,2.5vw,2.5rem) .5rem}nav button{font-size:.75rem;padding:.45rem .75rem}
+button{padding:.45rem .75rem}.sm{padding:.25rem .55rem;font-size:.8rem}
+main{max-width:1800px;width:100%;padding:clamp(.6rem,2.5vw,2.5rem)}
+h2{font-size:clamp(1.3rem,1rem + 1.2vw,2.1rem)}h3{font-size:clamp(1.1rem,.95rem + .6vw,1.5rem)}
+.grid{grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:clamp(.6rem,1.2vw,1.25rem)}
+.card{padding:.75rem .9rem}.card img{height:clamp(9rem,12vw,16rem)}
+.stat{font-size:clamp(1.8rem,1.2rem + 2vw,3rem)}.mu{font-size:.875rem}
+#modal{padding:clamp(.5rem,2vw,1.5rem)}#modal>div{max-width:min(36rem,100%);padding:clamp(.9rem,2vw,1.5rem)}
+img,svg,video,iframe{max-width:100%}table{font-size:.9rem}td,th{word-break:break-word}
+@media (max-width:480px){table{font-size:.8rem}td,th{padding:4px!important}}
+@media (min-width:1800px){main{padding-inline:3rem}}
+
+main:has(> .about){max-width:none}
+.about{width:100%}
+.about .lead{max-width:none;font-size:clamp(1rem,.9rem + .45vw,1.35rem);line-height:1.65;margin:.5rem 0 clamp(1rem,2vw,2rem)}
+.about .grid{grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr));gap:clamp(.75rem,1.6vw,1.75rem)}
+.about .card{padding:clamp(1rem,1.8vw,2rem) clamp(1rem,2vw,2.25rem);display:flex;flex-direction:column;gap:.5rem}
+.about .card b{font-size:clamp(1.1rem,.95rem + .6vw,1.6rem)}
+.about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word}
+
+.tv{max-width:44rem;margin:0 auto clamp(1rem,2vw,1.6rem);background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
+.tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
+.tvi{position:relative;aspect-ratio:16/9;background:radial-gradient(circle at 30% 20%,#f2a93b55,transparent 55%),linear-gradient(135deg,#2a2aa8,#0b0a3a)}
+.tvi img{width:100%;height:100%;object-fit:cover;display:block}
+.tvi .tvph{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:clamp(3.5rem,10vw,6rem)}
+.tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+.tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
+.tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
+.tqo{display:grid;gap:8px}.tqo button{display:flex;align-items:center;gap:10px;text-align:left;white-space:normal;width:100%;padding:10px 12px;border-radius:10px;background:#ffffff10;border:2px solid transparent;transition:background .15s,border-color .15s}
+.tqo button:not(:disabled):hover{background:#ffffff1f;border-color:#ffffff40}.tqo button:disabled{cursor:default}
+.tqo .l{flex:none;width:1.8rem;height:1.8rem;border-radius:50%;display:grid;place-items:center;background:var(--pr);color:#241a00;font-weight:800;text-transform:uppercase}
+.tqo button.ok{border-color:#2ecc71;background:#2ecc7122}.tqo button.ok .l{background:#2ecc71;color:#05210f}
+.tqo button.no{border-color:#e74c3c;background:#e74c3c22}.tqo button.no .l{background:#e74c3c;color:#fff}
+.tqr{margin-top:10px;font-weight:600}.tqr.ok{color:#5be08f}.tqr.no{color:#ff8a7d}.tqr .mu{font-weight:400}
+.tvs{margin-top:clamp(1rem,2vw,1.6rem)}.tqs .tq{border-top:0}
+#cfx{position:fixed;inset:0;pointer-events:none;z-index:20}
+
+.feed{display:grid;gap:clamp(.8rem,1.5vw,1.4rem);max-width:44rem;margin-inline:auto}
+.post{background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb}
+.post .ph{padding:10px 12px;display:flex;gap:10px;align-items:center}.post .ph img{width:2.5rem;height:2.5rem;border-radius:50%}
+.post>img{width:100%;max-height:36rem;object-fit:cover;display:block;cursor:zoom-in}
+.post .cap{padding:4px 12px 10px;white-space:pre-wrap;word-break:break-word}
+.rx{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px;border-top:1px solid #3e4042;border-bottom:1px solid #3e4042}
+.rx button{background:#3a3b3c;color:#e4e6eb}.rx button.on{background:#2d5bd0;font-weight:700}.rx button.on.ht{background:#c0395b}.rx .mu{margin-left:auto}
+.cm{padding:8px 12px 12px}.cmi{background:#3a3b3c;border-radius:12px;padding:6px 10px;margin:6px 0;white-space:pre-wrap;word-break:break-word}
+.cmi .mu{font-size:.75rem}.cmf{margin-top:8px}.cmf input,.cmf textarea{background:#18191a;border-color:#3e4042}
+
+.dtabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.qr{background:#ffffff0f;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.qr img,.card .qr img{width:100%;max-width:18rem;height:auto;max-height:22rem;object-fit:contain;background:#fff;padding:8px;border-radius:10px;cursor:zoom-in;align-self:center}
+
+:root{--nw:min(16rem,78vw);--hh:4rem;--ez:cubic-bezier(.22,.61,.36,1)}
+html{overflow-x:hidden}body{overflow-x:clip}
+header{position:sticky;top:0;z-index:6;background:#0b0a3af2;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#mnb{flex:none;width:2.6rem;height:2.6rem;padding:0;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#ffffff14;border:1px solid var(--bd);transition:background .2s}
+#mnb:hover{background:#ffffff24}
+#mnb i{display:block;width:1.25rem;height:2px;border-radius:2px;background:var(--tx);transition:transform .35s var(--ez),opacity .25s}
+body.mo #mnb i:nth-child(1){transform:translateY(7px) rotate(45deg)}body.mo #mnb i:nth-child(2){opacity:0}body.mo #mnb i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+nav#nav{position:fixed;left:0;top:var(--hh);bottom:0;width:var(--nw);display:flex;flex-direction:column;gap:3px;overflow-y:auto;overflow-x:hidden;padding:.75rem .6rem calc(1rem + env(safe-area-inset-bottom,0px));border:0;border-right:1px solid var(--bd);background:#0b0a3af7;z-index:5;transform:translateX(-100%);visibility:hidden;transition:transform .4s var(--ez),visibility 0s linear .4s}
+body.mo nav#nav{transform:none;visibility:visible;transition:transform .4s var(--ez),visibility 0s;box-shadow:6px 0 24px #0006}
+nav#nav button{text-align:left;width:100%;padding:.65rem .85rem;font-size:.8rem;border-radius:8px;flex:none}
+nav#nav button:hover{background:#ffffff14}nav#nav button.on{background:var(--pr);color:#241a00}
+main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s var(--ez)}
+@media (min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
+@media (max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
+
+.shb{background:#3a3b3c;color:#e4e6eb}
+.post.hlp,.card.hlp{box-shadow:0 0 0 3px var(--pr);transition:box-shadow .6s}
+.shg{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:8px;margin:10px 0}
+.shg button{display:flex;align-items:center;gap:8px;padding:.6rem .75rem;border-radius:10px;font-weight:700;color:#fff;justify-content:flex-start}
+.shg .ic{width:1.6rem;height:1.6rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff3;font-size:.85rem;flex:none}
+
+.appb{background:linear-gradient(135deg,#2a2aa8cc,#15145acc);border:1px solid var(--pr);border-radius:14px;padding:clamp(.9rem,2.5vw,1.6rem)}
+.appi{display:flex;gap:.9rem;align-items:center}.appi img{width:3.6rem;height:3.6rem;border-radius:22%;flex:none;box-shadow:0 4px 14px #0007}.appt{display:block;font-size:1.2rem;color:var(--pr)}
+.appl{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;list-style:none;padding:0;margin:.8rem 0}.appl li::before{content:"✓ ";color:var(--pr);font-weight:700}
+.appbt{display:flex;flex-wrap:wrap;gap:.6rem}.appd{display:flex;align-items:center;gap:.6rem;background:#000;border:1px solid #fff6;border-radius:10px;padding:.5rem 1.1rem;text-align:left;min-width:11rem}
+.appd small{display:block;font-size:.7rem;color:#ccc;line-height:1.1}.appd b{display:block;font-size:1.05rem;line-height:1.2}.appic{font-size:1.5rem;width:1.6rem;text-align:center}
+.appc{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.6rem;margin-top:.9rem}.appc>div{background:#ffffff12;border-radius:10px;padding:.5rem .8rem}.appc .stat{display:block;line-height:1.2}.appc .mu{font-size:.85rem}
+
+header>div{min-width:0;flex:1 1 auto}header b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}header small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}#hl{flex:none;display:flex;align-items:center;gap:.4rem}.hlu{font-size:.85rem;margin-right:.2rem;white-space:nowrap}.ib{display:inline-flex;align-items:center;justify-content:center;width:2.4rem;height:2.4rem;padding:0;border-radius:10px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);transition:background .2s}.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+@media (max-width:900px){.hlr{display:none}}@media (max-width:640px){header{gap:.5rem}header img{width:2.3rem;height:2.3rem}header b{font-size:.78rem;letter-spacing:.5px}header small{font-size:.7rem}.hlu{display:none}#hl{gap:.3rem}.ib{width:2.1rem;height:2.1rem;border-radius:8px}.ib svg{width:1.05rem;height:1.05rem}#mnb{width:2.3rem;height:2.3rem}}@media (max-width:400px){header small{display:none}header b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}}
+.adch{display:inline-block;font-size:.78rem;padding:.15rem .5rem;margin:0 .3rem .3rem 0;border-radius:999px;background:#ffffff14;border:1px solid var(--bd)}.adch.on{background:var(--pr);color:#1a1446;border-color:transparent;font-weight:700}.adck{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(15rem,100%),1fr));gap:0 .8rem}
+</style>
+<style id="bgcss"></style>
+</head><body>
+<header>
+  <button id="mnb" type="button" aria-label="Open sections menu" aria-expanded="false" aria-controls="nav" title="Sections"><i></i><i></i><i></i></button>
+  <div style="width:40px;height:40px;border-radius:50%;background:var(--pr);color:#0b0a3a;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;flex:none">✝</div>
+  <div><b>Jesus The Name Above All Names</b><small>JTNAAN Bulacan · Church Management</small></div>
+  <span id="hl" style="margin-left:auto"></span>
+</header>
+<nav id="nav"></nav>
+<main id="main"><p class="mu">Loading Church Data…</p></main>
+<div id="modal"><div id="mb"></div></div>
+
+<script>
+function menu(o){const b=document.body;o=o==null?!b.classList.contains("mo"):o;b.classList.toggle("mo",o);const m=document.getElementById("mnb");if(m){m.setAttribute("aria-expanded",o);m.setAttribute("aria-label",o?"Close sections menu":"Open sections menu")}}
+(function(){const h=document.querySelector("header"),f=()=>document.documentElement.style.setProperty("--hh",h.getBoundingClientRect().height+"px");f();addEventListener("resize",f);if(window.ResizeObserver)new ResizeObserver(f).observe(h)})();
+document.getElementById("mnb").addEventListener("click",()=>menu());
+addEventListener("keydown",ev=>{if(ev.key=="Escape"&&document.body.classList.contains("mo")&&document.getElementById("modal").style.display!="flex")menu(false)});
+document.getElementById("main").addEventListener("click",()=>{if(document.body.classList.contains("mo")&&!matchMedia("(min-width:760px)").matches)menu(false)});
+
+const CF={members:{t:"Members",f:[["name","Full name"],["birth","Birthday","date"],["contact","Contact number"],["address","Address"],["ministry","Ministry","m"],["joined","Date joined","date"]],s:["ministry","birth","joined","contact","address"],k:"name"},
+ministries:{t:"Ministries",f:[["name","Ministry name"],["leader","Leader"],["desc","Description","t"]],s:["leader","desc"],k:"name",photo:1},
+events:{t:"Events",f:[["title","Event title"],["date","Date","date"],["place","Place"],["desc","Details","t"]],s:["date","place","desc"],k:"title",multi:1,max:10},
+prayers:{t:"Prayer Requests",f:[["name","Name"],["req","Request","t"],["status","Status (Open / Answered)"]],s:["req","status"],k:"name"},
+gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:40,append:1},
+funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["type","Type","s:Income,Expense"],["category","Category (Offering, Tithes, Utilities...)"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
+social:{t:"Social Media",f:[["platform","Platform","s:Facebook,YouTube,TikTok,Instagram"],["date","Date","date"],["followers","Followers","number"],["reach","Reach / views","number"],["engagement","Engagement (likes+comments+shares)","number"]],s:[],k:"platform"},
+fbposts:{t:"Facebook Post",f:[["url","Facebook post link (paste here)"],["caption","Post text (optional)","t"],["date","Date posted","date"],["more","Extra photos on Facebook (optional)","number"]],s:[],k:"url",multi:1},
+devotion:{t:"Daily Devotion",f:[["date","Date","date"],["caption","Caption / devotion message","t"]],s:[],k:"caption",photo:1},
+testimony:{t:"Testimony",f:[["name","Name (optional)"],["date","Date","date"],["caption","Caption / testimony","t"]],s:[],k:"caption",photo:1},
+donate:{t:"Donation QR",f:[["method","Payment method","s:GCash,Maya,Bank transfer"],["name","Account name"],["number","Account / mobile number"],["bank","Bank name (for bank transfer)"],["note","Note (optional)","t"]],s:[],k:"method",photo:1}};
+
+const EM="jtnaanbulacan030126@gmail.com",DMS=["GCash","Maya","Bank transfer"],TL={dashboard:"home dashboard",devotion:"daily devotion",admins:"admins"};
+const SV=["Sunday Worship Service","Leadership & WT Practice","Midweek Bible Study"];
+const PL={dashboard:"Home dashboard – Facebook posts & site background",devotion:"Daily devotion – posts & comments",testimony:"Testimony – posts & comments",members:"Members – including private details",attendance:"Attendance",funds:"Funds",social:"Social media",ministries:"Ministries",events:"Events",prayers:"Prayer requests",gallery:"Gallery",support:"Support – donation QR codes",arrange:"Arrange sections (menu order)"};
+
+// Standalone in-memory database backed by LocalStorage (Zero server cost/limits!)
+const defaultData = {
+  members: [
+    {id:"m1", name:"Ptr. Juan Santos", ministry:"Pastor", contact:"0917-111-2222", address:"Bambang, Bulakan", joined:"2024-01-01"},
+    {id:"m2", name:"Bro. Mark Dela Cruz", ministry:"Worship Team", contact:"0918-333-4444", address:"Malolos, Bulacan", joined:"2024-02-15"},
+    {id:"m3", name:"Sis. Grace Reyes", ministry:"Youth Ministry", contact:"0920-555-6666", address:"San Jose del Monte", joined:"2024-03-01"}
+  ],
+  ministries: [
+    {id:"d0", name:"Church Leaders", desc:"Leadership team and coordinators.", leader:"Ptr. Juan"},
+    {id:"d1", name:"Worship Team", desc:"Musicians, singers, sound and multimedia volunteers.", leader:"Bro. Mark"},
+    {id:"d2", name:"Youth Ministry", desc:"Programs and events for young people.", leader:"Sis. Grace"},
+    {id:"d3", name:"Dance Ministry", desc:"Praise and worship dance team.", leader:"Sis. Lea"},
+    {id:"d4", name:"Media Ministry", desc:"Livestream, photography, sound, slides and social media.", leader:"Bro. Christian"}
+  ],
+  events: [
+    {id:"e1", title:"Sunday Grand Worship", date:new Date().toISOString().slice(0,10), place:"Purok 5 Bambang, Bulakan", desc:"Join us for a powerful time of praise, worship and the preaching of the Word!"}
+  ],
+  funds: [
+    {id:"f1", desc:"Sunday General Offering", date:new Date().toISOString().slice(0,10), type:"Income", category:"Offering", amount:15200},
+    {id:"f2", desc:"Sanctuary Sound System Utility", date:new Date().toISOString().slice(0,10), type:"Expense", category:"Utilities", amount:3500}
+  ],
+  devotion: [
+    {id:"dv1", date:new Date().toISOString().slice(0,10), caption:"“The Lord is my strength and my shield; in him my heart trusts, and I am helped.” — Psalm 28:7\n\nNo matter what battle you are facing this week, remember that God goes before you!"}
+  ],
+  testimony: [
+    {id:"ts1", name:"Sis. Maria", date:new Date().toISOString().slice(0,10), caption:"Praise God for healing my mother after our prayer session last Saturday! Truly, Jesus is the Name above all names!"}
+  ],
+  donate: [
+    {id:"dn1", method:"GCash", name:"JTNAAN Bulacan", number:"0938-076-7378", note:"Please include 'Offering' or 'Tithe' in the remarks."}
+  ],
+  attendance: [],
+  comments: [],
+  social: [],
+  fbposts: [],
+  prayers: [],
+  gallery: [],
+  settings: []
+};
+
+let D = JSON.parse(localStorage.getItem("jt_data")) || defaultData;
+let R = JSON.parse(localStorage.getItem("jt_rx_counts")) || {};
+let RM = JSON.parse(localStorage.getItem("jt_rx")) || {};
+let AL = JSON.parse(localStorage.getItem("jt_admins")) || [
+  {id:"adm1", name:"Admin Mart", username:"admin", password:"jtnaan2026", owner:true, perms:Object.keys(PL)}
+];
+let me = JSON.parse(localStorage.getItem("jt_active_me")) || null;
+let admin = !!(me && me.owner);
+let view = "dashboard", asel=new Set(), adate=new Date().toISOString().slice(0,10), asv=SV[0], dsel="GCash";
+
+function saveState(){
+  localStorage.setItem("jt_data", JSON.stringify(D));
+  localStorage.setItem("jt_rx_counts", JSON.stringify(R));
+  localStorage.setItem("jt_admins", JSON.stringify(AL));
+  if(me) localStorage.setItem("jt_active_me", JSON.stringify(me));
+  else localStorage.removeItem("jt_active_me");
+}
+
+const can = c => !!me && (me.owner || (me.perms || []).includes(okey(c == "donate" ? "support" : c == "fbposts" ? "dashboard" : c)));
+const accLabel = () => me ? (me.owner ? "Full access" : (me.perms || []).length + " sections") : "";
+
+const $ = s => document.querySelector(s);
+const ex = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const e = ex;
+
+// Quick Image Base64 Uploader (Zero server upload cost)
+async function upload(f){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const cv = document.createElement("canvas");
+        const maxDim = 1200;
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h *= maxDim / w; w = maxDim; }
+        else if(h > maxDim){ w *= maxDim / h; h = maxDim; }
+        cv.width = w; cv.height = h;
+        cv.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(cv.toDataURL("image/jpeg", 0.78));
+      };
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(f);
+  });
+}
+
+function baseTabs(){
+  return ["dashboard","reports","about","schedule","devotion","testimony","members","attendance",...(me?["funds"]:[]),"social","ministries","events","gallery",can("prayers")?"prayers":"prayer","support"];
+}
+const okey = t => t == "prayer" ? "prayers" : t;
+function tabs(){
+  const T = baseTabs();
+  if(admin) T.splice(T.indexOf("reports") + 1, 0, "admins");
+  return T;
+}
+
+function render(){
+  const T = tabs();
+  if(!T.includes(view)) view = T[0];
+  $("#nav").innerHTML = T.map(t => `<button class="${t==view?"on":""}" data-v="${t}">${TL[t]||t}</button>`).join("");
+  $("#hl").innerHTML = me ? `
+    <span class="mu hlu">${ex(me.name||me.username)}</span>
+    <button class="btn ib" onclick="downloadBackup()" title="Download Backup file"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg></button>
+    <button class="btn ib" data-logout="1" title="Log out"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></button>` :
+    `<button class="btn ib" data-login="1" title="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  if(view=="admins") $("#main").innerHTML = adminsv();
+  else if(view=="devotion"||view=="testimony") $("#main").innerHTML = feed(view);
+  else if(view=="prayer") $("#main").innerHTML = prayerv();
+  else if(view=="support") $("#main").innerHTML = supportv();
+  else if(view=="reports") $("#main").innerHTML = reports();
+  else if(view=="funds"||view=="social") $("#main").innerHTML = table(view);
+  else if(view=="about") $("#main").innerHTML = about();
+  else if(view=="schedule") $("#main").innerHTML = sched();
+  else if(view=="dashboard") $("#main").innerHTML = dash();
+  else if(view=="attendance") $("#main").innerHTML = attv();
+  else $("#main").innerHTML = list(view);
+}
 
-  <style>
-    #reader video { width: 100% !important; border-radius: 0.75rem; }
-  </style>
-</head>
-<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col md:flex-row">
+// 1-Click Offline Backup / Export
+function downloadBackup(){
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(D, null, 2));
+  const dl = document.createElement('a');
+  dl.setAttribute("href", dataStr);
+  dl.setAttribute("download", `JTNAAN_Church_Data_${new Date().toISOString().slice(0,10)}.json`);
+  dl.click();
+}
 
-  <aside class="w-full md:w-64 bg-slate-900 text-white flex-shrink-0 flex flex-col justify-between p-5">
-    <div>
-      <div class="flex items-center gap-3 pb-6 border-b border-slate-800">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-indigo-500/30">
-          <i class="ph-bold ph-church"></i>
-        </div>
-        <div>
-          <h1 class="text-base font-bold tracking-wide">JTNAAN Bulacan</h1>
-          <p class="text-[11px] text-emerald-400 font-medium">● Free Hosting Active</p>
-        </div>
-      </div>
+// Content sections
+function about(){
+  return `<section class="about"><h2>About Us</h2><p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship.</p><div class="grid"><div class="card"><b>Mission</b><div class="mu">To proclaim the Good News of Jesus Christ and make disciples of all nations.</div></div><div class="card"><b>Vision</b><div class="mu">To win the lost souls to Jesus Christ, nurture believers in the faith, and equip them to live for God’s glory.</div></div><div class="card"><b>Contact</b><div class="mu">Purok 5 Bambang, Bulakan, Bulacan<br>0938-076-7378<br>jtnaanbulacan030126@gmail.com<br><a style="color:var(--pr)" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61556921121315">Facebook Page ↗</a></div></div></div></section>`;
+}
 
-      <nav class="mt-6 space-y-1">
-        <a href="#dashboard" onclick="showSection('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-indigo-600 text-white">
-          <i class="ph-bold ph-squares-four text-lg"></i> Dashboard
-        </a>
-        <a href="#members" onclick="showSection('members')" id="nav-members" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-          <i class="ph-bold ph-users text-lg"></i> Members & QR Codes
-        </a>
-        <a href="#attendance" onclick="showSection('attendance')" id="nav-attendance" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-          <i class="ph-bold ph-qr-code text-lg"></i> QR Attendance Scanner
-        </a>
-        <a href="#tithes" onclick="showSection('tithes')" id="nav-tithes" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
-          <i class="ph-bold ph-hand-coins text-lg"></i> Tithes & Reports
-        </a>
-      </nav>
-    </div>
+function sched(){
+  return `<h2>Weekly Schedule</h2><div class="grid">${[["Sunday Worship Service","Every Sunday · 4:00 PM – 6:00 PM","Purok 5 Bambang, Bulakan, Bulacan"],["Leadership & WT Practice","Every Saturday · 5:30 PM – 8:30 PM","Purok 5 Bambang, Bulakan, Bulacan"],["Midweek Bible Study","Weekdays · 5:00 PM – 8:00 PM","Assigned designated house/place weekly"]].map(s=>`<div class="card"><b style="color:var(--pr)">${s[0]}</b><div>${s[1]}</div><div class="mu">${s[2]}</div></div>`).join("")}</div>
+  <div class="card" style="margin-top:14px"><b style="color:var(--pr)">Request a Visit</b><div class="mu" style="margin:4px 0 8px">Would you like a Bible study in your home, or an actual prayer and healing session at your place? Fill this out and our team will get in touch with you.</div><input id="rqn" placeholder="Your name"><input id="rqc" placeholder="Contact number"><input id="rqa" placeholder="Address / place"><button class="btn gold" onclick="alert('Thank you! Details saved.')">Send Request</button></div>`;
+}
 
-    <div class="pt-6 border-t border-slate-800 space-y-2">
-      <div class="flex items-center justify-between text-xs">
-        <span class="text-slate-400">Database:</span>
-        <span id="db-status-badge" class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-semibold">Local Storage</span>
-      </div>
-      <div class="flex gap-2 pt-2">
-        <button onclick="exportBackupJSON()" title="Download Backup File" class="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-md flex items-center justify-center gap-1">
-          <i class="ph-bold ph-download-simple"></i> Backup
-        </button>
-        <button onclick="document.getElementById('importFile').click()" title="Restore from Backup" class="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-md flex items-center justify-center gap-1">
-          <i class="ph-bold ph-upload-simple"></i> Restore
-        </button>
-        <input type="file" id="importFile" class="hidden" accept=".json" onchange="importBackupJSON(event)" />
-      </div>
-      <button onclick="openModal('authModal')" class="w-full text-center text-[11px] text-slate-400 hover:text-white pt-1">
-        ⚙ Supabase Cloud Config
-      </button>
-    </div>
-  </aside>
-
-  <main class="flex-1 flex flex-col overflow-y-auto">
-    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-      <h2 id="page-title" class="text-xl font-bold text-slate-800">Church Overview</h2>
-      <div class="flex items-center gap-2">
-        <button onclick="openModal('memberModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition">
-          <i class="ph-bold ph-user-plus"></i> New Member
-        </button>
-        <button onclick="openModal('titheModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition">
-          <i class="ph-bold ph-hand-coins"></i> Record Giving
-        </button>
-      </div>
-    </header>
-
-    <div class="p-6 space-y-6">
-
-      <!-- DASHBOARD -->
-      <section id="section-dashboard" class="space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <p class="text-xs font-semibold text-slate-400 uppercase">Total Members</p>
-              <h3 id="stat-members-count" class="text-2xl font-black text-slate-800 mt-1">0</h3>
-            </div>
-            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-2xl">
-              <i class="ph-bold ph-users-three"></i>
-            </div>
-          </div>
-          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <p class="text-xs font-semibold text-slate-400 uppercase">Today's Attendance</p>
-              <h3 id="stat-attendance-today" class="text-2xl font-black text-slate-800 mt-1">0</h3>
-            </div>
-            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-2xl">
-              <i class="ph-bold ph-calendar-check"></i>
-            </div>
-          </div>
-          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <p class="text-xs font-semibold text-slate-400 uppercase">Total Offerings</p>
-              <h3 id="stat-tithes-total" class="text-2xl font-black text-emerald-600 mt-1">₱0</h3>
-            </div>
-            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-2xl">
-              <i class="ph-bold ph-currency-circle-dollar"></i>
-            </div>
-          </div>
-          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <p class="text-xs font-semibold text-slate-400 uppercase">Location</p>
-              <h3 class="text-xl font-bold text-slate-800 mt-1">Bulacan</h3>
-            </div>
-            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-2xl">
-              <i class="ph-bold ph-map-pin"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-          <h3 class="font-bold text-slate-800 mb-3">Recent Check-In Activity</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-600">
-              <thead class="bg-slate-50 text-xs uppercase text-slate-400 border-b border-slate-100">
-                <tr>
-                  <th class="py-2.5 px-3">Member Name</th>
-                  <th class="py-2.5 px-3">Service</th>
-                  <th class="py-2.5 px-3">Timestamp</th>
-                </tr>
-              </thead>
-              <tbody id="dashboard-recent-attendance" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- MEMBERS -->
-      <section id="section-members" class="hidden space-y-4">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200">
-          <div class="relative w-full sm:w-80">
-            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
-            <input type="text" id="memberSearchInput" oninput="filterMembers()" placeholder="Search members by name or code..." class="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
-          </div>
-          <button onclick="openModal('memberModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
-            + Register Member
-          </button>
-        </div>
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <table class="w-full text-left text-sm text-slate-600">
-            <thead class="bg-slate-50 text-xs uppercase text-slate-400 border-b border-slate-200">
-              <tr>
-                <th class="py-3 px-4">Member Code</th>
-                <th class="py-3 px-4">Name</th>
-                <th class="py-3 px-4">Ministry</th>
-                <th class="py-3 px-4">Phone</th>
-                <th class="py-3 px-4 text-center">QR Pass</th>
-                <th class="py-3 px-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="membersTableBody" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- SCANNER -->
-      <section id="section-attendance" class="hidden space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2 mb-1">
-              <i class="ph-bold ph-camera text-indigo-600"></i> Live Camera Check-in
-            </h3>
-            <p class="text-xs text-slate-500 mb-4">Scan the member's QR code badge to mark Sunday attendance instantly.</p>
-            
-            <div class="mb-3">
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Service Type</label>
-              <select id="attendanceServiceType" class="w-full text-sm border border-slate-300 rounded-lg p-2 bg-white outline-none">
-                <option value="Sunday Worship (Morning)">Sunday Worship (Morning Service)</option>
-                <option value="Sunday Worship (Afternoon)">Sunday Worship (Afternoon Service)</option>
-                <option value="Midweek Prayer Meeting">Midweek Prayer Meeting</option>
-                <option value="Youth Fellowship">Youth Fellowship</option>
-              </select>
-            </div>
-
-            <div id="reader" class="overflow-hidden border border-slate-200 rounded-xl bg-slate-900 min-h-[260px] flex items-center justify-center text-white text-xs"></div>
-            
-            <div class="mt-4 flex gap-2">
-              <button id="btn-start-scan" onclick="startScanner()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm flex items-center justify-center gap-2">
-                <i class="ph-bold ph-play"></i> Start Camera
-              </button>
-              <button id="btn-stop-scan" onclick="stopScanner()" class="hidden flex-1 bg-rose-600 hover:bg-rose-700 text-white font-medium py-2 rounded-lg text-sm flex items-center justify-center gap-2">
-                <i class="ph-bold ph-stop"></i> Stop Camera
-              </button>
-            </div>
-            <div id="scan-feedback" class="mt-3 p-3 rounded-lg text-xs font-semibold text-center hidden"></div>
-          </div>
-
-          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="font-bold text-slate-800">Attendance Log</h3>
-                <span id="session-count-badge" class="px-2 py-0.5 bg-indigo-100 text-indigo-700 font-bold text-xs rounded-full">0 Checked</span>
-              </div>
-              <div class="overflow-y-auto max-h-[350px]">
-                <table class="w-full text-left text-sm text-slate-600">
-                  <thead class="bg-slate-50 text-xs uppercase text-slate-400">
-                    <tr>
-                      <th class="py-2 px-3">Name</th>
-                      <th class="py-2 px-3">Service</th>
-                      <th class="py-2 px-3">Time</th>
-                    </tr>
-                  </thead>
-                  <tbody id="attendanceSessionTable" class="divide-y divide-slate-100"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TITHES -->
-      <section id="section-tithes" class="hidden space-y-4">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200">
-          <select id="titheFilterCategory" onchange="renderTithes()" class="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white outline-none w-full sm:w-auto">
-            <option value="All">All Giving Categories</option>
-            <option value="Tithe">Tithes</option>
-            <option value="Offering">Sunday Offering</option>
-            <option value="Building Fund">Building Fund</option>
-            <option value="Missions">Missions</option>
-          </select>
-
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-1.5 transition">
-              <i class="ph-bold ph-file-xls text-lg"></i> Export Excel
-            </button>
-            <button onclick="exportToPDF()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-1.5 transition">
-              <i class="ph-bold ph-file-pdf text-lg"></i> Export PDF
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <table id="tithesTable" class="w-full text-left text-sm text-slate-600">
-            <thead class="bg-slate-50 text-xs uppercase text-slate-400 border-b border-slate-200">
-              <tr>
-                <th class="py-3 px-4">Date</th>
-                <th class="py-3 px-4">Member / Giver</th>
-                <th class="py-3 px-4">Category</th>
-                <th class="py-3 px-4">Amount</th>
-                <th class="py-3 px-4">Method</th>
-              </tr>
-            </thead>
-            <tbody id="tithesTableBody" class="divide-y divide-slate-100"></tbody>
-            <tfoot class="bg-slate-50 font-bold text-slate-800 border-t border-slate-200">
-              <tr>
-                <td colspan="3" class="py-3 px-4 text-right">Total:</td>
-                <td id="tithes-total-cell" class="py-3 px-4 text-emerald-600 font-extrabold text-base">₱0.00</td>
-                <td></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- MODALS -->
-  <div id="qrBadgeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl p-6 text-center shadow-2xl">
-      <h3 id="badge-name" class="font-extrabold text-lg text-slate-800">Member Pass</h3>
-      <p id="badge-code" class="text-xs text-indigo-600 font-mono font-semibold mt-0.5">JTNAAN-000</p>
-      <div id="badge-qrcode" class="my-5 flex items-center justify-center p-3 bg-white border border-slate-200 rounded-xl w-48 h-48 mx-auto shadow-inner"></div>
-      <button onclick="closeModal('qrBadgeModal')" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-lg">Close</button>
-    </div>
+function dash(){
+  const A = (D.attendance||[]).slice().sort((a,b)=>b.date.localeCompare(a.date))[0];
+  const up = (D.events||[]).slice(0,3);
+  return `<h2>Home Dashboard</h2>
+  <div class="grid">
+    <div class="card"><div class="stat">${(D.members||[]).length}</div>Members</div>
+    <div class="card"><div class="stat">${(D.ministries||[]).length}</div>Ministries</div>
+    <div class="card"><div class="stat">${A?A.present.length:0}</div>Last Attendance<div class="mu">${A?e(A.date):"No record yet"}</div></div>
+    <div class="card"><div class="stat">Bulacan</div>Active Chapter</div>
   </div>
+  <h2 style="margin-top:22px">Upcoming Events</h2>
+  <div class="grid">${up.map(x=>`<div class="card"><b>${e(x.title)}</b><div class="mu">${e(x.date)} · ${e(x.place)}</div><div>${e(x.desc||'')}</div></div>`).join('')||'<p class="mu">No upcoming events.</p>'}</div>
+  ${appv()}`;
+}
 
-  <div id="memberModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h3 class="font-bold text-lg text-slate-800">Register Member</h3>
-        <button onclick="closeModal('memberModal')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-lg"></i></button>
-      </div>
-      <form onsubmit="saveMember(event)" class="mt-4 space-y-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name</label>
-          <input type="text" id="m_name" required placeholder="Bro / Sis. Full Name" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number</label>
-          <input type="tel" id="m_phone" placeholder="0917-000-0000" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Ministry</label>
-          <select id="m_ministry" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white outline-none">
-            <option value="Worship Team">Worship Team</option>
-            <option value="Youth Ministry">Youth Ministry</option>
-            <option value="Ushering & Hospitality">Ushering & Hospitality</option>
-            <option value="Kids Church">Kids Church</option>
-            <option value="Men's Ministry">Men's Ministry</option>
-            <option value="Women's Ministry">Women's Ministry</option>
-            <option value="General Member">General Member</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Bulacan Municipality</label>
-          <input type="text" id="m_address" placeholder="e.g., Malolos, Bulacan" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none" />
-        </div>
-        <div class="pt-3 flex gap-2">
-          <button type="button" onclick="closeModal('memberModal')" class="flex-1 py-2 text-sm border border-slate-300 rounded-lg">Cancel</button>
-          <button type="submit" class="flex-1 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg">Save</button>
-        </div>
-      </form>
-    </div>
-  </div>
+function appv(){
+  return `<section class="appb" style="margin-top:26px"><div class="appi"><div style="font-size:2.4rem">📱</div><div><b class="appt">Get the JTNAAN Bulacan App</b><div class="mu">Open directly on your phone home screen without any app store installation or server limits.</div></div></div>
+  <ul class="appl"><li>Runs 100% offline and standalone</li><li>Unlimited usage & updates</li><li>Instant camera access for Sunday check-ins</li></ul>
+  <div class="appok">✓ Running on GitHub Pages with Unlimited Bandwidth</div></section>`;
+}
 
-  <div id="titheModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h3 class="font-bold text-lg text-slate-800">Record Giving</h3>
-        <button onclick="closeModal('titheModal')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-lg"></i></button>
-      </div>
-      <form onsubmit="saveTithe(event)" class="mt-4 space-y-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Member / Giver</label>
-          <input type="text" id="t_giver" required placeholder="Name or Anonymous" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Amount (PHP)</label>
-          <input type="number" id="t_amount" required step="any" placeholder="₱ Amount" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
-          <select id="t_category" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white outline-none">
-            <option value="Tithe">Tithe (10%)</option>
-            <option value="Offering">Sunday Offering</option>
-            <option value="Building Fund">Building Fund</option>
-            <option value="Missions">Missions</option>
-          </select>
-        </div>
-        <div class="pt-3 flex gap-2">
-          <button type="button" onclick="closeModal('titheModal')" class="flex-1 py-2 text-sm border border-slate-300 rounded-lg">Cancel</button>
-          <button type="submit" class="flex-1 py-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg">Record</button>
-        </div>
-      </form>
-    </div>
-  </div>
+function feed(c){
+  const F = CF[c];
+  const L = (D[c]||[]).slice().reverse();
+  return `<h2>${F.t}</h2>${can(c)?`<p><button class="btn gold" data-add="${c}">+ New Post</button></p>`:""}
+  <div class="feed">${L.map(x=>`<div class="post"><div class="ph"><b>${e(x.name||"JTNAAN Bulacan")}</b><div class="mu">${e(x.date||'')}</div></div><div class="cap">${e(x.caption||'')}</div>${x.photo?`<img src="${e(x.photo)}">`:""}</div>`).join('')||'<p class="mu">No posts yet.</p>'}</div>
+  ${c=="devotion"?`<div class="tvs">${trivia()}${tquiz()}</div>`:""}`;
+}
 
-  <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h3 class="font-bold text-base text-slate-800">Supabase Cloud Config</h3>
-        <button onclick="closeModal('authModal')" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x"></i></button>
-      </div>
-      <div class="mt-3 space-y-3">
-        <p class="text-xs text-slate-500">Optional: Connect directly to Supabase cloud database.</p>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-600">Project URL</label>
-          <input type="text" id="cfg_url" placeholder="https://xxx.supabase.co" class="w-full p-2 text-xs border border-slate-300 rounded-lg" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-600">Anon Key</label>
-          <input type="password" id="cfg_key" placeholder="eyJhbGciOi..." class="w-full p-2 text-xs border border-slate-300 rounded-lg" />
-        </div>
-        <button onclick="saveSupabaseConfig()" class="w-full py-2 bg-indigo-600 text-white font-semibold text-xs rounded-lg">Connect</button>
-      </div>
-    </div>
-  </div>
+function trivia(){
+  return `<section class="tv"><div class="tvh"><b>📜 Bible Trivia</b></div><div class="tvc"><h3>Did you know?</h3><p>The Book of Psalms contains both the shortest chapter in the Bible (Psalm 117) and the longest chapter (Psalm 119)!</p></div></section>`;
+}
 
-  <script>
-    let supabase = null;
-    let isConnected = false;
-    let SUPABASE_URL = localStorage.getItem('jtnaan_sp_url') || '';
-    let SUPABASE_ANON = localStorage.getItem('jtnaan_sp_key') || '';
+function tquiz(){
+  return `<section class="tv tqs"><div class="tq"><div class="tqh">❓ Question of the Day</div><div class="tqq">Who was swallowed by a great fish after fleeing from God's presence?</div>
+  <div class="tqo"><button onclick="alert('Correct! It was Jonah.')" class="btn"><span class="l">A</span><span>Jonah</span></button><button onclick="alert('Incorrect, try again!')" class="btn"><span class="l">B</span><span>Elijah</span></button><button onclick="alert('Incorrect, try again!')" class="btn"><span class="l">C</span><span>Moses</span></button></div></div></section>`;
+}
 
-    let members = JSON.parse(localStorage.getItem('jtnaan_members_data')) || [
-      { id: '1', code: 'JTNAAN-101', name: 'Bro. Mark Santos', phone: '0917-111-2222', ministry: 'Worship Team', address: 'Malolos, Bulacan' },
-      { id: '2', code: 'JTNAAN-102', name: 'Sis. Grace Reyes', phone: '0920-333-4444', ministry: 'Youth Ministry', address: 'San Jose del Monte' }
-    ];
+function prayerv(){
+  return `<h2>Prayer Request</h2><div class="card"><b style="color:var(--pr)">Send a Prayer Request</b><div class="mu" style="margin:4px 0 8px">We would love to pray with you. Write your prayer request below.</div><input id="pn" placeholder="Your name (optional)"><input id="pcn" placeholder="Contact number (optional)"><textarea id="pt" rows=4 placeholder="How can we pray for you?"></textarea><button class="btn gold" onclick="alert('Your prayer request has been submitted to the team.')">Submit Prayer</button></div>`;
+}
 
-    let tithes = JSON.parse(localStorage.getItem('jtnaan_tithes_data')) || [
-      { id: '1', giver_name: 'Bro. Mark Santos', category: 'Tithe', amount: 3000, payment_method: 'Cash', recorded_at: new Date().toISOString() }
-    ];
+function supportv(){
+  return `<h2>Support the Church</h2><div class="card"><b style="color:var(--pr)">Give directly via GCash, Maya or Bank Transfer</b><div class="mu" style="margin:8px 0">Every gift, big or small, supports our church ministries and sanctuary. God bless you!</div>
+  ${(D.donate||[]).map(d=>`<div class="card" style="margin-top:8px"><b>${e(d.method)}: ${e(d.number)}</b><div>Name: ${e(d.name)}</div><div class="mu">${e(d.note||'')}</div></div>`).join('')}</div>`;
+}
 
-    let attendance = JSON.parse(localStorage.getItem('jtnaan_attendance_data')) || [];
+function reports(){
+  return `<h2>Reports & Funds</h2><div class="grid">${(D.funds||[]).map(f=>`<div class="card"><b>${e(f.desc)}</b><div class="stat">₱${Number(f.amount||0).toLocaleString()}</div><div class="mu">${e(f.date)} · ${e(f.category)}</div></div>`).join('')}</div>`;
+}
 
-    function saveLocalData() {
-      localStorage.setItem('jtnaan_members_data', JSON.stringify(members));
-      localStorage.setItem('jtnaan_tithes_data', JSON.stringify(tithes));
-      localStorage.setItem('jtnaan_attendance_data', JSON.stringify(attendance));
+function table(c){
+  return `<h2>Church Funds</h2>${can('funds')?`<button class="btn gold" data-add="funds">+ Add Entry</button>`:''}<div style="overflow-x:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse">${(D.funds||[]).map(f=>`<tr style="border-top:1px solid var(--bd)"><td style="padding:8px">${e(f.date)}</td><td style="padding:8px font-weight:bold">${e(f.desc)}</td><td style="padding:8px">${e(f.category)}</td><td style="padding:8px">₱${Number(f.amount).toLocaleString()}</td></tr>`).join('')}</table></div>`;
+}
+
+function attv(){
+  return `<h2>Attendance Management</h2><input type="date" id="ad" value="${adate}"><select id="as">${SV.map(s=>`<option ${s==asv?"selected":""}>${ex(s)}</option>`).join("")}</select><p class="mu">Present: ${asel.size} of ${(D.members||[]).length}</p><button class="btn gold" onclick="saveAttendance()">Save Attendance</button>${(D.members||[]).map(m=>`<label class="chk"><input type="checkbox" onchange="toggleMember('${m.id}')" ${asel.has(m.id)?"checked":""}> ${e(m.name)}</label>`).join('')}`;
+}
+
+function toggleMember(id){
+  if(asel.has(id)) asel.delete(id); else asel.add(id);
+}
+
+function saveAttendance(){
+  D.attendance.unshift({id: adate+"_"+asv, date: adate, svc: asv, present: Array.from(asel)});
+  saveState();
+  alert("Attendance successfully recorded!");
+  render();
+}
+
+function list(c){
+  const F = CF[c];
+  const L = D[c] || [];
+  return `<h2>${F.t} <span>(${L.length})</span></h2>${can(c)?`<p><button class="btn gold" data-add="${c}">+ Add</button></p>`:""}<div class="grid">${L.map(x=>`<div class="card"><b>${e(x[F.k])}</b>${F.s.map(k=>x[k]?`<div class="mu"><b>${k}:</b> ${e(x[k])}</div>`:"" ).join("")}${can(c)?`<div style="margin-top:8px"><button class="red sm" data-del="${c}:${x.id}">Delete</button></div>`:""}</div>`).join('')||'<p class="mu">No entries found.</p>'}</div>`;
+}
+
+function adminsv(){
+  return `<h2>Admins Management</h2><p class="mu">Default admin: <b>admin</b> | Password: <b>jtnaan2026</b></p><div class="grid">${AL.map(a=>`<div class="card"><b>${e(a.name)} (${e(a.username)})</b><div class="mu">${a.owner?'Super Admin':'Staff Admin'}</div></div>`).join('')}</div>`;
+}
+
+function loginForm(msg){
+  $("#mb").innerHTML=`<h3 style="margin-top:0">Admin Login</h3><form id="lf"><div class="mu">Username (default: admin):</div><input id="lu" required><div class="mu" style="margin-top:8px">Password (default: jtnaan2026):</div><input id="lp" type="password" required><div id="le" style="color:#ff8a80;min-height:22px;margin-top:6px">${e(msg||"")}</div><p><button class="btn gold" type="submit">Log in</button> <button type="button" data-x="1">Cancel</button></p></form>`;
+  $("#modal").style.display="flex";
+}
+
+// Modal Form handling
+function form(c, id){
+  const F = CF[c];
+  const x = (D[c]||[]).find(y=>y.id==id)||{};
+  $("#mb").innerHTML = `<h3 style="margin-top:0">${id?"Edit":"Add"} – ${F.t}</h3>
+  ${F.f.map(([k,l,t])=>`<div class="mu" style="margin-top:6px">${l}:</div><input id="f_${k}" value="${e(x[k]||'')}" placeholder="${l}">`).join('')}
+  ${F.photo?`<div class="mu" style="margin-top:6px">Photo:</div><input type="file" id="f_photo" accept="image/*">`:''}
+  <p><button class="btn gold" data-save="${c}:${id||""}">Save</button> <button data-x="1">Cancel</button></p>`;
+  $("#modal").style.display = "flex";
+}
+
+// Global Click Handlers
+document.addEventListener("click", async ev => {
+  const t = ev.target, d = t.dataset || {};
+  if(d.v){ view = d.v; render(); menu(false); }
+  if(d.login) loginForm();
+  if(d.logout){ me = null; admin = false; saveState(); render(); }
+  if(d.x) $("#modal").style.display = "none";
+  if(d.add) form(d.add, "");
+  if(d.del){
+    const [c, id] = d.del.split(":");
+    if(confirm("Delete this entry?")){
+      D[c] = (D[c]||[]).filter(x => x.id != id);
+      saveState();
+      render();
     }
-
-    function initSupabase() {
-      if (SUPABASE_URL && SUPABASE_ANON) {
-        try {
-          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-          isConnected = true;
-          document.getElementById('db-status-badge').className = "px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold";
-          document.getElementById('db-status-badge').innerText = "Supabase Live";
-        } catch(e) {
-          console.error(e);
-        }
-      }
+  }
+  if(d.save){
+    const [c, id] = d.save.split(":");
+    const F = CF[c];
+    const item = { id: id || "id_" + Date.now() };
+    F.f.forEach(([k]) => {
+      const el = $("#f_" + k);
+      if(el) item[k] = el.value.trim();
+    });
+    const phInput = $("#f_photo");
+    if(phInput && phInput.files[0]){
+      item.photo = await upload(phInput.files[0]);
     }
+    D[c] = (D[c]||[]).filter(x => x.id != item.id);
+    D[c].unshift(item);
+    saveState();
+    $("#modal").style.display = "none";
+    render();
+  }
+});
 
-    function saveSupabaseConfig() {
-      const url = document.getElementById('cfg_url').value.trim();
-      const key = document.getElementById('cfg_key').value.trim();
-      if (!url || !key) return alert("Fill in URL and Key.");
-      localStorage.setItem('jtnaan_sp_url', url);
-      localStorage.setItem('jtnaan_sp_key', key);
-      SUPABASE_URL = url;
-      SUPABASE_ANON = key;
-      initSupabase();
-      closeModal('authModal');
-      alert("Supabase connected!");
-    }
+document.addEventListener("submit", ev => {
+  if(ev.target.id != "lf") return;
+  ev.preventDefault();
+  const u = $("#lu").value.trim();
+  const p = $("#lp").value;
+  const found = AL.find(a => a.username == u && a.password == p);
+  if(found){
+    me = found;
+    admin = !!found.owner;
+    saveState();
+    $("#modal").style.display = "none";
+    render();
+  } else {
+    $("#le").textContent = "Invalid username or password. Default is admin / jtnaan2026";
+  }
+});
 
-    function exportBackupJSON() {
-      const backup = { members, tithes, attendance, exported_at: new Date().toISOString() };
-      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `JTNAAN_Bulacan_Backup_${new Date().toISOString().slice(0,10)}.json`;
-      a.click();
-    }
-
-    function importBackupJSON(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = JSON.parse(evt.target.result);
-          if (data.members) members = data.members;
-          if (data.tithes) tithes = data.tithes;
-          if (data.attendance) attendance = data.attendance;
-          saveLocalData();
-          renderMembers();
-          renderTithes();
-          renderAttendanceSession();
-          alert("Database restored!");
-        } catch(err) {
-          alert("Invalid backup file.");
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function renderMembers(list = members) {
-      const tbody = document.getElementById('membersTableBody');
-      tbody.innerHTML = '';
-      list.forEach(m => {
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50 transition">
-            <td class="py-3 px-4 font-mono text-xs font-bold text-indigo-600">${m.code}</td>
-            <td class="py-3 px-4 font-medium text-slate-800">${m.name}</td>
-            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-xs">${m.ministry}</span></td>
-            <td class="py-3 px-4 text-xs">${m.phone || 'N/A'}</td>
-            <td class="py-3 px-4 text-center">
-              <button onclick="showMemberPass('${m.code}', '${m.name}')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-xs font-semibold rounded border">
-                <i class="ph-bold ph-qr-code"></i> View Pass
-              </button>
-            </td>
-            <td class="py-3 px-4 text-right">
-              <button onclick="deleteMember('${m.id}')" class="text-rose-500 hover:text-rose-700 text-xs font-bold">Remove</button>
-            </td>
-          </tr>
-        `;
-      });
-      document.getElementById('stat-members-count').innerText = members.length;
-    }
-
-    async function saveMember(e) {
-      e.preventDefault();
-      const code = 'JTNAAN-' + Math.floor(100 + Math.random() * 900);
-      const newM = {
-        id: Date.now().toString(),
-        code: code,
-        name: document.getElementById('m_name').value,
-        phone: document.getElementById('m_phone').value,
-        ministry: document.getElementById('m_ministry').value,
-        address: document.getElementById('m_address').value || 'Bulacan'
-      };
-
-      if (isConnected && supabase) {
-        await supabase.from('members').insert([newM]);
-      }
-      members.unshift(newM);
-      saveLocalData();
-      renderMembers();
-      closeModal('memberModal');
-      e.target.reset();
-    }
-
-    function deleteMember(id) {
-      if (!confirm("Delete member?")) return;
-      members = members.filter(m => m.id != id);
-      saveLocalData();
-      renderMembers();
-    }
-
-    function filterMembers() {
-      const q = document.getElementById('memberSearchInput').value.toLowerCase();
-      renderMembers(members.filter(m => m.name.toLowerCase().includes(q) || m.code.toLowerCase().includes(q)));
-    }
-
-    function showMemberPass(code, name) {
-      document.getElementById('badge-name').innerText = name;
-      document.getElementById('badge-code').innerText = code;
-      const c = document.getElementById('badge-qrcode');
-      c.innerHTML = '';
-      new QRCode(c, { text: code, width: 170, height: 170 });
-      openModal('qrBadgeModal');
-    }
-
-    let html5QrCode = null;
-    let isScanning = false;
-
-    function startScanner() {
-      html5QrCode = new Html5Qrcode("reader");
-      html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 220 }, onScanSuccess)
-        .then(() => {
-          isScanning = true;
-          document.getElementById('btn-start-scan').classList.add('hidden');
-          document.getElementById('btn-stop-scan').classList.remove('hidden');
-        })
-        .catch(err => alert("Camera permission error. Please allow camera access in browser."));
-    }
-
-    function stopScanner() {
-      if (html5QrCode && isScanning) {
-        html5QrCode.stop().then(() => {
-          isScanning = false;
-          document.getElementById('btn-start-scan').classList.remove('hidden');
-          document.getElementById('btn-stop-scan').classList.add('hidden');
-        });
-      }
-    }
-
-    function onScanSuccess(text) {
-      const m = members.find(item => item.code === text.trim());
-      const feedback = document.getElementById('scan-feedback');
-      feedback.classList.remove('hidden');
-
-      if (!m) {
-        feedback.className = "mt-3 p-3 rounded-lg text-xs font-semibold bg-rose-100 text-rose-700";
-        feedback.innerText = `Unknown Code: "${text}". Register member first.`;
-        return;
-      }
-
-      const record = {
-        member_name: m.name,
-        service_type: document.getElementById('attendanceServiceType').value,
-        checkin_time: new Date().toISOString()
-      };
-
-      attendance.unshift(record);
-      saveLocalData();
-      renderAttendanceSession();
-
-      feedback.className = "mt-3 p-3 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700";
-      feedback.innerText = `Checked in: ${m.name}`;
-
-      html5QrCode.pause();
-      setTimeout(() => { if (isScanning) html5QrCode.resume(); }, 2500);
-    }
-
-    function renderAttendanceSession() {
-      const t = document.getElementById('attendanceSessionTable');
-      const dt = document.getElementById('dashboard-recent-attendance');
-      t.innerHTML = '';
-      dt.innerHTML = '';
-
-      document.getElementById('stat-attendance-today').innerText = attendance.length;
-      document.getElementById('session-count-badge').innerText = `${attendance.length} Checked`;
-
-      attendance.forEach(a => {
-        const time = new Date(a.checkin_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const row = `
-          <tr>
-            <td class="py-2 px-3 font-semibold text-slate-800">${a.member_name}</td>
-            <td class="py-2 px-3 text-xs text-slate-500">${a.service_type}</td>
-            <td class="py-2 px-3 text-xs font-mono font-medium text-indigo-600">${time}</td>
-          </tr>
-        `;
-        t.innerHTML += row;
-        dt.innerHTML += row;
-      });
-    }
-
-    function renderTithes() {
-      const tbody = document.getElementById('tithesTableBody');
-      const cat = document.getElementById('titheFilterCategory').value;
-      tbody.innerHTML = '';
-      let total = 0;
-
-      tithes.filter(t => cat === 'All' || t.category === cat).forEach(t => {
-        total += Number(t.amount);
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50">
-            <td class="py-3 px-4 text-xs">${new Date(t.recorded_at).toLocaleDateString()}</td>
-            <td class="py-3 px-4 font-semibold text-slate-800">${t.giver_name}</td>
-            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-semibold rounded text-xs">${t.category}</span></td>
-            <td class="py-3 px-4 font-mono font-bold text-slate-900">₱${Number(t.amount).toLocaleString()}</td>
-            <td class="py-3 px-4 text-xs text-slate-500">${t.payment_method || 'Cash'}</td>
-          </tr>
-        `;
-      });
-
-      document.getElementById('tithes-total-cell').innerText = `₱${total.toLocaleString()}`;
-      document.getElementById('stat-tithes-total').innerText = `₱${total.toLocaleString()}`;
-    }
-
-    function saveTithe(e) {
-      e.preventDefault();
-      const newT = {
-        id: Date.now().toString(),
-        giver_name: document.getElementById('t_giver').value,
-        amount: parseFloat(document.getElementById('t_amount').value),
-        category: document.getElementById('t_category').value,
-        payment_method: 'Cash',
-        recorded_at: new Date().toISOString()
-      };
-      tithes.unshift(newT);
-      saveLocalData();
-      renderTithes();
-      closeModal('titheModal');
-      e.target.reset();
-    }
-
-    function exportToExcel() {
-      const rows = tithes.map(t => ({
-        "Date": new Date(t.recorded_at).toLocaleDateString(),
-        "Giver": t.giver_name,
-        "Category": t.category,
-        "Amount (PHP)": Number(t.amount),
-        "Method": t.payment_method || 'Cash'
-      }));
-      const ws = XLSX.utils.json_to_sheet(rows);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Giving Ledger");
-      XLSX.writeFile(wb, `JTNAAN_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
-    }
-
-    function exportToPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.setFontSize(16);
-      doc.text("JTNAAN Bulacan – Official Giving Report", 14, 18);
-      const tableData = tithes.map(t => [new Date(t.recorded_at).toLocaleDateString(), t.giver_name, t.category, `PHP ${t.amount}`, t.payment_method || 'Cash']);
-      doc.autoTable({
-        startY: 25,
-        head: [['Date', 'Giver', 'Category', 'Amount', 'Method']],
-        body: tableData,
-        theme: 'striped',
-        headStyles: { fillColor: [79, 70, 229] }
-      });
-      doc.save(`JTNAAN_Giving_Report.pdf`);
-    }
-
-    function showSection(name) {
-      if (isScanning && name !== 'attendance') stopScanner();
-      ['dashboard', 'members', 'attendance', 'tithes'].forEach(s => {
-        document.getElementById(`section-${s}`).classList.add('hidden');
-        document.getElementById(`nav-${s}`).classList.remove('bg-indigo-600', 'text-white');
-        document.getElementById(`nav-${s}`).classList.add('text-slate-300');
-      });
-      document.getElementById(`section-${name}`).classList.remove('hidden');
-      document.getElementById(`nav-${name}`).classList.add('bg-indigo-600', 'text-white');
-      document.getElementById(`nav-${name}`).classList.remove('text-slate-300');
-    }
-
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-    initSupabase();
-    renderMembers();
-    renderTithes();
-    renderAttendanceSession();
-  </script>
-</body>
-</html>
+// Initial boot
+render();
+</script>
+</body></html>
