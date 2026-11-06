@@ -9,7 +9,7 @@
 *{box-sizing:border-box}html{scroll-padding-top:70px}
 body{margin:0;background:radial-gradient(1000px 400px at 100% 0,#2a2aa8,transparent 60%),linear-gradient(#0b0a3a80,#0b0a3ab3),url("https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1600&q=80") center/cover fixed;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 
-/* Flawless Circular Header Logo */
+/* Header & Circular Logo */
 header{display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:6;background:#0b0a3af2;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 #header-logo-container{
   flex: 0 0 44px !important;
@@ -97,7 +97,9 @@ main:has(> .about){max-width:none}
 .about .card b{font-size:clamp(1.1rem,.95rem + .6vw,1.6rem)}
 .about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word}
 
-.tv{max-width:44rem;margin:0 auto clamp(1rem,2vw,1.6rem);background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
+/* Trivia & Quiz Container */
+.tvs{display:grid;gap:16px;max-width:44rem;margin:10px auto 26px}
+.tv{background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
 .tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
 .tvi{position:relative;aspect-ratio:16/9;background:#0b0a3a;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tvi img{width:100%;height:100%;object-fit:cover;display:block}
@@ -295,7 +297,7 @@ const churchData = {
     }
   ],
   fbposts: [
-    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center ...", url:"https://www.facebook.com/profile.php?id=61556921121315"},
+    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center of our lives and church.", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb2", date:"2026-11-02", caption:"Sunday Worship Service \"Jesus Be the Center of Our Hearts\" [Jesus at the Center Series - Proverbs 4:20-23]", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb3", date:"2026-11-03", caption:"More than a team, we're a family united in worship. JTNAAN Worship Team Bonding", url:"https://www.facebook.com/profile.php?id=61556921121315"}
   ],
@@ -313,8 +315,7 @@ const churchData = {
   events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
 };
 
-// Database Key Migration: Guarantees full fresh data
-const DB_KEY = "jt_bulacan_db_v11";
+const DB_KEY = "jt_bulacan_db_v12";
 let D = JSON.parse(localStorage.getItem(DB_KEY));
 if(!D || !D.members || D.members.length < 35 || !D.fbposts || D.fbposts.length === 0){
   D = JSON.parse(JSON.stringify(churchData));
@@ -698,7 +699,6 @@ async function saveFormData(c, id){
     if(el) item[k] = el.value.trim();
   });
   
-  // Multi-photo upload for Gallery
   if(c === 'gallery'){
     const phInput = $("#f_photos");
     if(phInput && phInput.files.length > 0){
@@ -730,7 +730,7 @@ async function saveFormData(c, id){
   alert("Saved successfully!");
 }
 
-// Social Sharing Dialog with direct social media integrations
+// Social Sharing Dialog
 function openShareModal(title, text, url=location.href){
   const T = encodeURIComponent(text);
   const U = encodeURIComponent(url);
@@ -867,7 +867,7 @@ function appv(){
 function about(){
   return `<section class="about">
     <h2>ABOUT US</h2>
-    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship, all in a welcoming community that encourages you to honor God and live out His Word in everyday life.</p>
+    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship.</p>
     <div class="grid">
       <div class="card"><b>Mission</b><div class="mu">To proclaim the Good News of Jesus Christ and make disciples of all nations.</div></div>
       <div class="card"><b>Vision</b><div class="mu">To win the lost souls to Jesus Christ, nurture believers in the faith, and equip them to live for God’s glory.</div></div>
@@ -935,42 +935,128 @@ async function submitVisitRequest(target){
   }
 }
 
+// Feed View (Trivia & Daily Quiz at the TOP, Devotion Messages at the BOTTOM)
 function feed(c){
   const F = CF[c];
   const L = D[c] || [];
   const logo = getChurchLogoUrl();
-  return `<h2>${TL[c]||F.t}</h2>
-  <p class="mu">${c=="devotion"?"A short word from God for today. React and share your thoughts in the comments.":"Stories of God's faithfulness in the lives of our church family. React and leave a word of encouragement."}</p>
-  ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ New ${c=="devotion"?"devotion":"testimony"}</button></p>`:''}
-  <div class="feed">
-    ${L.map(x=>`
-      <div class="post">
-        <div class="ph">
-          <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
-            ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
-          </div>
-          <div><b>${e(x.name||"Jesus: The Name Above All Names")}</b><div class="mu">${e(x.date)} · ${c=="devotion"?"Daily Devotion":"Testimony"}</div></div>
-        </div>
-        <div class="cap">${e(x.caption)}</div>
-        ${x.photo?`<img src="${e(x.photo)}" alt="">`:''}
-        <div class="rx">
-          <button class="on" onclick="toggleReaction('${c}:${x.id}', 'like')">👍 Like · ${(R[c+':'+x.id]||{}).like||7}</button>
-          <button class="ht on" onclick="toggleReaction('${c}:${x.id}', 'heart')">❤️ Heart · ${(R[c+':'+x.id]||{}).heart||7}</button>
-          <button class="shb" onclick="openShareModal('JTNAAN Bulacan - ${c}', '${encodeURIComponent(x.caption)}')">↗ Share</button>
-          <span class="mu">0 comments</span>
-        </div>
-        <div class="cm">
-          ${can(c)?`
-            <div style="margin-bottom:8px">
-              <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
-              <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete post</button>
-            </div>
-          `:''}
-        </div>
+
+  if(c === "devotion"){
+    return `
+      <h2>DAILY DEVOTION</h2>
+      <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership.</p>
+
+      <!-- 1. BIBLE TRIVIA & DAILY QUESTION AT THE TOP -->
+      <div class="tvs" style="margin-top:14px;margin-bottom:28px">
+        ${trivia()}
+        ${tquiz()}
       </div>
-    `).join('')||'<p class="mu">No posts yet.</p>'}
-  </div>
-  ${c=="devotion"?`<div class="tvs">${trivia()}${tquiz()}</div>`:''}`;
+
+      <!-- 2. DEVOTION MESSAGES SECTION AT THE BOTTOM -->
+      <h2 style="margin-top:32px;font-style:italic">DEVOTION MESSAGES</h2>
+      ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ New devotion</button></p>`:''}
+      
+      <div class="feed">
+        ${L.map(x=>`
+          <div class="post">
+            <div class="ph">
+              <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
+                ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
+              </div>
+              <div><b>${e(x.name||"Jesus: The Name Above All Names")}</b><div class="mu">${e(x.date)} · Daily Devotion</div></div>
+            </div>
+            <div class="cap">${e(x.caption)}</div>
+            ${x.photo?`<img src="${e(x.photo)}" alt="">`:''}
+            <div class="rx">
+              <button class="on" onclick="toggleReaction('${c}:${x.id}', 'like')">👍 Like · ${(R[c+':'+x.id]||{}).like||7}</button>
+              <button class="ht on" onclick="toggleReaction('${c}:${x.id}', 'heart')">❤️ Heart · ${(R[c+':'+x.id]||{}).heart||7}</button>
+              <button class="shb" onclick="openShareModal('JTNAAN Bulacan - Daily Devotion', '${encodeURIComponent(x.caption)}')">↗ Share</button>
+              <span class="mu">0 comments</span>
+            </div>
+            <div class="cm">
+              ${can(c)?`
+                <div style="margin-bottom:8px">
+                  <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
+                  <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete post</button>
+                </div>
+              `:''}
+            </div>
+          </div>
+        `).join('')||'<p class="mu">No devotion messages posted yet.</p>'}
+      </div>
+    `;
+  }
+
+  // Testimony Section
+  return `
+    <h2>TESTIMONY</h2>
+    <p class="mu">Stories of God's faithfulness in the lives of our church family. React and leave a word of encouragement.</p>
+    ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ New testimony</button></p>`:''}
+    
+    <div class="feed">
+      ${L.map(x=>`
+        <div class="post">
+          <div class="ph">
+            <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
+              ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
+            </div>
+            <div><b>${e(x.name||"Jesus: The Name Above All Names")}</b><div class="mu">${e(x.date)} · Testimony</div></div>
+          </div>
+          <div class="cap">${e(x.caption)}</div>
+          ${x.photo?`<img src="${e(x.photo)}" alt="">`:''}
+          <div class="rx">
+            <button class="on" onclick="toggleReaction('${c}:${x.id}', 'like')">👍 Like · ${(R[c+':'+x.id]||{}).like||7}</button>
+            <button class="ht on" onclick="toggleReaction('${c}:${x.id}', 'heart')">❤️ Heart · ${(R[c+':'+x.id]||{}).heart||7}</button>
+            <button class="shb" onclick="openShareModal('JTNAAN Bulacan - Testimony', '${encodeURIComponent(x.caption)}')">↗ Share</button>
+            <span class="mu">0 comments</span>
+          </div>
+          <div class="cm">
+            ${can(c)?`
+              <div style="margin-bottom:8px">
+                <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
+                <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete post</button>
+              </div>
+            `:''}
+          </div>
+        </div>
+      `).join('')||'<p class="mu">No testimonies posted yet.</p>'}
+    </div>
+
+    <div class="card" style="margin:22px auto 0;max-width:44rem">
+      <b style="color:var(--pr)">Share your life testimony</b>
+      <div class="mu" style="margin:4px 0 8px">Has God done something wonderful in your life? Write your story below and it will be delivered directly to the church.</div>
+      <input id="tsn" placeholder="Your name">
+      <input id="tsc" placeholder="Contact number or email (optional)">
+      <textarea id="tst" rows=6 placeholder="Your testimony"></textarea>
+      <div id="ts-feedback" class="mu" style="margin-bottom:6px"></div>
+      <button class="btn gold" onclick="submitTestimony('auto')">Submit Testimony (Direct to Church Email)</button>
+      <button class="btn" style="background:#3b5998" onclick="submitTestimony('fb')">Send to our Facebook page</button>
+    </div>
+  `;
+}
+
+async function submitTestimony(target){
+  const name = $("#tsn").value.trim();
+  const contact = $("#tsc").value.trim();
+  const test = $("#tst").value.trim();
+  if(!name || !test) return alert("Please enter your name and testimony.");
+  
+  if(target === 'auto'){
+    const fb = $("#ts-feedback");
+    fb.textContent = "Sending your testimony to the church email...";
+    const ok = await sendBackgroundEmail({ Name: name, Contact: contact, Testimony: test }, `Life Testimony from ${name}`);
+    if(ok){
+      fb.innerHTML = `<span style="color:#7be38f">✓ Your testimony has been sent directly to the church's Gmail!</span>`;
+      alert("Testimony delivered to church email!");
+    } else {
+      submitTestimony('fb');
+    }
+  } else {
+    const msg = `Life Testimony from ${name}\nContact: ${contact}\n\n${test}`;
+    if(navigator.clipboard) navigator.clipboard.writeText(msg);
+    alert("Testimony copied! Opening Facebook...");
+    window.open("https://m.me/61556921121315", "_blank");
+  }
 }
 
 function toggleReaction(key, type){
@@ -980,7 +1066,7 @@ function toggleReaction(key, type){
   render();
 }
 
-// Confetti Engine for Correct Answer
+// Fullscreen Confetti Engine for Correct Quiz Answer
 function triggerQuizConfetti(){
   const c = document.createElement("canvas");
   c.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:99999;";
@@ -1028,25 +1114,25 @@ function triggerQuizConfetti(){
   })(t0);
 }
 
-// Daily Quiz Questions & Reasoning
+// Daily Quiz Database & Explanations
 const dailyQuiz = {
   q: "Who was the prophet called by God as a young boy in the temple under Eli?",
   c: ["Samuel", "David", "Jeremiah"],
   a: 0,
   ref: "1 Samuel 3:1–10",
-  exp: "The Lord called Samuel three times at night while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he told Samuel to answer, 'Speak, Lord, for your servant is listening.' Samuel listened, and God established him as a faithful prophet to all Israel."
+  exp: "The Lord called Samuel three times while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he instructed Samuel to answer, 'Speak, Lord, for your servant is listening.' Samuel listened, and God established him as a faithful prophet to all Israel."
 };
 
 function getQuizAnswer(){
   try{
-    const val = localStorage.getItem("jt_quiz_choice_v1");
+    const val = localStorage.getItem("jt_quiz_choice_v2");
     return val !== null ? parseInt(val) : -1;
   }catch(e){ return -1; }
 }
 
 function handleQuizChoice(idx){
   if(getQuizAnswer() !== -1) return;
-  localStorage.setItem("jt_quiz_choice_v1", idx.toString());
+  localStorage.setItem("jt_quiz_choice_v2", idx.toString());
   if(idx === dailyQuiz.a){
     triggerQuizConfetti();
   }
@@ -1054,7 +1140,7 @@ function handleQuizChoice(idx){
 }
 
 function resetQuizForAdmin(){
-  localStorage.removeItem("jt_quiz_choice_v1");
+  localStorage.removeItem("jt_quiz_choice_v2");
   render();
 }
 
@@ -1178,7 +1264,6 @@ function ministriesv(){
   </div>`;
 }
 
-// Gallery View with 4 to 6 Photos Collage
 function galleryv(){
   const L = D.gallery || [];
   return `<h2>GALLERY (${L.length})</h2>
@@ -1337,7 +1422,6 @@ function reportsv(){
   </div>`;
 }
 
-// Social Media with Add/Edit features
 function socialv(){
   const L = D.social || [];
   return `<h2>SOCIAL MEDIA</h2>
@@ -1348,8 +1432,7 @@ function socialv(){
         <b style="font-size:1.15rem;color:var(--pr)">${e(s.platform)}</b>
         <div class="stat" style="font-size:2rem;margin-top:6px">${Number(s.followers).toLocaleString()}</div>
         <div class="mu">Followers</div>
-        <div style="margin-top:8px">Reach / Views: <b>${Number(s.reach||0).toLocaleString()}</b></div>
-        <div>Engagement: <b>${Number(s.engagement||0).toLocaleString()}</b></div>
+        <div style="margin-top:8px">Engagement: <b>${Number(s.engagement||0).toLocaleString()}</b></div>
         ${can("social")?`
           <div style="margin-top:10px">
             <button class="btn sm" onclick="openFormModal('social', '${s.id}')">Edit</button>
@@ -1361,7 +1444,6 @@ function socialv(){
   </div>`;
 }
 
-// Prayer Requests with auto-email and Messenger
 function prayersv(){
   const L = D.prayers || [];
   return `<h2>PRAYER REQUESTS (${L.length})</h2>
@@ -1442,7 +1524,6 @@ async function submitPrayerRequest(target){
   }
 }
 
-// Support the Church
 function supportv(){
   const L = D.donate || [];
   const DMS = ["GCash", "Maya", "Bank transfer"];
@@ -1507,9 +1588,24 @@ function launchSupportEmail(){
 }
 
 function list(c){
-  return `<h2>${TL[c]||c.toUpperCase()} (${(D[c]||[]).length})</h2>
+  const L = D[c] || [];
+  return `<h2>${TL[c]||c.toUpperCase()} (${L.length})</h2>
   ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ Add</button></p>`:''}
-  <p class="mu">Nothing yet.</p>`;
+  <div class="grid">
+    ${L.map(x=>`
+      <div class="card">
+        <b>${e(x.title||x.name||'')}</b>
+        <div class="mu">${e(x.date||'')} · ${e(x.place||'')}</div>
+        <div style="margin:4px 0">${e(x.desc||'')}</div>
+        ${can(c)?`
+          <div style="margin-top:8px">
+            <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
+            <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete</button>
+          </div>
+        `:''}
+      </div>
+    `).join('')||'<p class="mu">Nothing yet.</p>'}
+  </div>`;
 }
 
 function adminsv(){
