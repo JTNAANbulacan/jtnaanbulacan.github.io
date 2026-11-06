@@ -1,354 +1,17 @@
-<!DOCTYPE html><html lang="en" data-theme="dark" style="color-scheme: dark;"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>JTNAAN Bulacan – Church Management</title>
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D"><meta name="theme-color" content="#0b0a3a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-badge-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="JTNAAN">
-<style>
-:root{--bg:#0b0a3a;--card:#15145a;--tx:#fff;--mu:#b9bde6;--pr:#f2a93b;--bd:#3a3a9a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*{box-sizing:border-box}html{scroll-padding-top:60px}
-body{margin:0;background:radial-gradient(1000px 400px at 100% 0,#2a2aa8,transparent 60%),linear-gradient(#0b0a3a80,#0b0a3ab3),url("https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1600&q=80") center/cover fixed;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{display:flex;align-items:center;gap:10px;padding:10px 14px}header img{width:44px;height:44px;border-radius:50%}header b{text-transform:uppercase;letter-spacing:1px;font-size:14px}header small{display:block;color:var(--mu)}
-nav{display:flex;gap:4px;overflow-x:auto;padding:0 10px 8px;border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);background:#0b0a3af2;z-index:4}
-button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:7px 12px;background:transparent;color:var(--tx);white-space:nowrap}
-nav button{text-transform:uppercase;font-size:12px;letter-spacing:1px}nav button.on{background:var(--pr);color:#241a00;font-weight:700}
-.btn{background:#3b3bd0;font-weight:700}.gold{background:var(--pr);color:#241a00}.red{background:#c0392b}.sm{padding:4px 9px;font-size:13px}
-main{max-width:1800px;margin:auto;padding:16px}
-h2{font-style:italic;text-transform:uppercase;margin:0 0 12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-.card{background:#ffffff0f;border-left:3px solid #fff;border-radius:4px;padding:12px 14px}
-.card img{width:100%;height:150px;object-fit:cover;border-radius:8px;margin-bottom:6px}.card img.mimg{height:clamp(4.5rem,7vw,6.5rem)}
-.stat{font-size:34px;font-weight:900;color:var(--pr)}.mu{color:var(--mu);font-size:14px}
-input,textarea,select{width:100%;font:inherit;padding:8px;margin:3px 0;border:1px solid var(--bd);border-radius:8px;background:#0b0a3a;color:#fff}
-.msd{margin:3px 0;border:1px solid var(--bd);border-radius:8px;background:#0b0a3a}.msd summary{cursor:pointer;padding:8px 10px;list-style:none;display:flex;justify-content:space-between;gap:8px}.msd summary::after{content:"▾";color:var(--mu)}.msd[open] summary::after{content:"▴"}.msd .ms-l{max-height:14rem;overflow:auto;padding:0 6px 6px}.msd .chk{margin:4px 0;padding:6px 10px;cursor:pointer}
-.chk{display:flex;gap:10px;align-items:center;padding:8px 12px;background:#ffffff0f;border-radius:6px;margin:5px 0}.chk input{width:auto}
-.arit{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:4px 0;border:1px solid var(--bd);border-radius:8px;background:#ffffff0d;user-select:none}.arit.drag{outline:2px solid var(--pr);background:#ffffff1f}.arh{cursor:grab;touch-action:none;font-size:20px;padding:2px 8px;color:var(--pr)}
-#modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:9;padding:14px}
-#modal>div{background:var(--card);padding:18px;border-radius:12px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
-body::before{content:"";position:fixed;inset:-24px;z-index:-1;background:linear-gradient(#0b0a3a80,#0b0a3ab3);filter:blur(9px)}
-
-html{font-size:clamp(15px,.45vw + 13.3px,21px);-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{font-size:1rem}
-header{padding:.6rem clamp(.75rem,2.5vw,2.5rem);gap:.7rem}header img{width:2.75rem;height:2.75rem}header b{font-size:.9rem}header small{font-size:.8rem}
-nav{padding:0 clamp(.5rem,2.5vw,2.5rem) .5rem}nav button{font-size:.75rem;padding:.45rem .75rem}
-button{padding:.45rem .75rem}.sm{padding:.25rem .55rem;font-size:.8rem}
-main{max-width:1800px;width:100%;padding:clamp(.6rem,2.5vw,2.5rem)}
-h2{font-size:clamp(1.3rem,1rem + 1.2vw,2.1rem)}h3{font-size:clamp(1.1rem,.95rem + .6vw,1.5rem)}
-.grid{grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:clamp(.6rem,1.2vw,1.25rem)}
-.card{padding:.75rem .9rem}.card img{height:clamp(9rem,12vw,16rem)}
-.stat{font-size:clamp(1.8rem,1.2rem + 2vw,3rem)}.mu{font-size:.875rem}
-#modal{padding:clamp(.5rem,2vw,1.5rem)}#modal>div{max-width:min(36rem,100%);padding:clamp(.9rem,2vw,1.5rem)}
-img,svg,video,iframe{max-width:100%}table{font-size:.9rem}td,th{word-break:break-word}
-@media (max-width:480px){table{font-size:.8rem}td,th{padding:4px!important}}
-@media (min-width:1800px){main{padding-inline:3rem}}
-
-main:has(> .about){max-width:none}
-.about{width:100%}
-.about .lead{max-width:none;font-size:clamp(1rem,.9rem + .45vw,1.35rem);line-height:1.65;margin:.5rem 0 clamp(1rem,2vw,2rem)}
-.about .grid{grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr));gap:clamp(.75rem,1.6vw,1.75rem)}
-.about .card{padding:clamp(1rem,1.8vw,2rem) clamp(1rem,2vw,2.25rem);display:flex;flex-direction:column;gap:.5rem}
-.about .card b{font-size:clamp(1.1rem,.95rem + .6vw,1.6rem)}
-.about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word}
-
-.tv{max-width:44rem;margin:0 auto clamp(1rem,2vw,1.6rem);background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
-.tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
-.tvi{position:relative;aspect-ratio:16/9;background:radial-gradient(circle at 30% 20%,#f2a93b55,transparent 55%),linear-gradient(135deg,#2a2aa8,#0b0a3a)}
-.tvi img{width:100%;height:100%;object-fit:cover;display:block}
-.tvi .tvph{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:clamp(3.5rem,10vw,6rem)}
-.tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
-.tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
-.tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
-.tqo{display:grid;gap:8px}.tqo button{display:flex;align-items:center;gap:10px;text-align:left;white-space:normal;width:100%;padding:10px 12px;border-radius:10px;background:#ffffff10;border:2px solid transparent;transition:background .15s,border-color .15s}
-.tqo button:not(:disabled):hover{background:#ffffff1f;border-color:#ffffff40}.tqo button:disabled{cursor:default}
-.tqo .l{flex:none;width:1.8rem;height:1.8rem;border-radius:50%;display:grid;place-items:center;background:var(--pr);color:#241a00;font-weight:800;text-transform:uppercase}
-.tqo button.ok{border-color:#2ecc71;background:#2ecc7122}.tqo button.ok .l{background:#2ecc71;color:#05210f}
-.tqo button.no{border-color:#e74c3c;background:#e74c3c22}.tqo button.no .l{background:#e74c3c;color:#fff}
-.tqr{margin-top:10px;font-weight:600}.tqr.ok{color:#5be08f}.tqr.no{color:#ff8a7d}.tqr .mu{font-weight:400}
-.tvs{margin-top:clamp(1rem,2vw,1.6rem)}.tqs .tq{border-top:0}
-#cfx{position:fixed;inset:0;pointer-events:none;z-index:20}
-
-.feed{display:grid;gap:clamp(.8rem,1.5vw,1.4rem);max-width:44rem;margin-inline:auto}
-.post{background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb}
-.post .ph{padding:10px 12px;display:flex;gap:10px;align-items:center}.post .ph img{width:2.5rem;height:2.5rem;border-radius:50%}
-.post>img{width:100%;max-height:36rem;object-fit:cover;display:block;cursor:zoom-in}
-.post .cap{padding:4px 12px 10px;white-space:pre-wrap;word-break:break-word}
-.rx{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px;border-top:1px solid #3e4042;border-bottom:1px solid #3e4042}
-.rx button{background:#3a3b3c;color:#e4e6eb}.rx button.on{background:#2d5bd0;font-weight:700}.rx button.on.ht{background:#c0395b}.rx .mu{margin-left:auto}
-.cm{padding:8px 12px 12px}.cmi{background:#3a3b3c;border-radius:12px;padding:6px 10px;margin:6px 0;white-space:pre-wrap;word-break:break-word}
-.cmi .mu{font-size:.75rem}.cmf{margin-top:8px}.cmf input,.cmf textarea{background:#18191a;border-color:#3e4042}
-
-.dtabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-.qr{background:#ffffff0f;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
-.qr img,.card .qr img{width:100%;max-width:18rem;height:auto;max-height:22rem;object-fit:contain;background:#fff;padding:8px;border-radius:10px;cursor:zoom-in;align-self:center}
-
-:root{--nw:min(16rem,78vw);--hh:4rem;--ez:cubic-bezier(.22,.61,.36,1)}
-html{overflow-x:hidden}body{overflow-x:clip}
-header{position:sticky;top:0;z-index:6;background:#0b0a3af2;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-#mnb{flex:none;width:2.6rem;height:2.6rem;padding:0;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#ffffff14;border:1px solid var(--bd);transition:background .2s}
-#mnb:hover{background:#ffffff24}
-#mnb i{display:block;width:1.25rem;height:2px;border-radius:2px;background:var(--tx);transition:transform .35s var(--ez),opacity .25s}
-body.mo #mnb i:nth-child(1){transform:translateY(7px) rotate(45deg)}body.mo #mnb i:nth-child(2){opacity:0}body.mo #mnb i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-nav#nav{position:fixed;left:0;top:var(--hh);bottom:0;width:var(--nw);display:flex;flex-direction:column;gap:3px;overflow-y:auto;overflow-x:hidden;padding:.75rem .6rem calc(1rem + env(safe-area-inset-bottom,0px));border:0;border-right:1px solid var(--bd);background:#0b0a3af7;z-index:5;transform:translateX(-100%);visibility:hidden;transition:transform .4s var(--ez),visibility 0s linear .4s}
-body.mo nav#nav{transform:none;visibility:visible;transition:transform .4s var(--ez),visibility 0s;box-shadow:6px 0 24px #0006}
-nav#nav button{text-align:left;width:100%;padding:.65rem .85rem;font-size:.8rem;border-radius:8px;flex:none}
-nav#nav button:hover{background:#ffffff14}nav#nav button.on{background:var(--pr);color:#241a00}
-main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s var(--ez)}
-@media (min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
-@media (max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
-
-.shb{background:#3a3b3c;color:#e4e6eb}
-.post.hlp,.card.hlp{box-shadow:0 0 0 3px var(--pr);transition:box-shadow .6s}
-.shg{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:8px;margin:10px 0}
-.shg button{display:flex;align-items:center;gap:8px;padding:.6rem .75rem;border-radius:10px;font-weight:700;color:#fff;justify-content:flex-start}
-.shg .ic{width:1.6rem;height:1.6rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff3;font-size:.85rem;flex:none}
-
-.appb{background:linear-gradient(135deg,#2a2aa8cc,#15145acc);border:1px solid var(--pr);border-radius:14px;padding:clamp(.9rem,2.5vw,1.6rem)}
-.appi{display:flex;gap:.9rem;align-items:center}.appi img{width:3.6rem;height:3.6rem;border-radius:22%;flex:none;box-shadow:0 4px 14px #0007}.appt{display:block;font-size:1.2rem;color:var(--pr)}
-.appl{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;list-style:none;padding:0;margin:.8rem 0}.appl li::before{content:"✓ ";color:var(--pr);font-weight:700}
-.appbt{display:flex;flex-wrap:wrap;gap:.6rem}.appd{display:flex;align-items:center;gap:.6rem;background:#000;border:1px solid #fff6;border-radius:10px;padding:.5rem 1.1rem;text-align:left;min-width:11rem}
-.appd small{display:block;font-size:.7rem;color:#ccc;line-height:1.1}.appd b{display:block;font-size:1.05rem;line-height:1.2}.appic{font-size:1.5rem;width:1.6rem;text-align:center}
-.appc{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.6rem;margin-top:.9rem}.appc>div{background:#ffffff12;border-radius:10px;padding:.5rem .8rem}.appc .stat{display:block;line-height:1.2}.appc .mu{font-size:.85rem}
-
-header>div{min-width:0;flex:1 1 auto}header b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}header small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}#hl{flex:none;display:flex;align-items:center;gap:.4rem}.hlu{font-size:.85rem;margin-right:.2rem;white-space:nowrap}.ib{display:inline-flex;align-items:center;justify-content:center;width:2.4rem;height:2.4rem;padding:0;border-radius:10px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);transition:background .2s}.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
-@media (max-width:900px){.hlr{display:none}}@media (max-width:640px){header{gap:.5rem}header img{width:2.3rem;height:2.3rem}header b{font-size:.78rem;letter-spacing:.5px}header small{font-size:.7rem}.hlu{display:none}#hl{gap:.3rem}.ib{width:2.1rem;height:2.1rem;border-radius:8px}.ib svg{width:1.05rem;height:1.05rem}#mnb{width:2.3rem;height:2.3rem}}@media (max-width:400px){header small{display:none}header b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}}
-.adch{display:inline-block;font-size:.78rem;padding:.15rem .5rem;margin:0 .3rem .3rem 0;border-radius:999px;background:#ffffff14;border:1px solid var(--bd)}.adch.on{background:var(--pr);color:#1a1446;border-color:transparent;font-weight:700}.adck{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(15rem,100%),1fr));gap:0 .8rem}
-</style>
-</head><body>
-<header>
-  <button id="mnb" type="button" aria-label="Open sections menu" aria-expanded="false" aria-controls="nav" title="Sections"><i></i><i></i><i></i></button>
-  <div style="width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--pr);overflow:hidden;display:flex;align-items:center;justify-content:center;flex:none">
-    <svg viewBox="0 0 100 100" style="width:36px;height:36px"><circle cx="50" cy="50" r="46" fill="#fff" stroke="#15145a" stroke-width="4"/><path d="M50 16 L50 78 M32 34 L68 34" stroke="#c0392b" stroke-width="6" stroke-linecap="round"/><path d="M26 68 Q50 84 74 68 Q50 60 26 68" fill="#f2a93b"/><circle cx="50" cy="22" r="5" fill="#f2a93b"/></svg>
-  </div>
-  <div><b>JESUS THE NAME ABOVE ALL NAMES</b><small>JTNAAN Bulacan · Church Management</small></div>
-  <span id="hl" style="margin-left:auto"></span>
-</header>
-<nav id="nav"></nav>
-<main id="main"><p class="mu">Loading Church Data…</p></main>
-<div id="modal"><div id="mb"></div></div>
-
-<script>
-function menu(o){const b=document.body;o=o==null?!b.classList.contains("mo"):o;b.classList.toggle("mo",o);const m=document.getElementById("mnb");if(m){m.setAttribute("aria-expanded",o);m.setAttribute("aria-label",o?"Close sections menu":"Open sections menu")}}
-(function(){const h=document.querySelector("header"),f=()=>document.documentElement.style.setProperty("--hh",h.getBoundingClientRect().height+"px");f();addEventListener("resize",f);if(window.ResizeObserver)new ResizeObserver(f).observe(h)})();
-document.getElementById("mnb").addEventListener("click",()=>menu());
-addEventListener("keydown",ev=>{if(ev.key=="Escape"&&document.body.classList.contains("mo")&&document.getElementById("modal").style.display!="flex")menu(false)});
-document.getElementById("main").addEventListener("click",()=>{if(document.body.classList.contains("mo")&&!matchMedia("(min-width:760px)").matches)menu(false)});
-
-const CF={
-  members:{t:"Members",f:[["name","Full name"],["ministry","Ministry","m"],["joined","Date joined","date"],["contact","Contact number"],["address","Address"]],s:["ministry","joined","contact","address"],k:"name"},
-  ministries:{t:"Ministries",f:[["name","Ministry name"],["leader","Leader"],["desc","Description","t"]],s:["leader","desc"],k:"name",photo:1},
-  events:{t:"Events",f:[["title","Event title"],["date","Date","date"],["place","Place"],["desc","Details","t"]],s:["date","place","desc"],k:"title",multi:1,max:10},
-  prayers:{t:"Prayer Requests",f:[["name","Name"],["req","Request","t"],["status","Status (Open / Answered)"]],s:["req","status"],k:"name"},
-  gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:40,append:1},
-  funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["type","Type","s:Income,Expense"],["category","Category (Offering, Tithes, Utilities...)"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
-  social:{t:"Social Media",f:[["platform","Platform","s:Facebook,YouTube,TikTok,Instagram"],["date","Date","date"],["followers","Followers","number"],["reach","Reach / views","number"],["engagement","Engagement (likes+comments+shares)","number"]],s:[],k:"platform"},
-  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text (optional)","t"],["date","Date posted","date"]],s:[],k:"url",multi:1},
-  devotion:{t:"Daily Devotion",f:[["date","Date","date"],["caption","Caption / devotion message","t"]],s:[],k:"caption",photo:1},
-  testimony:{t:"Testimony",f:[["name","Name (optional)"],["date","Date","date"],["caption","Caption / testimony","t"]],s:[],k:"caption",photo:1},
-  donate:{t:"Donation QR",f:[["method","Payment method","s:GCash,Maya,Bank transfer"],["name","Account name"],["number","Account / mobile number"],["bank","Bank name (for bank transfer)"],["note","Note (optional)","t"]],s:[],k:"method",photo:1}
-};
-
-const EM="jtnaanbulacan030126@gmail.com";
-const TL={
-  dashboard:"HOME DASHBOARD",about:"ABOUT",schedule:"SCHEDULE",devotion:"DAILY DEVOTION",testimony:"TESTIMONY",
-  members:"MEMBERS",attendance:"ATTENDANCE",funds:"FUNDS",social:"SOCIAL",ministries:"MINISTRIES",
-  events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS"
-};
-
-const PL={
-  dashboard:"Home dashboard – Facebook posts & site background",
-  devotion:"Daily devotion – posts & comments",
-  testimony:"Testimony – posts & comments",
-  members:"Members – including private details",
-  attendance:"Attendance",
-  funds:"Funds",
-  social:"Social media",
-  ministries:"Ministries",
-  events:"Events",
-  prayers:"Prayer requests",
-  gallery:"Gallery",
-  support:"Support – donation QR codes",
-  arrange:"Arrange sections (menu order)"
-};
-
-// Configured Admins
-const defaultAdmins = [
-  {id:"adm1", name:"Admin Mart", username:"Admin@Mart", password:"JTNAAN@01", owner:true, perms:Object.keys(PL)},
-  {id:"adm2", name:"Treasurer", username:"Admin02", password:"JTNAAN02", owner:false, perms:["funds"]},
-  {id:"adm3", name:"Attendance Personnel", username:"Admin03", password:"JTNAAN03", owner:false, perms:["attendance"]},
-  {id:"adm4", name:"Media", username:"Admin04", password:"JTNAAN04", owner:false, perms:["gallery"]}
-];
-
-// Complete Real Church Data from Screenshots
-const churchData = {
-  members: [
-    {id:"m1", name:"Ace Dionisio", ministry:"Church Leader", joined:"2026-03-01"},
-    {id:"m2", name:"AJ Dionisio", ministry:"Member", joined:"2026-03-01"},
-    {id:"m3", name:"Aldrin Balmaceda Ninon", ministry:"Worship Team, Media Ministry", joined:"2026-03-01"},
-    {id:"m4", name:"Andrea Apellido", ministry:"Dance Ministry", joined:"2026-03-01"},
-    {id:"m5", name:"Angelo David", ministry:"Media Ministry", joined:"2026-03-01"},
-    {id:"m6", name:"Annalyn Nocus", ministry:"Church Leader, Dance Ministry", joined:"2026-03-01"},
-    {id:"m7", name:"Avery Dionisio", ministry:"Member", joined:"2026-03-01"},
-    {id:"m8", name:"Bebe Nacaya", ministry:"Member", joined:"2026-03-01"},
-    {id:"m9", name:"Cedrick Santos", ministry:"Dance Ministry", joined:"2026-03-01"},
-    {id:"m10", name:"Christine Biay", ministry:"Church Leader, Worship Team, Dance Ministry, Youth Ministry, Media Ministry", joined:"2026-03-01"},
-    {id:"m11", name:"Elisha Losito", ministry:"Member", joined:"2026-03-01"},
-    {id:"m12", name:"Ella Biay", ministry:"Church Leader, Worship Team, Dance Ministry, Youth Ministry", joined:"2026-03-01"},
-    {id:"m13", name:"Emil Biay", ministry:"Member", joined:"2026-03-01"},
-    {id:"m14", name:"Erick Biay", ministry:"Member", joined:"2026-03-01"},
-    {id:"m15", name:"Hazel Dela Pena", ministry:"Worship Team", joined:"2026-03-01"},
-    {id:"m16", name:"Hiro Samonte", ministry:"Worship Team, Youth Ministry", joined:"2026-03-01"},
-    {id:"m17", name:"Jasper Mariano", ministry:"Member", joined:"2026-03-01"},
-    {id:"m18", name:"Jimar Bustamante", ministry:"Media Ministry", joined:"2026-03-01"},
-    {id:"m19", name:"Jocelyn Basa", ministry:"Member", joined:"2026-03-01"},
-    {id:"m20", name:"Jude William", ministry:"Worship Team", joined:"2026-03-01"},
-    {id:"m21", name:"Justine Villaranda", ministry:"Youth Ministry, Media Ministry", joined:"2026-03-01"},
-    {id:"m22", name:"Margie Dionisio", ministry:"Founder, Pastor, Church Leader, Worship Team", joined:"2026-03-01"},
-    {id:"m23", name:"Maxine Danganan", ministry:"Worship Team, Youth Ministry", joined:"2026-03-01"},
-    {id:"m24", name:"Melissa Biay", ministry:"Member", joined:"2026-03-01"},
-    {id:"m25", name:"Michael Nacaya", ministry:"Worship Team", joined:"2026-03-01"},
-    {id:"m26", name:"Michaella Alliyah Villarin", ministry:"Member", joined:"2026-03-01"},
-    {id:"m27", name:"Nanay Cora", ministry:"Member", joined:"2026-03-01"},
-    {id:"m28", name:"Nanay Gare", ministry:"Member", joined:"2026-03-01"},
-    {id:"m29", name:"Nanay Lina", ministry:"Member", joined:"2026-03-01"},
-    {id:"m30", name:"Rey Losito", ministry:"Member", joined:"2026-03-01"},
-    {id:"m31", name:"Reymart Losito", ministry:"Pastor, Church Leader, Worship Team, Media Ministry", joined:"2026-03-01"},
-    {id:"m32", name:"Roby Nacaya", ministry:"Church Leader, Worship Team, Worship Head", joined:"2026-03-01"},
-    {id:"m33", name:"Roque Nacaya", ministry:"Member", joined:"2026-03-01"},
-    {id:"m34", name:"Samuel Dionisio", ministry:"Member", joined:"2026-03-01"},
-    {id:"m35", name:"Sofia Bercilla", ministry:"Dance Ministry, Youth Ministry", joined:"2026-03-01"},
-    {id:"m36", name:"Sophia Dionisio", ministry:"Member", joined:"2026-03-01"},
-    {id:"m37", name:"Vermar Mariano", ministry:"Youth Ministry, Media Ministry", joined:"2026-03-01"},
-    {id:"m38", name:"Vernie Losito", ministry:"Member", joined:"2026-03-01"},
-    {id:"m39", name:"Von Ryan Kurt Prangan", ministry:"Youth Ministry, Media Ministry", joined:"2026-03-01"}
-  ],
-  ministries: [
-    {
-      id: "d0",
-      name: "Church Leaders",
-      leader: "Margie Dionisio",
-      desc: "Leadership team and coordinators.",
-      photo: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800&q=80"
-    },
-    {
-      id: "d1",
-      name: "Dance Ministry",
-      leader: "Christine Biay",
-      desc: "Praise and worship dance team.",
-      photo: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=800&q=80"
-    },
-    {
-      id: "d2",
-      name: "Media Ministry",
-      leader: "Angelo David",
-      desc: "Livestream, photography, sound, slides and social media.",
-      photo: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80"
-    },
-    {
-      id: "d3",
-      name: "Worship Team",
-      leader: "Roby Nacaya",
-      desc: "Musicians, singers, sound and multimedia volunteers.",
-      photo: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=80"
-    },
-    {
-      id: "d4",
-      name: "Youth Ministry",
-      leader: "Ella Biay",
-      desc: "Programs and events for young people.",
-      photo: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80"
-    }
-  ],
-  funds: [
-    {
-      id: "f1",
-      desc: "Wireless Microphone",
-      date: "2026-11-29",
-      type: "Expense",
-      category: "Instrument",
-      amount: 3135
-    },
-    {
-      id: "f2",
-      desc: "Church Fund",
-      date: "2026-11-01",
-      type: "Income",
-      category: "Church Fund",
-      amount: 3171
-    }
-  ],
-  devotion: [
-    {
-      id: "dv1",
-      date: "2026-11-05",
-      name: "Jesus: The Name Above All Names",
-      caption: "2 Peter 3:13 NIV\n\"But in keeping with his promise we are looking forward to a new heaven and a new earth, where righteousness dwells.\"\n\nGod does not desire to destroy all creation but to re-create everything as it was originally meant to be (see Isaiah 66:22; Revelation 21–22).\n\nGod will purify the heavens and earth with fire; then he will fill them with his new creation. We can joyously look forward to the restoration of God's good world.",
-      photo: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1200&q=80"
-    }
-  ],
-  fbposts: [
-    {
-      id: "fb1",
-      date: "2026-11-05",
-      caption: "Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center ...",
-      url: "https://www.facebook.com/profile.php?id=61556921121315"
-    },
-    {
-      id: "fb2",
-      date: "2026-11-02",
-      caption: "Sunday Worship Service \"Jesus Be the Center of Our Hearts\" [Jesus at the Center Series - Proverbs 4:20-23]",
-      url: "https://www.facebook.com/profile.php?id=61556921121315"
-    },
-    {
-      id: "fb3",
-      date: "2026-11-03",
-      caption: "More than a team, we're a family united in worship. JTNAAN Worship Team Bonding",
-      url: "https://www.facebook.com/profile.php?id=61556921121315"
-    }
-  ],
-  attendance: [
-    {
-      id: "2026-11-01_SundayWorshipService",
-      date: "2026-11-01",
-      svc: "Sunday Worship Service",
-      present: [
-        "m1","m2","m3","m4","m5","m6","m7","m8","m9","m10",
-        "m11","m12","m13","m14","m15","m16","m17","m18","m19","m20",
-        "m21","m22","m23","m24","m25"
-      ]
-    }
-  ],
-  social: [
-    {
-      id: "s1",
-      platform: "Facebook",
-      date: "2026-03-01",
-      followers: 225,
-      reach: 12000,
-      engagement: 23984
-    }
-  ],
-  events: [],
-  prayers: [],
-  testimony: [],
-  donate: [],
-  gallery: [],
-  comments: []
-};
-
-// Initial state with automatic storage migration
-let D = JSON.parse(localStorage.getItem("jt_data_v3")) || churchData;
-if(!localStorage.getItem("jt_data_v3") || (D.members && D.members.length < 35)){
+let D = JSON.parse(localStorage.getItem("jt_data_v5")) || churchData;
+if (!localStorage.getItem("jt_data_v5") || (D.members && D.members.length < 35)) {
   D = churchData;
-  localStorage.setItem("jt_data_v3", "true");
+  localStorage.setItem("jt_data_v5", "true");
 }
 
 let R = JSON.parse(localStorage.getItem("jt_rx_counts")) || {"devotion:dv1": {like: 7, heart: 7}};
-let RM = JSON.parse(localStorage.getItem("jt_rx")) || {};
 let AL = defaultAdmins;
-let me = defaultAdmins[0]; // Admin Mart active by default
+let me = defaultAdmins[0]; // Admin Mart active
 let admin = true;
-let view = "dashboard", asel=new Set(), adate=new Date().toISOString().slice(0,10), asv="Sunday Worship Service";
+let view = "dashboard";
 
-function saveState(){
-  localStorage.setItem("jt_data_v3", "true");
+function saveState() {
+  localStorage.setItem("jt_data_v5", "true");
   localStorage.setItem("jt_data", JSON.stringify(D));
   localStorage.setItem("jt_rx_counts", JSON.stringify(R));
 }
@@ -359,84 +22,326 @@ const $ = s => document.querySelector(s);
 const ex = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const e = ex;
 
-function baseTabs(){
-  return [
+function baseTabs() {
+  const saved = ((D.settings || []).find(x => x.id === "order") || {}).list;
+  const defaultList = [
     "dashboard","about","schedule","devotion","testimony","members",
-    "attendance",...(can("funds")?["funds"]:[]),"social","ministries",
+    "attendance",...(can("funds") ? ["funds"] : []),"social","ministries",
     "events","gallery","prayers","support","reports"
   ];
+  if (saved && Array.isArray(saved)) {
+    const ordered = [];
+    saved.forEach(s => { if (defaultList.includes(s)) ordered.push(s); });
+    defaultList.forEach(s => { if (!ordered.includes(s)) ordered.push(s); });
+    return ordered;
+  }
+  return defaultList;
 }
 const okey = t => t == "prayer" ? "prayers" : t;
-function tabs(){
+function tabs() {
   const T = baseTabs();
-  if(admin) T.push("admins");
+  if (admin) T.push("admins");
   return T;
 }
 
-function render(){
+// Logo Handlers
+function getChurchLogoUrl() {
+  const custom = (D.settings || []).find(x => x.id === "logo");
+  return custom ? custom.url : "";
+}
+
+function renderLogo() {
+  const u = getChurchLogoUrl();
+  const box = $("#church-logo-render");
+  if (!box) return;
+  if (u) {
+    box.innerHTML = `<img src="${e(u)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="Logo">`;
+  } else {
+    box.innerHTML = `<svg viewBox="0 0 100 100" style="width:36px;height:36px"><circle cx="50" cy="50" r="46" fill="#fff" stroke="#15145a" stroke-width="4"/><path d="M50 16 L50 78 M32 34 L68 34" stroke="#c0392b" stroke-width="6" stroke-linecap="round"/><path d="M26 68 Q50 84 74 68 Q50 60 26 68" fill="#f2a93b"/><circle cx="50" cy="22" r="5" fill="#f2a93b"/></svg>`;
+  }
+}
+
+function handleLogoClick() {
+  if (admin) openLogoUploadModal();
+}
+
+function openLogoUploadModal() {
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">Edit Church Logo</h3>
+    <p class="mu">Upload a new church logo / seal to update across all pages.</p>
+    <div style="margin:12px 0"><input type="file" id="logo_file_input" accept="image/*"></div>
+    <p>
+      <button class="btn gold" onclick="saveNewLogo()">Save Logo</button>
+      ${getChurchLogoUrl() ? '<button class="red sm" onclick="resetDefaultLogo()">Reset to Default</button>' : ''}
+      <button onclick="$('#modal').style.display='none'">Cancel</button>
+    </p>`;
+  $("#modal").style.display = "flex";
+}
+
+async function saveNewLogo() {
+  const f = $("#logo_file_input").files[0];
+  if (!f) return alert("Please select an image.");
+  const b64 = await upload(f);
+  D.settings = (D.settings || []).filter(x => x.id !== "logo").concat([{id: "logo", url: b64}]);
+  saveState();
+  renderLogo();
+  render();
+  $("#modal").style.display = "none";
+  alert("Church logo updated!");
+}
+
+function resetDefaultLogo() {
+  D.settings = (D.settings || []).filter(x => x.id !== "logo");
+  saveState();
+  renderLogo();
+  render();
+  $("#modal").style.display = "none";
+  alert("Logo restored to default.");
+}
+
+async function upload(f) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const cv = document.createElement("canvas");
+        const maxDim = 800;
+        let w = img.width, h = img.height;
+        if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; }
+        else if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+        cv.width = w; cv.height = h;
+        cv.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(cv.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(f);
+  });
+}
+
+// 1-Click ZIP Generator matching exact folder tree requested
+async function downloadZipBackup() {
+  const zip = new JSZip();
+  const root = zip.folder("JTNAAN-Bulacan");
+
+  // Reconstruct modular files into ZIP
+  root.file("index.html", "<!DOCTYPE html>\n" + document.documentElement.outerHTML);
+  root.file("README.md", `# JTNAAN-Bulacan Church Management System Backup\nDownloaded on: ${new Date().toLocaleString()}\nRepository: https://jtnaanbulacan.github.io\nStructure:\n├── index.html\n├── assets/\n├── images/\n├── css/style.css\n├── js/data.js\n├── js/app.js\n└── README.md`);
+  root.folder("assets").file(".gitkeep", "");
+  root.folder("images").file(".gitkeep", "");
+  root.folder("css").file("style.css", document.querySelector("style") ? document.querySelector("style").innerText : "");
+  root.folder("js").file("data.js", "const churchData = " + JSON.stringify(D, null, 2) + ";\nconst defaultAdmins = " + JSON.stringify(AL, null, 2) + ";");
+  root.folder("js").file("app.js", "// JTNAAN Bulacan Core Engine JS");
+
+  const blob = await zip.generateAsync({type: "blob"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `JTNAAN-Bulacan.zip`;
+  a.click();
+}
+
+// Section Re-arranging
+let AO = [];
+function openArrangeModal() {
+  AO = tabs().filter(t => t !== "admins");
+  drawArr();
+}
+
+function drawArr(msg) {
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">Arrange Sections</h3>
+    <div class="mu" style="margin-bottom:8px">Move sections up or down to adjust your menu order.</div>
+    <div id="arl">${AO.map((t, i) => `
+      <div class="arit">
+        <span style="flex:1;text-transform:uppercase;font-size:13px;letter-spacing:1px;font-weight:bold">${ex(TL[t] || t)}</span>
+        <button class="sm btn" onclick="moveArr(${i}, -1)" ${i === 0 ? "disabled" : ""}>▲</button>
+        <button class="sm btn" onclick="moveArr(${i}, 1)" ${i === AO.length - 1 ? "disabled" : ""}>▼</button>
+      </div>
+    `).join('')}</div>
+    <div class="mu" style="margin:6px 0">${ex(msg || "")}</div>
+    <p>
+      <button class="btn gold" onclick="saveSectionOrder()">Save Order</button>
+      <button onclick="resetSectionOrder()">Reset Default</button>
+      <button onclick="$('#modal').style.display='none'">Cancel</button>
+    </p>`;
+  $("#modal").style.display = "flex";
+}
+
+function moveArr(i, dir) {
+  const target = i + dir;
+  if (target >= 0 && target < AO.length) {
+    const tmp = AO[i];
+    AO[i] = AO[target];
+    AO[target] = tmp;
+    drawArr("Order updated. Click 'Save Order' to apply.");
+  }
+}
+
+function saveSectionOrder() {
+  D.settings = (D.settings || []).filter(x => x.id !== "order").concat([{id: "order", list: AO}]);
+  saveState();
+  $("#modal").style.display = "none";
+  render();
+  alert("New section order applied!");
+}
+
+function resetSectionOrder() {
+  D.settings = (D.settings || []).filter(x => x.id !== "order");
+  saveState();
+  $("#modal").style.display = "none";
+  render();
+  alert("Restored to default order.");
+}
+
+// Text Editing Engine
+let TE = 0;
+function toggleTextEditMode() {
+  TE = TE ? 0 : 1;
+  document.body.classList.toggle("txon", TE === 1);
+  const btn = $("#btn-edit-text");
+  if (btn) btn.classList.toggle("on", TE === 1);
+  applyTextOutlines();
+}
+
+function applyTextOutlines() {
+  const allEl = $("#main").querySelectorAll("b, div, p, span, h2, h3, a, small");
+  allEl.forEach(el => {
+    if (el.children.length === 0 && el.innerText.trim().length > 1) {
+      el.classList.toggle("txe", TE === 1);
+    }
+  });
+}
+
+function txList() {
+  const texts = [];
+  $("#main").querySelectorAll("b, div, p, span, h2, h3, small").forEach(el => {
+    if (el.children.length === 0 && el.innerText.trim().length > 1) {
+      if (!texts.includes(el.innerText.trim())) texts.push(el.innerText.trim());
+    }
+  });
+
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">All Texts on Screen</h3>
+    <div style="max-height:60vh;overflow-y:auto">
+      ${texts.slice(0, 35).map(tx => `
+        <div style="padding:6px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.85rem">${ex(tx)}</span>
+          <button class="btn sm gold" onclick="openTextEditorModal('${encodeURIComponent(tx)}')">Edit</button>
+        </div>
+      `).join('')}
+    </div>
+    <p><button onclick="$('#modal').style.display='none'">Close</button></p>`;
+  $("#modal").style.display = "flex";
+}
+
+let activeEditTargetText = "";
+function openTextEditorModal(rawEncodedText) {
+  activeEditTargetText = decodeURIComponent(rawEncodedText);
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">Edit Text</h3>
+    <div class="mu">Original:</div>
+    <div class="txo">${ex(activeEditTargetText)}</div>
+    <div class="mu" style="margin-top:8px">Replace with:</div>
+    <textarea id="tx_new_val" rows="4">${ex(activeEditTargetText)}</textarea>
+    <p>
+      <button class="btn gold" onclick="saveEditedText()">Save Text</button>
+      <button onclick="$('#modal').style.display='none'">Cancel</button>
+    </p>`;
+  $("#modal").style.display = "flex";
+}
+
+function saveEditedText() {
+  const newVal = $("#tx_new_val").value.trim();
+  if (!newVal) return;
+  const walker = document.createTreeWalker($("#main"), NodeFilter.SHOW_TEXT);
+  let node;
+  while (node = walker.nextNode()) {
+    if (node.nodeValue.includes(activeEditTargetText)) {
+      node.nodeValue = node.nodeValue.replace(activeEditTargetText, newVal);
+    }
+  }
+  $("#modal").style.display = "none";
+  alert("Text updated!");
+}
+
+document.addEventListener("click", ev => {
+  if (TE !== 1) return;
+  const t = ev.target;
+  if (t.classList.contains("txe") && t.innerText.trim().length > 1) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    openTextEditorModal(encodeURIComponent(t.innerText.trim()));
+  }
+}, true);
+
+// Render Views
+function render() {
   const T = tabs();
-  if(!T.includes(view)) view = T[0];
-  $("#nav").innerHTML = T.map(t => `<button class="${t==view?"on":""}" data-v="${t}">${TL[t]||t.toUpperCase()}</button>`).join("");
+  if (!T.includes(view)) view = T[0];
+  $("#nav").innerHTML = T.map(t => `<button class="${t == view ? "on" : ""}" data-v="${t}">${TL[t] || t.toUpperCase()}</button>`).join("");
+  
   $("#hl").innerHTML = me ? `
     <span class="mu hlu">${ex(me.name)} · ${accLabel()}</span>
-    <button class="btn ib" onclick="downloadBackup()" title="Download Backup"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg></button>
+    <button class="btn ib" onclick="downloadZipBackup()" title="Download Backup ZIP"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg></button>
+    ${admin ? `
+      <button class="btn ib" onclick="openArrangeModal()" title="Arrange sections"><svg viewBox="0 0 24 24"><path d="M7 4v16m0-16L3 8m4-4 4 4m6 12V4m0 16-4-4m4 4 4-4"/></svg></button>
+      <button class="btn ib" id="btn-edit-text" onclick="toggleTextEditMode()" title="Edit all text & logos"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg></button>
+    ` : ''}
     <button class="btn ib" data-logout="1" title="Log out"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></button>` :
     `<button class="btn ib" data-login="1" title="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
   
-  if(view=="admins") $("#main").innerHTML = adminsv();
-  else if(view=="devotion"||view=="testimony") $("#main").innerHTML = feed(view);
-  else if(view=="prayers") $("#main").innerHTML = prayersv();
-  else if(view=="support") $("#main").innerHTML = supportv();
-  else if(view=="reports") $("#main").innerHTML = reportsv();
-  else if(view=="funds") $("#main").innerHTML = fundsv();
-  else if(view=="social") $("#main").innerHTML = socialv();
-  else if(view=="about") $("#main").innerHTML = about();
-  else if(view=="schedule") $("#main").innerHTML = sched();
-  else if(view=="dashboard") $("#main").innerHTML = dash();
-  else if(view=="attendance") $("#main").innerHTML = attv();
-  else if(view=="members") $("#main").innerHTML = membersv();
-  else if(view=="ministries") $("#main").innerHTML = ministriesv();
+  renderLogo();
+
+  if (view == "admins") $("#main").innerHTML = adminsv();
+  else if (view == "devotion" || view == "testimony") $("#main").innerHTML = feed(view);
+  else if (view == "prayers") $("#main").innerHTML = prayersv();
+  else if (view == "support") $("#main").innerHTML = supportv();
+  else if (view == "reports") $("#main").innerHTML = reportsv();
+  else if (view == "funds") $("#main").innerHTML = fundsv();
+  else if (view == "social") $("#main").innerHTML = socialv();
+  else if (view == "about") $("#main").innerHTML = about();
+  else if (view == "schedule") $("#main").innerHTML = sched();
+  else if (view == "dashboard") $("#main").innerHTML = dash();
+  else if (view == "attendance") $("#main").innerHTML = attv();
+  else if (view == "members") $("#main").innerHTML = membersv();
+  else if (view == "ministries") $("#main").innerHTML = ministriesv();
   else $("#main").innerHTML = list(view);
+
+  if (TE === 1) applyTextOutlines();
 }
 
-function downloadBackup(){
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(D, null, 2));
-  const dl = document.createElement('a');
-  dl.setAttribute("href", dataStr);
-  dl.setAttribute("download", `JTNAAN_Bulacan_Backup_${new Date().toISOString().slice(0,10)}.json`);
-  dl.click();
-}
-
-function dash(){
-  const A = (D.attendance||[])[0];
+function dash() {
+  const A = (D.attendance || [])[0];
+  const logo = getChurchLogoUrl();
   return `<h2>HOME DASHBOARD</h2>
   <div class="grid">
-    <div class="card"><div class="stat">${(D.members||[]).length}</div>Members</div>
-    <div class="card"><div class="stat">${(D.ministries||[]).length}</div>Ministries</div>
-    <div class="card"><div class="stat">${A?A.present.length:0}</div>Last attendance<div class="mu">${A?e(A.date+" · "+A.svc):"No record yet"}</div></div>
-    <div class="card"><div class="stat">${(D.prayers||[]).length}</div>Open prayer requests</div>
+    <div class="card"><div class="stat">${(D.members || []).length}</div>Members</div>
+    <div class="card"><div class="stat">${(D.ministries || []).length}</div>Ministries</div>
+    <div class="card"><div class="stat">${A ? A.present.length : 0}</div>Last attendance<div class="mu">${A ? e(A.date + " · " + A.svc) : "No record yet"}</div></div>
+    <div class="card"><div class="stat">${(D.prayers || []).length}</div>Open prayer requests</div>
   </div>
-  ${can("dashboard")?`
+  ${can("dashboard") ? `
   <div class="card" style="margin-top:14px">
     <b style="color:var(--pr)">Site background</b>
     <div class="mu" style="margin:4px 0 8px">Upload a photo to use as the blurred background of the whole site. It changes for every visitor right away.</div>
     <div class="mu" style="margin-bottom:8px">Currently using the default background.</div>
-    <button class="btn gold sm" onclick="alert('Select a photo to update background.')">Upload new background</button>
-  </div>`:''}
+    <button class="btn gold sm" onclick="alert('Select an image file to update background.')">Upload new background</button>
+  </div>` : ''}
   <h2 style="margin-top:24px">LATEST FACEBOOK POSTS</h2>
-  ${can("dashboard")?`<p><button class="btn gold" data-add="fbposts">+ Paste a post</button></p>`:''}
+  ${can("dashboard") ? `<p><button class="btn gold" data-add="fbposts">+ Paste a post</button></p>` : ''}
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(17.5rem,100%),1fr))">
-    ${(D.fbposts||[]).map(p=>`
+    ${(D.fbposts || []).map(p => `
       <div style="background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb;padding:14px">
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
-          <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;font-weight:bold;color:#0b0a3a">✝</div>
+          <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden">
+            ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
+          </div>
           <div><b>Jesus: The Name Above All Names</b><div class="mu" style="font-size:.78rem">${e(p.date)} · 🌐</div></div>
         </div>
         <div style="font-size:.9rem;line-height:1.45;margin-bottom:10px">${e(p.caption)} <a style="color:#8ab4f8" target="_blank" rel="noopener" href="${e(p.url)}">See more</a></div>
-        <div>
-          <a style="color:#8ab4f8;font-size:.85rem" target="_blank" rel="noopener" href="${e(p.url)}">View on Facebook ↗</a>
-          ${can("dashboard")?` <button class="btn sm" data-del="fbposts:${p.id}">Delete</button>`:''}
-        </div>
+        <div><a style="color:#8ab4f8;font-size:.85rem" target="_blank" rel="noopener" href="${e(p.url)}">View on Facebook ↗</a></div>
       </div>
     `).join('')}
   </div>
@@ -446,13 +351,16 @@ function dash(){
   ${appv()}`;
 }
 
-function appv(){
+function appv() {
+  const logo = getChurchLogoUrl();
   return `<section class="appb" style="margin-top:26px">
     <div class="appi">
-      <div style="width:52px;height:52px;border-radius:12px;background:#fff;border:2px solid var(--pr);display:flex;align-items:center;justify-content:center;font-size:1.8rem">✝</div>
+      <div style="width:52px;height:52px;border-radius:12px;background:#fff;border:2px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden">
+        ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="font-size:1.8rem">✝</span>`}
+      </div>
       <div>
         <b class="appt">Get the JTNAAN Bulacan app</b>
-        <div class="mu">Easily open and see everything on our website — daily devotions, testimonies, events, schedule, gallery and more — right from your phone's home screen.</div>
+        <div class="mu">Open directly on your phone's home screen — daily devotions, testimonies, events, schedule, and gallery.</div>
       </div>
     </div>
     <ul class="appl"><li>No registration needed</li><li>Just install the app</li><li>Connect any Gmail account already on your phone</li></ul>
@@ -465,17 +373,13 @@ function appv(){
       <div><span class="stat">4</span><span class="mu">iPhone / iPad downloads</span></div>
       <div><span class="stat">8</span><span class="mu">Total downloads</span></div>
     </div>
-    <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
-      <button class="btn sm" style="background:#fff;color:#111;font-weight:bold" onclick="alert('Gmail account connect available in mobile view.')">G Connect with Gmail</button>
-      <span class="mu" style="font-size:.8rem">Optional — your name is filled in for you when you comment or send a request.</span>
-    </div>
   </section>`;
 }
 
-function about(){
+function about() {
   return `<section class="about">
     <h2>ABOUT US</h2>
-    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship, all in a welcoming community that encourages you to honor God and live out His Word in everyday life.</p>
+    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship.</p>
     <div class="grid">
       <div class="card"><b>Mission</b><div class="mu">To proclaim the Good News of Jesus Christ and make disciples of all nations.</div></div>
       <div class="card"><b>Vision</b><div class="mu">To win the lost souls to Jesus Christ, nurture believers in the faith, and equip them to live for God’s glory.</div></div>
@@ -484,80 +388,51 @@ function about(){
   </section>`;
 }
 
-function sched(){
+function sched() {
   return `<h2>WEEKLY SCHEDULE</h2>
   <div class="grid">
     <div class="card"><b style="color:var(--pr)">Sunday Worship Service</b><div>Every Sunday · 4:00 PM – 6:00 PM</div><div class="mu">Purok 5 Bambang, Bulakan, Bulacan</div></div>
     <div class="card"><b style="color:var(--pr)">Leadership & WT Practice</b><div>Every Saturday · 5:30 PM – 8:30 PM</div><div class="mu">Purok 5 Bambang, Bulakan, Bulacan</div></div>
     <div class="card"><b style="color:var(--pr)">Midweek Bible Study</b><div>Weekdays · 5:00 PM – 8:00 PM</div><div class="mu">Assigned designated house/place weekly</div></div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <b style="color:var(--pr)">Request a Visit</b>
-    <div class="mu" style="margin:4px 0 8px">Would you like a Bible study in your home, or an actual prayer and healing session at your place? Fill this out and our team will get in touch with you.</div>
-    <select id="rqt"><option>Bible study at my home</option><option>Actual prayer and healing at my place</option></select>
-    <input id="rqn" placeholder="Your name">
-    <input id="rqc" placeholder="Contact number">
-    <input id="rqa" placeholder="Address / place">
-    <label class="mu" style="display:block;margin-top:6px">Preferred date & time (optional)</label>
-    <div style="display:flex;gap:8px"><input type="date" id="rqd" style="flex:1"><input type="time" id="rqh" style="flex:1"></div>
-    <textarea id="rqm" rows=3 placeholder="Notes (optional)"></textarea>
-    <button class="btn gold" onclick="alert('Opening Messenger with details...')">Send via Messenger</button>
-    <button class="btn" onclick="alert('Opening Gmail...')">Send via Gmail</button>
   </div>`;
 }
 
-function feed(c){
+function feed(c) {
   const F = CF[c];
   const L = D[c] || [];
-  return `<h2>${TL[c]||F.t}</h2>
-  <p class="mu">${c=="devotion"?"A short word from God for today. React and share your thoughts in the comments.":"Stories of God's faithfulness in the lives of our church family. React and leave a word of encouragement."}</p>
-  ${can(c)?`<p><button class="btn gold" data-add="${c}">+ New ${c=="devotion"?"devotion":"testimony"}</button></p>`:''}
+  const logo = getChurchLogoUrl();
+  return `<h2>${TL[c] || F.t}</h2>
+  ${can(c) ? `<p><button class="btn gold" data-add="${c}">+ New Post</button></p>` : ''}
   <div class="feed">
-    ${L.map(x=>`
+    ${L.map(x => `
       <div class="post">
         <div class="ph">
-          <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;font-weight:bold;color:#0b0a3a">✝</div>
-          <div><b>${e(x.name||"Jesus: The Name Above All Names")}</b><div class="mu">${e(x.date)} · ${c=="devotion"?"Daily Devotion":"Testimony"}</div></div>
+          <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden">
+            ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
+          </div>
+          <div><b>${e(x.name || "Jesus: The Name Above All Names")}</b><div class="mu">${e(x.date)} · ${c == "devotion" ? "Daily Devotion" : "Testimony"}</div></div>
         </div>
         <div class="cap">${e(x.caption)}</div>
-        ${x.photo?`<img src="${e(x.photo)}" alt="">`:''}
+        ${x.photo ? `<img src="${e(x.photo)}" alt="">` : ''}
         <div class="rx">
           <button class="on">👍 Like · 7</button>
           <button class="ht on">❤️ Heart · 7</button>
           <button class="shb" onclick="navigator.clipboard&&navigator.clipboard.writeText(location.href);alert('Link copied!')">↗ Share</button>
           <span class="mu">0 comments</span>
         </div>
-        <div class="cm">
-          <div class="cmf">
-            <input placeholder="Your name (optional)">
-            <textarea rows=2 placeholder="Write a comment..."></textarea>
-            <button class="btn sm gold" onclick="alert('Comment submitted!')">Post comment</button>
-          </div>
-          ${can(c)?`<div style="margin-top:8px"><button class="btn sm" data-add="${c}">Edit</button> <button class="red sm" data-del="${c}:${x.id}">Delete post</button></div>`:''}
-        </div>
       </div>
-    `).join('')||'<p class="mu">No posts yet.</p>'}
+    `).join('') || '<p class="mu">No posts yet.</p>'}
   </div>
-  ${c=="devotion"?`<div class="tvs">${trivia()}${tquiz()}</div>`:''}
-  ${c=="testimony"?`
-    <div class="card" style="margin:22px auto 0;max-width:44rem">
-      <b style="color:var(--pr)">Share your life testimony</b>
-      <div class="mu" style="margin:4px 0 8px">Has God done something wonderful in your life? We would love to hear it. Write your story below and send it to us through Gmail or our Facebook page.</div>
-      <input placeholder="Your name">
-      <input placeholder="Contact number or email (optional)">
-      <textarea rows=6 placeholder="Your testimony"></textarea>
-      <button class="btn gold" onclick="alert('Opening Gmail...')">Send via Gmail</button>
-      <button class="btn" style="background:#3b5998" onclick="alert('Opening Facebook...')">Send to our Facebook page</button>
-    </div>`:''}`;
+  ${c == "devotion" ? `<div class="tvs">${trivia()}${tquiz()}</div>` : ''}`;
 }
 
-function trivia(){
+function trivia() {
   return `<section class="tv"><div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu">New trivia in 23h 2m · resets 8:00 AM PH time</span></div>
   <div class="tvi"><div class="tvph">📜</div><span class="tvtag">OLD TESTAMENT</span></div>
   <div class="tvc"><h3>The Longest & Shortest Chapter</h3><p>Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!</p></div></section>`;
 }
 
-function tquiz(){
+function tquiz() {
   return `<section class="tv tqs"><div class="tq"><div class="tqh">❓ Question of the day</div>
   <div class="tqq">Who was the prophet called by God as a young boy in the temple under Eli?</div>
   <div class="tqo">
@@ -567,12 +442,12 @@ function tquiz(){
   </div></div></section>`;
 }
 
-function membersv(){
+function membersv() {
   const L = D.members || [];
   const ministryOrder = ["Church Leader","Member","Worship Team","Media Ministry","Dance Ministry","Youth Ministry","Founder","Pastor","Worship Head"];
   const mCounts = {};
   L.forEach(m => {
-    (m.ministry||"").split(",").map(s=>s.trim()).filter(Boolean).forEach(k => {
+    (m.ministry || "").split(",").map(s => s.trim()).filter(Boolean).forEach(k => {
       mCounts[k] = (mCounts[k] || 0) + 1;
     });
   });
@@ -580,114 +455,102 @@ function membersv(){
   return `<h2>MEMBERS (${L.length})</h2>
   <div class="grid" style="margin-bottom:14px">
     <div class="card"><div class="stat">${L.length}</div>Total members</div>
-    ${ministryOrder.map(k=>`<div class="card"><div class="stat">${mCounts[k]||0}</div>${e(k)}</div>`).join('')}
+    ${ministryOrder.map(k => `<div class="card"><div class="stat">${mCounts[k] || 0}</div>${e(k)}</div>`).join('')}
   </div>
-  ${can("members")?`<p><button class="btn gold" data-add="members">+ Add</button></p>`:''}
+  ${can("members") ? `<p><button class="btn gold" data-add="members">+ Add Member</button></p>` : ''}
   <div class="grid">
-    ${L.map(m=>`
+    ${L.map(m => `
       <div class="card">
         <b style="font-size:1.05rem">${e(m.name)}</b>
         <div class="mu" style="margin-top:4px"><b>Ministry:</b> ${e(m.ministry)}</div>
         <div class="mu"><b>Date joined:</b> ${e(m.joined)}</div>
-        ${can("members")?`<div style="margin-top:8px"><button class="btn sm" data-add="members">Edit</button> <button class="red sm" data-del="members:${m.id}">Delete</button></div>`:''}
+        ${can("members") ? `<div style="margin-top:8px"><button class="btn sm" data-add="members">Edit</button> <button class="red sm" data-del="members:${m.id}">Delete</button></div>` : ''}
       </div>
     `).join('')}
   </div>`;
 }
 
-function ministriesv(){
+function ministriesv() {
   const L = D.ministries || [];
   return `<h2>MINISTRIES (${L.length})</h2>
-  ${can("ministries")?`<p><button class="btn gold" data-add="ministries">+ Add</button></p>`:''}
+  ${can("ministries") ? `<p><button class="btn gold" data-add="ministries">+ Add</button></p>` : ''}
   <div class="grid">
-    ${L.map(m=>`
+    ${L.map(m => `
       <div class="card" style="padding:0;overflow:hidden">
-        ${m.photo?`<img src="${e(m.photo)}" style="width:100%;height:140px;object-fit:cover;display:block" alt="">`:''}
+        ${m.photo ? `<img src="${e(m.photo)}" style="width:100%;height:140px;object-fit:cover;display:block" alt="">` : ''}
         <div style="padding:12px 14px">
           <b style="font-size:1.1rem">${e(m.name)}</b>
           <div class="mu" style="margin-top:4px"><b>Leader:</b> ${e(m.leader)}</div>
           <div class="mu" style="margin-top:4px"><b>Description:</b> ${e(m.desc)}</div>
-          ${can("ministries")?`<div style="margin-top:10px"><button class="btn sm" data-add="ministries">Edit</button> <button class="red sm" data-del="ministries:${m.id}">Delete</button></div>`:''}
         </div>
       </div>
     `).join('')}
   </div>`;
 }
 
-function fundsv(){
+function fundsv() {
   const L = D.funds || [];
   let inc = 0, exp = 0;
   L.forEach(f => {
     const a = +f.amount || 0;
-    if(f.type == "Expense") exp += a; else inc += a;
+    if (f.type == "Expense") exp += a; else inc += a;
   });
 
   return `<h2>CHURCH FUNDS</h2>
-  <div class="card" style="margin-bottom:14px">
-    <b style="color:var(--pr)">Would you like to help?</b>
-    <div class="mu" style="margin:4px 0 8px">If God places it in your heart, you are warmly invited to support our church activities, outreach and ministries. Every gift, big or small, is received with gratitude. God bless you!</div>
-    <button class="gold" onclick="alert('Opening Messenger...')">I’d like to help (Messenger)</button>
-    <button class="btn" onclick="alert('Opening Email...')">Email us</button>
-  </div>
   <div class="grid" style="margin-bottom:14px">
     <div class="card"><div class="stat">₱${inc.toLocaleString()}</div>Income</div>
     <div class="card"><div class="stat">₱${exp.toLocaleString()}</div>Expenses</div>
     <div class="card"><div class="stat">₱${(inc - exp).toLocaleString()}</div>Balance</div>
   </div>
-  ${can("funds")?`<p><button class="btn gold" data-add="funds">+ Add</button></p>`:''}
+  ${can("funds") ? `<p><button class="btn gold" data-add="funds">+ Add Entry</button></p>` : ''}
   <div style="overflow-x:auto">
     <table style="width:100%;border-collapse:collapse">
       <tr style="border-bottom:1px solid var(--bd)">
         <th style="text-align:left;padding:8px;color:var(--pr)">Description</th>
         <th style="text-align:left;padding:8px;color:var(--pr)">Date</th>
         <th style="text-align:left;padding:8px;color:var(--pr)">Type</th>
-        <th style="text-align:left;padding:8px;color:var(--pr)">Category (Offering, Tithes, Utilities...)</th>
+        <th style="text-align:left;padding:8px;color:var(--pr)">Category</th>
         <th style="text-align:left;padding:8px;color:var(--pr)">Amount (₱)</th>
-        <th></th>
       </tr>
-      ${L.map(f=>`
+      ${L.map(f => `
         <tr style="border-top:1px solid var(--bd)">
           <td style="padding:8px"><b>${e(f.desc)}</b></td>
           <td style="padding:8px">${e(f.date)}</td>
           <td style="padding:8px">${e(f.type)}</td>
           <td style="padding:8px">${e(f.category)}</td>
-          <td style="padding:8px">${Number(f.amount).toLocaleString()}</td>
-          <td style="padding:8px;text-align:right">
-            ${can("funds")?`<button class="btn sm" data-add="funds">Edit</button> <button class="red sm" data-del="funds:${f.id}">Del</button>`:''}
-          </td>
+          <td style="padding:8px">₱${Number(f.amount).toLocaleString()}</td>
         </tr>
       `).join('')}
     </table>
   </div>`;
 }
 
-function attv(){
-  const A = (D.attendance||[])[0] || {date:"2026-11-01", svc:"Sunday Worship Service", present:[]};
+function attv() {
+  const A = (D.attendance || [])[0] || {date:"2026-11-01", svc:"Sunday Worship Service", present:[]};
   return `<h2>ATTENDANCE</h2>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <input type="date" value="${e(A.date)}" style="max-width:200px">
-    <select style="max-width:320px"><option selected>${e(A.svc)}</option><option>Leadership & WT Practice</option><option>Midweek Bible Study</option></select>
+    <select style="max-width:320px"><option selected>${e(A.svc)}</option></select>
   </div>
-  <p class="mu">Present: ${A.present.length} of ${(D.members||[]).length}</p>
-  ${can("attendance")?`<button class="btn gold" onclick="alert('Attendance saved successfully!')">Save attendance</button>`:''}
+  <p class="mu">Present: ${A.present.length} of ${(D.members || []).length}</p>
   <div style="margin-top:12px">
-    ${(D.members||[]).map((m,i)=>`
+    ${(D.members || []).map((m, i) => `
       <label class="chk">
-        <input type="checkbox" ${i < 25 ? "checked":""} ${can("attendance")?"":"disabled"}>
-        ${e(m.name)} ${i < 25 ? '<span class="mu">✓ saved</span>':''}
+        <input type="checkbox" ${i < 25 ? "checked" : ""} ${can("attendance") ? "" : "disabled"}>
+        ${e(m.name)} ${i < 25 ? '<span class="mu">✓ saved</span>' : ''}
       </label>
     `).join('')}
   </div>`;
 }
 
-function reportsv(){
+function reportsv() {
   return `<h2>REPORTS</h2>
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(19rem,100%),1fr))">
     <div class="card">
       <b>Church funds per month (₱)</b>
       <div style="height:140px;background:#ffffff0f;border-radius:8px;display:flex;align-items:flex-end;gap:16px;padding:12px;margin:10px 0">
-        <div style="flex:1;background:var(--pr);height:100%;border-radius:4px" title="Income 3171"></div>
-        <div style="flex:1;background:#6f8fff;height:98%;border-radius:4px" title="Expense 3135"></div>
+        <div style="flex:1;background:var(--pr);height:100%;border-radius:4px"></div>
+        <div style="flex:1;background:#6f8fff;height:98%;border-radius:4px"></div>
       </div>
       <div class="mu"><span style="color:var(--pr)">■</span> Income (₱3,171) &nbsp; <span style="color:#6f8fff">■</span> Expense (₱3,135)</div>
     </div>
@@ -696,7 +559,7 @@ function reportsv(){
       <div style="height:140px;background:#ffffff0f;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:10px 0">
         <span class="stat">39</span>
       </div>
-      <div class="mu">Add "Date joined" to members to see growth.</div>
+      <div class="mu">Total registered members</div>
     </div>
     <div class="card">
       <b>Attendance</b>
@@ -705,146 +568,80 @@ function reportsv(){
       </div>
       <div class="mu">2026-11-01 · Sunday Worship Service</div>
     </div>
-    <div class="card">
-      <b>Social media followers</b>
-      <div style="height:140px;background:#ffffff0f;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:10px 0">
-        <span class="stat">225</span>
-      </div>
-      <div class="mu">Facebook followers</div>
-    </div>
-    <div class="card">
-      <b>Social media engagement</b>
-      <div style="height:140px;background:#ffffff0f;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:10px 0">
-        <span class="stat">23,984</span>
-      </div>
-      <div class="mu">Total likes, comments, and shares</div>
-    </div>
   </div>`;
 }
 
-function socialv(){
+function socialv() {
   const L = D.social || [];
   return `<h2>SOCIAL MEDIA</h2>
   <div class="grid">
-    ${L.map(s=>`
+    ${L.map(s => `
       <div class="card">
-        <b style="font-size:1.1rem">${e(s.platform)}</b>
-        <div class="mu">Date: ${e(s.date)}</div>
+        <b>${e(s.platform)}</b>
         <div class="stat" style="font-size:2rem;margin-top:6px">${Number(s.followers).toLocaleString()}</div>
         <div class="mu">Followers</div>
-        <div style="margin-top:8px">Reach / Views: <b>${Number(s.reach).toLocaleString()}</b></div>
-        <div>Engagement: <b>${Number(s.engagement).toLocaleString()}</b></div>
+        <div style="margin-top:8px">Engagement: <b>${Number(s.engagement).toLocaleString()}</b></div>
       </div>
     `).join('')}
   </div>`;
 }
 
-function prayersv(){
-  return `<h2>PRAYER REQUESTS (0)</h2>
-  ${can("prayers")?`<p><button class="btn gold" data-add="prayers">+ Add</button></p>`:''}
-  <p class="mu">Nothing yet.</p>`;
+function prayersv() {
+  return `<h2>PRAYER REQUESTS (0)</h2><p class="mu">Nothing yet.</p>`;
 }
 
-function supportv(){
+function supportv() {
   return `<h2>SUPPORT THE CHURCH</h2>
   <div class="card">
     <b style="color:var(--pr)">Give directly via QR</b>
-    <div class="mu" style="margin-top:4px">Choose GCash, Maya or Bank transfer, then scan the QR code using your app. Thank you for your generosity!</div>
-    ${can("support")?`<p><button class="btn gold sm" data-add="donate">+ Add QR code</button></p>`:''}
-    <p class="mu">Donation QR codes will be posted here soon.</p>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <b style="color:var(--pr)">Would you like to help?</b>
-    <div class="mu" style="margin:4px 0 8px">If God places it in your heart, you are warmly invited to support our church activities, outreach and ministries. Every gift, big or small, is received with gratitude. God bless you!</div>
-    <button class="gold" onclick="alert('Opening Messenger...')">I’d like to help (Messenger)</button>
-    <button class="btn" onclick="alert('Opening Gmail...')">Email us</button>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div class="mu">You may also reach us directly at 0938-076-7378 or jtnaanbulacan030126@gmail.com to ask how to give or volunteer.</div>
+    <div class="mu" style="margin-top:4px">Donation QR codes will be posted here soon.</div>
   </div>`;
 }
 
-function list(c){
-  const F = CF[c] || {t:c, f:[], s:[], k:"title"};
-  const L = D[c] || [];
-  return `<h2>${TL[c]||F.t.toUpperCase()} (${L.length})</h2>
-  ${can(c)?`<p><button class="btn gold" data-add="${c}">+ Add</button></p>`:''}
-  <p class="mu">Nothing yet.</p>`;
+function list(c) {
+  return `<h2>${TL[c] || c.toUpperCase()}</h2><p class="mu">Nothing yet.</p>`;
 }
 
-function adminsv(){
-  if(!admin) return `<p class="mu">Access restricted to Super Admin.</p>`;
+function adminsv() {
+  if (!admin) return `<p class="mu">Access restricted to Super Admin.</p>`;
   return `<h2>ADMINS MANAGEMENT</h2>
-  <p class="mu">Church admins, role permissions, and system access.</p>
-  <div class="grid">${AL.map(a=>`
+  <div class="grid">${AL.map(a => `
     <div class="card">
       <b style="font-size:1.1rem;color:var(--pr)">${e(a.name)}</b>
-      <div class="mu" style="margin:4px 0">Username: <b>${e(a.username)}</b></div>
-      <div style="font-size:.85rem">Access: <b>${a.owner ? 'All Access (Super Admin)' : a.perms.map(p=>PL[p]||p).join(', ')}</b></div>
+      <div class="mu">Username: <b>${e(a.username)}</b></div>
+      <div style="font-size:.85rem">Role: <b>${a.owner ? 'Super Admin (All Access)' : a.perms.map(p => PL[p] || p).join(', ')}</b></div>
     </div>
   `).join('')}</div>`;
 }
 
-function loginForm(msg){
-  $("#mb").innerHTML=`<h3 style="margin-top:0">Admin Login</h3>
-  <form id="lf">
-    <div class="mu">Username:</div>
-    <input id="lu" placeholder="e.g. Admin@Mart, Admin02..." required>
-    <div class="mu" style="margin-top:8px">Password:</div>
-    <input id="lp" type="password" placeholder="Enter password" required>
-    <div id="le" style="color:#ff8a80;min-height:22px;margin-top:6px">${e(msg||"")}</div>
-    <p><button class="btn gold" type="submit">Log in</button> <button type="button" data-x="1">Cancel</button></p>
-  </form>`;
-  $("#modal").style.display="flex";
-}
-
-function form(c, id){
-  const F = CF[c];
-  const x = (D[c]||[]).find(y=>y.id==id)||{};
-  $("#mb").innerHTML = `<h3 style="margin-top:0">${id?"Edit":"Add"} – ${F.t}</h3>
-  ${F.f.map(([k,l,t])=>`<div class="mu" style="margin-top:6px">${l}:</div><input id="f_${k}" value="${e(x[k]||'')}" placeholder="${l}">`).join('')}
-  <p><button class="btn gold" data-save="${c}:${id||""}">Save</button> <button data-x="1">Cancel</button></p>`;
+function loginForm() {
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">Admin Login</h3>
+    <form id="lf">
+      <div class="mu">Username:</div>
+      <input id="lu" placeholder="e.g. Admin@Mart, Admin02..." required>
+      <div class="mu" style="margin-top:8px">Password:</div>
+      <input id="lp" type="password" placeholder="Enter password" required>
+      <div id="le" style="color:#ff8a80;min-height:22px;margin-top:6px"></div>
+      <p><button class="btn gold" type="submit">Log in</button> <button type="button" onclick="$('#modal').style.display='none'">Cancel</button></p>
+    </form>`;
   $("#modal").style.display = "flex";
 }
 
 document.addEventListener("click", ev => {
   const t = ev.target, d = t.dataset || {};
-  if(d.v){ view = d.v; render(); menu(false); }
-  if(d.login) loginForm();
-  if(d.logout){ me = null; admin = false; render(); }
-  if(d.x) $("#modal").style.display = "none";
-  if(d.add) form(d.add, "");
-  if(d.del){
-    const [c, id] = d.del.split(":");
-    if(confirm("Delete this entry?")){
-      D[c] = (D[c]||[]).filter(x => x.id != id);
-      saveState();
-      render();
-    }
-  }
-  if(d.save){
-    const [c, id] = d.save.split(":");
-    const F = CF[c];
-    const item = { id: id || "id_" + Date.now() };
-    F.f.forEach(([k]) => {
-      const el = $("#f_" + k);
-      if(el) item[k] = el.value.trim();
-    });
-    D[c] = (D[c]||[]).filter(x => x.id != item.id);
-    D[c].unshift(item);
-    saveState();
-    $("#modal").style.display = "none";
-    render();
-  }
+  if (d.v) { view = d.v; render(); menu(false); }
+  if (d.login) loginForm();
+  if (d.logout) { me = null; admin = false; render(); }
 });
 
 document.addEventListener("submit", ev => {
-  if(ev.target.id != "lf") return;
+  if (ev.target.id != "lf") return;
   ev.preventDefault();
   const u = $("#lu").value.trim().toLowerCase();
   const p = $("#lp").value;
   const found = AL.find(a => a.username.toLowerCase() === u && a.password === p);
-  if(found){
+  if (found) {
     me = found;
     admin = !!found.owner;
     $("#modal").style.display = "none";
@@ -855,5 +652,3 @@ document.addEventListener("submit", ev => {
 });
 
 render();
-</script>
-</body></html>
