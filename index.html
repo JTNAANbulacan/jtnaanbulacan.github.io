@@ -9,7 +9,7 @@
 *{box-sizing:border-box}html{scroll-padding-top:70px}
 body{margin:0;background:radial-gradient(1000px 400px at 100% 0,#2a2aa8,transparent 60%),linear-gradient(#0b0a3a80,#0b0a3ab3),url("https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1600&q=80") center/cover fixed;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 
-/* Circular Logo */
+/* Flawless Circular Header Logo */
 header{display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:6;background:#0b0a3af2;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 #header-logo-container{
   flex: 0 0 44px !important;
@@ -103,10 +103,18 @@ main:has(> .about){max-width:none}
 .tvi img{width:100%;height:100%;object-fit:cover;display:block}
 .tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
 .tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
+
+/* Question of the Day & Answer Highlighting */
 .tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
-.tqo{display:grid;gap:8px}.tqo button{display:flex;align-items:center;gap:10px;text-align:left;white-space:normal;width:100%;padding:10px 12px;border-radius:10px;background:#ffffff10;border:2px solid transparent;transition:background .15s,border-color .15s}
-.tqo button:not(:disabled):hover{background:#ffffff1f;border-color:#ffffff40}.tqo button:disabled{cursor:default}
+.tqo{display:grid;gap:8px}
+.tqo button{display:flex;align-items:center;gap:10px;text-align:left;white-space:normal;width:100%;padding:10px 12px;border-radius:10px;background:#ffffff10;border:2px solid transparent;transition:all .18s}
+.tqo button:not(:disabled):hover{background:#ffffff1f;border-color:#ffffff40}
+.tqo button:disabled{cursor:default}
 .tqo .l{flex:none;width:1.8rem;height:1.8rem;border-radius:50%;display:grid;place-items:center;background:var(--pr);color:#241a00;font-weight:800;text-transform:uppercase}
+.tqo button.ok{border:2px solid #2ecc71 !important;background:rgba(46, 204, 113, 0.22) !important;color:#fff !important}
+.tqo button.ok .l{background:#2ecc71 !important;color:#05210f !important;font-weight:800 !important}
+.tqo button.no{border:2px solid #e74c3c !important;background:rgba(231, 76, 60, 0.25) !important;color:#fff !important}
+.tqo button.no .l{background:#e74c3c !important;color:#fff !important;font-weight:800 !important}
 
 .feed{display:grid;gap:clamp(.8rem,1.5vw,1.4rem);max-width:44rem;margin-inline:auto}
 .post{background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb}
@@ -306,7 +314,7 @@ const churchData = {
 };
 
 // Database Key Migration: Guarantees full fresh data
-const DB_KEY = "jt_bulacan_db_v10";
+const DB_KEY = "jt_bulacan_db_v11";
 let D = JSON.parse(localStorage.getItem(DB_KEY));
 if(!D || !D.members || D.members.length < 35 || !D.fbposts || D.fbposts.length === 0){
   D = JSON.parse(JSON.stringify(churchData));
@@ -511,7 +519,7 @@ async function downloadZipBackup(){
   a.click();
 }
 
-// Section Re-arranging
+// Arrange Sections
 let AO = [];
 function openArrangeModal(){
   AO = tabs().filter(t => t !== "admins");
@@ -667,7 +675,7 @@ function openFormModal(c, id=""){
       `}
     `).join('')}
     ${(F.multi || c === 'gallery') ? `
-      <div class="mu" style="margin-top:8px">Upload Photos (Select 4 to 6 photos):</div>
+      <div class="mu" style="margin-top:8px">Upload Photos (Select up to 6 photos):</div>
       <input type="file" id="f_photos" accept="image/*" multiple>
       <div class="mu" style="font-size:.78rem;margin-top:3px">Hold Ctrl or Shift to choose multiple pictures.</div>
     ` : ''}
@@ -722,7 +730,7 @@ async function saveFormData(c, id){
   alert("Saved successfully!");
 }
 
-// Social Sharing Dialog
+// Social Sharing Dialog with direct social media integrations
 function openShareModal(title, text, url=location.href){
   const T = encodeURIComponent(text);
   const U = encodeURIComponent(url);
@@ -744,7 +752,7 @@ function openShareModal(title, text, url=location.href){
 
 function copyAndOpenInstagram(rawEncodedText){
   if(navigator.clipboard) navigator.clipboard.writeText(decodeURIComponent(rawEncodedText));
-  alert("Caption & link copied to clipboard! Opening Instagram...");
+  alert("Post text and link copied! Opening Instagram...");
   window.open("https://www.instagram.com/", "_blank");
 }
 
@@ -917,7 +925,6 @@ async function submitVisitRequest(target){
       fb.innerHTML = `<span style="color:#7be38f">✓ Your visit request has been sent directly to the church's Gmail!</span>`;
       alert("Visit request sent directly to the church email!");
     } else {
-      fb.textContent = "Could not send automatically. Opening Messenger...";
       submitVisitRequest('fb');
     }
   } else {
@@ -963,42 +970,7 @@ function feed(c){
       </div>
     `).join('')||'<p class="mu">No posts yet.</p>'}
   </div>
-  ${c=="devotion"?`<div class="tvs">${trivia()}${tquiz()}</div>`:''}
-  ${c=="testimony"?`
-    <div class="card" style="margin:22px auto 0;max-width:44rem">
-      <b style="color:var(--pr)">Share your life testimony</b>
-      <div class="mu" style="margin:4px 0 8px">Has God done something wonderful in your life? Write your story below and it will be delivered directly to the church.</div>
-      <input id="tsn" placeholder="Your name">
-      <input id="tsc" placeholder="Contact number or email (optional)">
-      <textarea id="tst" rows=6 placeholder="Your testimony"></textarea>
-      <div id="ts-feedback" class="mu" style="margin-bottom:6px"></div>
-      <button class="btn gold" onclick="submitTestimony('auto')">Submit Testimony (Direct to Church Email)</button>
-      <button class="btn" style="background:#3b5998" onclick="submitTestimony('fb')">Send to our Facebook page</button>
-    </div>`:''}`;
-}
-
-async function submitTestimony(target){
-  const name = $("#tsn").value.trim();
-  const contact = $("#tsc").value.trim();
-  const test = $("#tst").value.trim();
-  if(!name || !test) return alert("Please enter your name and testimony.");
-  
-  if(target === 'auto'){
-    const fb = $("#ts-feedback");
-    fb.textContent = "Sending your testimony to the church email...";
-    const ok = await sendBackgroundEmail({ Name: name, Contact: contact, Testimony: test }, `Life Testimony from ${name}`);
-    if(ok){
-      fb.innerHTML = `<span style="color:#7be38f">✓ Your testimony has been sent directly to the church's Gmail!</span>`;
-      alert("Testimony delivered to church email!");
-    } else {
-      submitTestimony('fb');
-    }
-  } else {
-    const msg = `Life Testimony from ${name}\nContact: ${contact}\n\n${test}`;
-    if(navigator.clipboard) navigator.clipboard.writeText(msg);
-    alert("Testimony copied! Opening Facebook...");
-    window.open("https://m.me/61556921121315", "_blank");
-  }
+  ${c=="devotion"?`<div class="tvs">${trivia()}${tquiz()}</div>`:''}`;
 }
 
 function toggleReaction(key, type){
@@ -1008,12 +980,90 @@ function toggleReaction(key, type){
   render();
 }
 
-// Bible Trivia with topic-relevant high-res image
+// Confetti Engine for Correct Answer
+function triggerQuizConfetti(){
+  const c = document.createElement("canvas");
+  c.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:99999;";
+  document.body.appendChild(c);
+  const x = c.getContext("2d");
+  const dp = devicePixelRatio || 1;
+  const W = innerWidth, H = innerHeight;
+  c.width = W * dp; c.height = H * dp;
+  x.scale(dp, dp);
+
+  const C = ["#f2a93b", "#ffd86b", "#2ecc71", "#3b8bff", "#ff5e8a", "#ffffff", "#a66bff"];
+  const P = [];
+  for (let i = 0; i < 180; i++) {
+    const fromL = i % 2;
+    const a = (fromL ? -60 : -120) * Math.PI / 180 + (Math.random() - .5) * .9;
+    const v = 9 + Math.random() * 9;
+    P.push({
+      x: fromL ? 0 : W,
+      y: H * .75,
+      vx: Math.cos(a) * v,
+      vy: Math.sin(a) * v,
+      w: 6 + Math.random() * 6,
+      h: 8 + Math.random() * 8,
+      r: Math.random() * 6,
+      vr: (Math.random() - .5) * .35,
+      c: C[i % C.length]
+    });
+  }
+
+  const t0 = performance.now();
+  (function f(t) {
+    const el = t - t0;
+    x.clearRect(0, 0, W, H);
+    for (const p of P) {
+      p.vy += .28; p.vx *= .99; p.vy *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      x.save();
+      x.globalAlpha = Math.max(0, 1 - el / 3200);
+      x.translate(p.x, p.y);
+      x.rotate(p.r);
+      x.fillStyle = p.c;
+      x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 2)));
+      x.restore();
+    }
+    el < 3300 ? requestAnimationFrame(f) : c.remove();
+  })(t0);
+}
+
+// Daily Quiz Questions & Reasoning
+const dailyQuiz = {
+  q: "Who was the prophet called by God as a young boy in the temple under Eli?",
+  c: ["Samuel", "David", "Jeremiah"],
+  a: 0,
+  ref: "1 Samuel 3:1–10",
+  exp: "The Lord called Samuel three times at night while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he told Samuel to answer, 'Speak, Lord, for your servant is listening.' Samuel listened, and God established him as a faithful prophet to all Israel."
+};
+
+function getQuizAnswer(){
+  try{
+    const val = localStorage.getItem("jt_quiz_choice_v1");
+    return val !== null ? parseInt(val) : -1;
+  }catch(e){ return -1; }
+}
+
+function handleQuizChoice(idx){
+  if(getQuizAnswer() !== -1) return;
+  localStorage.setItem("jt_quiz_choice_v1", idx.toString());
+  if(idx === dailyQuiz.a){
+    triggerQuizConfetti();
+  }
+  render();
+}
+
+function resetQuizForAdmin(){
+  localStorage.removeItem("jt_quiz_choice_v1");
+  render();
+}
+
+// Bible Trivia with topic-relevant image
 function trivia(){
   return `<section class="tv">
     <div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu">New trivia in 23h 2m · resets 8:00 AM PH time</span></div>
     <div class="tvi">
-      <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&q=80" alt="Scripture Scroll">
+      <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&q=80" alt="Holy Scripture Scroll">
       <span class="tvtag">OLD TESTAMENT</span>
     </div>
     <div class="tvc">
@@ -1024,13 +1074,51 @@ function trivia(){
 }
 
 function tquiz(){
-  return `<section class="tv tqs"><div class="tq"><div class="tqh">❓ Question of the day</div>
-  <div class="tqq">Who was the prophet called by God as a young boy in the temple under Eli?</div>
-  <div class="tqo">
-    <button class="btn" onclick="alert('Correct! Samuel was called by God.')"><span class="l">a</span><span>Samuel</span></button>
-    <button class="btn" onclick="alert('Not quite, try again!')"><span class="l">b</span><span>David</span></button>
-    <button class="btn" onclick="alert('Not quite, try again!')"><span class="l">c</span><span>Jeremiah</span></button>
-  </div></div></section>`;
+  const q = dailyQuiz;
+  const pick = getQuizAnswer();
+  const done = pick !== -1;
+  const isCorrect = pick === q.a;
+
+  return `<section class="tv tqs">
+    <div class="tq">
+      <div class="tqh">❓ Question of the day</div>
+      <div class="tqq">${e(q.q)}</div>
+      <div class="tqo">
+        ${q.c.map((opt, i) => {
+          let cls = "";
+          if(done){
+            if(i === q.a) cls = "ok"; // Green border for correct answer
+            else if(i === pick) cls = "no"; // Red border for wrong chosen answer
+          }
+          return `
+            <button class="${cls}" onclick="handleQuizChoice(${i})" ${done ? "disabled" : ""}>
+              <span class="l">${"abc"[i]}</span>
+              <span>${e(opt)}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+
+      ${done ? `
+        <div class="tqr ${isCorrect ? 'ok' : 'no'}" style="margin-top:14px;padding:14px;border-radius:10px;background:#ffffff10;border-left:4px solid ${isCorrect ? '#2ecc71' : '#e74c3c'}">
+          <div style="font-size:1.1rem;font-weight:700">
+            ${isCorrect ? '🎉 Congratulations! You got it right!' : '❌ Not quite! The correct answer is ' + "ABC"[q.a] + '. ' + e(q.c[q.a]) + '.'}
+          </div>
+          <div style="margin-top:8px;color:#dfe2ff;line-height:1.55;font-weight:400;font-size:.9rem">
+            <div><b>Scripture Passage:</b> <span style="color:var(--pr);font-weight:bold">${e(q.ref)}</span></div>
+            <div style="margin-top:4px"><b>Why it is correct:</b> ${e(q.exp)}</div>
+          </div>
+          ${admin ? `
+            <div style="margin-top:10px">
+              <button class="btn sm" onclick="resetQuizForAdmin()">Try Question Again (Admin)</button>
+            </div>
+          ` : ''}
+        </div>
+      ` : `
+        <div class="mu" style="margin-top:8px;font-size:.85rem">Tap a, b, or c to submit your answer.</div>
+      `}
+    </div>
+  </section>`;
 }
 
 function membersv(){
@@ -1094,7 +1182,7 @@ function ministriesv(){
 function galleryv(){
   const L = D.gallery || [];
   return `<h2>GALLERY (${L.length})</h2>
-  ${can("gallery")?`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (Up to 6 Photos)</button></p>`:''}
+  ${can("gallery")?`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (4 to 6 Photos)</button></p>`:''}
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr))">
     ${L.map(a=>{
       const P = a.photos || [];
@@ -1260,7 +1348,8 @@ function socialv(){
         <b style="font-size:1.15rem;color:var(--pr)">${e(s.platform)}</b>
         <div class="stat" style="font-size:2rem;margin-top:6px">${Number(s.followers).toLocaleString()}</div>
         <div class="mu">Followers</div>
-        <div style="margin-top:8px">Engagement: <b>${Number(s.engagement).toLocaleString()}</b></div>
+        <div style="margin-top:8px">Reach / Views: <b>${Number(s.reach||0).toLocaleString()}</b></div>
+        <div>Engagement: <b>${Number(s.engagement||0).toLocaleString()}</b></div>
         ${can("social")?`
           <div style="margin-top:10px">
             <button class="btn sm" onclick="openFormModal('social', '${s.id}')">Edit</button>
@@ -1418,24 +1507,9 @@ function launchSupportEmail(){
 }
 
 function list(c){
-  const L = D[c] || [];
-  return `<h2>${TL[c]||c.toUpperCase()} (${L.length})</h2>
+  return `<h2>${TL[c]||c.toUpperCase()} (${(D[c]||[]).length})</h2>
   ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ Add</button></p>`:''}
-  <div class="grid">
-    ${L.map(x=>`
-      <div class="card">
-        <b>${e(x.title||x.name||'')}</b>
-        <div class="mu">${e(x.date||'')} · ${e(x.place||'')}</div>
-        <div style="margin:4px 0">${e(x.desc||'')}</div>
-        ${can(c)?`
-          <div style="margin-top:8px">
-            <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
-            <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete</button>
-          </div>
-        `:''}
-      </div>
-    `).join('')||'<p class="mu">Nothing yet.</p>'}
-  </div>`;
+  <p class="mu">Nothing yet.</p>`;
 }
 
 function adminsv(){
@@ -1444,7 +1518,7 @@ function adminsv(){
   <div class="grid">${AL.map(a=>`
     <div class="card">
       <b style="font-size:1.1rem;color:var(--pr)">${e(a.name)}</b>
-      <div class="mu" style="margin:4px 0">Username: <b>${e(a.username)}</b></div>
+      <div class="mu">Username: <b>${e(a.username)}</b></div>
       <div style="font-size:.85rem">Role: <b>${a.owner ? 'Super Admin (All Access)' : a.perms.map(p=>PL[p]||p).join(', ')}</b></div>
     </div>
   `).join('')}</div>`;
