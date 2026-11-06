@@ -3,50 +3,73 @@
 <title>JTNAAN Bulacan – Church Management</title>
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D"><meta name="theme-color" content="#0b0a3a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-badge-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="JTNAAN">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<style id="bgcss"></style>
 <style>
 :root{--bg:#0b0a3a;--card:#15145a;--tx:#fff;--mu:#b9bde6;--pr:#f2a93b;--bd:#3a3a9a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*{box-sizing:border-box}html{scroll-padding-top:70px}
-body{margin:0;background:radial-gradient(1000px 400px at 100% 0,#2a2aa8,transparent 60%),linear-gradient(#0b0a3a80,#0b0a3ab3),url("https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1600&q=80") center/cover fixed;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html{scroll-padding-top:70px;background:#0b0a3a}
 
-/* Header & Circular Logo */
+/* Dedicated Dual-Layer Church Background */
+body{margin:0;background:transparent;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;position:relative;min-height:100vh}
+#site-bg{
+  position:fixed;
+  top:-30px;left:-30px;right:-30px;bottom:-30px;
+  z-index:-2;
+  pointer-events:none;
+  background-size:cover !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  filter:blur(9px);
+  -webkit-filter:blur(9px);
+  transform:scale(1.05);
+  transition:background-image 0.4s ease;
+}
+#site-bg-overlay{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:radial-gradient(1000px 400px at 100% 0,rgba(42,42,168,0.45),transparent 60%),linear-gradient(rgba(11,10,58,0.72),rgba(11,10,58,0.86));
+}
+
+/* Perfect Circular Header Logo */
 header{display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:6;background:#0b0a3af2;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 #header-logo-container{
-  flex: 0 0 44px !important;
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
-  min-height: 44px !important;
-  border-radius: 50% !important;
-  background: #fff !important;
-  border: 2px solid var(--pr) !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  overflow: hidden !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,.4) !important;
-  transition: transform .2s !important;
-  box-sizing: border-box !important;
+  flex:0 0 44px !important;
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  min-height:44px !important;
+  max-width:44px !important;
+  max-height:44px !important;
+  border-radius:50% !important;
+  background:#fff !important;
+  border:2px solid var(--pr) !important;
+  padding:0 !important;
+  margin:0 !important;
+  overflow:hidden !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  box-shadow:0 2px 10px rgba(0,0,0,.4) !important;
+  transition:transform .2s !important;
+  box-sizing:border-box !important;
 }
 #header-logo-container:hover{transform:scale(1.06)}
 #church-logo-render{
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
+  width:100% !important;
+  height:100% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:50% !important;
+  overflow:hidden !important;
 }
 #church-logo-render img{
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  border-radius: 50% !important;
-  display: block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  border-radius:50% !important;
+  display:block !important;
 }
 
 header>div{min-width:0;flex:1 1 auto}
@@ -106,7 +129,7 @@ main:has(> .about){max-width:none}
 .tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
 .tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
 
-/* Question of the Day & Answer Highlighting */
+/* Question of the Day & Choice Colors */
 .tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
 .tqo{display:grid;gap:8px}
 .tqo button{display:flex;align-items:center;gap:10px;text-align:left;white-space:normal;width:100%;padding:10px 12px;border-radius:10px;background:#ffffff10;border:2px solid transparent;transition:all .18s}
@@ -162,6 +185,11 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 </style>
 </head><body>
 
+<!-- Dedicated Background Layer & Violet Overlay -->
+<div id="site-bg"></div>
+<div id="site-bg-overlay"></div>
+
+<!-- Live Hidden File Pickers -->
 <input type="file" id="bg-file-picker" accept="image/*" style="display:none" onchange="handleBgUpload(event)">
 <input type="file" id="logo-file-picker" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
 
@@ -176,6 +204,7 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 <nav id="nav"></nav>
 <main id="main"><p class="mu">Loading Church Data…</p></main>
 
+<!-- Quick Action Toolbar for Admin Mart -->
 <div id="txbar">
   <b style="color:var(--pr)">✎ Admin Mart Live Edit</b>
   <span class="mu">Click any text to edit</span>
@@ -297,7 +326,7 @@ const churchData = {
     }
   ],
   fbposts: [
-    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center of our lives and church.", url:"https://www.facebook.com/profile.php?id=61556921121315"},
+    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center ...", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb2", date:"2026-11-02", caption:"Sunday Worship Service \"Jesus Be the Center of Our Hearts\" [Jesus at the Center Series - Proverbs 4:20-23]", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb3", date:"2026-11-03", caption:"More than a team, we're a family united in worship. JTNAAN Worship Team Bonding", url:"https://www.facebook.com/profile.php?id=61556921121315"}
   ],
@@ -315,11 +344,56 @@ const churchData = {
   events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
 };
 
-const DB_KEY = "jt_bulacan_db_v12";
+// Permanent Multi-Megabyte Storage via IndexedDB
+const ChurchDB = {
+  dbName: "JTNAAN_Church_Database",
+  storeName: "keyval",
+  db: null,
+  async init() {
+    return new Promise((resolve) => {
+      if (!window.indexedDB) { resolve(null); return; }
+      const req = indexedDB.open(this.dbName, 1);
+      req.onupgradeneeded = (e) => {
+        const d = e.target.result;
+        if (!d.objectStoreNames.contains(this.storeName)) {
+          d.createObjectStore(this.storeName);
+        }
+      };
+      req.onsuccess = (e) => { this.db = e.target.result; resolve(this.db); };
+      req.onerror = () => resolve(null);
+    });
+  },
+  async get(key) {
+    if (!this.db) await this.init();
+    if (!this.db) return null;
+    return new Promise((resolve) => {
+      try {
+        const tx = this.db.transaction(this.storeName, "readonly");
+        const req = tx.objectStore(this.storeName).get(key);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      } catch(e) { resolve(null); }
+    });
+  },
+  async set(key, val) {
+    if (!this.db) await this.init();
+    if (!this.db) return false;
+    return new Promise((resolve) => {
+      try {
+        const tx = this.db.transaction(this.storeName, "readwrite");
+        tx.objectStore(this.storeName).put(val, key);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      } catch(e) { resolve(false); }
+    });
+  }
+};
+
+const DB_KEY = "jt_bulacan_db_v15";
 let D = JSON.parse(localStorage.getItem(DB_KEY));
 if(!D || !D.members || D.members.length < 35 || !D.fbposts || D.fbposts.length === 0){
   D = JSON.parse(JSON.stringify(churchData));
-  localStorage.setItem(DB_KEY, JSON.stringify(D));
+  try{ localStorage.setItem(DB_KEY, JSON.stringify(D)); }catch(e){}
 }
 
 let R = JSON.parse(localStorage.getItem("jt_rx_counts")) || {"devotion:dv1": {like: 7, heart: 7}};
@@ -342,11 +416,19 @@ let me = savedSession;
 let admin = !!(me && me.owner);
 let view = "dashboard", dsel="GCash";
 
-function saveState(){
-  localStorage.setItem(DB_KEY, JSON.stringify(D));
-  localStorage.setItem("jt_rx_counts", JSON.stringify(R));
-  if(me) localStorage.setItem("jt_active_session", JSON.stringify(me));
-  else localStorage.setItem("jt_active_session", "null");
+// Asynchronous Permanent Save to IndexedDB & LocalStorage
+async function saveState(){
+  await ChurchDB.set("church_data", D);
+  await ChurchDB.set("rx_counts", R);
+  if(me) await ChurchDB.set("active_session", me);
+  try {
+    localStorage.setItem(DB_KEY, JSON.stringify(D));
+    localStorage.setItem("jt_rx_counts", JSON.stringify(R));
+    if(me) localStorage.setItem("jt_active_session", JSON.stringify(me));
+    else localStorage.setItem("jt_active_session", "null");
+  } catch(e) {
+    console.warn("LocalStorage full, saved in IndexedDB successfully.");
+  }
 }
 
 const can = c => !!me && (me.owner || (me.perms || []).includes(okey(c == "donate" ? "support" : c == "fbposts" ? "dashboard" : c)));
@@ -355,34 +437,42 @@ const $ = s => document.querySelector(s);
 const ex = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const e = ex;
 
-// Background handling
+// Default Church Sanctuary Worship Photo
+const defaultChurchBg = "https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=1600&q=80";
+
 function applyBackground(){
   const custom = (D.settings||[]).find(x => x.id === "bg");
-  const el = $("#bgcss");
-  if(custom && custom.url){
-    el.textContent = `body::before{background:radial-gradient(1000px 400px at 100% 0,#2a2aa8,transparent 60%),linear-gradient(#0b0a3a80,#0b0a3ab3),url("${custom.url}") center/cover fixed !important;filter:blur(8px)}`;
-  } else {
-    el.textContent = ``;
-  }
+  const bgEl = document.getElementById("site-bg");
+  if(!bgEl) return;
+  const url = (custom && custom.url) ? custom.url : defaultChurchBg;
+  bgEl.style.backgroundImage = `url("${url}")`;
 }
 
 function triggerBgPicker(){
-  const p = $("#bg-file-picker");
+  const p = document.getElementById("bg-file-picker");
   if(p) p.click();
 }
 
 async function handleBgUpload(ev){
   const f = ev.target.files[0];
   if(!f) return;
-  const b64 = await upload(f);
-  D.settings = (D.settings||[]).filter(x => x.id !== "bg").concat([{id:"bg", url: b64}]);
-  saveState();
-  applyBackground();
-  render();
-  alert("Site background updated successfully!");
+  try {
+    const b64 = await upload(f, 1400, 0.78);
+    try { localStorage.setItem("jt_custom_bg", b64); } catch(e){}
+    await ChurchDB.set("custom_bg", b64);
+    D.settings = (D.settings||[]).filter(x => x.id !== "bg").concat([{id:"bg", url: b64}]);
+    await saveState();
+    applyBackground();
+    render();
+    alert("Church background updated and permanently saved!");
+  } catch(err) {
+    alert("Error uploading background: " + err.message);
+  }
 }
 
 function resetBgToDefault(){
+  try { localStorage.removeItem("jt_custom_bg"); } catch(e){}
+  ChurchDB.set("custom_bg", null);
   D.settings = (D.settings||[]).filter(x => x.id !== "bg");
   saveState();
   applyBackground();
@@ -428,29 +518,36 @@ function triggerLogoPicker(){
 async function handleLogoUpload(ev){
   const f = ev.target.files[0];
   if(!f) return;
-  const b64 = await upload(f);
-  D.settings = (D.settings||[]).filter(x => x.id !== "logo").concat([{id:"logo", url: b64}]);
-  saveState();
-  renderLogo();
-  render();
-  alert("Church logo updated successfully!");
+  try {
+    const b64 = await upload(f, 400, 0.85);
+    try { localStorage.setItem("jt_custom_logo", b64); } catch(e){}
+    await ChurchDB.set("custom_logo", b64);
+    D.settings = (D.settings||[]).filter(x => x.id !== "logo").concat([{id:"logo", url: b64}]);
+    await saveState();
+    renderLogo();
+    render();
+    alert("Church logo updated and permanently saved!");
+  } catch(err) {
+    alert("Error uploading logo: " + err.message);
+  }
 }
 
-async function upload(f){
+async function upload(f, maxDim = 1200, quality = 0.75){
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = ev => {
       const img = new Image();
       img.onload = () => {
         const cv = document.createElement("canvas");
-        const maxDim = 1000;
         let w = img.width, h = img.height;
-        if(w > h && w > maxDim){ h *= maxDim / w; w = maxDim; }
-        else if(h > maxDim){ w *= maxDim / h; h = maxDim; }
+        if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
         cv.width = w; cv.height = h;
-        cv.getContext("2d").drawImage(img, 0, 0, w, h);
-        resolve(cv.toDataURL("image/jpeg", 0.8));
+        const ctx = cv.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(cv.toDataURL("image/jpeg", quality));
       };
+      img.onerror = reject;
       img.src = ev.target.result;
     };
     reader.onerror = reject;
@@ -705,7 +802,7 @@ async function saveFormData(c, id){
       const upList = [];
       const files = Array.from(phInput.files).slice(0, 6);
       for(const f of files){
-        upList.push(await upload(f));
+        upList.push(await upload(f, 1000, 0.75));
       }
       item.photos = upList;
     } else if(id) {
@@ -716,7 +813,7 @@ async function saveFormData(c, id){
 
   const ph = $("#f_photo");
   if(ph && ph.files[0]){
-    item.photo = await upload(ph.files[0]);
+    item.photo = await upload(ph.files[0], 900, 0.78);
   } else if(id) {
     const old = (D[c]||[]).find(y => y.id === id) || {};
     if(old.photo) item.photo = old.photo;
@@ -724,10 +821,10 @@ async function saveFormData(c, id){
   
   D[c] = (D[c]||[]).filter(x => x.id !== item.id);
   D[c].unshift(item);
-  saveState();
+  await saveState();
   closeModal();
   render();
-  alert("Saved successfully!");
+  alert("Saved and stored permanently!");
 }
 
 // Social Sharing Dialog
@@ -807,7 +904,7 @@ function dash(){
   <div class="card" style="margin-top:14px">
     <b style="color:var(--pr)">Site background</b>
     <div class="mu" style="margin:4px 0 8px">Upload a photo to use as the blurred background of the whole site. It changes for every visitor right away.</div>
-    <div class="mu" style="margin-bottom:8px">${customBg ? "Custom background is currently active." : "Currently using the default background."}</div>
+    <div class="mu" style="margin-bottom:8px">${customBg ? "Custom sanctuary background is active." : "Currently using the default church background."}</div>
     <button class="btn gold sm" onclick="triggerBgPicker()">Upload new background</button>
     ${customBg ? ` <button class="btn red sm" onclick="resetBgToDefault()">Use default background</button>` : ''}
   </div>`:''}
@@ -867,7 +964,7 @@ function appv(){
 function about(){
   return `<section class="about">
     <h2>ABOUT US</h2>
-    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship.</p>
+    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship, all in a welcoming community that encourages you to honor God and live out His Word in everyday life.</p>
     <div class="grid">
       <div class="card"><b>Mission</b><div class="mu">To proclaim the Good News of Jesus Christ and make disciples of all nations.</div></div>
       <div class="card"><b>Vision</b><div class="mu">To win the lost souls to Jesus Christ, nurture believers in the faith, and equip them to live for God’s glory.</div></div>
@@ -947,7 +1044,7 @@ function feed(c){
       <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership.</p>
 
       <!-- 1. BIBLE TRIVIA & DAILY QUESTION AT THE TOP -->
-      <div class="tvs" style="margin-top:14px;margin-bottom:28px">
+      <div class="tvs">
         ${trivia()}
         ${tquiz()}
       </div>
@@ -1173,8 +1270,8 @@ function tquiz(){
         ${q.c.map((opt, i) => {
           let cls = "";
           if(done){
-            if(i === q.a) cls = "ok"; // Green border for correct answer
-            else if(i === pick) cls = "no"; // Red border for wrong chosen answer
+            if(i === q.a) cls = "ok";
+            else if(i === pick) cls = "no";
           }
           return `
             <button class="${cls}" onclick="handleQuizChoice(${i})" ${done ? "disabled" : ""}>
@@ -1264,6 +1361,7 @@ function ministriesv(){
   </div>`;
 }
 
+// Gallery View with 4 to 6 Photos Collage
 function galleryv(){
   const L = D.gallery || [];
   return `<h2>GALLERY (${L.length})</h2>
@@ -1422,6 +1520,7 @@ function reportsv(){
   </div>`;
 }
 
+// Social Media with Add/Edit features
 function socialv(){
   const L = D.social || [];
   return `<h2>SOCIAL MEDIA</h2>
@@ -1444,6 +1543,7 @@ function socialv(){
   </div>`;
 }
 
+// Prayer Requests with auto-email and Messenger
 function prayersv(){
   const L = D.prayers || [];
   return `<h2>PRAYER REQUESTS (${L.length})</h2>
@@ -1510,7 +1610,7 @@ async function submitPrayerRequest(target){
     if(ok){
       fb.innerHTML = `<span style="color:#7be38f">✓ Your prayer request has been delivered directly to the church's Gmail!</span>`;
       D.prayers.unshift({ id: "pr_" + Date.now().toString(36), name: name + " (" + cat + ")", req: req, status: "Open" });
-      saveState();
+      await saveState();
       render();
       alert("Prayer request delivered directly to church email!");
     } else {
@@ -1524,6 +1624,7 @@ async function submitPrayerRequest(target){
   }
 }
 
+// Support the Church
 function supportv(){
   const L = D.donate || [];
   const DMS = ["GCash", "Maya", "Bank transfer"];
@@ -1628,11 +1729,12 @@ function deleteRecord(c, id){
   }
 }
 
-// Session System
-function handleLogout(){
+// Session System with Safe Logout
+async function handleLogout(){
   me = null;
   admin = false;
-  localStorage.setItem("jt_active_session", "null");
+  await ChurchDB.set("active_session", null);
+  try{ localStorage.setItem("jt_active_session", "null"); }catch(e){}
   render();
 }
 
@@ -1654,7 +1756,7 @@ function loginForm(msg){
   setTimeout(() => { const el = $("#lu"); if(el) el.focus(); }, 60);
 }
 
-function handleLoginSubmit(ev){
+async function handleLoginSubmit(ev){
   ev.preventDefault();
   const u = $("#lu").value.trim().toLowerCase();
   const p = $("#lp").value;
@@ -1662,7 +1764,8 @@ function handleLoginSubmit(ev){
   if(found){
     me = found;
     admin = !!found.owner;
-    localStorage.setItem("jt_active_session", JSON.stringify(found));
+    await ChurchDB.set("active_session", found);
+    try{ localStorage.setItem("jt_active_session", JSON.stringify(found)); }catch(e){}
     closeModal();
     render();
   } else {
@@ -1675,7 +1778,45 @@ document.addEventListener("click", ev => {
   if(d.v){ view = d.v; render(); menu(false); }
 });
 
-applyBackground();
-render();
+// Permanent Database Boot (IndexedDB + LocalStorage sync)
+async function initDatabaseAndApp(){
+  await ChurchDB.init();
+
+  // Load custom background from IndexedDB or LocalStorage
+  const idbBg = await ChurchDB.get("custom_bg");
+  if(idbBg){
+    D.settings = (D.settings||[]).filter(x => x.id !== "bg").concat([{id:"bg", url: idbBg}]);
+  } else {
+    try{
+      const lsBg = localStorage.getItem("jt_custom_bg");
+      if(lsBg) D.settings = (D.settings||[]).filter(x => x.id !== "bg").concat([{id:"bg", url: lsBg}]);
+    }catch(e){}
+  }
+
+  // Load custom logo from IndexedDB or LocalStorage
+  const idbLogo = await ChurchDB.get("custom_logo");
+  if(idbLogo){
+    D.settings = (D.settings||[]).filter(x => x.id !== "logo").concat([{id:"logo", url: idbLogo}]);
+  } else {
+    try{
+      const lsLogo = localStorage.getItem("jt_custom_logo");
+      if(lsLogo) D.settings = (D.settings||[]).filter(x => x.id !== "logo").concat([{id:"logo", url: lsLogo}]);
+    }catch(e){}
+  }
+
+  // Load church data from IndexedDB
+  const idbData = await ChurchDB.get("church_data");
+  if(idbData && idbData.members && idbData.members.length >= 35){
+    if(idbBg && !idbData.settings.some(s => s.id === 'bg')) idbData.settings.push({id:'bg', url: idbBg});
+    if(idbLogo && !idbData.settings.some(s => s.id === 'logo')) idbData.settings.push({id:'logo', url: idbLogo});
+    D = idbData;
+  }
+
+  applyBackground();
+  renderLogo();
+  render();
+}
+
+initDatabaseAndApp();
 </script>
 </body></html>
