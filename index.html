@@ -9,7 +9,7 @@
 *{box-sizing:border-box}html{scroll-padding-top:70px}
 body{margin:0;background:radial-gradient(1000px 400px at 100% 0,#2a2aa8,transparent 60%),linear-gradient(#0b0a3a80,#0b0a3ab3),url("https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1600&q=80") center/cover fixed;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 
-/* Flawless Circular Header Logo */
+/* Circular Logo */
 header{display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:6;background:#0b0a3af2;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 #header-logo-container{
   flex: 0 0 44px !important;
@@ -99,7 +99,8 @@ main:has(> .about){max-width:none}
 
 .tv{max-width:44rem;margin:0 auto clamp(1rem,2vw,1.6rem);background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
 .tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
-.tvi{position:relative;aspect-ratio:16/9;background:radial-gradient(circle at 30% 20%,#f2a93b55,transparent 55%),linear-gradient(135deg,#2a2aa8,#0b0a3a);display:flex;align-items:center;justify-content:center}
+.tvi{position:relative;aspect-ratio:16/9;background:#0b0a3a;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tvi img{width:100%;height:100%;object-fit:cover;display:block}
 .tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
 .tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
 .tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
@@ -120,6 +121,10 @@ main:has(> .about){max-width:none}
 .qr{background:#ffffff0f;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .qr img{width:100%;max-width:18rem;height:auto;max-height:22rem;object-fit:contain;background:#fff;padding:8px;border-radius:10px;align-self:center}
 
+.shg{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:8px;margin:12px 0}
+.shg button{display:flex;align-items:center;gap:8px;padding:.6rem .75rem;border-radius:10px;font-weight:700;color:#fff;justify-content:flex-start}
+.shg .ic{width:1.6rem;height:1.6rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff3;font-size:.85rem;flex:none}
+
 .appb{background:linear-gradient(135deg,#2a2aa8cc,#15145acc);border:1px solid var(--pr);border-radius:14px;padding:clamp(.9rem,2.5vw,1.6rem)}
 .appi{display:flex;gap:.9rem;align-items:center}.appi img{width:3.6rem;height:3.6rem;border-radius:22%;flex:none;box-shadow:0 4px 14px #0007}.appt{display:block;font-size:1.2rem;color:var(--pr)}
 .appl{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;list-style:none;padding:0;margin:.8rem 0}.appl li::before{content:"✓ ";color:var(--pr);font-weight:700}
@@ -129,8 +134,7 @@ main:has(> .about){max-width:none}
 
 #hl{flex:none;display:flex;align-items:center;gap:.4rem}.hlu{font-size:.85rem;margin-right:.2rem;white-space:nowrap}
 .ib{display:inline-flex;align-items:center;justify-content:center;width:2.4rem;height:2.4rem;padding:0;border-radius:10px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);transition:background .2s}
-.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}
-.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none !important}
+.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none !important}
 
 :root{--nw:min(16rem,78vw);--hh:4rem;--ez:cubic-bezier(.22,.61,.36,1)}
 html{overflow-x:hidden}body{overflow-x:clip}
@@ -184,7 +188,7 @@ const CF={
   ministries:{t:"Ministries",f:[["name","Ministry name"],["leader","Leader"],["desc","Description","t"]],s:["leader","desc"],k:"name",photo:1},
   events:{t:"Events",f:[["title","Event title"],["date","Date","date"],["place","Place"],["desc","Details","t"]],s:["date","place","desc"],k:"title",photo:1},
   prayers:{t:"Prayer Requests",f:[["name","Name"],["req","Request","t"],["status","Status (Open / Answered)"]],s:["req","status"],k:"name"},
-  gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:40},
+  gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:6},
   funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["type","Type","s:Income,Expense"],["category","Category"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
   social:{t:"Social Media",f:[["platform","Platform","s:Facebook,YouTube,TikTok,Instagram"],["date","Date","date"],["followers","Followers","number"],["reach","Reach / views","number"],["engagement","Engagement","number"]],s:[],k:"platform"},
   fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"],["date","Date posted","date"]],s:[],k:"url"},
@@ -293,12 +297,16 @@ const churchData = {
       present:["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11","m12","m13","m14","m15","m16","m17","m18","m19","m20","m21","m22","m23","m24","m25"]
     }
   ],
-  social: [{id:"s1", platform:"Facebook", date:"2026-03-01", followers:225, reach:12000, engagement:23984}],
+  social: [
+    {id:"s1", platform:"Facebook", date:"2026-03-01", followers:225, reach:12000, engagement:23984},
+    {id:"s2", platform:"YouTube", date:"2026-03-01", followers:180, reach:6500, engagement:1420},
+    {id:"s3", platform:"TikTok", date:"2026-03-01", followers:450, reach:18900, engagement:4120}
+  ],
   events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
 };
 
-// Force migration so fresh church data always loads
-const DB_KEY = "jt_bulacan_db_v9";
+// Database Key Migration: Guarantees full fresh data
+const DB_KEY = "jt_bulacan_db_v10";
 let D = JSON.parse(localStorage.getItem(DB_KEY));
 if(!D || !D.members || D.members.length < 35 || !D.fbposts || D.fbposts.length === 0){
   D = JSON.parse(JSON.stringify(churchData));
@@ -308,14 +316,13 @@ if(!D || !D.members || D.members.length < 35 || !D.fbposts || D.fbposts.length =
 let R = JSON.parse(localStorage.getItem("jt_rx_counts")) || {"devotion:dv1": {like: 7, heart: 7}};
 let AL = defaultAdmins;
 
-// Safe, persistent session management
 let savedSession = null;
 try {
   const raw = localStorage.getItem("jt_active_session");
   if(raw !== null){
     savedSession = JSON.parse(raw);
   } else {
-    savedSession = defaultAdmins[0]; // Admin Mart default on first visit
+    savedSession = defaultAdmins[0]; // Admin Mart default
     localStorage.setItem("jt_active_session", JSON.stringify(savedSession));
   }
 } catch(e){
@@ -442,6 +449,27 @@ async function upload(f){
   });
 }
 
+// Background AJAX Email Sender (Does not open Gmail)
+async function sendBackgroundEmail(formData, subject="Church Website Form Submission"){
+  try{
+    const res = await fetch("https://formsubmit.co/ajax/jtnaanbulacan030126@gmail.com", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        _subject: subject,
+        ...formData
+      })
+    });
+    return res.ok;
+  }catch(err){
+    console.error("Email send error:", err);
+    return false;
+  }
+}
+
 function baseTabs(){
   const saved = ((D.settings||[]).find(x => x.id === "order") || {}).list;
   const defaultList = [
@@ -483,7 +511,7 @@ async function downloadZipBackup(){
   a.click();
 }
 
-// Arrange Sections
+// Section Re-arranging
 let AO = [];
 function openArrangeModal(){
   AO = tabs().filter(t => t !== "admins");
@@ -638,7 +666,12 @@ function openFormModal(c, id=""){
         <input id="f_${k}" type="${t||'text'}" value="${e(x[k]||'')}" placeholder="${l}">
       `}
     `).join('')}
-    ${F.photo ? `
+    ${(F.multi || c === 'gallery') ? `
+      <div class="mu" style="margin-top:8px">Upload Photos (Select 4 to 6 photos):</div>
+      <input type="file" id="f_photos" accept="image/*" multiple>
+      <div class="mu" style="font-size:.78rem;margin-top:3px">Hold Ctrl or Shift to choose multiple pictures.</div>
+    ` : ''}
+    ${F.photo && c !== 'gallery' ? `
       <div class="mu" style="margin-top:6px">Photo / Image:</div>
       <input type="file" id="f_photo" accept="image/*">
     ` : ''}
@@ -656,6 +689,23 @@ async function saveFormData(c, id){
     const el = $("#f_" + k);
     if(el) item[k] = el.value.trim();
   });
+  
+  // Multi-photo upload for Gallery
+  if(c === 'gallery'){
+    const phInput = $("#f_photos");
+    if(phInput && phInput.files.length > 0){
+      const upList = [];
+      const files = Array.from(phInput.files).slice(0, 6);
+      for(const f of files){
+        upList.push(await upload(f));
+      }
+      item.photos = upList;
+    } else if(id) {
+      const old = (D[c]||[]).find(y => y.id === id) || {};
+      item.photos = old.photos || [];
+    }
+  }
+
   const ph = $("#f_photo");
   if(ph && ph.files[0]){
     item.photo = await upload(ph.files[0]);
@@ -663,12 +713,39 @@ async function saveFormData(c, id){
     const old = (D[c]||[]).find(y => y.id === id) || {};
     if(old.photo) item.photo = old.photo;
   }
+  
   D[c] = (D[c]||[]).filter(x => x.id !== item.id);
   D[c].unshift(item);
   saveState();
   closeModal();
   render();
   alert("Saved successfully!");
+}
+
+// Social Sharing Dialog
+function openShareModal(title, text, url=location.href){
+  const T = encodeURIComponent(text);
+  const U = encodeURIComponent(url);
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">Share to Social Media</h3>
+    <div class="mu" style="margin-bottom:10px">${ex(title)}</div>
+    <div class="shg">
+      <button style="background:#1877f2" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${U}', '_blank')"><span class="ic">f</span> Facebook</button>
+      <button style="background:#0084ff" onclick="window.open('https://m.me/61556921121315', '_blank')"><span class="ic">✉</span> Messenger</button>
+      <button style="background:#25d366" onclick="window.open('https://api.whatsapp.com/send?text=${T}%20${U}', '_blank')"><span class="ic">✆</span> WhatsApp</button>
+      <button style="background:#d62976" onclick="copyAndOpenInstagram('${encodeURIComponent(text)}')"><span class="ic">◎</span> Instagram</button>
+      <button style="background:#000" onclick="window.open('https://twitter.com/intent/tweet?text=${T}&url=${U}', '_blank')"><span class="ic">𝕏</span> X / Twitter</button>
+      <button style="background:#3b3bd0" onclick="navigator.clipboard.writeText('${url}');alert('Link copied to clipboard!')"><span class="ic">⧉</span> Copy Link</button>
+    </div>
+    <p><button onclick="closeModal()">Close</button></p>
+  `;
+  $("#modal").style.display = "flex";
+}
+
+function copyAndOpenInstagram(rawEncodedText){
+  if(navigator.clipboard) navigator.clipboard.writeText(decodeURIComponent(rawEncodedText));
+  alert("Caption & link copied to clipboard! Opening Instagram...");
+  window.open("https://www.instagram.com/", "_blank");
 }
 
 function render(){
@@ -701,6 +778,7 @@ function render(){
   else if(view=="attendance") $("#main").innerHTML = attv();
   else if(view=="members") $("#main").innerHTML = membersv();
   else if(view=="ministries") $("#main").innerHTML = ministriesv();
+  else if(view=="gallery") $("#main").innerHTML = galleryv();
   else $("#main").innerHTML = list(view);
 
   if(TE === 1) applyTextOutlines();
@@ -781,7 +859,7 @@ function appv(){
 function about(){
   return `<section class="about">
     <h2>ABOUT US</h2>
-    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship.</p>
+    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship, all in a welcoming community that encourages you to honor God and live out His Word in everyday life.</p>
     <div class="grid">
       <div class="card"><b>Mission</b><div class="mu">To proclaim the Good News of Jesus Christ and make disciples of all nations.</div></div>
       <div class="card"><b>Vision</b><div class="mu">To win the lost souls to Jesus Christ, nurture believers in the faith, and equip them to live for God’s glory.</div></div>
@@ -807,24 +885,46 @@ function sched(){
     <label class="mu" style="display:block;margin-top:6px">Preferred date & time (optional)</label>
     <div style="display:flex;gap:8px"><input type="date" id="rqd" style="flex:1"><input type="time" id="rqh" style="flex:1"></div>
     <textarea id="rqm" rows=3 placeholder="Notes (optional)"></textarea>
-    <button class="btn gold" onclick="submitVisitRequest('fb')">Send via Messenger</button>
-    <button class="btn" onclick="submitVisitRequest('gm')">Send via Gmail</button>
+    <div id="rq-feedback" class="mu" style="margin-bottom:6px"></div>
+    <button class="btn gold" onclick="submitVisitRequest('auto')">Send Visit Request (Direct to Church Email)</button>
+    <button class="btn" onclick="submitVisitRequest('fb')">Send via Messenger</button>
   </div>`;
 }
 
-function submitVisitRequest(target){
+async function submitVisitRequest(target){
   const name = $("#rqn").value.trim();
   const contact = $("#rqc").value.trim();
   const address = $("#rqa").value.trim();
   if(!name || !contact) return alert("Please enter your name and contact number.");
   const type = $("#rqt").value;
-  const msg = `Church Visit Request: ${type}\nName: ${name}\nContact: ${contact}\nAddress: ${address}\nNotes: ${$("#rqm").value}`;
-  if(navigator.clipboard) navigator.clipboard.writeText(msg);
-  alert("Details copied! Opening " + (target === 'fb' ? "Messenger..." : "Gmail..."));
-  if(target === 'fb'){
-    window.open("https://m.me/61556921121315", "_blank");
+  const notes = $("#rqm").value;
+  const date = $("#rqd").value;
+  const time = $("#rqh").value;
+
+  if(target === 'auto'){
+    const fb = $("#rq-feedback");
+    fb.textContent = "Sending request directly to church email...";
+    const ok = await sendBackgroundEmail({
+      Request_Type: type,
+      Name: name,
+      Contact: contact,
+      Address: address,
+      Preferred_Date: date,
+      Preferred_Time: time,
+      Notes: notes
+    }, `Visit Request: ${type} - ${name}`);
+    if(ok){
+      fb.innerHTML = `<span style="color:#7be38f">✓ Your visit request has been sent directly to the church's Gmail!</span>`;
+      alert("Visit request sent directly to the church email!");
+    } else {
+      fb.textContent = "Could not send automatically. Opening Messenger...";
+      submitVisitRequest('fb');
+    }
   } else {
-    window.open(`mailto:jtnaanbulacan030126@gmail.com?subject=Church Visit Request&body=${encodeURIComponent(msg)}`);
+    const msg = `Church Visit Request: ${type}\nName: ${name}\nContact: ${contact}\nAddress: ${address}\nDate: ${date} ${time}\nNotes: ${notes}`;
+    if(navigator.clipboard) navigator.clipboard.writeText(msg);
+    alert("Details copied! Opening Messenger...");
+    window.open("https://m.me/61556921121315", "_blank");
   }
 }
 
@@ -849,7 +949,7 @@ function feed(c){
         <div class="rx">
           <button class="on" onclick="toggleReaction('${c}:${x.id}', 'like')">👍 Like · ${(R[c+':'+x.id]||{}).like||7}</button>
           <button class="ht on" onclick="toggleReaction('${c}:${x.id}', 'heart')">❤️ Heart · ${(R[c+':'+x.id]||{}).heart||7}</button>
-          <button class="shb" onclick="navigator.clipboard&&navigator.clipboard.writeText(location.href);alert('Link copied to clipboard!')">↗ Share</button>
+          <button class="shb" onclick="openShareModal('JTNAAN Bulacan - ${c}', '${encodeURIComponent(x.caption)}')">↗ Share</button>
           <span class="mu">0 comments</span>
         </div>
         <div class="cm">
@@ -863,7 +963,42 @@ function feed(c){
       </div>
     `).join('')||'<p class="mu">No posts yet.</p>'}
   </div>
-  ${c=="devotion"?`<div class="tvs">${trivia()}${tquiz()}</div>`:''}`;
+  ${c=="devotion"?`<div class="tvs">${trivia()}${tquiz()}</div>`:''}
+  ${c=="testimony"?`
+    <div class="card" style="margin:22px auto 0;max-width:44rem">
+      <b style="color:var(--pr)">Share your life testimony</b>
+      <div class="mu" style="margin:4px 0 8px">Has God done something wonderful in your life? Write your story below and it will be delivered directly to the church.</div>
+      <input id="tsn" placeholder="Your name">
+      <input id="tsc" placeholder="Contact number or email (optional)">
+      <textarea id="tst" rows=6 placeholder="Your testimony"></textarea>
+      <div id="ts-feedback" class="mu" style="margin-bottom:6px"></div>
+      <button class="btn gold" onclick="submitTestimony('auto')">Submit Testimony (Direct to Church Email)</button>
+      <button class="btn" style="background:#3b5998" onclick="submitTestimony('fb')">Send to our Facebook page</button>
+    </div>`:''}`;
+}
+
+async function submitTestimony(target){
+  const name = $("#tsn").value.trim();
+  const contact = $("#tsc").value.trim();
+  const test = $("#tst").value.trim();
+  if(!name || !test) return alert("Please enter your name and testimony.");
+  
+  if(target === 'auto'){
+    const fb = $("#ts-feedback");
+    fb.textContent = "Sending your testimony to the church email...";
+    const ok = await sendBackgroundEmail({ Name: name, Contact: contact, Testimony: test }, `Life Testimony from ${name}`);
+    if(ok){
+      fb.innerHTML = `<span style="color:#7be38f">✓ Your testimony has been sent directly to the church's Gmail!</span>`;
+      alert("Testimony delivered to church email!");
+    } else {
+      submitTestimony('fb');
+    }
+  } else {
+    const msg = `Life Testimony from ${name}\nContact: ${contact}\n\n${test}`;
+    if(navigator.clipboard) navigator.clipboard.writeText(msg);
+    alert("Testimony copied! Opening Facebook...");
+    window.open("https://m.me/61556921121315", "_blank");
+  }
 }
 
 function toggleReaction(key, type){
@@ -873,10 +1008,19 @@ function toggleReaction(key, type){
   render();
 }
 
+// Bible Trivia with topic-relevant high-res image
 function trivia(){
-  return `<section class="tv"><div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu">New trivia in 23h 2m · resets 8:00 AM PH time</span></div>
-  <div class="tvi"><div class="tvph">📜</div><span class="tvtag">OLD TESTAMENT</span></div>
-  <div class="tvc"><h3>The Longest & Shortest Chapter</h3><p>Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!</p></div></section>`;
+  return `<section class="tv">
+    <div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu">New trivia in 23h 2m · resets 8:00 AM PH time</span></div>
+    <div class="tvi">
+      <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&q=80" alt="Scripture Scroll">
+      <span class="tvtag">OLD TESTAMENT</span>
+    </div>
+    <div class="tvc">
+      <h3>The Longest & Shortest Chapter</h3>
+      <p>Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!</p>
+    </div>
+  </section>`;
 }
 
 function tquiz(){
@@ -946,6 +1090,49 @@ function ministriesv(){
   </div>`;
 }
 
+// Gallery View with 4 to 6 Photos Collage
+function galleryv(){
+  const L = D.gallery || [];
+  return `<h2>GALLERY (${L.length})</h2>
+  ${can("gallery")?`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (Up to 6 Photos)</button></p>`:''}
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr))">
+    ${L.map(a=>{
+      const P = a.photos || [];
+      return `
+        <div class="card" style="padding:0;overflow:hidden;background:#242526">
+          <div style="padding:10px 14px">
+            <b style="font-size:1.05rem">${e(a.cap)}</b>
+            <div class="mu">${P.length} photo${P.length===1?'':'s'} · tap to view</div>
+          </div>
+          <div onclick="openAlbumViewer('${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(${P.length>2?3:P.length||1},1fr);gap:2px">
+            ${P.slice(0,6).map(u=>`<img src="${e(u)}" style="width:100%;height:100px;object-fit:cover;display:block">`).join('')}
+          </div>
+          ${can("gallery")?`
+            <div style="padding:10px 14px">
+              <button class="btn sm" onclick="openFormModal('gallery', '${a.id}')">Edit / Add Photos</button>
+              <button class="btn red sm" onclick="deleteRecord('gallery', '${a.id}')">Delete</button>
+            </div>
+          `:''}
+        </div>
+      `;
+    }).join('')||'<p class="mu">Nothing yet.</p>'}
+  </div>`;
+}
+
+function openAlbumViewer(id){
+  const a = (D.gallery||[]).find(x => x.id === id);
+  if(!a) return;
+  const P = a.photos || [];
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">${e(a.cap)}</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;max-height:65vh;overflow-y:auto">
+      ${P.map(u=>`<img src="${e(u)}" style="width:100%;border-radius:6px;display:block">`).join('')}
+    </div>
+    <p><button onclick="closeModal()">Close</button></p>
+  `;
+  $("#modal").style.display = "flex";
+}
+
 function fundsv(){
   const L = D.funds || [];
   let inc = 0, exp = 0;
@@ -960,7 +1147,7 @@ function fundsv(){
     <div class="card"><div class="stat">₱${exp.toLocaleString()}</div>Expenses</div>
     <div class="card"><div class="stat">₱${(inc - exp).toLocaleString()}</div>Balance</div>
   </div>
-  ${can("funds")?`<p><button class="btn gold" onclick="openFormModal('funds')">+ Add</button></p>`:''}
+  ${can("funds")?`<p><button class="btn gold" onclick="openFormModal('funds')">+ Add Entry</button></p>`:''}
   <div style="overflow-x:auto">
     <table style="width:100%;border-collapse:collapse">
       <tr style="border-bottom:1px solid var(--bd)">
@@ -1000,7 +1187,7 @@ function attv(){
   <p class="mu">Present: <span id="att_count">${A.present.length}</span> of ${(D.members||[]).length}</p>
   ${can("attendance")?`<button class="btn gold" onclick="saveAttendanceRecord()">Save attendance</button>`:''}
   <div style="margin-top:12px">
-    ${(D.members||[]).map(m=>`
+    ${(D.members||[]).map((m,i)=>`
       <label class="chk">
         <input type="checkbox" data-att-id="${m.id}" ${A.present.includes(m.id) ? "checked":""} ${can("attendance")?"":"disabled"} onchange="updateAttendanceCount()">
         ${e(m.name)}
@@ -1062,27 +1249,111 @@ function reportsv(){
   </div>`;
 }
 
+// Social Media with Add/Edit features
 function socialv(){
   const L = D.social || [];
   return `<h2>SOCIAL MEDIA</h2>
+  ${can("social")?`<p><button class="btn gold" onclick="openFormModal('social')">+ Add Platform</button></p>`:''}
   <div class="grid">
     ${L.map(s => `
       <div class="card">
-        <b>${e(s.platform)}</b>
+        <b style="font-size:1.15rem;color:var(--pr)">${e(s.platform)}</b>
         <div class="stat" style="font-size:2rem;margin-top:6px">${Number(s.followers).toLocaleString()}</div>
         <div class="mu">Followers</div>
         <div style="margin-top:8px">Engagement: <b>${Number(s.engagement).toLocaleString()}</b></div>
+        ${can("social")?`
+          <div style="margin-top:10px">
+            <button class="btn sm" onclick="openFormModal('social', '${s.id}')">Edit</button>
+            <button class="btn red sm" onclick="deleteRecord('social', '${s.id}')">Delete</button>
+          </div>
+        `:''}
       </div>
     `).join('')}
   </div>`;
 }
 
+// Prayer Requests with auto-email and Messenger
 function prayersv(){
-  return `<h2>PRAYER REQUESTS (${(D.prayers||[]).length})</h2>
-  ${can("prayers")?`<p><button class="btn gold" onclick="openFormModal('prayers')">+ Add</button></p>`:''}
-  <p class="mu">${(D.prayers||[]).length === 0 ? "Nothing yet." : ""}</p>`;
+  const L = D.prayers || [];
+  return `<h2>PRAYER REQUESTS (${L.length})</h2>
+  ${can("prayers")?`<p><button class="btn gold" onclick="openFormModal('prayers')">+ Add Request (Admin)</button></p>`:''}
+  
+  <div class="card">
+    <b style="color:var(--pr)">Send a Prayer Request</b>
+    <div class="mu" style="margin:4px 0 8px">We would love to pray with you. Fill this out and it will be sent directly to our church prayer team.</div>
+    <select id="pc">
+      <option>Healing</option><option>Family</option><option>Finances / Work</option>
+      <option>Salvation of a loved one</option><option>Guidance / Decision</option>
+      <option>Thanksgiving</option><option>Other</option>
+    </select>
+    <input id="pn" placeholder="Your name (optional)">
+    <input id="pcn" placeholder="Contact number (optional)">
+    <input id="pfor" placeholder="Who is this prayer for? (e.g. myself, my mother)">
+    <textarea id="pt" rows=4 placeholder="How can we pray for you?"></textarea>
+    <select id="pv">
+      <option>Please keep this private (pastor/prayer team only)</option>
+      <option>Okay to share with the church prayer group</option>
+    </select>
+    <div id="pr-feedback" class="mu" style="margin-bottom:6px"></div>
+    <button class="btn gold" onclick="submitPrayerRequest('auto')">🙏 Send Prayer Request (Auto-send to Church Email)</button>
+    <button class="btn" onclick="submitPrayerRequest('fb')">Send to Facebook Page (Messenger)</button>
+  </div>
+  
+  <div class="grid" style="margin-top:14px">
+    ${L.map(p=>`
+      <div class="card">
+        <b>${e(p.name)}</b>
+        <div class="mu" style="margin:4px 0">${e(p.req)}</div>
+        <div class="mu"><b>Status:</b> ${e(p.status||'Open')}</div>
+        ${can("prayers")?`
+          <div style="margin-top:8px">
+            <button class="btn sm" onclick="openFormModal('prayers', '${p.id}')">Edit</button>
+            <button class="btn red sm" onclick="deleteRecord('prayers', '${p.id}')">Delete</button>
+          </div>
+        `:''}
+      </div>
+    `).join('')}
+  </div>`;
 }
 
+async function submitPrayerRequest(target){
+  const cat = $("#pc").value;
+  const name = $("#pn").value.trim() || "Anonymous";
+  const contact = $("#pcn").value.trim();
+  const forWhom = $("#pfor").value.trim();
+  const req = $("#pt").value.trim();
+  const priv = $("#pv").value;
+  if(!req) return alert("Please describe your prayer request.");
+
+  if(target === 'auto'){
+    const fb = $("#pr-feedback");
+    fb.textContent = "Sending your prayer request directly to the church email...";
+    const ok = await sendBackgroundEmail({
+      Category: cat,
+      Name: name,
+      Contact: contact,
+      Prayer_For: forWhom,
+      Request: req,
+      Privacy: priv
+    }, `Prayer Request [${cat}] - ${name}`);
+    if(ok){
+      fb.innerHTML = `<span style="color:#7be38f">✓ Your prayer request has been delivered directly to the church's Gmail!</span>`;
+      D.prayers.unshift({ id: "pr_" + Date.now().toString(36), name: name + " (" + cat + ")", req: req, status: "Open" });
+      saveState();
+      render();
+      alert("Prayer request delivered directly to church email!");
+    } else {
+      submitPrayerRequest('fb');
+    }
+  } else {
+    const msg = `Prayer Request: ${cat}\nName: ${name}\nContact: ${contact}\nPrayer For: ${forWhom}\nDetails: ${req}\nPrivacy: ${priv}`;
+    if(navigator.clipboard) navigator.clipboard.writeText(msg);
+    alert("Prayer details copied! Opening Facebook Messenger...");
+    window.open("https://m.me/61556921121315", "_blank");
+  }
+}
+
+// Support the Church
 function supportv(){
   const L = D.donate || [];
   const DMS = ["GCash", "Maya", "Bank transfer"];
@@ -1147,9 +1418,24 @@ function launchSupportEmail(){
 }
 
 function list(c){
-  return `<h2>${TL[c]||c.toUpperCase()} (${(D[c]||[]).length})</h2>
+  const L = D[c] || [];
+  return `<h2>${TL[c]||c.toUpperCase()} (${L.length})</h2>
   ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ Add</button></p>`:''}
-  <p class="mu">Nothing yet.</p>`;
+  <div class="grid">
+    ${L.map(x=>`
+      <div class="card">
+        <b>${e(x.title||x.name||'')}</b>
+        <div class="mu">${e(x.date||'')} · ${e(x.place||'')}</div>
+        <div style="margin:4px 0">${e(x.desc||'')}</div>
+        ${can(c)?`
+          <div style="margin-top:8px">
+            <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
+            <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete</button>
+          </div>
+        `:''}
+      </div>
+    `).join('')||'<p class="mu">Nothing yet.</p>'}
+  </div>`;
 }
 
 function adminsv(){
@@ -1158,7 +1444,7 @@ function adminsv(){
   <div class="grid">${AL.map(a=>`
     <div class="card">
       <b style="font-size:1.1rem;color:var(--pr)">${e(a.name)}</b>
-      <div class="mu">Username: <b>${e(a.username)}</b></div>
+      <div class="mu" style="margin:4px 0">Username: <b>${e(a.username)}</b></div>
       <div style="font-size:.85rem">Role: <b>${a.owner ? 'Super Admin (All Access)' : a.perms.map(p=>PL[p]||p).join(', ')}</b></div>
     </div>
   `).join('')}</div>`;
@@ -1172,7 +1458,7 @@ function deleteRecord(c, id){
   }
 }
 
-// Fixed Login & Logout System
+// Session System
 function handleLogout(){
   me = null;
   admin = false;
