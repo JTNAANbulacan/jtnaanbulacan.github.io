@@ -129,7 +129,8 @@ main:has(> .about){max-width:none}
 
 #hl{flex:none;display:flex;align-items:center;gap:.4rem}.hlu{font-size:.85rem;margin-right:.2rem;white-space:nowrap}
 .ib{display:inline-flex;align-items:center;justify-content:center;width:2.4rem;height:2.4rem;padding:0;border-radius:10px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);transition:background .2s}
-.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}
+.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none !important}
 
 :root{--nw:min(16rem,78vw);--hh:4rem;--ez:cubic-bezier(.22,.61,.36,1)}
 html{overflow-x:hidden}body{overflow-x:clip}
@@ -147,7 +148,6 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 </style>
 </head><body>
 
-<!-- Live Hidden File Pickers -->
 <input type="file" id="bg-file-picker" accept="image/*" style="display:none" onchange="handleBgUpload(event)">
 <input type="file" id="logo-file-picker" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
 
@@ -162,7 +162,6 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 <nav id="nav"></nav>
 <main id="main"><p class="mu">Loading Church Data…</p></main>
 
-<!-- Quick Action Toolbar for Admin Mart -->
 <div id="txbar">
   <b style="color:var(--pr)">✎ Admin Mart Live Edit</b>
   <span class="mu">Click any text to edit</span>
@@ -223,7 +222,6 @@ const defaultAdmins = [
   {id:"adm4", name:"Media", username:"Admin04", password:"JTNAAN04", owner:false, perms:["gallery"]}
 ];
 
-// Exact Real Church Data from Screenshots
 const churchData = {
   members: [
     {id:"m1", name:"Ace Dionisio", ministry:"Church Leader", joined:"2026-03-01"},
@@ -299,8 +297,8 @@ const churchData = {
   events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
 };
 
-// Database Key Migration: Guarantees full data presence
-const DB_KEY = "jt_bulacan_db_v8";
+// Force migration so fresh church data always loads
+const DB_KEY = "jt_bulacan_db_v9";
 let D = JSON.parse(localStorage.getItem(DB_KEY));
 if(!D || !D.members || D.members.length < 35 || !D.fbposts || D.fbposts.length === 0){
   D = JSON.parse(JSON.stringify(churchData));
@@ -309,13 +307,30 @@ if(!D || !D.members || D.members.length < 35 || !D.fbposts || D.fbposts.length =
 
 let R = JSON.parse(localStorage.getItem("jt_rx_counts")) || {"devotion:dv1": {like: 7, heart: 7}};
 let AL = defaultAdmins;
-let me = defaultAdmins[0]; // Admin Mart active
-let admin = true;
+
+// Safe, persistent session management
+let savedSession = null;
+try {
+  const raw = localStorage.getItem("jt_active_session");
+  if(raw !== null){
+    savedSession = JSON.parse(raw);
+  } else {
+    savedSession = defaultAdmins[0]; // Admin Mart default on first visit
+    localStorage.setItem("jt_active_session", JSON.stringify(savedSession));
+  }
+} catch(e){
+  savedSession = defaultAdmins[0];
+}
+
+let me = savedSession;
+let admin = !!(me && me.owner);
 let view = "dashboard", dsel="GCash";
 
 function saveState(){
   localStorage.setItem(DB_KEY, JSON.stringify(D));
   localStorage.setItem("jt_rx_counts", JSON.stringify(R));
+  if(me) localStorage.setItem("jt_active_session", JSON.stringify(me));
+  else localStorage.setItem("jt_active_session", "null");
 }
 
 const can = c => !!me && (me.owner || (me.perms || []).includes(okey(c == "donate" ? "support" : c == "fbposts" ? "dashboard" : c)));
@@ -468,7 +483,7 @@ async function downloadZipBackup(){
   a.click();
 }
 
-// Section Re-arranging
+// Arrange Sections
 let AO = [];
 function openArrangeModal(){
   AO = tabs().filter(t => t !== "admins");
@@ -478,7 +493,7 @@ function openArrangeModal(){
 function drawArr(msg){
   $("#mb").innerHTML = `
     <h3 style="margin-top:0">Arrange Sections</h3>
-    <div class="mu" style="margin-bottom:8px">Move sections up or down to adjust your menu order.</div>
+    <div class="mu" style="margin-bottom:8px">Move sections up or down to adjust menu order.</div>
     <div id="arl">${AO.map((t, i) => `
       <div class="arit">
         <span style="flex:1;text-transform:uppercase;font-size:13px;letter-spacing:1px;font-weight:bold">${ex(TL[t]||t)}</span>
@@ -490,7 +505,7 @@ function drawArr(msg){
     <p>
       <button class="btn gold" onclick="saveSectionOrder()">Save Order</button>
       <button onclick="resetSectionOrder()">Reset Default</button>
-      <button onclick="$('#modal').style.display='none'">Cancel</button>
+      <button onclick="closeModal()">Cancel</button>
     </p>`;
   $("#modal").style.display = "flex";
 }
@@ -508,7 +523,7 @@ function moveArr(i, dir){
 function saveSectionOrder(){
   D.settings = (D.settings||[]).filter(x => x.id !== "order").concat([{id:"order", list: AO}]);
   saveState();
-  $("#modal").style.display = "none";
+  closeModal();
   render();
   alert("New section order applied!");
 }
@@ -516,7 +531,7 @@ function saveSectionOrder(){
 function resetSectionOrder(){
   D.settings = (D.settings||[]).filter(x => x.id !== "order");
   saveState();
-  $("#modal").style.display = "none";
+  closeModal();
   render();
   alert("Restored to default order.");
 }
@@ -558,7 +573,7 @@ function txList(){
         </div>
       `).join('')}
     </div>
-    <p><button onclick="$('#modal').style.display='none'">Close</button></p>`;
+    <p><button onclick="closeModal()">Close</button></p>`;
   $("#modal").style.display = "flex";
 }
 
@@ -573,7 +588,7 @@ function openTextEditorModal(rawEncodedText){
     <textarea id="tx_new_val" rows="4">${ex(activeEditTargetText)}</textarea>
     <p>
       <button class="btn gold" onclick="saveEditedText()">Save Text</button>
-      <button onclick="$('#modal').style.display='none'">Cancel</button>
+      <button onclick="closeModal()">Cancel</button>
     </p>`;
   $("#modal").style.display = "flex";
 }
@@ -588,7 +603,7 @@ function saveEditedText(){
       node.nodeValue = node.nodeValue.replace(activeEditTargetText, newVal);
     }
   }
-  $("#modal").style.display = "none";
+  closeModal();
   alert("Text updated!");
 }
 
@@ -601,6 +616,11 @@ document.addEventListener("click", ev => {
     openTextEditorModal(encodeURIComponent(t.innerText.trim()));
   }
 }, true);
+
+function closeModal(){
+  const m = $("#modal");
+  if(m) m.style.display = "none";
+}
 
 // Modal Add/Edit Form
 function openFormModal(c, id=""){
@@ -624,7 +644,7 @@ function openFormModal(c, id=""){
     ` : ''}
     <p>
       <button class="btn gold" onclick="saveFormData('${c}', '${id}')">Save</button>
-      <button onclick="$('#modal').style.display='none'">Cancel</button>
+      <button onclick="closeModal()">Cancel</button>
     </p>`;
   $("#modal").style.display = "flex";
 }
@@ -646,7 +666,7 @@ async function saveFormData(c, id){
   D[c] = (D[c]||[]).filter(x => x.id !== item.id);
   D[c].unshift(item);
   saveState();
-  $("#modal").style.display = "none";
+  closeModal();
   render();
   alert("Saved successfully!");
 }
@@ -663,8 +683,8 @@ function render(){
       <button class="btn ib" onclick="openArrangeModal()" title="Arrange sections"><svg viewBox="0 0 24 24"><path d="M7 4v16m0-16L3 8m4-4 4 4m6 12V4m0 16-4-4m4 4 4-4"/></svg></button>
       <button class="btn ib" id="btn-edit-text" onclick="toggleTextEditMode()" title="Edit all text & logos"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg></button>
     ` : ''}
-    <button class="btn ib" data-logout="1" title="Log out"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></button>` :
-    `<button class="btn ib" data-login="1" title="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
+    <button class="btn ib" onclick="handleLogout()" title="Log out"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></button>` :
+    `<button class="btn ib" onclick="loginForm()" title="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
   
   renderLogo();
 
@@ -761,7 +781,7 @@ function appv(){
 function about(){
   return `<section class="about">
     <h2>ABOUT US</h2>
-    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship, all in a welcoming community that encourages you to honor God and live out His Word in everyday life.</p>
+    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship.</p>
     <div class="grid">
       <div class="card"><b>Mission</b><div class="mu">To proclaim the Good News of Jesus Christ and make disciples of all nations.</div></div>
       <div class="card"><b>Vision</b><div class="mu">To win the lost souls to Jesus Christ, nurture believers in the faith, and equip them to live for God’s glory.</div></div>
@@ -1063,7 +1083,6 @@ function prayersv(){
   <p class="mu">${(D.prayers||[]).length === 0 ? "Nothing yet." : ""}</p>`;
 }
 
-// Support the Church (Exact styling and actions)
 function supportv(){
   const L = D.donate || [];
   const DMS = ["GCash", "Maya", "Bank transfer"];
@@ -1153,29 +1172,33 @@ function deleteRecord(c, id){
   }
 }
 
-function loginForm(){
-  $("#mb").innerHTML=`
-    <h3 style="margin-top:0">Admin Login</h3>
-    <form id="lf">
-      <div class="mu">Username:</div>
-      <input id="lu" placeholder="e.g. Admin@Mart, Admin02..." required>
-      <div class="mu" style="margin-top:8px">Password:</div>
-      <input id="lp" type="password" placeholder="Enter password" required>
-      <div id="le" style="color:#ff8a80;min-height:22px;margin-top:6px"></div>
-      <p><button class="btn gold" type="submit">Log in</button> <button type="button" onclick="$('#modal').style.display='none'">Cancel</button></p>
-    </form>`;
-  $("#modal").style.display="flex";
+// Fixed Login & Logout System
+function handleLogout(){
+  me = null;
+  admin = false;
+  localStorage.setItem("jt_active_session", "null");
+  render();
 }
 
-document.addEventListener("click", ev => {
-  const t = ev.target, d = t.dataset || {};
-  if(d.v){ view = d.v; render(); menu(false); }
-  if(d.login) loginForm();
-  if(d.logout){ me = null; admin = false; render(); }
-});
+function loginForm(msg){
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">Admin Login</h3>
+    <form id="lf" onsubmit="handleLoginSubmit(event)">
+      <div class="mu">Username:</div>
+      <input id="lu" placeholder="e.g. Admin@Mart, Admin02..." autocomplete="username" required>
+      <div class="mu" style="margin-top:8px">Password:</div>
+      <input id="lp" type="password" placeholder="Enter password" autocomplete="current-password" required>
+      <div id="le" style="color:#ff8a80;min-height:22px;margin-top:6px">${e(msg||"")}</div>
+      <p>
+        <button class="btn gold" type="submit">Log in</button>
+        <button type="button" onclick="closeModal()">Cancel</button>
+      </p>
+    </form>`;
+  $("#modal").style.display = "flex";
+  setTimeout(() => { const el = $("#lu"); if(el) el.focus(); }, 60);
+}
 
-document.addEventListener("submit", ev => {
-  if(ev.target.id != "lf") return;
+function handleLoginSubmit(ev){
   ev.preventDefault();
   const u = $("#lu").value.trim().toLowerCase();
   const p = $("#lp").value;
@@ -1183,11 +1206,17 @@ document.addEventListener("submit", ev => {
   if(found){
     me = found;
     admin = !!found.owner;
-    $("#modal").style.display = "none";
+    localStorage.setItem("jt_active_session", JSON.stringify(found));
+    closeModal();
     render();
   } else {
     $("#le").textContent = "Invalid username or password.";
   }
+}
+
+document.addEventListener("click", ev => {
+  const t = ev.target, d = t.dataset || {};
+  if(d.v){ view = d.v; render(); menu(false); }
 });
 
 applyBackground();
