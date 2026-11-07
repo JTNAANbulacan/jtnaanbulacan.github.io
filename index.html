@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" style="color-scheme: dark; --hh: 65px;">
-<head>
+<html lang="en" data-theme="dark" style="color-scheme: dark; --hh: 65.30000305175781px;"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>JTNAAN Bulacan – Church Management</title>
-<meta name="description" content="Church management system with daily devotions, interactive bible trivia and quiz, comments, emoticon reactions, member directory, attendance, funds, ministries, and community engagement for JTNAAN Bulacan." />
-<meta property="og:title" content="JTNAAN Bulacan – Church Management" />
-<meta property="og:description" content="Church management system with daily devotions, interactive bible trivia and quiz, comments, emoticon reactions, member directory, attendance, funds, ministries, and community engagement for JTNAAN Bulacan." />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
+<meta name="description" content="Church management system with daily devotions, interactive bible trivia and quiz, comments, emoticon reactions, member directory, attendance, funds, ministries, and community engagement for JTNAAN Bulacan.">
+<meta property="og:title" content="JTNAAN Bulacan – Church Management">
+<meta property="og:description" content="Church management system with daily devotions, interactive bible trivia and quiz, comments, emoticon reactions, member directory, attendance, funds, ministries, and community engagement for JTNAAN Bulacan.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 
 <!-- iOS Safari & Home Screen Icons (Resolves single letter 'J' icon on iOS) -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
@@ -168,7 +167,23 @@ main:has(> .about){max-width:none}
 .post{background:#242526;border-radius:12px;overflow:visible;color:#e4e6eb;box-shadow:0 4px 18px rgba(0,0,0,0.35);position:relative}
 .post .ph{padding:10px 12px;display:flex;gap:10px;align-items:center;border-top-left-radius:12px;border-top-right-radius:12px}
 .post .ph img{width:2.5rem;height:2.5rem;border-radius:50%}
-.post>img{width:100%;max-height:36rem;object-fit:cover;display:block}
+.post>img{width:100%;max-height:36rem;object-fit:contain;background:#000;display:block}
+.post>img,.tvi img,.card img,.qr img,#mb img{cursor:zoom-in}
+
+/* Image Lightbox (zoom & pan) */
+#lb{position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.94);display:none;flex-direction:column;touch-action:none;-webkit-user-select:none;user-select:none}
+#lb.open{display:flex}
+#lb-stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab}
+#lb-stage.drag{cursor:grabbing}
+#lb-img{max-width:100vw;max-height:100%;object-fit:contain;transform-origin:center center;will-change:transform;-webkit-user-drag:none;pointer-events:none}
+#lb-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:#000c;flex-wrap:wrap}
+#lb-bar button{background:#ffffff1f;color:#fff;border:1px solid #ffffff40;border-radius:10px;min-width:44px;height:44px;font-size:1.2rem;padding:0 12px}
+#lb-bar button:hover{background:#ffffff38}
+#lb-count{color:#fff;font-size:.85rem;min-width:3.5rem;text-align:center}
+#lb-close{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:12px;z-index:2;background:#000a;color:#fff;border:1px solid #ffffff55;border-radius:50%;width:44px;height:44px;font-size:1.5rem;line-height:1;padding:0}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;background:#000a;color:#fff;border:1px solid #ffffff44;border-radius:50%;width:46px;height:46px;font-size:1.5rem;padding:0}
+#lb-prev{left:10px}#lb-next{right:10px}
+#lb-hint{position:absolute;left:0;right:0;top:calc(14px + env(safe-area-inset-top,0px));text-align:center;color:#ffffffb0;font-size:.78rem;pointer-events:none}
 .post .cap{padding:8px 14px 12px;white-space:pre-wrap;word-break:break-word;line-height:1.6}
 
 /* Accessible Reactions & Emoticon System */
@@ -378,10 +393,10 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 @media(max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
 </style>
 </head>
-<body>
+<body class="mo">
 
 <!-- Dedicated Background Layer & Violet Overlay -->
-<div id="site-bg"></div>
+<div id="site-bg" style="background-image: url(&quot;https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/backgrounds/1794039678841_aasfa.jpg&quot;);"></div>
 <div id="site-bg-overlay"></div>
 
 <!-- Live Native Pickers -->
@@ -389,15 +404,612 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 <input type="file" id="logo-file-picker" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
 
 <header>
-  <button id="mnb" type="button" aria-label="Open sections menu" aria-expanded="false" aria-controls="nav" title="Sections"><i></i><i></i><i></i></button>
+  <button id="mnb" type="button" aria-label="Close sections menu" aria-expanded="true" aria-controls="nav" title="Sections"><i></i><i></i><i></i></button>
   <div id="header-logo-container" onclick="handleLogoClick()" title="Church Logo">
-    <div id="church-logo-render"></div>
+    <div id="church-logo-render"><img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png" alt="JTNAAN Seal" onerror="this.onerror=null;this.src='apple-touch-icon.png'"></div>
   </div>
   <div><b>JESUS THE NAME ABOVE ALL NAMES</b><small>JTNAAN Bulacan · Church Management</small></div>
-  <span id="hl"></span>
+  <span id="hl">
+    <span class="mu hlu">Admin Mart · Full access</span>
+    
+      <button class="btn ib" onclick="openGitHubSyncModal()" title="Sync / Export for GitHub Pages (jtnaanbulacan.github.io)"><svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"></path></svg></button>
+      <button class="btn ib" onclick="downloadZipBackup()" title="Download Backup ZIP"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"></path></svg></button>
+      <button class="btn ib" onclick="openArrangeModal()" title="Arrange sections"><svg viewBox="0 0 24 24"><path d="M7 4v16m0-16L3 8m4-4 4 4m6 12V4m0 16-4-4m4 4 4-4"></path></svg></button>
+      <button class="btn ib" id="btn-edit-text" onclick="toggleTextEditMode()" title="Edit all text &amp; logos"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"></path></svg></button>
+    
+    <button class="btn ib" onclick="handleLogout()" title="Log out" aria-label="Log out"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"></path></svg></button></span>
 </header>
-<nav id="nav"></nav>
-<main id="main"><p class="mu">Connecting to Live Church Database…</p></main>
+<nav id="nav">
+    
+      <div id="drawer-admin-box" style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:8px;background:#ffffff0f;border-radius:6px">
+        <div style="font-weight:bold;color:var(--pr);font-size:.9rem">Admin Mart</div>
+        <div class="mu" style="font-size:.75rem">Full access</div>
+        <button class="btn red sm" onclick="handleLogout()" style="margin-top:6px;width:100%;text-align:center">Log Out</button>
+      </div>
+    
+    <button class="" data-v="dashboard">HOME DASHBOARD</button><button class="" data-v="about">ABOUT</button><button class="" data-v="schedule">SCHEDULE</button><button class="on" data-v="devotion">DAILY DEVOTION</button><button class="" data-v="testimony">TESTIMONY</button><button class="" data-v="members">MEMBERS</button><button class="" data-v="attendance">ATTENDANCE</button><button class="" data-v="funds">FUNDS</button><button class="" data-v="social">SOCIAL</button><button class="" data-v="ministries">MINISTRIES</button><button class="" data-v="events">EVENTS</button><button class="" data-v="gallery">GALLERY</button><button class="" data-v="prayers">PRAYERS</button><button class="" data-v="support">SUPPORT</button><button class="" data-v="reports">REPORTS</button><button class="" data-v="admins">ADMINS</button>
+    
+      <div style="margin-top:16px;padding:12px 10px;border-top:1px solid var(--bd)">
+        <button class="btn sm" onclick="openGitHubSyncModal();menu(false)" style="width:100%;font-size:.8rem;display:flex;align-items:center;justify-content:center;gap:6px;background:#ffffff15">
+          <span>🚀</span> Update GitHub Pages
+        </button>
+      </div>
+    
+  </nav>
+<main id="main">
+      <h2>DAILY DEVOTION</h2>
+      <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership. Share your reflections and amen comments!</p>
+
+      <!-- 1. BIBLE TRIVIA & DAILY QUESTION AT THE TOP -->
+      <div class="tvs">
+        <section class="tv">
+    <div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu">New trivia in 23h 2m · resets 8:00 AM PH time</span></div>
+    <div class="tvi">
+      <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&amp;q=80" alt="Holy Scripture Scroll">
+      <span class="tvtag">OLD TESTAMENT</span>
+    </div>
+    <div class="tvc">
+      <h3>The Longest &amp; Shortest Chapter</h3>
+      <p>Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!</p>
+    </div>
+  </section>
+        <section class="tv tqs">
+    <div class="tq">
+      <div class="tqh">❓ Question of the day</div>
+      <div class="tqq">Who was the prophet called by God as a young boy in the temple under Eli?</div>
+      <div class="tqo">
+        
+            <button class="ok" onclick="handleQuizChoice(0)" disabled="">
+              <span class="l">a</span>
+              <span>Samuel</span>
+            </button>
+          
+            <button class="" onclick="handleQuizChoice(1)" disabled="">
+              <span class="l">b</span>
+              <span>David</span>
+            </button>
+          
+            <button class="" onclick="handleQuizChoice(2)" disabled="">
+              <span class="l">c</span>
+              <span>Jeremiah</span>
+            </button>
+          
+      </div>
+
+      
+        <div class="tqr ok" style="margin-top:14px;padding:14px;border-radius:10px;background:#ffffff10;border-left:4px solid #2ecc71">
+          <div style="font-size:1.1rem;font-weight:700">
+            🎉 Congratulations! You got it right!
+          </div>
+          <div style="margin-top:8px;color:#dfe2ff;line-height:1.55;font-weight:400;font-size:.9rem">
+            <div><b>Scripture Passage:</b> <span style="color:var(--pr);font-weight:bold">1 Samuel 3:1–10</span></div>
+            <div style="margin-top:4px"><b>Why it is correct:</b> The Lord called Samuel three times while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he instructed Samuel to answer, 'Speak, Lord, for your servant is listening.' Samuel listened, and God established him as a faithful prophet to all Israel.</div>
+          </div>
+          
+            <div style="margin-top:10px">
+              <button class="btn sm" onclick="resetQuizForAdmin()">Try Question Again (Admin)</button>
+            </div>
+          
+        </div>
+      
+    </div>
+  </section>
+      </div>
+
+      <!-- 2. DEVOTION MESSAGES SECTION AT THE BOTTOM -->
+      <h2 style="margin-top:32px;font-style:italic">DEVOTION MESSAGES</h2>
+      <p><button class="btn gold" onclick="openFormModal('devotion')">+ New devotion</button></p>
+      
+      <div class="feed">
+        
+    <article class="post" id="post_devotion_dv1">
+      <div class="ph">
+        <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
+          <img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png" style="width:100%;height:100%;object-fit:cover" alt="Seal">
+        </div>
+        <div>
+          <b>Jesus: The Name Above All Names</b>
+          <div class="mu">2026-11-05 · Daily Devotion</div>
+        </div>
+      </div>
+
+      <div class="cap">2 Peter 3:13 NIV
+"But in keeping with his promise we are looking forward to a new heaven and a new earth, where righteousness dwells."
+
+God does not desire to destroy all creation but to re-create everything as it was originally meant to be (see Isaiah 66:22; Revelation 21–22).
+
+God will purify the heavens and earth with fire; then he will fill them with his new creation. We can joyously look forward to the restoration of God's good world.</div>
+      <img src="https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1200&amp;q=80" alt="Post image">
+
+      <!-- Accessible Reaction & Emoticon Bar -->
+      <div class="rx-bar-wrap">
+        <div class="rx" role="toolbar" aria-label="Post reactions and actions">
+          
+          <!-- 1. Core Reaction Buttons (Like, Heart, Amen, Praise) -->
+          <button type="button" class="rx-chip-btn rx-like dim" onclick="toggleReaction('devotion:dv1', 'like')" title="React with Like" aria-label="Like: 7. Click to like.">
+            <span class="rx-chip-emoji">👍</span>
+            <span>Like</span>
+            <span class="rx-chip-count">· 7</span>
+          </button>
+
+          <button type="button" class="rx-chip-btn rx-heart dim" onclick="toggleReaction('devotion:dv1', 'heart')" title="React with Heart" aria-label="Heart: 7. Click to react heart.">
+            <span class="rx-chip-emoji">❤️</span>
+            <span>Heart</span>
+            <span class="rx-chip-count">· 7</span>
+          </button>
+
+          <button type="button" class="rx-chip-btn rx-amen dim" onclick="toggleReaction('devotion:dv1', 'amen')" title="React with Amen" aria-label="Amen: 14. Click to say Amen.">
+            <span class="rx-chip-emoji">🙏</span>
+            <span>Amen</span>
+            <span class="rx-chip-count">· 14</span>
+          </button>
+
+          <button type="button" class="rx-chip-btn rx-praise dim" onclick="toggleReaction('devotion:dv1', 'praise')" title="React with Praise" aria-label="Praise: 6. Click to praise.">
+            <span class="rx-chip-emoji">🙌</span>
+            <span>Praise</span>
+            <span class="rx-chip-count">· 6</span>
+          </button>
+
+          <!-- 2. Other Active Reaction Chips Picked From Tray -->
+          
+            <button type="button" class="rx-chip-btn " onclick="toggleReaction('devotion:dv1', 'faith')" title="React with Faith" aria-label="Faith: 8. Click to react.">
+              <span class="rx-chip-emoji">✝️</span>
+              <span>Faith</span>
+              <span class="rx-chip-count">· 8</span>
+            </button>
+          
+
+          <!-- 3. Emoticon Reaction Tray Picker Trigger -->
+          <div class="rx-picker-container">
+            <button type="button" class="rx-picker-btn " onclick="toggleRxTray('devotion:dv1')" aria-label="More emoticon reactions" aria-haspopup="true" aria-expanded="false" title="Select more emoticon reactions">
+              <span class="rx-ico">😀</span>
+              <span>Emoticons</span>
+              <span class="rx-arrow">▾</span>
+            </button>
+
+            <!-- Floating Emoticon Tray -->
+            <div id="rx_tray_devotion_dv1" class="rx-tray" role="dialog" aria-label="Available emoticon reactions" style="display:none">
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'amen')" aria-label="React with Amen (🙏)">
+                  <span>🙏</span>
+                  <span class="em-tooltip">Amen</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'heart')" aria-label="React with Heart (❤️)">
+                  <span>❤️</span>
+                  <span class="em-tooltip">Heart</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'praise')" aria-label="React with Praise (🙌)">
+                  <span>🙌</span>
+                  <span class="em-tooltip">Praise</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'like')" aria-label="React with Like (👍)">
+                  <span>👍</span>
+                  <span class="em-tooltip">Like</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'faith')" aria-label="React with Faith (✝️)">
+                  <span>✝️</span>
+                  <span class="em-tooltip">Faith</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'inspired')" aria-label="React with Inspired (💡)">
+                  <span>💡</span>
+                  <span class="em-tooltip">Inspired</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'peace')" aria-label="React with Peace (🕊️)">
+                  <span>🕊️</span>
+                  <span class="em-tooltip">Peace</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'fire')" aria-label="React with Spirit (🔥)">
+                  <span>🔥</span>
+                  <span class="em-tooltip">Spirit</span>
+                </button>
+              
+            </div>
+          </div>
+
+          <!-- 4. Share Devotion & Reaction -->
+          <button type="button" class="shb rx-chip-btn" onclick="openShareWithReactionModal('devotion', 'dv1')" title="Share devotion and reactions" aria-label="Share devotion">
+            <span>↗</span>
+            <span>Share</span>
+          </button>
+
+          <!-- 5. Interactive Public Comments Trigger -->
+          <button type="button" class="cm-toggle-btn" onclick="focusCommentInput('dv1')" aria-label="2 comments" title="Jump to public comments section">
+            <span>💬</span>
+            <span><b>2</b> comments · Write one</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PUBLIC COMMENT SECTION -->
+      <section class="cm" id="cm_sec_devotion_dv1" aria-label="Public comments and reflections for this devotion">
+        
+          <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b;display:flex;gap:8px">
+            <button class="btn sm" onclick="openFormModal('devotion', 'dv1')">Edit Post</button>
+            <button class="btn red sm" onclick="deleteRecord('devotion', 'dv1')">Delete Post</button>
+          </div>
+        
+
+        <!-- Comments Section Header -->
+        <div class="cm-header">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:1.15rem">💬</span>
+            <div>
+              <b style="font-size:0.95rem;color:#ffffff">Comments &amp; Reflections (2)</b>
+              <div class="mu" style="font-size:0.75rem">Public community discussion · Share your Amen &amp; reflections</div>
+            </div>
+          </div>
+          <span class="cm-badge">🕊️ Public Space</span>
+        </div>
+
+        <!-- Comments List -->
+        <div class="cm-list" id="cm_list_dv1">
+          
+            <div class="cm-card" id="cm_card_cm1">
+              <div class="cm-avatar">AN</div>
+              <div class="cm-body">
+                <div class="cm-meta">
+                  <span class="cm-author">Aldrin Balmaceda Ninon</span>
+                  <span class="cm-dot">·</span>
+                  <span class="cm-time">2d ago</span>
+                  
+                    <button type="button" class="cm-del-btn" onclick="deleteCommentRecord('cm1')" title="Delete comment" aria-label="Delete comment by Aldrin Balmaceda Ninon">Delete</button>
+                  
+                </div>
+                <div class="cm-text">Amen! Looking forward to God's promised restoration. Blessed morning church family! 🙏✨</div>
+                <div class="cm-card-actions">
+                  <button type="button" class="cm-amen-btn " onclick="toggleCommentAmen('cm1')" title="Amen this reflection" aria-label="Amen (0)">
+                    <span>🙏 Amen</span>
+                    <span class="cm-amen-count">· 0</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          
+            <div class="cm-card" id="cm_card_cm2">
+              <div class="cm-avatar">CB</div>
+              <div class="cm-body">
+                <div class="cm-meta">
+                  <span class="cm-author">Christine Biay</span>
+                  <span class="cm-dot">·</span>
+                  <span class="cm-time">2d ago</span>
+                  
+                    <button type="button" class="cm-del-btn" onclick="deleteCommentRecord('cm2')" title="Delete comment" aria-label="Delete comment by Christine Biay">Delete</button>
+                  
+                </div>
+                <div class="cm-text">Hallelujah! What a powerful reminder to keep our hearts focused on Christ and His everlasting kingdom. ❤️✝️</div>
+                <div class="cm-card-actions">
+                  <button type="button" class="cm-amen-btn " onclick="toggleCommentAmen('cm2')" title="Amen this reflection" aria-label="Amen (0)">
+                    <span>🙏 Amen</span>
+                    <span class="cm-amen-count">· 0</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          
+        </div>
+
+        <!-- Add Comment Form (No login required) -->
+        <div class="cm-form">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <label class="cm-form-title" for="ctext_dv1">✍️ Write a Comment or Prayer (Public):</label>
+            <span class="mu" style="font-size:0.75rem">No account needed</span>
+          </div>
+          
+          <!-- Name Input Field -->
+          <div class="cm-name-wrap">
+            <label for="cname_dv1" class="cm-field-label">Your Name (shown publicly on your comment):</label>
+            <div class="cm-name-row">
+              <span class="cm-input-prefix">👤</span>
+              <input type="text" id="cname_dv1" class="cm-name-input" maxlength="60" value="Admin Mart" placeholder="Enter your name (e.g. Bro. Mark, Sis. Sarah, Maria)..." aria-label="Your Name" oninput="saveCommenterName(this.value)">
+            </div>
+          </div>
+
+          <!-- Quick Accessible Emoticons Row -->
+          <div class="cm-quick-emojis" role="toolbar" aria-label="Quick accessible emoticon shortcuts">
+            <span class="cm-quick-lbl">Accessible emoticons (tap to add):</span>
+            <div class="cm-quick-scroll">
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '🙏')" title="Insert 🙏 Amen">
+                  <span class="em-glyph">🙏</span> <span class="em-name">Amen</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '❤️')" title="Insert ❤️ Love">
+                  <span class="em-glyph">❤️</span> <span class="em-name">Love</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '✝️')" title="Insert ✝️ Faith">
+                  <span class="em-glyph">✝️</span> <span class="em-name">Faith</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '🙌')" title="Insert 🙌 Praise">
+                  <span class="em-glyph">🙌</span> <span class="em-name">Praise</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '✨')" title="Insert ✨ Blessed">
+                  <span class="em-glyph">✨</span> <span class="em-name">Blessed</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '🕊️')" title="Insert 🕊️ Peace">
+                  <span class="em-glyph">🕊️</span> <span class="em-name">Peace</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '👏')" title="Insert 👏 Glory">
+                  <span class="em-glyph">👏</span> <span class="em-name">Glory</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '🔥')" title="Insert 🔥 Spirit">
+                  <span class="em-glyph">🔥</span> <span class="em-name">Spirit</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '💡')" title="Insert 💡 Inspired">
+                  <span class="em-glyph">💡</span> <span class="em-name">Inspired</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '😊')" title="Insert 😊 Grateful">
+                  <span class="em-glyph">😊</span> <span class="em-name">Grateful</span>
+                </button>
+              
+            </div>
+          </div>
+
+          <!-- Comment Textarea -->
+          <div style="margin-top:6px">
+            <label for="ctext_dv1" class="cm-field-label">Your Comment / Reflection:</label>
+            <textarea id="ctext_dv1" class="cm-textarea" rows="3" placeholder="Write your reflection, Amen, insights from today's devotion, or a prayer for the church..." aria-label="Comment text" onkeydown="handleCommentKeydown(event, 'devotion', 'dv1')"></textarea>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="cm-form-actions">
+            <small class="mu" style="font-size:0.75rem">💡 Anyone visiting the site can read your comment · Press Ctrl+Enter to submit</small>
+            <button type="button" class="btn gold cm-submit-btn" id="cbtn_dv1" onclick="submitPostComment('devotion', 'dv1')">
+              <span>Post Comment 🙏</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </article>
+  
+    <article class="post" id="post_devotion_id_mw6n3cv4">
+      <div class="ph">
+        <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
+          <img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png" style="width:100%;height:100%;object-fit:cover" alt="Seal">
+        </div>
+        <div>
+          <b>Jesus: The Name Above All Names</b>
+          <div class="mu">2026-11-08 · Daily Devotion</div>
+        </div>
+      </div>
+
+      <div class="cap">Proverbs 16:32 NIV
+"Better a patient person than a warrior, one with self-control than one who takes a city."
+
+Self-control is superior to conquest. Success in business, school, or home life can be ruined by a person who can’t control his or her temper. We can find great personal victory when we control our tempers. 
+
+When you feel yourself ready to explode, remember that losing control may cause you to forfeit what you want the most.</div>
+      <img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/devotion/1794070229925_xsooh.jpg" alt="Post image">
+
+      <!-- Accessible Reaction & Emoticon Bar -->
+      <div class="rx-bar-wrap">
+        <div class="rx" role="toolbar" aria-label="Post reactions and actions">
+          
+          <!-- 1. Core Reaction Buttons (Like, Heart, Amen, Praise) -->
+          <button type="button" class="rx-chip-btn rx-like dim" onclick="toggleReaction('devotion:id_mw6n3cv4', 'like')" title="React with Like" aria-label="Like: 7. Click to like.">
+            <span class="rx-chip-emoji">👍</span>
+            <span>Like</span>
+            <span class="rx-chip-count">· 7</span>
+          </button>
+
+          <button type="button" class="rx-chip-btn rx-heart dim" onclick="toggleReaction('devotion:id_mw6n3cv4', 'heart')" title="React with Heart" aria-label="Heart: 7. Click to react heart.">
+            <span class="rx-chip-emoji">❤️</span>
+            <span>Heart</span>
+            <span class="rx-chip-count">· 7</span>
+          </button>
+
+          <button type="button" class="rx-chip-btn rx-amen dim" onclick="toggleReaction('devotion:id_mw6n3cv4', 'amen')" title="React with Amen" aria-label="Amen: 14. Click to say Amen.">
+            <span class="rx-chip-emoji">🙏</span>
+            <span>Amen</span>
+            <span class="rx-chip-count">· 14</span>
+          </button>
+
+          <button type="button" class="rx-chip-btn rx-praise dim" onclick="toggleReaction('devotion:id_mw6n3cv4', 'praise')" title="React with Praise" aria-label="Praise: 6. Click to praise.">
+            <span class="rx-chip-emoji">🙌</span>
+            <span>Praise</span>
+            <span class="rx-chip-count">· 6</span>
+          </button>
+
+          <!-- 2. Other Active Reaction Chips Picked From Tray -->
+          
+
+          <!-- 3. Emoticon Reaction Tray Picker Trigger -->
+          <div class="rx-picker-container">
+            <button type="button" class="rx-picker-btn " onclick="toggleRxTray('devotion:id_mw6n3cv4')" aria-label="More emoticon reactions" aria-haspopup="true" aria-expanded="false" title="Select more emoticon reactions">
+              <span class="rx-ico">😀</span>
+              <span>Emoticons</span>
+              <span class="rx-arrow">▾</span>
+            </button>
+
+            <!-- Floating Emoticon Tray -->
+            <div id="rx_tray_devotion_id_mw6n3cv4" class="rx-tray" role="dialog" aria-label="Available emoticon reactions" style="display:none">
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'amen')" aria-label="React with Amen (🙏)">
+                  <span>🙏</span>
+                  <span class="em-tooltip">Amen</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'heart')" aria-label="React with Heart (❤️)">
+                  <span>❤️</span>
+                  <span class="em-tooltip">Heart</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'praise')" aria-label="React with Praise (🙌)">
+                  <span>🙌</span>
+                  <span class="em-tooltip">Praise</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'like')" aria-label="React with Like (👍)">
+                  <span>👍</span>
+                  <span class="em-tooltip">Like</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'faith')" aria-label="React with Faith (✝️)">
+                  <span>✝️</span>
+                  <span class="em-tooltip">Faith</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'inspired')" aria-label="React with Inspired (💡)">
+                  <span>💡</span>
+                  <span class="em-tooltip">Inspired</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'peace')" aria-label="React with Peace (🕊️)">
+                  <span>🕊️</span>
+                  <span class="em-tooltip">Peace</span>
+                </button>
+              
+                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'fire')" aria-label="React with Spirit (🔥)">
+                  <span>🔥</span>
+                  <span class="em-tooltip">Spirit</span>
+                </button>
+              
+            </div>
+          </div>
+
+          <!-- 4. Share Devotion & Reaction -->
+          <button type="button" class="shb rx-chip-btn" onclick="openShareWithReactionModal('devotion', 'id_mw6n3cv4')" title="Share devotion and reactions" aria-label="Share devotion">
+            <span>↗</span>
+            <span>Share</span>
+          </button>
+
+          <!-- 5. Interactive Public Comments Trigger -->
+          <button type="button" class="cm-toggle-btn" onclick="focusCommentInput('id_mw6n3cv4')" aria-label="0 comments" title="Jump to public comments section">
+            <span>💬</span>
+            <span><b>0</b> comments · Write one</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PUBLIC COMMENT SECTION -->
+      <section class="cm" id="cm_sec_devotion_id_mw6n3cv4" aria-label="Public comments and reflections for this devotion">
+        
+          <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b;display:flex;gap:8px">
+            <button class="btn sm" onclick="openFormModal('devotion', 'id_mw6n3cv4')">Edit Post</button>
+            <button class="btn red sm" onclick="deleteRecord('devotion', 'id_mw6n3cv4')">Delete Post</button>
+          </div>
+        
+
+        <!-- Comments Section Header -->
+        <div class="cm-header">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:1.15rem">💬</span>
+            <div>
+              <b style="font-size:0.95rem;color:#ffffff">Comments &amp; Reflections (0)</b>
+              <div class="mu" style="font-size:0.75rem">Public community discussion · Share your Amen &amp; reflections</div>
+            </div>
+          </div>
+          <span class="cm-badge">🕊️ Public Space</span>
+        </div>
+
+        <!-- Comments List -->
+        <div class="cm-list" id="cm_list_id_mw6n3cv4">
+          
+            <div class="cm-empty">
+              <span style="font-size:1.6rem">💬</span>
+              <b style="color:#ffffff;font-size:0.92rem">No comments yet on this devotion</b>
+              <span style="font-size:0.82rem">Be the first to share an encouragement, Amen, or prayer with our church family!</span>
+            </div>
+          
+        </div>
+
+        <!-- Add Comment Form (No login required) -->
+        <div class="cm-form">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <label class="cm-form-title" for="ctext_id_mw6n3cv4">✍️ Write a Comment or Prayer (Public):</label>
+            <span class="mu" style="font-size:0.75rem">No account needed</span>
+          </div>
+          
+          <!-- Name Input Field -->
+          <div class="cm-name-wrap">
+            <label for="cname_id_mw6n3cv4" class="cm-field-label">Your Name (shown publicly on your comment):</label>
+            <div class="cm-name-row">
+              <span class="cm-input-prefix">👤</span>
+              <input type="text" id="cname_id_mw6n3cv4" class="cm-name-input" maxlength="60" value="Admin Mart" placeholder="Enter your name (e.g. Bro. Mark, Sis. Sarah, Maria)..." aria-label="Your Name" oninput="saveCommenterName(this.value)">
+            </div>
+          </div>
+
+          <!-- Quick Accessible Emoticons Row -->
+          <div class="cm-quick-emojis" role="toolbar" aria-label="Quick accessible emoticon shortcuts">
+            <span class="cm-quick-lbl">Accessible emoticons (tap to add):</span>
+            <div class="cm-quick-scroll">
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '🙏')" title="Insert 🙏 Amen">
+                  <span class="em-glyph">🙏</span> <span class="em-name">Amen</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '❤️')" title="Insert ❤️ Love">
+                  <span class="em-glyph">❤️</span> <span class="em-name">Love</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '✝️')" title="Insert ✝️ Faith">
+                  <span class="em-glyph">✝️</span> <span class="em-name">Faith</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '🙌')" title="Insert 🙌 Praise">
+                  <span class="em-glyph">🙌</span> <span class="em-name">Praise</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '✨')" title="Insert ✨ Blessed">
+                  <span class="em-glyph">✨</span> <span class="em-name">Blessed</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '🕊️')" title="Insert 🕊️ Peace">
+                  <span class="em-glyph">🕊️</span> <span class="em-name">Peace</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '👏')" title="Insert 👏 Glory">
+                  <span class="em-glyph">👏</span> <span class="em-name">Glory</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '🔥')" title="Insert 🔥 Spirit">
+                  <span class="em-glyph">🔥</span> <span class="em-name">Spirit</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '💡')" title="Insert 💡 Inspired">
+                  <span class="em-glyph">💡</span> <span class="em-name">Inspired</span>
+                </button>
+              
+                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '😊')" title="Insert 😊 Grateful">
+                  <span class="em-glyph">😊</span> <span class="em-name">Grateful</span>
+                </button>
+              
+            </div>
+          </div>
+
+          <!-- Comment Textarea -->
+          <div style="margin-top:6px">
+            <label for="ctext_id_mw6n3cv4" class="cm-field-label">Your Comment / Reflection:</label>
+            <textarea id="ctext_id_mw6n3cv4" class="cm-textarea" rows="3" placeholder="Write your reflection, Amen, insights from today's devotion, or a prayer for the church..." aria-label="Comment text" onkeydown="handleCommentKeydown(event, 'devotion', 'id_mw6n3cv4')"></textarea>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="cm-form-actions">
+            <small class="mu" style="font-size:0.75rem">💡 Anyone visiting the site can read your comment · Press Ctrl+Enter to submit</small>
+            <button type="button" class="btn gold cm-submit-btn" id="cbtn_id_mw6n3cv4" onclick="submitPostComment('devotion', 'id_mw6n3cv4')">
+              <span>Post Comment 🙏</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </article>
+  
+      </div>
+    </main>
 
 <!-- Live Action Bar for Admin Mart -->
 <div id="txbar">
@@ -1605,8 +2217,97 @@ function dash(){
   ${appv()}`;
 }
 
+// ===== App download counter (Android / iPhone) — stored in Supabase: settings → "dl" =====
+const DL_BASE = { android: 4, ios: 4 };      // starting values (what the page showed before)
+let deferredInstallPrompt = null;
+window.addEventListener("beforeinstallprompt", ev => { ev.preventDefault(); deferredInstallPrompt = ev; });
+window.addEventListener("appinstalled", () => { deferredInstallPrompt = null; });
+
+function getDlCounts(){
+  const rec = (D.settings || []).find(x => x.id === "dl");
+  const a = rec && Number.isFinite(+rec.android) ? +rec.android : DL_BASE.android;
+  const i = rec && Number.isFinite(+rec.ios) ? +rec.ios : DL_BASE.ios;
+  return { android: a, ios: i, total: a + i };
+}
+
+function paintDlCounts(){
+  const c = getDlCounts();
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v.toLocaleString(); };
+  set("dl_android", c.android); set("dl_ios", c.ios); set("dl_total", c.total);
+}
+
+let lastDlClick = { android: 0, ios: 0 };
+async function trackDownload(platform){
+  // ignore accidental double-taps within 1.5s
+  const now = Date.now();
+  if(now - lastDlClick[platform] < 1500) return;
+  lastDlClick[platform] = now;
+
+  // 1) instant local update so the visitor sees the number go up
+  const cur = getDlCounts();
+  const next = { id: "dl", android: cur.android + (platform === "android" ? 1 : 0), ios: cur.ios + (platform === "ios" ? 1 : 0) };
+  D.settings = (D.settings || []).filter(x => x.id !== "dl").concat([next]);
+  paintDlCounts();
+
+  // 2) save to the cloud (atomic RPC if you created it, otherwise read-then-write)
+  if(!supabaseClient) return;
+  try {
+    const rpc = await supabaseClient.rpc("increment_download", { p_platform: platform });
+    if(!rpc.error) { fetchAllFromCloud(true); return; }
+  } catch(_) {}
+  try {
+    const { data } = await supabaseClient.from("church_records").select("data").eq("collection", "settings").eq("id", "dl").maybeSingle();
+    const base = (data && data.data) ? data.data : { android: DL_BASE.android, ios: DL_BASE.ios };
+    const upd = { android: (+base.android || 0) + (platform === "android" ? 1 : 0), ios: (+base.ios || 0) + (platform === "ios" ? 1 : 0) };
+    await supabaseClient.from("church_records").upsert({ collection: "settings", id: "dl", data: upd, updated_at: new Date().toISOString() });
+    D.settings = (D.settings || []).filter(x => x.id !== "dl").concat([{ id: "dl", ...upd }]);
+    paintDlCounts();
+  } catch(err) { console.warn("Download count not saved:", err); }
+}
+
+function isStandaloneApp(){
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+async function downloadAndroid(){
+  trackDownload("android");
+  if(isStandaloneApp()){ showSuccessNotification("The app is already installed on this device."); return; }
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    try { await deferredInstallPrompt.userChoice; } catch(_) {}
+    deferredInstallPrompt = null;
+    return;
+  }
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">🤖 Install on Android</h3>
+    <ol style="line-height:1.8;padding-left:1.2rem">
+      <li>Open this page in <b>Chrome</b>.</li>
+      <li>Tap the <b>⋮</b> menu (top right).</li>
+      <li>Tap <b>Install app</b> or <b>Add to Home screen</b>.</li>
+      <li>Tap <b>Install</b>. The JTNAAN icon appears on your home screen.</li>
+    </ol>
+    <p><button class="btn gold" onclick="closeModal()">Got it</button></p>`;
+  $("#modal").style.display = "flex";
+}
+
+function downloadIOS(){
+  trackDownload("ios");
+  if(isStandaloneApp()){ showSuccessNotification("The app is already installed on this device."); return; }
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">📱 Install on iPhone / iPad</h3>
+    <ol style="line-height:1.8;padding-left:1.2rem">
+      <li>Open this page in <b>Safari</b>.</li>
+      <li>Tap the <b>Share</b> button ⬆ (bottom of the screen).</li>
+      <li>Scroll down and tap <b>Add to Home Screen</b>.</li>
+      <li>Tap <b>Add</b>. The JTNAAN icon appears on your home screen.</li>
+    </ol>
+    <p><button class="btn gold" onclick="closeModal()">Got it</button></p>`;
+  $("#modal").style.display = "flex";
+}
+
 function appv(){
   const logo = getChurchLogoUrl();
+  const c = getDlCounts();
   return `<section class="appb" style="margin-top:26px">
     <div class="appi">
       <div style="width:52px;height:52px;border-radius:12px;background:#fff;border:2px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
@@ -1619,13 +2320,13 @@ function appv(){
     </div>
     <ul class="appl"><li>No registration needed</li><li>Just install the app</li><li>Connect any Gmail account already on your phone</li></ul>
     <div class="appbt">
-      <button class="appd" onclick="alert('Downloading Android web app...')"><span class="appic">🤖</span><span><small>Download for</small><b>Android</b></span></button>
-      <button class="appd" onclick="alert('To install on iPhone: Open Safari, tap Share ⬆, then Add to Home Screen.')"><span class="appic">📱</span><span><small>Download for</small><b>iPhone / iPad</b></span></button>
+      <button class="appd" onclick="downloadAndroid()"><span class="appic">🤖</span><span><small>Download for</small><b>Android</b></span></button>
+      <button class="appd" onclick="downloadIOS()"><span class="appic">📱</span><span><small>Download for</small><b>iPhone / iPad</b></span></button>
     </div>
     <div class="appc">
-      <div><span class="stat">4</span><span class="mu">Android downloads</span></div>
-      <div><span class="stat">4</span><span class="mu">iPhone / iPad downloads</span></div>
-      <div><span class="stat">8</span><span class="mu">Total downloads</span></div>
+      <div><span class="stat" id="dl_android">${c.android.toLocaleString()}</span><span class="mu">Android downloads</span></div>
+      <div><span class="stat" id="dl_ios">${c.ios.toLocaleString()}</span><span class="mu">iPhone / iPad downloads</span></div>
+      <div><span class="stat" id="dl_total">${c.total.toLocaleString()}</span><span class="mu">Total downloads</span></div>
     </div>
   </section>`;
 }
@@ -1939,9 +2640,22 @@ function toggleCommentsSection(secId){
 }
 
 // Render Feed View: Devotion Messages & Testimonies with Full Comments and Emoticons
+// Sort posts: newest date first, then newest created (id holds a base-36 timestamp) first
+function idStamp(id){
+  const m = /^id_([0-9a-z]+)$/i.exec(String(id || ""));
+  return m ? parseInt(m[1], 36) : 0;
+}
+function sortNewestFirst(list){
+  return (list || []).slice().sort((a, b) => {
+    const da = String(a.date || ""), db = String(b.date || "");
+    if(da !== db) return db.localeCompare(da);          // newer date on top
+    return idStamp(b.id) - idStamp(a.id);               // same day: newest post on top
+  });
+}
+
 function feed(c){
   const F = CF[c];
-  const L = D[c] || [];
+  const L = c === "devotion" ? sortNewestFirst(D[c]) : (D[c] || []);
   const logo = getChurchLogoUrl();
 
   if(c === "devotion"){
@@ -3029,6 +3743,178 @@ async function initApp(){
 }
 
 initApp();
+
+// ===== Image Lightbox: tap any photo to view it large, zoom, pan and swipe =====
+(function(){
+  const lb = document.createElement("div");
+  lb.id = "lb";
+  lb.setAttribute("role", "dialog");
+  lb.setAttribute("aria-label", "Image viewer");
+  lb.innerHTML = `
+    <div id="lb-hint">Pinch or scroll to zoom · drag to move · double-tap to zoom</div>
+    <button id="lb-close" type="button" aria-label="Close image">&times;</button>
+    <div id="lb-stage">
+      <button class="lb-nav" id="lb-prev" type="button" aria-label="Previous image">‹</button>
+      <img id="lb-img" alt="" draggable="false">
+      <button class="lb-nav" id="lb-next" type="button" aria-label="Next image">›</button>
+    </div>
+    <div id="lb-bar">
+      <button id="lb-out" type="button" aria-label="Zoom out">−</button>
+      <span id="lb-count"></span>
+      <button id="lb-in" type="button" aria-label="Zoom in">+</button>
+      <button id="lb-reset" type="button" aria-label="Reset zoom" style="font-size:.85rem">Reset</button>
+      <button id="lb-open" type="button" aria-label="Open full image in new tab" style="font-size:.85rem">Open ↗</button>
+    </div>`;
+  document.body.appendChild(lb);
+
+  const stage = lb.querySelector("#lb-stage"), img = lb.querySelector("#lb-img");
+  const MIN = 1, MAX = 8;
+  let items = [], idx = 0, s = 1, tx = 0, ty = 0;
+  const ptrs = new Map();
+  let startDist = 0, startScale = 1, moved = 0, downX = 0, downY = 0, swipeStartX = 0, lastTap = 0;
+
+  const apply = () => { img.style.transform = `translate(${tx}px,${ty}px) scale(${s})`; };
+  function clampPan(){
+    if(s <= 1){ tx = 0; ty = 0; return; }
+    const r = img.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    const w = r.width / s * s, h = r.height; // current rendered size already includes scale
+    const maxX = Math.max(0, (w - sr.width) / 2), maxY = Math.max(0, (h - sr.height) / 2);
+    tx = Math.max(-maxX, Math.min(maxX, tx));
+    ty = Math.max(-maxY, Math.min(maxY, ty));
+  }
+  function zoomAt(ns, cx, cy){
+    ns = Math.max(MIN, Math.min(MAX, ns));
+    const sr = stage.getBoundingClientRect();
+    const px = cx - (sr.left + sr.width / 2), py = cy - (sr.top + sr.height / 2);
+    tx = px - (px - tx) * (ns / s);
+    ty = py - (py - ty) * (ns / s);
+    s = ns;
+    clampPan(); apply();
+  }
+  function reset(){ s = 1; tx = 0; ty = 0; apply(); }
+  function show(i){
+    if(!items.length) return;
+    idx = (i + items.length) % items.length;
+    img.src = items[idx].src;
+    img.alt = items[idx].alt || "";
+    lb.querySelector("#lb-count").textContent = items.length > 1 ? (idx + 1) + " / " + items.length : "";
+    const multi = items.length > 1;
+    lb.querySelector("#lb-prev").style.display = multi ? "" : "none";
+    lb.querySelector("#lb-next").style.display = multi ? "" : "none";
+    reset();
+  }
+  function open(list, i){
+    items = list; lb.classList.add("open");
+    document.documentElement.style.overflow = "hidden";
+    show(i);
+  }
+  function close(){
+    lb.classList.remove("open");
+    document.documentElement.style.overflow = "";
+    img.removeAttribute("src");
+  }
+
+  // Which photos count as "viewable"? Everything except logos/avatars/tiny icons.
+  function isViewable(el){
+    if(!el || el.tagName !== "IMG") return false;
+    if(el.closest("#lb, header, nav, .ph, .appi, .cm-avatar, #church-logo-render, #header-logo-container")) return false;
+    if(!el.closest("#main, #mb")) return false;
+    const r = el.getBoundingClientRect();
+    return r.width >= 60 && r.height >= 40 && !!el.src;
+  }
+  function groupFor(el){
+    const scope = el.closest("#mb") || el.closest(".grid") || el.closest(".feed") || el.closest("#main");
+    const all = Array.from(scope.querySelectorAll("img")).filter(isViewable);
+    return all.length ? all : [el];
+  }
+
+  // Capture phase so it also wins over parent onclick handlers (e.g. gallery cards)
+  document.addEventListener("click", ev => {
+    if(TE === 1) return;                       // don't interfere with admin text-edit mode
+    const t = ev.target;
+    if(!isViewable(t)) return;
+    ev.preventDefault(); ev.stopPropagation();
+    const g = groupFor(t);
+    open(g.map(x => ({ src: x.currentSrc || x.src, alt: x.alt })), Math.max(0, g.indexOf(t)));
+  }, true);
+
+  // Buttons
+  lb.querySelector("#lb-close").onclick = close;
+  lb.querySelector("#lb-prev").onclick = ev => { ev.stopPropagation(); show(idx - 1); };
+  lb.querySelector("#lb-next").onclick = ev => { ev.stopPropagation(); show(idx + 1); };
+  lb.querySelector("#lb-in").onclick = () => { const r = stage.getBoundingClientRect(); zoomAt(s * 1.5, r.left + r.width / 2, r.top + r.height / 2); };
+  lb.querySelector("#lb-out").onclick = () => { const r = stage.getBoundingClientRect(); zoomAt(s / 1.5, r.left + r.width / 2, r.top + r.height / 2); };
+  lb.querySelector("#lb-reset").onclick = reset;
+  lb.querySelector("#lb-open").onclick = () => { if(items[idx]) window.open(items[idx].src, "_blank", "noopener"); };
+
+  // Keyboard
+  addEventListener("keydown", ev => {
+    if(!lb.classList.contains("open")) return;
+    if(ev.key === "Escape") { ev.stopImmediatePropagation(); close(); }
+    else if(ev.key === "ArrowLeft") show(idx - 1);
+    else if(ev.key === "ArrowRight") show(idx + 1);
+    else if(ev.key === "+" || ev.key === "=") lb.querySelector("#lb-in").click();
+    else if(ev.key === "-") lb.querySelector("#lb-out").click();
+    else if(ev.key === "0") reset();
+  }, true);
+
+  // Mouse wheel / trackpad zoom
+  stage.addEventListener("wheel", ev => {
+    ev.preventDefault();
+    zoomAt(s * (ev.deltaY < 0 ? 1.15 : 1 / 1.15), ev.clientX, ev.clientY);
+  }, { passive: false });
+
+  // Pointer gestures: drag to pan, pinch to zoom, swipe to change image, double-tap to zoom
+  stage.addEventListener("pointerdown", ev => {
+    if(ev.target.closest(".lb-nav")) return;
+    stage.setPointerCapture(ev.pointerId);
+    ptrs.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    if(ptrs.size === 1){ moved = 0; downX = swipeStartX = ev.clientX; downY = ev.clientY; stage.classList.add("drag"); }
+    if(ptrs.size === 2){
+      const [a, b] = [...ptrs.values()];
+      startDist = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      startScale = s;
+    }
+  });
+  stage.addEventListener("pointermove", ev => {
+    const p = ptrs.get(ev.pointerId);
+    if(!p) return;
+    const dx = ev.clientX - p.x, dy = ev.clientY - p.y;
+    p.x = ev.clientX; p.y = ev.clientY;
+    if(ptrs.size === 2){
+      const [a, b] = [...ptrs.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      zoomAt(startScale * d / startDist, (a.x + b.x) / 2, (a.y + b.y) / 2);
+      moved = 99;
+    } else if(ptrs.size === 1){
+      moved += Math.abs(dx) + Math.abs(dy);
+      if(s > 1){ tx += dx; ty += dy; clampPan(); apply(); }
+    }
+  });
+  function endPtr(ev){
+    const had = ptrs.delete(ev.pointerId);
+    if(!had) return;
+    if(ptrs.size === 0){
+      stage.classList.remove("drag");
+      const totalDx = ev.clientX - swipeStartX, totalDy = ev.clientY - downY;
+      if(moved < 8){                                   // it was a tap
+        const now = Date.now();
+        if(now - lastTap < 320){                       // double-tap / double-click
+          if(s > 1.05) reset(); else zoomAt(2.5, ev.clientX, ev.clientY);
+          lastTap = 0;
+        } else {
+          lastTap = now;
+          if(s === 1 && !(function(){const r=img.getBoundingClientRect();return ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom})()) setTimeout(() => { if(lastTap && Date.now() - lastTap >= 300) close(); }, 320); // tap on dark area closes
+        }
+      } else if(s <= 1.05 && Math.abs(totalDx) > 60 && Math.abs(totalDx) > Math.abs(totalDy) * 1.5 && items.length > 1){
+        show(idx + (totalDx < 0 ? 1 : -1));            // swipe left/right = next/previous
+      }
+    }
+  }
+  stage.addEventListener("pointerup", endPtr);
+  stage.addEventListener("pointercancel", endPtr);
+})();
 </script>
-</body>
-</html>
+
+
+</body></html>
