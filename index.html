@@ -1342,10 +1342,21 @@ async function fetchAllFromCloud(silent = false){
     };
 
     const cloudR = {};
+    const myRxFromCloud = {};
 
     data.forEach(row => {
       if(row.collection === "reactions"){
-        cloudR[row.id] = row.data;
+        const d = row.data || {};
+        if(d.uid && d.key && d.type){
+          // one record per person -> add 1 to that reaction's total
+          if(!cloudR[d.key]) cloudR[d.key] = {};
+          cloudR[d.key][d.type] = (cloudR[d.key][d.type] || 0) + 1;
+          if(d.uid === getCommenterId()) myRxFromCloud[d.key] = d.type;
+        } else {
+          // older single-record counts (kept so nothing already saved is lost)
+          if(!cloudR[row.id]) cloudR[row.id] = {};
+          Object.keys(d).forEach(t => { cloudR[row.id][t] = (cloudR[row.id][t] || 0) + (+d[t] || 0); });
+        }
       } else if(row.collection === "admins"){
         cloudD.admins.push({ id: row.id, ...row.data });
       } else if(row.collection && cloudD[row.collection] !== undefined){
@@ -1359,8 +1370,13 @@ async function fetchAllFromCloud(silent = false){
       }
     });
 
-    if(Object.keys(cloudR).length > 0){
-      R = cloudR;
+    R = cloudR;
+    // keep "which reaction is mine" in sync with the cloud (skip right after I tapped one)
+    if(Date.now() - lastRxChange > 8000){
+      Object.keys(localStorage).filter(k => k.indexOf("jt_my_rx_") === 0).forEach(k => {
+        if(!myRxFromCloud[k.slice(9)]) localStorage.removeItem(k);
+      });
+      Object.keys(myRxFromCloud).forEach(k => localStorage.setItem("jt_my_rx_" + k, myRxFromCloud[k]));
     }
 
     if(cloudD.admins.length > 0){
@@ -2467,42 +2483,50 @@ function toggleRxTray(key){
   }
 }
 
+// Facebook-style reactions: every visitor's reaction is its own record, so counts STACK UP
+// across all visitors/devices (no overwriting). One reaction per person per post:
+// tap another emoji to change it, tap the same one again to remove it.
+let lastRxChange = 0;
+function reactionRowId(key){ return key + "|" + getCommenterId(); }
+
 async function selectReaction(key, type){
-  if(!R[key]) R[key] = {like: 0, heart: 0};
+  if(!R[key]) R[key] = {};
   const cur = getMyReaction(key);
+  const uid = getCommenterId();
+  lastRxChange = Date.now();
+
+  document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
 
   if(cur === type){
-    // Already selected, decrement
+    // tapped the same reaction again -> remove my reaction
     R[key][type] = Math.max(0, (R[key][type] || 1) - 1);
     localStorage.removeItem("jt_my_rx_" + key);
+    render();
+    await deleteRecordFromCloud("reactions", reactionRowId(key));
   } else {
-    // If was another reaction, decrement the old one
-    if(cur && R[key][cur]){
-      R[key][cur] = Math.max(0, R[key][cur] - 1);
-    }
-    // Increment the new reaction
+    // new or changed reaction
+    if(cur) R[key][cur] = Math.max(0, (R[key][cur] || 1) - 1);
     R[key][type] = (R[key][type] || 0) + 1;
     localStorage.setItem("jt_my_rx_" + key, type);
     const rxInfo = REACTION_TYPES.find(r => r.id === type);
-    if(rxInfo){
-      showSuccessNotification(`You reacted ${rxInfo.emoji} ${rxInfo.label}!`);
-    }
+    if(rxInfo) showSuccessNotification(`You reacted ${rxInfo.emoji} ${rxInfo.label}!`);
+    render();
+    await syncRecordToCloud("reactions", reactionRowId(key), { key: key, type: type, uid: uid, t: Date.now() });
   }
-
-  // Close tray
-  document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
-  
-  // Sync live to Supabase cloud
-  await syncRecordToCloud("reactions", key, R[key]);
-  render();
 }
 
 async function resetPostReactions(key){
   if(!confirm("Reset all reactions on this post to 0?")) return;
-  R[key] = { like: 0, heart: 0, amen: 0, praise: 0 };
+  lastRxChange = Date.now();
+  R[key] = {};
   localStorage.removeItem("jt_my_rx_" + key);
-  await syncRecordToCloud("reactions", key, R[key]);
   render();
+  if(supabaseClient){
+    try {
+      await supabaseClient.from("church_records").delete().eq("collection", "reactions").eq("id", key);
+      await supabaseClient.from("church_records").delete().eq("collection", "reactions").like("id", key + "|%");
+    } catch(err){ showErrorNotification("Could not reset reactions: " + err.message); return; }
+  }
   showSuccessNotification("Reactions reset to 0.");
 }
 
