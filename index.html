@@ -3,9 +3,9 @@
 <title>JTNAAN Bulacan – Church Management</title>
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D"><meta name="theme-color" content="#0b0a3a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-badge-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="JTNAAN">
 
-<!-- Supabase Real-Time Cloud SDK -->
+<!-- Supabase Cloud SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- JSZip for 1-click backups -->
+<!-- JSZip for Backup Packages -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style id="bgcss"></style>
@@ -95,15 +95,33 @@ body.txon main{padding-bottom:7rem}
 body.txon #txbar{display:flex}
 .txo{background:#ffffff0f;border-radius:6px;padding:6px 9px;font-size:.85rem;white-space:pre-wrap;word-break:break-word;color:var(--mu)}
 
-/* Trivia, Quiz, Feed */
-.tvs{display:grid;gap:16px;max-width:44rem;margin:10px auto 26px}
-.tv{background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
+html{font-size:clamp(15px,.45vw + 13.3px,21px);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-size:1rem}
+button{padding:.45rem .75rem}.sm{padding:.25rem .55rem;font-size:.8rem}
+h2{font-size:clamp(1.3rem,1rem + 1.2vw,2.1rem)}h3{font-size:clamp(1.1rem,.95rem + .6vw,1.5rem)}
+.grid{grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:clamp(.6rem,1.2vw,1.25rem)}
+.card{padding:.75rem .9rem}.card img{height:clamp(9rem,12vw,16rem)}
+.stat{font-size:clamp(1.8rem,1.2rem + 2vw,3rem)}.mu{font-size:.875rem}
+#modal>div{max-width:min(36rem,100%);padding:clamp(.9rem,2vw,1.5rem)}
+img,svg,video,iframe{max-width:100%}table{font-size:.9rem}td,th{word-break:break-word}
+@media (max-width:480px){table{font-size:.8rem}td,th{padding:4px!important}}
+
+main:has(> .about){max-width:none}
+.about{width:100%}
+.about .lead{max-width:none;font-size:clamp(1rem,.9rem + .45vw,1.35rem);line-height:1.65;margin:.5rem 0 clamp(1rem,2vw,2rem)}
+.about .grid{grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr));gap:clamp(.75rem,1.6vw,1.75rem)}
+.about .card{padding:clamp(1rem,1.8vw,2rem) clamp(1rem,2vw,2.25rem);display:flex;flex-direction:column;gap:.5rem}
+.about .card b{font-size:clamp(1.1rem,.95rem + .6vw,1.6rem)}
+.about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word}
+
+.tv{max-width:44rem;margin:0 auto clamp(1rem,2vw,1.6rem);background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
 .tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
 .tvi{position:relative;aspect-ratio:16/9;background:#0b0a3a;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tvi img{width:100%;height:100%;object-fit:cover;display:block}
 .tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
 .tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
 
+/* Question of the Day & Choice Colors */
 .tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
 .tqo{display:grid;gap:8px}
 .tqo button{display:flex;align-items:center;gap:10px;text-align:left;white-space:normal;width:100%;padding:10px 12px;border-radius:10px;background:#ffffff10;border:2px solid transparent;transition:all .18s}
@@ -138,6 +156,11 @@ body.txon #txbar{display:flex}
 .appbt{display:flex;flex-wrap:wrap;gap:.6rem}.appd{display:flex;align-items:center;gap:.6rem;background:#000;border:1px solid #fff6;border-radius:10px;padding:.5rem 1.1rem;text-align:left;min-width:11rem}
 .appd small{display:block;font-size:.7rem;color:#ccc;line-height:1.1}.appd b{display:block;font-size:1.05rem;line-height:1.2}.appic{font-size:1.5rem;width:1.6rem;text-align:center}
 .appc{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.6rem;margin-top:.9rem}.appc>div{background:#ffffff12;border-radius:10px;padding:.5rem .8rem}.appc .stat{display:block;line-height:1.2}.appc .mu{font-size:.85rem}
+
+#hl{flex:none;display:flex;align-items:center;gap:.4rem}.hlu{font-size:.85rem;margin-right:.2rem;white-space:nowrap}
+.ib{display:inline-flex;align-items:center;justify-content:center;width:2.4rem;height:2.4rem;padding:0;border-radius:10px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);transition:background .2s}
+.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}
+.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none !important}
 
 :root{--nw:min(16rem,78vw);--hh:4rem;--ez:cubic-bezier(.22,.61,.36,1)}
 html{overflow-x:hidden}body{overflow-x:clip}
@@ -192,10 +215,10 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 <script>
 // ==========================================
 // 1. SUPABASE REAL-TIME CLOUD CONFIGURATION
-// Paste your Project URL & Anon Public Key here:
+// Paste your Project URL & Anon Key into lines 164 & 165:
 // ==========================================
-let SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL_HERE";
-let SUPABASE_ANON = "YOUR_SUPABASE_ANON_KEY_HERE";
+let SUPABASE_URL = "https://sbrnofctchqotcjteqxr.supabase.co";
+let SUPABASE_ANON = "sb_publishable_YHuL4d2Ubc62WnLtX_vxjA_3i2z87JE";
 
 if(!SUPABASE_URL || SUPABASE_URL.includes("YOUR_SUPABASE")) {
   SUPABASE_URL = localStorage.getItem("jt_sp_url") || "";
@@ -377,7 +400,7 @@ const churchData = {
   events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
 };
 
-// Global Memory Initial State (Overwritten by Supabase on connect)
+// Global Memory Initial State (Supabase is Single Source of Truth)
 let D = JSON.parse(JSON.stringify(churchData));
 let R = {"devotion:dv1": {like: 7, heart: 7}};
 let AL = defaultAdmins;
@@ -385,7 +408,6 @@ let AL = defaultAdmins;
 // Public Visitor Mode by default. Do not auto-login anyone.
 let savedSession = null;
 try {
-  // Clear any old stuck admin sessions once
   if(localStorage.getItem("jt_guest_reset_v3") !== "done"){
     localStorage.removeItem("jt_active_session");
     localStorage.setItem("jt_guest_reset_v3", "done");
@@ -1289,7 +1311,7 @@ async function submitVisitRequest(target){
   }
 }
 
-// Feed View: Trivia & Daily Quiz at TOP, Devotion Messages at BOTTOM
+// Feed View (Trivia & Daily Quiz at TOP, Devotion Messages at BOTTOM)
 function feed(c){
   const F = CF[c];
   const L = D[c] || [];
@@ -1420,6 +1442,7 @@ async function toggleReaction(key, type){
   render();
 }
 
+// Fullscreen Confetti Engine for Correct Quiz Answer
 function triggerQuizConfetti(){
   const c = document.createElement("canvas");
   c.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:99999;";
