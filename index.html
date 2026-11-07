@@ -1480,18 +1480,25 @@ function render(){
       </div>
     `}
     ${T.map(t => `<button class="${t==view?"on":""}" data-v="${t}">${TL[t]||t.toUpperCase()}</button>`).join("")}
+    <div style="margin-top:16px;padding:12px 10px;border-top:1px solid var(--bd)">
+      <button class="btn sm" onclick="openGitHubSyncModal();menu(false)" style="width:100%;font-size:.8rem;display:flex;align-items:center;justify-content:center;gap:6px;background:#ffffff15">
+        <span>🚀</span> Update GitHub Pages
+      </button>
+    </div>
   `;
   
   // Header Buttons
   $("#hl").innerHTML = me ? `
     <span class="mu hlu">${ex(me.name)} · ${accLabel()}</span>
+    <button class="btn ib" onclick="openGitHubSyncModal()" title="Sync / Export for GitHub Pages (jtnaanbulacan.github.io)"><svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"/></svg></button>
     <button class="btn ib" onclick="downloadZipBackup()" title="Download Backup ZIP"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg></button>
     ${admin ? `
       <button class="btn ib" onclick="openArrangeModal()" title="Arrange sections"><svg viewBox="0 0 24 24"><path d="M7 4v16m0-16L3 8m4-4 4 4m6 12V4m0 16-4-4m4 4 4-4"/></svg></button>
       <button class="btn ib" id="btn-edit-text" onclick="toggleTextEditMode()" title="Edit all text & logos"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg></button>
     ` : ''}
     <button class="btn ib" onclick="handleLogout()" title="Log out" aria-label="Log out"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></button>` :
-    `<button class="btn ib" onclick="loginForm()" title="Admin login" aria-label="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
+    `<button class="btn ib" onclick="openGitHubSyncModal()" title="Sync with GitHub Pages"><svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"/></svg></button>
+     <button class="btn ib" onclick="loginForm()" title="Admin login" aria-label="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
   
   renderLogo();
 
