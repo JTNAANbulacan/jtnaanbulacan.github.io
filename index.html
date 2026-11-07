@@ -3,7 +3,7 @@
 <title>JTNAAN Bulacan – Church Management</title>
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D"><meta name="theme-color" content="#0b0a3a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-badge-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="JTNAAN">
 
-<!-- Supabase Cloud SDK -->
+<!-- Supabase Real-Time Cloud SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- JSZip for Backup Packages -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -76,7 +76,12 @@ input,textarea,select{width:100%;font:inherit;padding:8px;margin:3px 0;border:1p
 .chk input{width:auto}
 .arit{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:4px 0;border:1px solid var(--bd);border-radius:8px;background:#ffffff0d}
 #modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:99;padding:14px}
-#modal>div{background:var(--card);padding:18px;border-radius:12px;width:100%;max-width:480px;max-height:90vh;overflow:auto}
+#modal>div{background:var(--card);padding:18px;border-radius:12px;width:100%;max-width:520px;max-height:90vh;overflow:auto}
+
+/* Admin Permissions Checkbox Grid & Badges */
+.adck{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(14rem,100%),1fr));gap:4px 8px;margin-top:6px}
+.adch{display:inline-block;font-size:.78rem;padding:.2rem .55rem;margin:0 .3rem .3rem 0;border-radius:999px;background:#ffffff14;border:1px solid var(--bd)}
+.adch.on{background:var(--pr);color:#1a1446;border-color:transparent;font-weight:700}
 
 /* Cloud Status Banner */
 .cloud-status-banner{
@@ -102,7 +107,7 @@ h2{font-size:clamp(1.3rem,1rem + 1.2vw,2.1rem)}h3{font-size:clamp(1.1rem,.95rem 
 .grid{grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:clamp(.6rem,1.2vw,1.25rem)}
 .card{padding:.75rem .9rem}.card img{height:clamp(9rem,12vw,16rem)}
 .stat{font-size:clamp(1.8rem,1.2rem + 2vw,3rem)}.mu{font-size:.875rem}
-#modal>div{max-width:min(36rem,100%);padding:clamp(.9rem,2vw,1.5rem)}
+#modal>div{max-width:min(38rem,100%);padding:clamp(.9rem,2vw,1.5rem)}
 img,svg,video,iframe{max-width:100%}table{font-size:.9rem}td,th{word-break:break-word}
 @media (max-width:480px){table{font-size:.8rem}td,th{padding:4px!important}}
 
@@ -114,7 +119,9 @@ main:has(> .about){max-width:none}
 .about .card b{font-size:clamp(1.1rem,.95rem + .6vw,1.6rem)}
 .about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word}
 
-.tv{max-width:44rem;margin:0 auto clamp(1rem,2vw,1.6rem);background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
+/* Trivia & Quiz Container */
+.tvs{display:grid;gap:16px;max-width:44rem;margin:10px auto 26px}
+.tv{background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
 .tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
 .tvi{position:relative;aspect-ratio:16/9;background:#0b0a3a;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tvi img{width:100%;height:100%;object-fit:cover;display:block}
@@ -165,6 +172,7 @@ main:has(> .about){max-width:none}
 :root{--nw:min(16rem,78vw);--hh:4rem;--ez:cubic-bezier(.22,.61,.36,1)}
 html{overflow-x:hidden}body{overflow-x:clip}
 #mnb{flex:none;width:2.4rem;height:2.4rem;padding:0;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#ffffff14;border:1px solid var(--bd);transition:background .2s}
+#mnb:hover{background:#ffffff24}
 #mnb i{display:block;width:1.2rem;height:2px;border-radius:2px;background:var(--tx);transition:transform .35s var(--ez),opacity .25s}
 body.mo #mnb i:nth-child(1){transform:translateY(7px) rotate(45deg)}body.mo #mnb i:nth-child(2){opacity:0}body.mo #mnb i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
@@ -183,9 +191,11 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 </style>
 </head><body>
 
+<!-- Dedicated Background Layer & Violet Overlay -->
 <div id="site-bg"></div>
 <div id="site-bg-overlay"></div>
 
+<!-- Live Native Pickers -->
 <input type="file" id="bg-file-picker" accept="image/*" style="display:none" onchange="handleBgUpload(event)">
 <input type="file" id="logo-file-picker" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
 
@@ -215,7 +225,7 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 <script>
 // ==========================================
 // 1. SUPABASE REAL-TIME CLOUD CONFIGURATION
-// Paste your Project URL & Anon Key into lines 164 & 165:
+// Preserved Keys from your connection:
 // ==========================================
 let SUPABASE_URL = "https://sbrnofctchqotcjteqxr.supabase.co";
 let SUPABASE_ANON = "sb_publishable_YHuL4d2Ubc62WnLtX_vxjA_3i2z87JE";
@@ -235,6 +245,7 @@ function initSupabaseClient(){
         auth: { persistSession: false },
         realtime: { params: { eventsPerSecond: 10 } }
       });
+      console.log("☁ Supabase Cloud Connected!");
       setupRealtimeSync();
     } catch(e) {
       console.warn("Supabase init error:", e);
@@ -298,20 +309,23 @@ const TL={
   events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS"
 };
 
+// All Sections Available for Permission Checkboxes
 const PL={
-  dashboard:"Home dashboard – Facebook posts & site background",
-  devotion:"Daily devotion – posts & comments",
-  testimony:"Testimony – posts & comments",
-  members:"Members – including private details",
-  attendance:"Attendance",
-  funds:"Funds",
-  social:"Social media",
-  ministries:"Ministries",
-  events:"Events",
-  prayers:"Prayer requests",
-  gallery:"Gallery",
-  support:"Support – donation QR codes",
-  arrange:"Arrange sections (menu order)"
+  dashboard:"Home Dashboard (Facebook posts & background)",
+  about:"About Us (mission, vision, contact details)",
+  schedule:"Schedule (weekly services & visit requests)",
+  devotion:"Daily Devotion (create/edit posts & delete comments)",
+  testimony:"Testimony (manage testimonies)",
+  members:"Members (add, edit, delete members & view details)",
+  attendance:"Attendance (take attendance & save records)",
+  funds:"Church Funds (manage income, expenses & ledger)",
+  social:"Social Media (add, edit, delete metrics)",
+  ministries:"Ministries (add, edit, delete ministries & banners)",
+  events:"Events (create, edit, delete events)",
+  gallery:"Gallery (create albums, upload photos & delete)",
+  prayers:"Prayer Requests (manage prayer requests)",
+  support:"Support (add, edit, delete donation QR codes)",
+  arrange:"Arrange Sections (reorder menu order)"
 };
 
 const defaultAdmins = [
@@ -400,18 +414,13 @@ const churchData = {
   events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
 };
 
-// Global Memory Initial State (Supabase is Single Source of Truth)
+// Global State
 let D = JSON.parse(JSON.stringify(churchData));
 let R = {"devotion:dv1": {like: 7, heart: 7}};
 let AL = defaultAdmins;
 
-// Public Visitor Mode by default. Do not auto-login anyone.
 let savedSession = null;
 try {
-  if(localStorage.getItem("jt_guest_reset_v3") !== "done"){
-    localStorage.removeItem("jt_active_session");
-    localStorage.setItem("jt_guest_reset_v3", "done");
-  }
   const raw = localStorage.getItem("jt_active_session");
   if(raw && raw !== "null"){
     savedSession = JSON.parse(raw);
@@ -484,7 +493,6 @@ async function fetchAllFromCloud(silent = false){
       return;
     }
     
-    // Seed database if completely empty
     if(!data || data.length === 0){
       await seedCloudDatabase();
       return;
@@ -508,7 +516,6 @@ async function fetchAllFromCloud(silent = false){
       }
     });
 
-    // Replace in-memory state directly from Supabase
     Object.keys(cloudD).forEach(k => {
       D[k] = cloudD[k];
     });
@@ -521,7 +528,10 @@ async function fetchAllFromCloud(silent = false){
       AL = cloudD.admins;
       if(me){
         const updatedMe = AL.find(a => a.username.toLowerCase() === me.username.toLowerCase());
-        if(updatedMe) me = updatedMe;
+        if(updatedMe){
+          me = updatedMe;
+          admin = !!me.owner;
+        }
       }
     }
 
@@ -586,7 +596,6 @@ function setupRealtimeSync(){
   }
 }
 
-// Background sync on mobile device focus
 document.addEventListener("visibilitychange", () => {
   if(!document.hidden && supabaseClient){
     fetchAllFromCloud(true);
@@ -599,7 +608,14 @@ setInterval(() => {
   if(!document.hidden && supabaseClient) fetchAllFromCloud(true);
 }, 20000);
 
-const can = c => !!me && (me.owner || (me.perms || []).includes(okey(c == "donate" ? "support" : c == "fbposts" ? "dashboard" : c)));
+// Permission Check Engine
+const can = c => {
+  if (!me) return false;
+  if (me.owner) return true;
+  const key = okey(c == "donate" ? "support" : c == "fbposts" ? "dashboard" : c);
+  return (me.perms || []).includes(key);
+};
+
 const accLabel = () => me ? (me.owner ? "Full access" : (me.perms || []).length + " sections") : "";
 const $ = s => document.querySelector(s);
 const ex = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -643,7 +659,6 @@ async function resetBgToDefault(){
   showSuccessNotification("Default background restored.");
 }
 
-// Logo handling
 function getChurchLogoUrl(){
   const custom = (D.settings||[]).find(x => x.id === "logo");
   return custom ? custom.url : "";
@@ -1311,7 +1326,7 @@ async function submitVisitRequest(target){
   }
 }
 
-// Feed View (Trivia & Daily Quiz at TOP, Devotion Messages at BOTTOM)
+// Feed View: Trivia & Daily Quiz at TOP, Devotion Messages at BOTTOM
 function feed(c){
   const F = CF[c];
   const L = D[c] || [];
@@ -1442,7 +1457,6 @@ async function toggleReaction(key, type){
   render();
 }
 
-// Fullscreen Confetti Engine for Correct Quiz Answer
 function triggerQuizConfetti(){
   const c = document.createElement("canvas");
   c.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:99999;";
@@ -1983,16 +1997,145 @@ function list(c){
   </div>`;
 }
 
+// Admins Management (Admin Mart has access to Add/Edit admins with permission checkboxes)
 function adminsv(){
-  if(!admin) return `<p class="mu">Access restricted to Super Admin.</p>`;
-  return `<h2>ADMINS MANAGEMENT</h2>
-  <div class="grid">${AL.map(a=>`
-    <div class="card">
-      <b style="font-size:1.1rem;color:var(--pr)">${e(a.name)}</b>
-      <div class="mu">Username: <b>${e(a.username)}</b></div>
-      <div style="font-size:.85rem">Role: <b>${a.owner ? 'Super Admin (All Access)' : a.perms.map(p=>PL[p]||p).join(', ')}</b></div>
+  if(!admin) return `<p class="mu">Access restricted to Super Admin (Admin Mart).</p>`;
+  return `
+    <h2>ADMINS MANAGEMENT <span>(${AL.length})</span></h2>
+    <p class="mu">Only Admin Mart has access to this section. Add admin accounts, update credentials, and check the sections each admin can update/edit.</p>
+    <p><button class="btn gold" onclick="openAdminModal('_new')">+ Add Admin</button></p>
+    <div class="grid">
+      ${AL.map(a => `
+        <div class="card">
+          <b style="font-size:1.1rem;color:var(--pr)">${e(a.name)}</b>
+          <div class="mu" style="margin:4px 0">Username: <b>${e(a.username)}</b></div>
+          <div style="margin:8px 0">
+            ${a.owner ? '<span class="adch on">Full access to every section (Super Admin)</span>' : 
+              (a.perms && a.perms.length > 0) ? a.perms.map(p => `<span class="adch">${e(PL[p] || p)}</span>`).join('') :
+              '<span class="mu" style="font-size:.8rem">No edit permissions assigned.</span>'
+            }
+          </div>
+          <button class="btn sm" onclick="openAdminModal('${e(a.id)}')">Edit</button>
+          ${!a.owner ? ` <button class="btn red sm" onclick="deleteAdminRecord('${e(a.id)}')">Remove</button>` : ''}
+        </div>
+      `).join('')}
     </div>
-  `).join('')}</div>`;
+  `;
+}
+
+function openAdminModal(id){
+  const nw = id === "_new";
+  const a = (AL || []).find(x => x.id === id) || { perms: [] };
+  const P = a.perms || [];
+  const K = Object.keys(PL);
+
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">${nw ? "Add New Admin" : "Edit Admin"}</h3>
+    <div>
+      <div class="mu">Admin Name (shown in top header when logged in):</div>
+      <input id="adm_name" maxlength="60" value="${e(a.name || "")}" placeholder="e.g. Sister Sarah">
+      
+      <div class="mu" style="margin-top:8px">Username:</div>
+      <input id="adm_username" maxlength="40" autocomplete="off" value="${e(a.username || "")}" placeholder="e.g. Admin05">
+      
+      <div class="mu" style="margin-top:8px">Password ${nw ? "(required)" : "(leave blank to keep current password)"}:</div>
+      <input id="adm_password" type="password" autocomplete="new-password">
+      <label class="chk"><input type="checkbox" onchange="$('#adm_password').type = this.checked ? 'text' : 'password'"> Show password</label>
+
+      ${a.owner ? `
+        <p class="mu" style="margin-top:10px">Admin Mart is the Super Admin and always has full access to every section.</p>
+      ` : `
+        <div class="mu" style="margin-top:10px"><b style="color:var(--pr)">Sections this admin can update / edit:</b></div>
+        <label class="chk">
+          <input type="checkbox" id="ad_select_all" ${K.every(k => P.includes(k)) ? "checked" : ""} onchange="document.querySelectorAll('[data-adp]').forEach(i => i.checked = this.checked)">
+          <b>Select All Sections</b>
+        </label>
+        <div class="adck">
+          ${K.map(k => `
+            <label class="chk">
+              <input type="checkbox" data-adp="${k}" ${P.includes(k) ? "checked" : ""}>
+              ${e(PL[k])}
+            </label>
+          `).join('')}
+        </div>
+      `}
+      <div id="adm_error" style="color:#ff8a80;min-height:22px;margin-top:6px"></div>
+      <p>
+        <button class="btn gold" id="btn-save-admin" onclick="saveAdminRecord('${id}')">Save Admin</button>
+        <button onclick="closeModal()">Cancel</button>
+      </p>
+    </div>
+  `;
+  $("#modal").style.display = "flex";
+}
+
+async function saveAdminRecord(id){
+  const nw = id === "_new";
+  const name = $("#adm_name").value.trim();
+  const username = $("#adm_username").value.trim();
+  const password = $("#adm_password").value;
+  const errEl = $("#adm_error");
+  const btn = $("#btn-save-admin");
+
+  if(!name || !username){
+    errEl.textContent = "Please fill in both name and username.";
+    return;
+  }
+  if(nw && !password){
+    errEl.textContent = "Please enter a password for the new admin.";
+    return;
+  }
+
+  const existing = (AL || []).find(x => x.id === id);
+  const isOwner = existing ? !!existing.owner : false;
+  const perms = isOwner ? Object.keys(PL) : Array.from(document.querySelectorAll("[data-adp]:checked")).map(i => i.dataset.adp);
+
+  const adminObj = {
+    id: nw ? ("adm_" + Date.now().toString(36)) : id,
+    name: name,
+    username: username,
+    password: password ? password : (existing ? existing.password : ""),
+    owner: isOwner,
+    perms: perms
+  };
+
+  btn.disabled = true;
+  btn.textContent = "Saving to Cloud...";
+
+  try {
+    AL = AL.filter(x => x.id !== adminObj.id);
+    AL.push(adminObj);
+
+    // Save directly to Supabase cloud
+    await syncRecordToCloud("admins", adminObj.id, adminObj);
+
+    if(me && me.id === adminObj.id){
+      me = adminObj;
+      localStorage.setItem("jt_active_session", JSON.stringify(me));
+    }
+
+    closeModal();
+    render();
+    showSuccessNotification("Admin account saved and synced to cloud!");
+  } catch(err) {
+    errEl.textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = "Save Admin";
+  }
+}
+
+async function deleteAdminRecord(id){
+  const target = AL.find(a => a.id === id);
+  if(!target) return;
+  if(target.owner){
+    return alert("Cannot remove the Super Admin account (Admin Mart).");
+  }
+  if(confirm(`Remove admin account for "${target.name}" (${target.username})?`)){
+    AL = AL.filter(a => a.id !== id);
+    await deleteRecordFromCloud("admins", id);
+    render();
+    showSuccessNotification("Admin removed live from database!");
+  }
 }
 
 async function deleteRecord(c, id){
