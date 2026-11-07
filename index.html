@@ -1025,12 +1025,9 @@ async function sendBackgroundEmail(formData, subject="Church Website Form Submis
 function baseTabs(){
   const saved = ((D.settings||[]).find(x => x.id === "order") || {}).list;
   const defaultList = [
-    "dashboard","about","schedule","devotion","testimony",
-    ...(can("members") || admin ? ["members"] : []),
-    ...(can("attendance") || admin ? ["attendance"] : []),
-    ...(can("funds") || admin ? ["funds"] : []),
-    "social","ministries","events","gallery","prayers","support",
-    ...(admin ? ["reports"] : [])
+    "dashboard","about","schedule","devotion","testimony","members",
+    "attendance",...(can("funds")?["funds"]:[]),"social","ministries",
+    "events","gallery","prayers","support","reports"
   ];
   if(saved && Array.isArray(saved)){
     const ordered = [];
@@ -1082,8 +1079,16 @@ async function saveCloudConfig(){
   showSuccessNotification("Supabase Cloud Sync is now active!");
 }
 
-// Download Backup ZIP
+function isAdminMart(){
+  return !!(me && (me.owner === true || me.name === "Admin Mart" || (me.username && me.username.toLowerCase() === "admin@mart")));
+}
+
+// Download Backup ZIP (Admin Mart Only)
 async function downloadZipBackup(){
+  if(!isAdminMart()){
+    alert("Access restricted to Super Admin (Admin Mart).");
+    return;
+  }
   const zip = new JSZip();
   const root = zip.folder("JTNAAN-Bulacan");
   root.file("index.html", "<!DOCTYPE html>\n" + document.documentElement.outerHTML);
@@ -1138,6 +1143,10 @@ async function downloadZipBackup(){
 }
 
 function downloadIndexHtmlDirectly(){
+  if(!isAdminMart()){
+    alert("Access restricted to Super Admin (Admin Mart).");
+    return;
+  }
   const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
   const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
   const a = document.createElement("a");
@@ -1148,6 +1157,10 @@ function downloadIndexHtmlDirectly(){
 }
 
 async function copyHtmlForGithub(){
+  if(!isAdminMart()){
+    alert("Access restricted to Super Admin (Admin Mart).");
+    return;
+  }
   const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
   try {
     await navigator.clipboard.writeText(htmlContent);
@@ -1164,12 +1177,16 @@ async function copyHtmlForGithub(){
 }
 
 function openGitHubSyncModal(){
+  if(!isAdminMart()){
+    alert("Access restricted to Super Admin (Admin Mart).");
+    return;
+  }
   $("#mb").innerHTML = `
     <h3 style="margin-top:0">🚀 Update GitHub Pages (jtnaanbulacan.github.io)</h3>
     <p class="mu">To make the official church logo icon and comments appear on your live GitHub site, update your repository with this latest code.</p>
     
     <div style="background:#242528;padding:12px 14px;border-radius:10px;margin-bottom:12px;border:1px solid #3c3d40">
-      <b style="color:var(--pr);display:block;margin-bottom:4px">Method 1: Direct File Download (Recommended)</b>
+      <b style="color:var(--pr);display:block;margin-bottom:4px">Method 1: Direct File Download (Admin Mart Only)</b>
       <div class="mu" style="font-size:0.85rem;margin-bottom:8px">Download the updated <code>index.html</code> and upload/replace it in your GitHub repository.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn gold sm" onclick="downloadIndexHtmlDirectly()">📥 Download index.html</button>
@@ -1483,25 +1500,26 @@ function render(){
       </div>
     `}
     ${T.map(t => `<button class="${t==view?"on":""}" data-v="${t}">${TL[t]||t.toUpperCase()}</button>`).join("")}
-    <div style="margin-top:16px;padding:12px 10px;border-top:1px solid var(--bd)">
-      <button class="btn sm" onclick="openGitHubSyncModal();menu(false)" style="width:100%;font-size:.8rem;display:flex;align-items:center;justify-content:center;gap:6px;background:#ffffff15">
-        <span>🚀</span> Update GitHub Pages
-      </button>
-    </div>
+    ${isAdminMart() ? `
+      <div style="margin-top:16px;padding:12px 10px;border-top:1px solid var(--bd)">
+        <button class="btn sm" onclick="openGitHubSyncModal();menu(false)" style="width:100%;font-size:.8rem;display:flex;align-items:center;justify-content:center;gap:6px;background:#ffffff15">
+          <span>🚀</span> Update GitHub Pages
+        </button>
+      </div>
+    ` : ''}
   `;
   
   // Header Buttons
   $("#hl").innerHTML = me ? `
     <span class="mu hlu">${ex(me.name)} · ${accLabel()}</span>
-    <button class="btn ib" onclick="openGitHubSyncModal()" title="Sync / Export for GitHub Pages (jtnaanbulacan.github.io)"><svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"/></svg></button>
-    <button class="btn ib" onclick="downloadZipBackup()" title="Download Backup ZIP"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg></button>
-    ${admin ? `
+    ${isAdminMart() ? `
+      <button class="btn ib" onclick="openGitHubSyncModal()" title="Sync / Export for GitHub Pages (jtnaanbulacan.github.io)"><svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"/></svg></button>
+      <button class="btn ib" onclick="downloadZipBackup()" title="Download Backup ZIP"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg></button>
       <button class="btn ib" onclick="openArrangeModal()" title="Arrange sections"><svg viewBox="0 0 24 24"><path d="M7 4v16m0-16L3 8m4-4 4 4m6 12V4m0 16-4-4m4 4 4-4"/></svg></button>
       <button class="btn ib" id="btn-edit-text" onclick="toggleTextEditMode()" title="Edit all text & logos"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg></button>
     ` : ''}
     <button class="btn ib" onclick="handleLogout()" title="Log out" aria-label="Log out"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></button>` :
-    `<button class="btn ib" onclick="openGitHubSyncModal()" title="Sync with GitHub Pages"><svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"/></svg></button>
-     <button class="btn ib" onclick="loginForm()" title="Admin login" aria-label="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
+    `<button class="btn ib" onclick="loginForm()" title="Admin login" aria-label="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
   
   renderLogo();
 
