@@ -1253,9 +1253,7 @@ const churchData = {
 
 // Global State
 let D = JSON.parse(JSON.stringify(churchData));
-let R = {
-  "devotion:dv1": {like: 7, heart: 7, amen: 14, praise: 6, faith: 8}
-};
+let R = {};   // reactions start empty; only real viewer/admin reactions are counted
 let AL = defaultAdmins;
 
 let savedSession = null;
@@ -2499,6 +2497,15 @@ async function selectReaction(key, type){
   render();
 }
 
+async function resetPostReactions(key){
+  if(!confirm("Reset all reactions on this post to 0?")) return;
+  R[key] = { like: 0, heart: 0, amen: 0, praise: 0 };
+  localStorage.removeItem("jt_my_rx_" + key);
+  await syncRecordToCloud("reactions", key, R[key]);
+  render();
+  showSuccessNotification("Reactions reset to 0.");
+}
+
 async function toggleReaction(key, type){
   await selectReaction(key, type);
 }
@@ -2723,7 +2730,7 @@ function feed(c){
 // Render Single Post with Accessible Reactions & Comment Thread
 function renderFeedPost(c, x, logo){
   const key = `${c}:${x.id}`;
-  const defaultRx = { like: 7, heart: 7, amen: 14, praise: 6 };
+  const defaultRx = { like: 0, heart: 0, amen: 0, praise: 0 };   // every post starts with NO reactions
   const postRx = Object.assign({}, defaultRx, R[key] || {});
   const myRx = getMyReaction(key);
   const myRxObj = REACTION_TYPES.find(r => r.id === myRx);
@@ -2847,6 +2854,7 @@ function renderFeedPost(c, x, logo){
           <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b;display:flex;gap:8px">
             <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit Post</button>
             <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete Post</button>
+            <button class="btn sm" onclick="resetPostReactions('${c}:${x.id}')">Reset reactions to 0</button>
           </div>
         ` : ''}
 
