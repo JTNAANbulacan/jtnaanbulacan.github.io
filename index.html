@@ -5,7 +5,7 @@
 
 <!-- Supabase Real-Time Cloud SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- JSZip for Backup Packages -->
+<!-- JSZip for 1-click backups -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style id="bgcss"></style>
@@ -13,7 +13,7 @@
 :root{--bg:#0b0a3a;--card:#15145a;--tx:#fff;--mu:#b9bde6;--pr:#f2a93b;--bd:#3a3a9a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html{scroll-padding-top:70px;background:#0b0a3a}
 
-/* Background Backdrop Layer */
+/* Background Layers */
 body{margin:0;background:transparent;color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;position:relative;min-height:100vh}
 #site-bg{
   position:fixed;top:-30px;left:-30px;right:-30px;bottom:-30px;z-index:-2;pointer-events:none;
@@ -25,21 +25,41 @@ body{margin:0;background:transparent;color:var(--tx);font:16px/1.5 system-ui,-ap
   background:radial-gradient(1000px 400px at 100% 0,rgba(42,42,168,0.45),transparent 60%),linear-gradient(rgba(11,10,58,0.72),rgba(11,10,58,0.86));
 }
 
-/* Header & Logo */
-header{display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:6;background:#0b0a3af2;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-#header-logo-container{
-  flex:0 0 44px !important;width:44px !important;height:44px !important;min-width:44px !important;min-height:44px !important;
-  border-radius:50% !important;background:#fff !important;border:2px solid var(--pr) !important;padding:0 !important;margin:0 !important;
-  overflow:hidden !important;display:flex !important;align-items:center !important;justify-content:center !important;
-  cursor:pointer !important;box-shadow:0 2px 10px rgba(0,0,0,.4) !important;transition:transform .2s !important;box-sizing:border-box !important;
+/* Header & Mobile Optimization */
+header{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;position:sticky;top:0;z-index:10;
+  background:#0b0a3af7;border-bottom:1px solid var(--bd);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
 }
-#header-logo-container:hover{transform:scale(1.06)}
-#church-logo-render{width:100% !important;height:100% !important;display:flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden}
-#church-logo-render img{width:100% !important;height:100% !important;object-fit:cover !important;border-radius:50% !important;display:block !important}
+#header-logo-container{
+  flex:0 0 42px !important;width:42px !important;height:42px !important;border-radius:50% !important;
+  background:#fff !important;border:2px solid var(--pr) !important;padding:0 !important;margin:0 !important;
+  overflow:hidden !important;display:flex !important;align-items:center !important;justify-content:center !important;
+  cursor:pointer !important;box-shadow:0 2px 8px rgba(0,0,0,.4) !important;box-sizing:border-box !important;
+}
+#church-logo-render{width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden}
+#church-logo-render img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 
-header>div{min-width:0;flex:1 1 auto}
-header b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:1px;font-size:14px;line-height:1.2}
-header small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--mu);font-size:12px}
+header>div{min-width:0;flex:1 1 auto;overflow:hidden}
+header b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.5px;font-size:13px;line-height:1.2}
+header small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--mu);font-size:11px}
+
+#hl{flex:none;display:flex;align-items:center;gap:.3rem;margin-left:auto}
+.hlu{font-size:.8rem;white-space:nowrap}
+.ib{
+  display:inline-flex;align-items:center;justify-content:center;width:2.2rem;height:2.2rem;
+  padding:0;border-radius:8px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);flex-shrink:0;
+}
+.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}
+.ib svg{width:1.15rem;height:1.15rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none !important}
+
+@media(max-width:768px){
+  header{padding:6px 10px;gap:6px}
+  .hlu{display:none !important}
+  #header-logo-container{flex:0 0 36px !important;width:36px !important;height:36px !important}
+  header b{font-size:12px}
+  .ib{width:2rem;height:2rem}
+  .ib svg{width:1rem;height:1rem}
+}
 
 nav{display:flex;gap:4px;overflow-x:auto;padding:0 10px 8px;border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);background:#0b0a3af2;z-index:4}
 button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:7px 12px;background:transparent;color:var(--tx);white-space:nowrap}
@@ -58,7 +78,7 @@ input,textarea,select{width:100%;font:inherit;padding:8px;margin:3px 0;border:1p
 #modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:99;padding:14px}
 #modal>div{background:var(--card);padding:18px;border-radius:12px;width:100%;max-width:480px;max-height:90vh;overflow:auto}
 
-/* Cloud Status Notification Banner */
+/* Cloud Status Banner */
 .cloud-status-banner{
   background:rgba(231,76,60,0.2);border:1px solid #e74c3c;border-radius:8px;padding:12px 16px;
   margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
@@ -75,26 +95,7 @@ body.txon main{padding-bottom:7rem}
 body.txon #txbar{display:flex}
 .txo{background:#ffffff0f;border-radius:6px;padding:6px 9px;font-size:.85rem;white-space:pre-wrap;word-break:break-word;color:var(--mu)}
 
-html{font-size:clamp(15px,.45vw + 13.3px,21px);-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{font-size:1rem}
-button{padding:.45rem .75rem}.sm{padding:.25rem .55rem;font-size:.8rem}
-h2{font-size:clamp(1.3rem,1rem + 1.2vw,2.1rem)}h3{font-size:clamp(1.1rem,.95rem + .6vw,1.5rem)}
-.grid{grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:clamp(.6rem,1.2vw,1.25rem)}
-.card{padding:.75rem .9rem}.card img{height:clamp(9rem,12vw,16rem)}
-.stat{font-size:clamp(1.8rem,1.2rem + 2vw,3rem)}.mu{font-size:.875rem}
-#modal>div{max-width:min(36rem,100%);padding:clamp(.9rem,2vw,1.5rem)}
-img,svg,video,iframe{max-width:100%}table{font-size:.9rem}td,th{word-break:break-word}
-@media (max-width:480px){table{font-size:.8rem}td,th{padding:4px!important}}
-
-main:has(> .about){max-width:none}
-.about{width:100%}
-.about .lead{max-width:none;font-size:clamp(1rem,.9rem + .45vw,1.35rem);line-height:1.65;margin:.5rem 0 clamp(1rem,2vw,2rem)}
-.about .grid{grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr));gap:clamp(.75rem,1.6vw,1.75rem)}
-.about .card{padding:clamp(1rem,1.8vw,2rem) clamp(1rem,2vw,2.25rem);display:flex;flex-direction:column;gap:.5rem}
-.about .card b{font-size:clamp(1.1rem,.95rem + .6vw,1.6rem)}
-.about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word}
-
-/* Trivia & Quiz Container */
+/* Trivia, Quiz, Feed */
 .tvs{display:grid;gap:16px;max-width:44rem;margin:10px auto 26px}
 .tv{background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
 .tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
@@ -103,7 +104,6 @@ main:has(> .about){max-width:none}
 .tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
 .tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
 
-/* Question of the Day & Choice Colors */
 .tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
 .tqo{display:grid;gap:8px}
 .tqo button{display:flex;align-items:center;gap:10px;text-align:left;white-space:normal;width:100%;padding:10px 12px;border-radius:10px;background:#ffffff10;border:2px solid transparent;transition:all .18s}
@@ -139,40 +139,40 @@ main:has(> .about){max-width:none}
 .appd small{display:block;font-size:.7rem;color:#ccc;line-height:1.1}.appd b{display:block;font-size:1.05rem;line-height:1.2}.appic{font-size:1.5rem;width:1.6rem;text-align:center}
 .appc{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.6rem;margin-top:.9rem}.appc>div{background:#ffffff12;border-radius:10px;padding:.5rem .8rem}.appc .stat{display:block;line-height:1.2}.appc .mu{font-size:.85rem}
 
-#hl{flex:none;display:flex;align-items:center;gap:.4rem}.hlu{font-size:.85rem;margin-right:.2rem;white-space:nowrap}
-.ib{display:inline-flex;align-items:center;justify-content:center;width:2.4rem;height:2.4rem;padding:0;border-radius:10px;background:#ffffff14;border:1px solid var(--bd);color:var(--tx);transition:background .2s}
-.ib:hover{background:#ffffff26}.ib.on{background:var(--pr);color:#1a1446;border-color:transparent}.ib svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none !important}
-
 :root{--nw:min(16rem,78vw);--hh:4rem;--ez:cubic-bezier(.22,.61,.36,1)}
 html{overflow-x:hidden}body{overflow-x:clip}
-#mnb{flex:none;width:2.6rem;height:2.6rem;padding:0;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#ffffff14;border:1px solid var(--bd);transition:background .2s}
-#mnb:hover{background:#ffffff24}
-#mnb i{display:block;width:1.25rem;height:2px;border-radius:2px;background:var(--tx);transition:transform .35s var(--ez),opacity .25s}
+#mnb{flex:none;width:2.4rem;height:2.4rem;padding:0;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#ffffff14;border:1px solid var(--bd);transition:background .2s}
+#mnb i{display:block;width:1.2rem;height:2px;border-radius:2px;background:var(--tx);transition:transform .35s var(--ez),opacity .25s}
 body.mo #mnb i:nth-child(1){transform:translateY(7px) rotate(45deg)}body.mo #mnb i:nth-child(2){opacity:0}body.mo #mnb i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-nav#nav{position:fixed;left:0;top:var(--hh);bottom:0;width:var(--nw);display:flex;flex-direction:column;gap:3px;overflow-y:auto;overflow-x:hidden;padding:.75rem .6rem calc(1rem + env(safe-area-inset-bottom,0px));border:0;border-right:1px solid var(--bd);background:#0b0a3af7;z-index:5;transform:translateX(-100%);visibility:hidden;transition:transform .4s var(--ez),visibility 0s linear .4s}
+
+nav#nav{
+  position:fixed;left:0;top:var(--hh);bottom:0;width:var(--nw);display:flex;flex-direction:column;gap:3px;
+  overflow-y:auto;overflow-x:hidden;padding:.75rem .6rem calc(1rem + env(safe-area-inset-bottom,0px));
+  border:0;border-right:1px solid var(--bd);background:#0b0a3af7;z-index:20;transform:translateX(-100%);
+  visibility:hidden;transition:transform .4s var(--ez),visibility 0s linear .4s;
+}
 body.mo nav#nav{transform:none;visibility:visible;transition:transform .4s var(--ez),visibility 0s;box-shadow:6px 0 24px #0006}
 nav#nav button{text-align:left;width:100%;padding:.65rem .85rem;font-size:.8rem;border-radius:8px;flex:none}
 nav#nav button:hover{background:#ffffff14}nav#nav button.on{background:var(--pr);color:#241a00}
 main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s var(--ez)}
-@media (min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
-@media (max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
+@media(min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
+@media(max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
 </style>
 </head><body>
 
 <div id="site-bg"></div>
 <div id="site-bg-overlay"></div>
 
-<!-- Live Native Pickers -->
 <input type="file" id="bg-file-picker" accept="image/*" style="display:none" onchange="handleBgUpload(event)">
 <input type="file" id="logo-file-picker" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
 
 <header>
   <button id="mnb" type="button" aria-label="Open sections menu" aria-expanded="false" aria-controls="nav" title="Sections"><i></i><i></i><i></i></button>
-  <div id="header-logo-container" onclick="handleLogoClick()" title="Click to change church logo (Admin Mart)">
+  <div id="header-logo-container" onclick="handleLogoClick()" title="Church Logo">
     <div id="church-logo-render"></div>
   </div>
   <div><b>JESUS THE NAME ABOVE ALL NAMES</b><small>JTNAAN Bulacan · Church Management</small></div>
-  <span id="hl" style="margin-left:auto"></span>
+  <span id="hl"></span>
 </header>
 <nav id="nav"></nav>
 <main id="main"><p class="mu">Connecting to Live Church Database…</p></main>
@@ -192,7 +192,7 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 <script>
 // ==========================================
 // 1. SUPABASE REAL-TIME CLOUD CONFIGURATION
-// Enter your Project URL & Anon Public Key:
+// Paste your Project URL & Anon Public Key here:
 // ==========================================
 let SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL_HERE";
 let SUPABASE_ANON = "YOUR_SUPABASE_ANON_KEY_HERE";
@@ -224,7 +224,7 @@ function isCloudConnected(){
   return !!supabaseClient;
 }
 
-// Visual error & success toast system
+// Visual Notification Toast System
 function showErrorNotification(msg){
   let t = document.getElementById("db-error-toast");
   if(!t){
@@ -359,7 +359,7 @@ const churchData = {
     }
   ],
   fbposts: [
-    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center of our lives and church.", url:"https://www.facebook.com/profile.php?id=61556921121315"},
+    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center ...", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb2", date:"2026-11-02", caption:"Sunday Worship Service \"Jesus Be the Center of Our Hearts\" [Jesus at the Center Series - Proverbs 4:20-23]", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb3", date:"2026-11-03", caption:"More than a team, we're a family united in worship. JTNAAN Worship Team Bonding", url:"https://www.facebook.com/profile.php?id=61556921121315"}
   ],
@@ -377,18 +377,26 @@ const churchData = {
   events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
 };
 
-// In-Memory Global State (Supabase is Single Source of Truth)
+// Global Memory Initial State (Overwritten by Supabase on connect)
 let D = JSON.parse(JSON.stringify(churchData));
 let R = {"devotion:dv1": {like: 7, heart: 7}};
 let AL = defaultAdmins;
 
+// Public Visitor Mode by default. Do not auto-login anyone.
 let savedSession = null;
 try {
+  // Clear any old stuck admin sessions once
+  if(localStorage.getItem("jt_guest_reset_v3") !== "done"){
+    localStorage.removeItem("jt_active_session");
+    localStorage.setItem("jt_guest_reset_v3", "done");
+  }
   const raw = localStorage.getItem("jt_active_session");
-  if(raw !== null && raw !== "null"){
+  if(raw && raw !== "null"){
     savedSession = JSON.parse(raw);
   }
-} catch(e){}
+} catch(e){
+  savedSession = null;
+}
 
 let me = savedSession;
 let admin = !!(me && me.owner);
@@ -443,7 +451,7 @@ async function deleteRecordFromCloud(collection, id){
   }
 }
 
-// Fetch Latest Data Directly from Supabase (Zero Stale LocalStorage)
+// Fetch Latest Data Directly from Supabase
 async function fetchAllFromCloud(silent = false){
   if(!supabaseClient) return;
   try {
@@ -454,7 +462,7 @@ async function fetchAllFromCloud(silent = false){
       return;
     }
     
-    // First time project setup: seed initial records once
+    // Seed database if completely empty
     if(!data || data.length === 0){
       await seedCloudDatabase();
       return;
@@ -478,7 +486,7 @@ async function fetchAllFromCloud(silent = false){
       }
     });
 
-    // Replace in-memory state cleanly from Supabase
+    // Replace in-memory state directly from Supabase
     Object.keys(cloudD).forEach(k => {
       D[k] = cloudD[k];
     });
@@ -504,7 +512,6 @@ async function fetchAllFromCloud(silent = false){
   }
 }
 
-// Seed the cloud database on initial connection
 async function seedCloudDatabase(){
   if(!supabaseClient) return;
   const rows = [];
@@ -557,7 +564,7 @@ function setupRealtimeSync(){
   }
 }
 
-// Automatic polling & re-sync on device wake / tab focus
+// Background sync on mobile device focus
 document.addEventListener("visibilitychange", () => {
   if(!document.hidden && supabaseClient){
     fetchAllFromCloud(true);
@@ -664,14 +671,13 @@ async function handleLogoUpload(ev){
   }
 }
 
-// Media upload engine with client compression & Supabase Storage upload
+// Supabase Storage media upload engine
 async function uploadMediaToSupabase(file, folder = "uploads", maxDim = 1200, quality = 0.78){
   if(!supabaseClient){
     showErrorNotification("Database is not connected. Media cannot be uploaded.");
     throw new Error("Supabase is not connected.");
   }
   
-  // Clean client-side image compression
   const blob = await compressImageToBlob(file, maxDim, quality);
   const ext = file.name ? file.name.split('.').pop().toLowerCase() : 'jpg';
   const cleanExt = (ext.length <= 4) ? ext : 'jpg';
@@ -933,14 +939,12 @@ async function saveEditedText(){
   const newVal = $("#tx_new_val").value.trim();
   if(!newVal) return;
   
-  // Persist text override in Supabase settings
   let curMap = ((D.settings||[]).find(x => x.id === "texts") || {}).map || {};
   curMap[activeEditTargetText] = newVal;
   D.settings = (D.settings||[]).filter(x => x.id !== "texts").concat([{id:"texts", map: curMap}]);
   
   await syncRecordToCloud("settings", "texts", { map: curMap });
 
-  // Update in DOM
   const walker = document.createTreeWalker($("#main"), NodeFilter.SHOW_TEXT);
   let node;
   while(node = walker.nextNode()){
@@ -1011,7 +1015,6 @@ async function saveFormData(c, id){
   });
   
   try {
-    // Multi-photo upload for Gallery using Supabase Storage
     if(c === 'gallery'){
       const phInput = $("#f_photos");
       if(phInput && phInput.files.length > 0){
@@ -1028,7 +1031,6 @@ async function saveFormData(c, id){
       }
     }
 
-    // Single photo upload using Supabase Storage
     const ph = $("#f_photo");
     if(ph && ph.files[0]){
       item.photo = await uploadMediaToSupabase(ph.files[0], c, 1000, 0.78);
@@ -1083,13 +1085,13 @@ function render(){
   // Mobile Drawer Navigation Header
   $("#nav").innerHTML = `
     ${me ? `
-      <div id="drawer-admin-box">
+      <div id="drawer-admin-box" style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:8px;background:#ffffff0f;border-radius:6px">
         <div style="font-weight:bold;color:var(--pr);font-size:.9rem">${ex(me.name)}</div>
         <div class="mu" style="font-size:.75rem">${ex(accLabel())}</div>
         <button class="btn red sm" onclick="handleLogout()" style="margin-top:6px;width:100%;text-align:center">Log Out</button>
       </div>
     ` : `
-      <div id="drawer-admin-box">
+      <div id="drawer-admin-box" style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:8px">
         <button class="btn gold sm" onclick="loginForm();menu(false)" style="width:100%;text-align:center">Admin Login</button>
       </div>
     `}
@@ -1135,13 +1137,13 @@ function dash(){
   const cloudOk = isCloudConnected();
 
   return `
-  <!-- Live Cloud Database Status for Admins -->
+  <!-- Live Cloud Database Status (Visible Only to Admins) -->
   ${admin ? `
     <div class="cloud-status-banner ${cloudOk ? 'online' : ''}">
       <div>
         <b>${cloudOk ? '☁ Supabase Database: Live & Syncing to All Devices' : '⚠️ Cloud Database Not Connected (Using Offline Fallback)'}</b>
         <div class="mu" style="font-size:.85rem;margin-top:2px">
-          ${cloudOk ? 'All updates saved here automatically appear in real time on mobile phones, tablets, and visitors worldwide.' : 'Edits are not yet broadcasting. Connect your Supabase keys to make changes visible to all phones and visitors.'}
+          ${cloudOk ? 'All updates saved here automatically appear in real time on mobile phones, tablets, and visitors worldwide.' : 'Edits are not broadcasting. Paste your Supabase URL & Anon Key into the code or click the button below to connect.'}
         </div>
       </div>
       <button class="btn sm ${cloudOk ? '' : 'gold'}" onclick="openCloudConfigModal()">${cloudOk ? 'Database Settings' : 'Connect Cloud Now'}</button>
@@ -1206,7 +1208,7 @@ function appv(){
     <ul class="appl"><li>No registration needed</li><li>Just install the app</li><li>Connect any Gmail account already on your phone</li></ul>
     <div class="appbt">
       <button class="appd" onclick="alert('Downloading Android web app...')"><span class="appic">🤖</span><span><small>Download for</small><b>Android</b></span></button>
-      <button class="appd" onclick="alert('To install on iPhone: Open Safari, tap Share ⬆, then tap Add to Home Screen.')"><span class="appic">📱</span><span><small>Download for</small><b>iPhone / iPad</b></span></button>
+      <button class="appd" onclick="alert('To install on iPhone: Open Safari, tap Share ⬆, then Add to Home Screen.')"><span class="appic">📱</span><span><small>Download for</small><b>iPhone / iPad</b></span></button>
     </div>
     <div class="appc">
       <div><span class="stat">4</span><span class="mu">Android downloads</span></div>
@@ -1219,7 +1221,7 @@ function appv(){
 function about(){
   return `<section class="about">
     <h2>ABOUT US</h2>
-    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship, all in a welcoming community that encourages you to honor God and live out His Word in everyday life.</p>
+    <p class="mu lead">Be part of a Christ-centered journey through our weekly gatherings, where you can strengthen your faith, build meaningful connections, and grow spiritually through inspiring messages, uplifting worship, leadership development, and Bible-centered fellowship.</p>
     <div class="grid">
       <div class="card"><b>Mission</b><div class="mu">To proclaim the Good News of Jesus Christ and make disciples of all nations.</div></div>
       <div class="card"><b>Vision</b><div class="mu">To win the lost souls to Jesus Christ, nurture believers in the faith, and equip them to live for God’s glory.</div></div>
@@ -1287,7 +1289,7 @@ async function submitVisitRequest(target){
   }
 }
 
-// Feed View (Trivia & Daily Quiz at TOP, Devotion Messages at BOTTOM)
+// Feed View: Trivia & Daily Quiz at TOP, Devotion Messages at BOTTOM
 function feed(c){
   const F = CF[c];
   const L = D[c] || [];
@@ -1778,7 +1780,8 @@ function socialv(){
         <b style="font-size:1.15rem;color:var(--pr)">${e(s.platform)}</b>
         <div class="stat" style="font-size:2rem;margin-top:6px">${Number(s.followers).toLocaleString()}</div>
         <div class="mu">Followers</div>
-        <div style="margin-top:8px">Engagement: <b>${Number(s.engagement||0).toLocaleString()}</b></div>
+        <div style="margin-top:8px">Reach / Views: <b>${Number(s.reach||0).toLocaleString()}</b></div>
+        <div>Engagement: <b>${Number(s.engagement||0).toLocaleString()}</b></div>
         ${can("social")?`
           <div style="margin-top:10px">
             <button class="btn sm" onclick="openFormModal('social', '${s.id}')">Edit</button>
@@ -1978,13 +1981,13 @@ async function deleteRecord(c, id){
   }
 }
 
-// Session Management
+// Clean Session Management (Log out sets to Guest)
 async function handleLogout(){
   me = null;
   admin = false;
   localStorage.setItem("jt_active_session", "null");
   render();
-  showSuccessNotification("Logged out successfully.");
+  showSuccessNotification("Logged out. Viewing in Public Visitor mode.");
 }
 
 function loginForm(msg){
@@ -2022,15 +2025,29 @@ async function handleLoginSubmit(ev){
   }
 }
 
+function handleHashRoute(){
+  const h = window.location.hash.toLowerCase();
+  if(h === "#admin" || h === "#login" || new URLSearchParams(window.location.search).get("login")){
+    if(!me){
+      loginForm();
+    }
+  }
+}
+
 document.addEventListener("click", ev => {
   const t = ev.target, d = t.dataset || {};
   if(d.v){ view = d.v; render(); menu(false); }
 });
 
-// Boot and connect to cloud database
-applyBackground();
-render();
-initSupabaseClient();
-fetchAllFromCloud();
+// Boot Application: Supabase as Single Source of Truth
+async function initApp(){
+  applyBackground();
+  render();
+  initSupabaseClient();
+  await fetchAllFromCloud(true);
+  handleHashRoute();
+}
+
+initApp();
 </script>
 </body></html>
