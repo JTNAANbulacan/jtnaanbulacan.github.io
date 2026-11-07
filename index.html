@@ -1025,9 +1025,12 @@ async function sendBackgroundEmail(formData, subject="Church Website Form Submis
 function baseTabs(){
   const saved = ((D.settings||[]).find(x => x.id === "order") || {}).list;
   const defaultList = [
-    "dashboard","about","schedule","devotion","testimony","members",
-    "attendance",...(can("funds")?["funds"]:[]),"social","ministries",
-    "events","gallery","prayers","support","reports"
+    "dashboard","about","schedule","devotion","testimony",
+    ...(can("members") || admin ? ["members"] : []),
+    ...(can("attendance") || admin ? ["attendance"] : []),
+    ...(can("funds") || admin ? ["funds"] : []),
+    "social","ministries","events","gallery","prayers","support",
+    ...(admin ? ["reports"] : [])
   ];
   if(saved && Array.isArray(saved)){
     const ordered = [];
