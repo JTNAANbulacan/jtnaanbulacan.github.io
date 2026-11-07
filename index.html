@@ -10,12 +10,21 @@
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
 
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D">
+<!-- iOS Safari & Home Screen Icons (Resolves single letter 'J' icon on iOS) -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
+<link rel="apple-touch-icon" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
+<link rel="apple-touch-icon-precomposed" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
+<link rel="icon" type="image/png" sizes="512x512" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
+<link rel="shortcut icon" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
+
+<!-- Web App Manifest for iOS & Android Installation -->
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b0a3a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-badge-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="JTNAAN">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JTNAAN App">
 
 <!-- Supabase Real-Time Cloud SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -888,29 +897,27 @@ async function resetBgToDefault(){
   showSuccessNotification("Default background restored.");
 }
 
+const defaultChurchLogoUrl = "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png";
+
 function getChurchLogoUrl(){
   const custom = (D.settings||[]).find(x => x.id === "logo");
-  return custom ? custom.url : "";
+  return (custom && custom.url) ? custom.url : defaultChurchLogoUrl;
+}
+
+function updatePwaIcons(logoUrl){
+  if(!logoUrl) return;
+  document.querySelectorAll("link[rel*='apple-touch-icon'], link[rel*='icon']").forEach(link => {
+    link.href = logoUrl;
+  });
 }
 
 function renderLogo(){
   const u = getChurchLogoUrl();
   const box = $("#church-logo-render");
-  if(!box) return;
-  if(u){
-    box.innerHTML = `<img src="${e(u)}" alt="JTNAAN Seal">`;
-  } else {
-    box.innerHTML = `
-      <svg viewBox="0 0 100 100" style="width:100%;height:100%;display:block">
-        <circle cx="50" cy="50" r="48" fill="#fff" stroke="#15145a" stroke-width="4"/>
-        <circle cx="50" cy="50" r="42" fill="none" stroke="#f2a93b" stroke-width="2"/>
-        <path d="M50 14 L50 78 M30 36 L70 36" stroke="#c0392b" stroke-width="7" stroke-linecap="round"/>
-        <path d="M22 66 Q50 82 78 66 Q50 56 22 66" fill="#f2a93b" stroke="#241a00" stroke-width="1.5"/>
-        <path d="M50 48 Q40 40 38 48 Q48 52 50 62 Q52 52 62 48 Q60 40 50 48" fill="#fff" stroke="#15145a" stroke-width="1.5"/>
-        <circle cx="50" cy="22" r="5" fill="#f2a93b"/>
-      </svg>
-    `;
+  if(box){
+    box.innerHTML = `<img src="${e(u)}" alt="JTNAAN Seal" onerror="this.onerror=null;this.src='apple-touch-icon.png'">`;
   }
+  updatePwaIcons(u);
 }
 
 function handleLogoClick(){
@@ -1077,7 +1084,43 @@ async function downloadZipBackup(){
   const zip = new JSZip();
   const root = zip.folder("JTNAAN-Bulacan");
   root.file("index.html", "<!DOCTYPE html>\n" + document.documentElement.outerHTML);
-  root.file("README.md", `# JTNAAN-Bulacan Church Management System Backup\nDownloaded: ${new Date().toLocaleString()}\nRepository: https://jtnaanbulacan.github.io\nStructure:\n├── index.html\n├── assets/\n├── images/\n├── css/style.css\n├── js/data.js\n├── js/app.js\n└── README.md`);
+  root.file("README.md", `# JTNAAN-Bulacan Church Management System Backup\nDownloaded: ${new Date().toLocaleString()}\nRepository: https://jtnaanbulacan.github.io\nStructure:\n├── index.html\n├── manifest.json\n├── apple-touch-icon.png\n├── icon-192.png\n├── icon-512.png\n├── favicon.ico\n├── assets/\n├── images/\n├── css/style.css\n├── js/data.js\n├── js/app.js\n└── README.md`);
+
+  const manifestData = {
+    name: "JTNAAN Bulacan",
+    short_name: "JTNAAN App",
+    description: "Church management system with daily devotions, interactive bible trivia and quiz, comments, emoticon reactions, member directory, attendance, funds, ministries, and community engagement for JTNAAN Bulacan.",
+    start_url: "./",
+    scope: "./",
+    display: "standalone",
+    theme_color: "#0b0a3a",
+    background_color: "#0b0a3a",
+    icons: [
+      { src: "apple-touch-icon.png", sizes: "180x180", type: "image/png", purpose: "any" },
+      { src: "icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png", sizes: "512x512", type: "image/png", purpose: "any" }
+    ]
+  };
+  root.file("manifest.json", JSON.stringify(manifestData, null, 2));
+
+  // Bundle the real PNG icon into the root of the ZIP
+  try {
+    const logoUrl = getChurchLogoUrl() || "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png";
+    const res = await fetch(logoUrl);
+    if(res.ok){
+      const imgBlob = await res.blob();
+      root.file("apple-touch-icon.png", imgBlob);
+      root.file("apple-touch-icon-precomposed.png", imgBlob);
+      root.file("icon-192.png", imgBlob);
+      root.file("icon-512.png", imgBlob);
+      root.file("favicon.ico", imgBlob);
+    }
+  } catch(e) {
+    console.warn("Could not bundle image files:", e);
+  }
+
   root.folder("assets").file(".gitkeep", "");
   root.folder("images").file(".gitkeep", "");
   root.folder("css").file("style.css", document.querySelector("style") ? document.querySelector("style").innerText : "");
@@ -1089,6 +1132,62 @@ async function downloadZipBackup(){
   a.href = URL.createObjectURL(blob);
   a.download = `JTNAAN-Bulacan.zip`;
   a.click();
+}
+
+function downloadIndexHtmlDirectly(){
+  const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "index.html";
+  a.click();
+  showSuccessNotification("index.html downloaded! Replace it in your GitHub repository.");
+}
+
+async function copyHtmlForGithub(){
+  const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  try {
+    await navigator.clipboard.writeText(htmlContent);
+    showSuccessNotification("✓ All HTML code copied! Ready to paste into GitHub.");
+  } catch(e) {
+    const ta = document.createElement("textarea");
+    ta.value = htmlContent;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    showSuccessNotification("✓ All HTML code copied to clipboard!");
+  }
+}
+
+function openGitHubSyncModal(){
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0">🚀 Update GitHub Pages (jtnaanbulacan.github.io)</h3>
+    <p class="mu">To make the official church logo icon and comments appear on your live GitHub site, update your repository with this latest code.</p>
+    
+    <div style="background:#242528;padding:12px 14px;border-radius:10px;margin-bottom:12px;border:1px solid #3c3d40">
+      <b style="color:var(--pr);display:block;margin-bottom:4px">Method 1: Direct File Download (Recommended)</b>
+      <div class="mu" style="font-size:0.85rem;margin-bottom:8px">Download the updated <code>index.html</code> and upload/replace it in your GitHub repository.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn gold sm" onclick="downloadIndexHtmlDirectly()">📥 Download index.html</button>
+        <button class="btn sm" onclick="downloadZipBackup()">📦 Download Full Backup ZIP</button>
+      </div>
+    </div>
+
+    <div style="background:#242528;padding:12px 14px;border-radius:10px;margin-bottom:12px;border:1px solid #3c3d40">
+      <b style="color:var(--pr);display:block;margin-bottom:4px">Method 2: 1-Click Copy & Paste to GitHub</b>
+      <div class="mu" style="font-size:0.85rem;margin-bottom:8px">1. Click "Copy All Code", then 2. Click "Open GitHub" -> Select all, paste, and commit!</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn sm" onclick="copyHtmlForGithub()">📋 Copy All HTML Code</button>
+        <a class="btn gold sm" target="_blank" rel="noopener" href="https://github.com/jtnaanbulacan/jtnaanbulacan.github.io/edit/main/index.html" style="text-decoration:none;display:inline-flex;align-items:center">🔗 Open GitHub to Paste ↗</a>
+      </div>
+    </div>
+
+    <p style="margin-bottom:0">
+      <button onclick="closeModal()">Close</button>
+    </p>
+  `;
+  $("#modal").style.display = "flex";
 }
 
 // Arrange Sections
