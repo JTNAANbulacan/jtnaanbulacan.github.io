@@ -1,7 +1,21 @@
-<!DOCTYPE html><html lang="en" data-theme="dark" style="color-scheme: dark;"><head><meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" style="color-scheme: dark; --hh: 65px;">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>JTNAAN Bulacan – Church Management</title>
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D"><meta name="theme-color" content="#0b0a3a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-badge-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="JTNAAN">
+<meta name="description" content="Church management system with daily devotions, interactive bible trivia and quiz, comments, emoticon reactions, member directory, attendance, funds, ministries, and community engagement for JTNAAN Bulacan." />
+<meta property="og:title" content="JTNAAN Bulacan – Church Management" />
+<meta property="og:description" content="Church management system with daily devotions, interactive bible trivia and quiz, comments, emoticon reactions, member directory, attendance, funds, ministries, and community engagement for JTNAAN Bulacan." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22JTNAAN%20Bulacan%22%2C%22short_name%22%3A%22JTNAAN%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%230b0a3a%22%2C%22background_color%22%3A%22%230b0a3a%22%7D">
+<meta name="theme-color" content="#0b0a3a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-badge-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JTNAAN">
 
 <!-- Supabase Real-Time Cloud SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -140,14 +154,134 @@ main:has(> .about){max-width:none}
 .tqo button.no{border:2px solid #e74c3c !important;background:rgba(231, 76, 60, 0.25) !important;color:#fff !important}
 .tqo button.no .l{background:#e74c3c !important;color:#fff !important;font-weight:800 !important}
 
+/* Devotion Feed & Post Container */
 .feed{display:grid;gap:clamp(.8rem,1.5vw,1.4rem);max-width:44rem;margin-inline:auto}
-.post{background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb}
+.post{background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb;box-shadow:0 4px 18px rgba(0,0,0,0.35);position:relative}
 .post .ph{padding:10px 12px;display:flex;gap:10px;align-items:center}.post .ph img{width:2.5rem;height:2.5rem;border-radius:50%}
 .post>img{width:100%;max-height:36rem;object-fit:cover;display:block}
-.post .cap{padding:4px 12px 10px;white-space:pre-wrap;word-break:break-word}
-.rx{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px;border-top:1px solid #3e4042;border-bottom:1px solid #3e4042}
-.rx button{background:#3a3b3c;color:#e4e6eb}.rx button.on{background:#2d5bd0;font-weight:700}.rx button.on.ht{background:#c0395b}.rx .mu{margin-left:auto}
-.cm{padding:8px 12px 12px}
+.post .cap{padding:8px 14px 12px;white-space:pre-wrap;word-break:break-word;line-height:1.6}
+
+/* Accessible Reactions & Emoticon System */
+.rx-bar-wrap{position:relative}
+.rx{
+  display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;
+  background:#1e1f20;border-top:1px solid #38393b;border-bottom:1px solid #38393b;
+}
+.rx-picker-container{position:relative;display:inline-flex}
+.rx-picker-btn{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;
+  background:#343538;color:#fff;font-size:0.83rem;font-weight:600;border:1px solid #4a4b4e;
+  cursor:pointer;transition:all 0.18s;touch-action:manipulation;min-height:36px;
+}
+.rx-picker-btn:hover{background:#45464a;border-color:var(--pr);transform:translateY(-1px)}
+.rx-picker-btn.on{background:rgba(242,169,59,0.22);color:var(--pr);border-color:var(--pr)}
+.rx-picker-btn .rx-ico{font-size:1.15rem;line-height:1}
+.rx-picker-btn .rx-arrow{font-size:0.75rem;opacity:0.8}
+
+.rx-tray{
+  position:absolute;bottom:calc(100% + 8px);left:0;z-index:90;
+  background:#1b1c1e;border:1px solid #4e5054;border-radius:28px;
+  padding:6px 8px;box-shadow:0 10px 32px rgba(0,0,0,0.65);
+  display:flex;align-items:center;gap:3px;backdrop-filter:blur(10px);
+  animation:rxPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes rxPop{from{opacity:0;transform:translateY(8px) scale(0.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.rx-emoticon-btn{
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;background:transparent;border:none;cursor:pointer;
+  font-size:1.55rem;transition:transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275),background 0.15s;
+  position:relative;padding:0;touch-action:manipulation;
+}
+.rx-emoticon-btn:hover, .rx-emoticon-btn:focus-visible{
+  transform:scale(1.35) translateY(-5px);z-index:10;background:rgba(255,255,255,0.12);outline:none;
+}
+.rx-emoticon-btn.active{background:rgba(242,169,59,0.3);box-shadow:0 0 0 2px var(--pr)}
+.rx-emoticon-btn .em-tooltip{
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:#050515f0;color:#fff;font-size:0.7rem;font-weight:600;padding:3px 7px;
+  border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s;
+  border:1px solid rgba(255,255,255,0.2);box-shadow:0 4px 12px rgba(0,0,0,0.5);
+}
+.rx-emoticon-btn:hover .em-tooltip, .rx-emoticon-btn:focus-visible .em-tooltip{opacity:1}
+
+.rx-chip-btn{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;
+  background:#343538;color:#e4e6eb;font-size:0.82rem;font-weight:500;border:1px solid #4a4b4e;
+  cursor:pointer;transition:all 0.18s;min-height:36px;touch-action:manipulation;
+}
+.rx-chip-btn:hover{background:#45464a;border-color:#6e7073}
+.rx-chip-btn.on{background:rgba(45,91,208,0.28);border-color:#2d5bd0;color:#8ab4f8;font-weight:700}
+.rx-chip-btn.on.ht{background:rgba(192,57,91,0.28);border-color:#c0395b;color:#ff85a2;font-weight:700}
+.rx-chip-btn .rx-chip-emoji{font-size:1.05rem;line-height:1}
+.rx-chip-btn .rx-chip-count{font-variant-numeric:tabular-nums;opacity:0.95;font-weight:700}
+
+.cm-toggle-btn{
+  background:transparent;color:var(--mu);font-size:0.84rem;padding:6px 10px;
+  margin-left:auto;cursor:pointer;border-radius:8px;border:1px solid transparent;
+  display:inline-flex;align-items:center;gap:5px;transition:all 0.18s;
+}
+.cm-toggle-btn:hover{color:#fff;background:#ffffff14;border-color:var(--bd)}
+
+/* Comments Section & Cards */
+.cm{padding:12px 14px 18px;background:#1b1c1e}
+.cm-header{font-size:0.92rem;color:#e4e6eb;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.cm-list{display:grid;gap:10px;margin-bottom:14px}
+.cm-card{display:flex;gap:10px;align-items:flex-start}
+.cm-avatar{
+  width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#312e81,#4338ca);
+  color:#fff;font-weight:700;font-size:0.85rem;display:flex;align-items:center;justify-content:center;
+  flex:none;border:1px solid var(--pr);text-transform:uppercase;box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+.cm-body{
+  flex:1;background:#2a2b2e;border-radius:12px;padding:8px 12px;border:1px solid #3c3d40;
+}
+.cm-meta{display:flex;align-items:center;gap:6px;font-size:0.78rem;margin-bottom:4px}
+.cm-author{font-weight:700;color:#fff;font-size:0.86rem}
+.cm-dot{color:var(--mu)}
+.cm-time{color:var(--mu);font-size:0.75rem}
+.cm-del-btn{
+  margin-left:auto;background:transparent;border:none;color:#ff8a80;font-size:0.75rem;
+  cursor:pointer;padding:2px 6px;border-radius:4px;
+}
+.cm-del-btn:hover{background:rgba(231,76,60,0.2);text-decoration:underline}
+.cm-text{font-size:0.9rem;line-height:1.5;color:#dfe2ff;word-break:break-word;white-space:pre-wrap}
+
+.cm-empty{
+  padding:16px 14px;text-align:center;color:var(--mu);font-size:0.88rem;
+  background:rgba(255,255,255,0.03);border-radius:10px;border:1px dashed #3e4042;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+
+/* Comment Form */
+.cm-form{
+  background:#242528;border-radius:12px;padding:12px 14px;border:1px solid #3e4042;margin-top:10px;
+}
+.cm-form-title{display:block;font-size:0.88rem;font-weight:700;color:var(--pr);margin-bottom:8px}
+.cm-name-row{
+  display:flex;align-items:center;gap:8px;background:#151618;border:1px solid var(--bd);
+  border-radius:8px;padding:2px 10px;margin-bottom:8px;
+}
+.cm-name-input{background:transparent !important;border:none !important;padding:8px 0 !important;font-size:0.9rem;color:#fff;margin:0}
+.cm-name-input:focus{outline:none}
+
+.cm-quick-emojis{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.cm-quick-lbl{font-size:0.78rem;color:var(--mu);flex:none}
+.cm-quick-scroll{display:flex;gap:5px;flex-wrap:wrap}
+.cm-quick-em-btn{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:16px;
+  background:#343538;border:1px solid #4a4b4e;color:#dfe2ff;font-size:0.8rem;
+  cursor:pointer;transition:all 0.15s;touch-action:manipulation;
+}
+.cm-quick-em-btn:hover{background:#45464a;border-color:var(--pr);transform:scale(1.05)}
+
+.cm-textarea{
+  width:100%;border:1px solid var(--bd);border-radius:8px;background:#151618;color:#fff;
+  padding:10px;font-size:0.92rem;line-height:1.45;resize:vertical;min-height:64px;box-sizing:border-box;
+}
+.cm-textarea:focus{border-color:var(--pr);outline:none}
+.cm-form-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:8px}
+.cm-submit-btn{padding:7px 18px;font-size:0.88rem;font-weight:700}
 
 .dtabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
 .qr{background:#ffffff0f;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
@@ -189,7 +323,8 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 @media(min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
 @media(max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
 </style>
-</head><body>
+</head>
+<body>
 
 <!-- Dedicated Background Layer & Violet Overlay -->
 <div id="site-bg"></div>
@@ -289,6 +424,14 @@ document.getElementById("mnb").addEventListener("click",()=>menu());
 addEventListener("keydown",ev=>{if(ev.key=="Escape"&&document.body.classList.contains("mo")&&document.getElementById("modal").style.display!="flex")menu(false)});
 document.getElementById("main").addEventListener("click",()=>{if(document.body.classList.contains("mo")&&!matchMedia("(min-width:760px)").matches)menu(false)});
 
+// Close open reaction trays when tapping outside
+document.addEventListener("click", ev => {
+  if(!ev.target.closest(".rx-picker-container")){
+    document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
+    document.querySelectorAll(".rx-picker-btn").forEach(el => el.setAttribute("aria-expanded", "false"));
+  }
+});
+
 const CF={
   members:{t:"Members",f:[["name","Full name"],["ministry","Ministry","m"],["joined","Date joined","date"],["contact","Contact number"],["address","Address"]],s:["ministry","joined","contact","address"],k:"name"},
   ministries:{t:"Ministries",f:[["name","Ministry name"],["leader","Leader"],["desc","Description","t"]],s:["leader","desc"],k:"name",photo:1},
@@ -327,6 +470,18 @@ const PL={
   support:"Support (add, edit, delete donation QR codes)",
   arrange:"Arrange Sections (reorder menu order)"
 };
+
+// Accessible Reaction Definition
+const REACTION_TYPES = [
+  { id: "amen", emoji: "🙏", label: "Amen", desc: "Amen & Prayer" },
+  { id: "heart", emoji: "❤️", label: "Heart", desc: "Love & Grace" },
+  { id: "praise", emoji: "🙌", label: "Praise", desc: "Praise & Hallelujah" },
+  { id: "like", emoji: "👍", label: "Like", desc: "Like & Support" },
+  { id: "faith", emoji: "✝️", label: "Faith", desc: "Faith in Christ" },
+  { id: "inspired", emoji: "💡", label: "Inspired", desc: "Inspiration & Wisdom" },
+  { id: "peace", emoji: "🕊️", label: "Peace", desc: "Peace & Comfort" },
+  { id: "fire", emoji: "🔥", label: "Spirit", desc: "Holy Spirit Revival" }
+];
 
 const defaultAdmins = [
   {id:"adm1", name:"Admin Mart", username:"Admin@Mart", password:"JTNAAN@01", owner:true, perms:Object.keys(PL)},
@@ -395,6 +550,22 @@ const churchData = {
       photo:"https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1200&q=80"
     }
   ],
+  comments: [
+    {
+      id:"cm1",
+      postId:"dv1",
+      name:"Aldrin Balmaceda Ninon",
+      text:"Amen! Looking forward to God's promised restoration. Blessed morning church family! 🙏✨",
+      date:"2026-11-05T08:30:00.000Z"
+    },
+    {
+      id:"cm2",
+      postId:"dv1",
+      name:"Christine Biay",
+      text:"Hallelujah! What a powerful reminder to keep our hearts focused on Christ and His everlasting kingdom. ❤️✝️",
+      date:"2026-11-05T09:15:00.000Z"
+    }
+  ],
   fbposts: [
     {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center ...", url:"https://www.facebook.com/profile.php?id=61556921121315"},
     {id:"fb2", date:"2026-11-02", caption:"Sunday Worship Service \"Jesus Be the Center of Our Hearts\" [Jesus at the Center Series - Proverbs 4:20-23]", url:"https://www.facebook.com/profile.php?id=61556921121315"},
@@ -411,12 +582,14 @@ const churchData = {
     {id:"s2", platform:"YouTube", date:"2026-03-01", followers:180, reach:6500, engagement:1420},
     {id:"s3", platform:"TikTok", date:"2026-03-01", followers:450, reach:18900, engagement:4120}
   ],
-  events: [], prayers: [], testimony: [], donate: [], gallery: [], comments: [], settings: []
+  events: [], prayers: [], testimony: [], donate: [], gallery: [], settings: []
 };
 
 // Global State
 let D = JSON.parse(JSON.stringify(churchData));
-let R = {"devotion:dv1": {like: 7, heart: 7}};
+let R = {
+  "devotion:dv1": {like: 7, heart: 7, amen: 14, praise: 6, faith: 8}
+};
 let AL = defaultAdmins;
 
 let savedSession = null;
@@ -517,7 +690,9 @@ async function fetchAllFromCloud(silent = false){
     });
 
     Object.keys(cloudD).forEach(k => {
-      D[k] = cloudD[k];
+      if(cloudD[k].length > 0 || (k === "comments" && data.some(r => r.collection === "comments"))){
+        D[k] = cloudD[k];
+      }
     });
 
     if(Object.keys(cloudR).length > 0){
@@ -555,6 +730,15 @@ async function seedCloudDatabase(){
         data: item,
         updated_at: new Date().toISOString()
       });
+    });
+  });
+
+  Object.keys(R).forEach(k => {
+    rows.push({
+      collection: 'reactions',
+      id: String(k),
+      data: R[k],
+      updated_at: new Date().toISOString()
     });
   });
 
@@ -1109,6 +1293,25 @@ function openShareModal(title, text, url=location.href){
   $("#modal").style.display = "flex";
 }
 
+function openShareWithReactionModal(c, postId){
+  const item = (D[c]||[]).find(x => x.id === postId) || {};
+  const key = `${c}:${postId}`;
+  const myRxId = getMyReaction(key);
+  const myRx = REACTION_TYPES.find(r => r.id === myRxId);
+
+  let shareTitle = "JTNAAN Bulacan – " + (c === 'devotion' ? 'Daily Devotion' : 'Testimony');
+  let snippet = (item.caption || '').slice(0, 180) + '...';
+  let shareText = "";
+
+  if(myRx){
+    shareText = `${myRx.emoji} I reacted "${myRx.label}" to today's JTNAAN Bulacan Devotion:\n\n"${snippet}"\n\nBe blessed and read the full reflection:`;
+  } else {
+    shareText = `JTNAAN Bulacan Devotion:\n\n"${snippet}"\n\nRead more here:`;
+  }
+
+  openShareModal(shareTitle, shareText);
+}
+
 function copyAndOpenInstagram(rawEncodedText){
   if(navigator.clipboard) navigator.clipboard.writeText(decodeURIComponent(rawEncodedText));
   showSuccessNotification("Caption & link copied! Opening Instagram...");
@@ -1326,7 +1529,197 @@ async function submitVisitRequest(target){
   }
 }
 
-// Feed View: Trivia & Daily Quiz at TOP, Devotion Messages at BOTTOM
+// Helpers for Reactions & Comments
+function getMyReaction(key){
+  return localStorage.getItem("jt_my_rx_" + key) || "";
+}
+
+function getSavedCommenterName(){
+  if(me && me.name) return me.name;
+  return localStorage.getItem("jt_commenter_name") || "";
+}
+
+function saveCommenterName(name){
+  if(name && name.trim()){
+    localStorage.setItem("jt_commenter_name", name.trim());
+  }
+}
+
+function getInitials(name){
+  if(!name) return "✝";
+  const parts = name.trim().split(/\s+/);
+  if(parts.length >= 2){
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
+
+function formatCommentTime(dateStr){
+  if(!dateStr) return "Just now";
+  try{
+    const d = new Date(dateStr);
+    if(isNaN(d.getTime())) return String(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    if(diffSec < 60) return "Just now";
+    if(diffMin < 60) return `${diffMin}m ago`;
+    if(diffHour < 24) return `${diffHour}h ago`;
+    if(diffDay < 7) return `${diffDay}d ago`;
+
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }catch(e){
+    return String(dateStr);
+  }
+}
+
+function toggleRxTray(key){
+  const trayId = "rx_tray_" + key.replace(/[^a-zA-Z0-9_]/g, "_");
+  const tray = document.getElementById(trayId);
+  if(!tray) return;
+  const isVisible = tray.style.display === "flex";
+  
+  // Close all other trays first
+  document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
+  document.querySelectorAll(".rx-picker-btn").forEach(el => el.setAttribute("aria-expanded", "false"));
+
+  if(!isVisible){
+    tray.style.display = "flex";
+    const btn = tray.previousElementSibling;
+    if(btn) btn.setAttribute("aria-expanded", "true");
+  }
+}
+
+async function selectReaction(key, type){
+  if(!R[key]) R[key] = {like: 0, heart: 0};
+  const cur = getMyReaction(key);
+
+  if(cur === type){
+    // Already selected, decrement
+    R[key][type] = Math.max(0, (R[key][type] || 1) - 1);
+    localStorage.removeItem("jt_my_rx_" + key);
+  } else {
+    // If was another reaction, decrement the old one
+    if(cur && R[key][cur]){
+      R[key][cur] = Math.max(0, R[key][cur] - 1);
+    }
+    // Increment the new reaction
+    R[key][type] = (R[key][type] || 0) + 1;
+    localStorage.setItem("jt_my_rx_" + key, type);
+    const rxInfo = REACTION_TYPES.find(r => r.id === type);
+    if(rxInfo){
+      showSuccessNotification(`You reacted ${rxInfo.emoji} ${rxInfo.label}!`);
+    }
+  }
+
+  // Close tray
+  document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
+  
+  // Sync live to Supabase cloud
+  await syncRecordToCloud("reactions", key, R[key]);
+  render();
+}
+
+async function toggleReaction(key, type){
+  await selectReaction(key, type);
+}
+
+function insertEmoticonToComment(postId, emoji){
+  const el = document.getElementById("ctext_" + postId);
+  if(!el) return;
+  const val = el.value;
+  const spacer = (val.length > 0 && !val.endsWith(" ")) ? " " : "";
+  el.value = val + spacer + emoji + " ";
+  el.focus();
+}
+
+function handleCommentKeydown(ev, collection, postId){
+  if(ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)){
+    ev.preventDefault();
+    submitPostComment(collection, postId);
+  }
+}
+
+async function submitPostComment(collection, postId){
+  const nameEl = document.getElementById("cname_" + postId);
+  const textEl = document.getElementById("ctext_" + postId);
+  const btn = document.getElementById("cbtn_" + postId);
+
+  const name = nameEl ? nameEl.value.trim() : "";
+  const text = textEl ? textEl.value.trim() : "";
+
+  if(!name){
+    alert("Please enter your name so the church family knows who shared this comment.");
+    if(nameEl) nameEl.focus();
+    return;
+  }
+
+  if(!text){
+    alert("Please write your comment, reflection, or prayer before posting.");
+    if(textEl) textEl.focus();
+    return;
+  }
+
+  saveCommenterName(name);
+
+  if(btn){
+    btn.disabled = true;
+    btn.textContent = "Posting...";
+  }
+
+  const commentItem = {
+    id: "cm_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 6),
+    postId: postId,
+    name: name,
+    text: text,
+    date: new Date().toISOString()
+  };
+
+  try{
+    if(!D.comments) D.comments = [];
+    D.comments.push(commentItem);
+
+    // Sync directly to Supabase cloud
+    await syncRecordToCloud("comments", commentItem.id, commentItem);
+
+    showSuccessNotification("Comment posted! God bless you.");
+    render();
+  }catch(err){
+    showErrorNotification("Could not post comment: " + err.message);
+    if(btn){
+      btn.disabled = false;
+      btn.textContent = "Post Comment";
+    }
+  }
+}
+
+async function deleteCommentRecord(commentId){
+  if(!confirm("Are you sure you want to remove this comment?")) return;
+  try{
+    D.comments = (D.comments || []).filter(c => c.id !== commentId);
+    await deleteRecordFromCloud("comments", commentId);
+    showSuccessNotification("Comment removed.");
+    render();
+  }catch(err){
+    showErrorNotification("Could not delete comment: " + err.message);
+  }
+}
+
+function toggleCommentsSection(secId){
+  const el = document.getElementById("cm_sec_" + secId);
+  if(!el) return;
+  const input = el.querySelector(".cm-textarea");
+  if(input){
+    input.focus();
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// Render Feed View: Devotion Messages & Testimonies with Full Comments and Emoticons
 function feed(c){
   const F = CF[c];
   const L = D[c] || [];
@@ -1335,7 +1728,7 @@ function feed(c){
   if(c === "devotion"){
     return `
       <h2>DAILY DEVOTION</h2>
-      <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership.</p>
+      <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership. Share your reflections and amen comments!</p>
 
       <!-- 1. BIBLE TRIVIA & DAILY QUESTION AT THE TOP -->
       <div class="tvs">
@@ -1348,32 +1741,7 @@ function feed(c){
       ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ New devotion</button></p>`:''}
       
       <div class="feed">
-        ${L.map(x=>`
-          <div class="post">
-            <div class="ph">
-              <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
-                ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
-              </div>
-              <div><b>${e(x.name||"Jesus: The Name Above All Names")}</b><div class="mu">${e(x.date)} · Daily Devotion</div></div>
-            </div>
-            <div class="cap">${e(x.caption)}</div>
-            ${x.photo?`<img src="${e(x.photo)}" alt="">`:''}
-            <div class="rx">
-              <button class="on" onclick="toggleReaction('${c}:${x.id}', 'like')">👍 Like · ${(R[c+':'+x.id]||{}).like||7}</button>
-              <button class="ht on" onclick="toggleReaction('${c}:${x.id}', 'heart')">❤️ Heart · ${(R[c+':'+x.id]||{}).heart||7}</button>
-              <button class="shb" onclick="openShareModal('JTNAAN Bulacan - Daily Devotion', '${encodeURIComponent(x.caption)}')">↗ Share</button>
-              <span class="mu">0 comments</span>
-            </div>
-            <div class="cm">
-              ${can(c)?`
-                <div style="margin-bottom:8px">
-                  <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
-                  <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete post</button>
-                </div>
-              `:''}
-            </div>
-          </div>
-        `).join('')||'<p class="mu">No devotion messages posted yet.</p>'}
+        ${L.map(x=>renderFeedPost(c, x, logo)).join('')||'<p class="mu">No devotion messages posted yet.</p>'}
       </div>
     `;
   }
@@ -1385,32 +1753,7 @@ function feed(c){
     ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ New testimony</button></p>`:''}
     
     <div class="feed">
-      ${L.map(x=>`
-        <div class="post">
-          <div class="ph">
-            <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
-              ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
-            </div>
-            <div><b>${e(x.name||"Jesus: The Name Above All Names")}</b><div class="mu">${e(x.date)} · Testimony</div></div>
-          </div>
-          <div class="cap">${e(x.caption)}</div>
-          ${x.photo?`<img src="${e(x.photo)}" alt="">`:''}
-          <div class="rx">
-            <button class="on" onclick="toggleReaction('${c}:${x.id}', 'like')">👍 Like · ${(R[c+':'+x.id]||{}).like||7}</button>
-            <button class="ht on" onclick="toggleReaction('${c}:${x.id}', 'heart')">❤️ Heart · ${(R[c+':'+x.id]||{}).heart||7}</button>
-            <button class="shb" onclick="openShareModal('JTNAAN Bulacan - Testimony', '${encodeURIComponent(x.caption)}')">↗ Share</button>
-            <span class="mu">0 comments</span>
-          </div>
-          <div class="cm">
-            ${can(c)?`
-              <div style="margin-bottom:8px">
-                <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
-                <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete post</button>
-              </div>
-            `:''}
-          </div>
-        </div>
-      `).join('')||'<p class="mu">No testimonies posted yet.</p>'}
+      ${L.map(x=>renderFeedPost(c, x, logo)).join('')||'<p class="mu">No testimonies posted yet.</p>'}
     </div>
 
     <div class="card" style="margin:22px auto 0;max-width:44rem">
@@ -1423,6 +1766,183 @@ function feed(c){
       <button class="btn gold" onclick="submitTestimony('auto')">Submit Testimony (Direct to Church Email)</button>
       <button class="btn" style="background:#3b5998" onclick="submitTestimony('fb')">Send to our Facebook page</button>
     </div>
+  `;
+}
+
+// Render Single Post with Accessible Reactions & Comment Thread
+function renderFeedPost(c, x, logo){
+  const key = `${c}:${x.id}`;
+  const postRx = R[key] || { like: 7, heart: 7, amen: 12 };
+  const myRx = getMyReaction(key);
+  const myRxObj = REACTION_TYPES.find(r => r.id === myRx);
+  
+  // Comments for this post
+  const postComments = (D.comments || []).filter(cm => cm.postId === x.id || cm.postId === key);
+  const trayId = "rx_tray_" + key.replace(/[^a-zA-Z0-9_]/g, "_");
+
+  return `
+    <article class="post" id="post_${c}_${x.id}">
+      <div class="ph">
+        <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
+          ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover" alt="Seal">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
+        </div>
+        <div>
+          <b>${e(x.name||"Jesus: The Name Above All Names")}</b>
+          <div class="mu">${e(x.date)} · ${c === 'devotion' ? 'Daily Devotion' : 'Testimony'}</div>
+        </div>
+      </div>
+
+      <div class="cap">${e(x.caption)}</div>
+      ${x.photo ? `<img src="${e(x.photo)}" alt="Post image">` : ''}
+
+      <!-- Accessible Reaction & Emoticon Bar -->
+      <div class="rx-bar-wrap">
+        <div class="rx" role="toolbar" aria-label="Post reactions and actions">
+          
+          <!-- Reaction Picker Trigger -->
+          <div class="rx-picker-container">
+            <button class="rx-picker-btn ${myRx ? 'on' : ''}" 
+              onclick="toggleRxTray('${key}')" 
+              aria-label="Choose emoticon reaction" 
+              aria-haspopup="true" 
+              aria-expanded="false" 
+              title="Add or change your emoticon reaction">
+              <span class="rx-ico">${myRxObj ? myRxObj.emoji : '😀'}</span>
+              <span>${myRxObj ? myRxObj.label : 'React'}</span>
+              <span class="rx-arrow">▾</span>
+            </button>
+
+            <!-- Floating Emoticon Tray -->
+            <div id="${trayId}" class="rx-tray" role="dialog" aria-label="Available emoticon reactions" style="display:none">
+              ${REACTION_TYPES.map(r => `
+                <button type="button" class="rx-emoticon-btn ${myRx === r.id ? 'active' : ''}" 
+                  onclick="selectReaction('${key}', '${r.id}')" 
+                  aria-label="React with ${r.label} (${r.emoji})">
+                  <span>${r.emoji}</span>
+                  <span class="em-tooltip">${r.label}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Active Reaction Chips -->
+          ${REACTION_TYPES.filter(r => (postRx[r.id] || 0) > 0).map(r => `
+            <button type="button" class="rx-chip-btn ${myRx === r.id ? 'on' : ''} ${r.id === 'heart' ? 'ht' : ''}" 
+              onclick="toggleReaction('${key}', '${r.id}')" 
+              title="React with ${r.label}" 
+              aria-label="${r.label}: ${postRx[r.id]}. ${myRx === r.id ? 'You reacted.' : 'Click to react.'}">
+              <span class="rx-chip-emoji">${r.emoji}</span>
+              <span>${r.label}</span>
+              <span class="rx-chip-count">· ${postRx[r.id]}</span>
+            </button>
+          `).join('')}
+
+          <!-- Share Devotion and Reaction -->
+          <button type="button" class="shb rx-chip-btn" onclick="openShareWithReactionModal('${c}', '${x.id}')" title="Share devotion and reactions" aria-label="Share devotion">
+            <span>↗</span>
+            <span>Share</span>
+          </button>
+
+          <!-- Comments Count Toggle -->
+          <button type="button" class="cm-toggle-btn" onclick="toggleCommentsSection('${c}_${x.id}')" aria-label="${postComments.length} comments" title="Jump to comments">
+            <span>💬</span>
+            <span>${postComments.length} comment${postComments.length === 1 ? '' : 's'}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Comment Section -->
+      <section class="cm" id="cm_sec_${c}_${x.id}" aria-label="Comments for this devotion">
+        ${can(c) ? `
+          <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b;display:flex;gap:8px">
+            <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit Post</button>
+            <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete Post</button>
+          </div>
+        ` : ''}
+
+        <!-- Comments List -->
+        <div class="cm-header">
+          <b>Comments & Reflections (${postComments.length})</b>
+          <span class="mu" style="font-size:0.75rem">Join the conversation</span>
+        </div>
+
+        <div class="cm-list">
+          ${postComments.length > 0 ? postComments.map(cm => `
+            <div class="cm-card" id="cm_card_${cm.id}">
+              <div class="cm-avatar">${getInitials(cm.name)}</div>
+              <div class="cm-body">
+                <div class="cm-meta">
+                  <span class="cm-author">${e(cm.name || 'Anonymous')}</span>
+                  <span class="cm-dot">·</span>
+                  <span class="cm-time">${formatCommentTime(cm.date)}</span>
+                  ${(can(c) || admin || (me && me.name === cm.name)) ? `
+                    <button type="button" class="cm-del-btn" onclick="deleteCommentRecord('${cm.id}')" title="Delete comment" aria-label="Delete comment by ${e(cm.name)}">Delete</button>
+                  ` : ''}
+                </div>
+                <div class="cm-text">${e(cm.text)}</div>
+              </div>
+            </div>
+          `).join('') : `
+            <div class="cm-empty">
+              <span style="font-size:1.4rem">💬</span>
+              <span>No comments yet. Be the first to share an encouragement, Amen, or prayer!</span>
+            </div>
+          `}
+        </div>
+
+        <!-- Add Comment Form -->
+        <div class="cm-form">
+          <label class="cm-form-title" for="ctext_${x.id}">Leave a Comment or Prayer:</label>
+          
+          <!-- Name Input Field -->
+          <div class="cm-name-row">
+            <span class="cm-input-prefix">👤</span>
+            <input type="text" id="cname_${x.id}" class="cm-name-input" maxlength="60" 
+              value="${e(getSavedCommenterName())}" 
+              placeholder="Your name (e.g. Bro. Mark, Sis. Sarah)..." 
+              aria-label="Your Name"
+              onchange="saveCommenterName(this.value)">
+          </div>
+
+          <!-- Quick Emoticons Row -->
+          <div class="cm-quick-emojis" role="toolbar" aria-label="Quick emoticon shortcuts">
+            <span class="cm-quick-lbl">Quick add:</span>
+            <div class="cm-quick-scroll">
+              ${[
+                { e: "🙏", label: "Amen" },
+                { e: "❤️", label: "Love" },
+                { e: "✝️", label: "Faith" },
+                { e: "🙌", label: "Praise" },
+                { e: "✨", label: "Blessed" },
+                { e: "🕊️", label: "Peace" },
+                { e: "👏", label: "Glory" },
+                { e: "🔥", label: "Spirit" }
+              ].map(item => `
+                <button type="button" class="cm-quick-em-btn" 
+                  onclick="insertEmoticonToComment('${x.id}', '${item.e}')" 
+                  title="Insert ${item.e} ${item.label}">
+                  <span>${item.e}</span> <span>${item.label}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Comment Textarea -->
+          <textarea id="ctext_${x.id}" class="cm-textarea" rows="2" 
+            placeholder="Write your comment, reflection, or prayer here..." 
+            aria-label="Comment text"
+            onkeydown="handleCommentKeydown(event, '${c}', '${x.id}')"></textarea>
+
+          <!-- Form Actions -->
+          <div class="cm-form-actions">
+            <small class="mu">Press Post or Ctrl+Enter to submit</small>
+            <button type="button" class="btn gold sm cm-submit-btn" id="cbtn_${x.id}" onclick="submitPostComment('${c}', '${x.id}')">
+              Post Comment
+            </button>
+          </div>
+        </div>
+      </section>
+    </article>
   `;
 }
 
@@ -1448,13 +1968,6 @@ async function submitTestimony(target){
     showSuccessNotification("Testimony copied! Opening Facebook...");
     window.open("https://m.me/61556921121315", "_blank");
   }
-}
-
-async function toggleReaction(key, type){
-  if(!R[key]) R[key] = {like: 7, heart: 7};
-  R[key][type] = (R[key][type] || 0) + 1;
-  await syncRecordToCloud("reactions", key, R[key]);
-  render();
 }
 
 function triggerQuizConfetti(){
@@ -2216,4 +2729,5 @@ async function initApp(){
 
 initApp();
 </script>
-</body></html>
+</body>
+</html>
