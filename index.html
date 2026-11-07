@@ -2005,7 +2005,9 @@ async function saveFormData(c, id){
   const btn = $("#btn-save-form");
   if(btn){ btn.disabled = true; btn.textContent = "Uploading & Syncing..."; }
 
+  const prevItem = id ? ((D[c]||[]).find(y => y.id === id) || {}) : {};
   const item = { id: id || "id_" + Date.now().toString(36) };
+  item.createdAt = prevItem.createdAt || Date.now();
   F.f.forEach(([k]) => {
     const el = $("#f_" + k);
     if(el) item[k] = el.value.trim();
@@ -2640,16 +2642,32 @@ function toggleCommentsSection(secId){
 }
 
 // Render Feed View: Devotion Messages & Testimonies with Full Comments and Emoticons
-// Sort posts: newest date first, then newest created (id holds a base-36 timestamp) first
+// Sort posts: newest first (top) -> oldest last (bottom)
 function idStamp(id){
   const m = /^id_([0-9a-z]+)$/i.exec(String(id || ""));
   return m ? parseInt(m[1], 36) : 0;
 }
+function postDateValue(x){
+  const raw = String(x.date || "").trim();
+  let t = Date.parse(raw);                                   // 2026-11-08, Nov 8 2026, ...
+  if(isNaN(t)){
+    const m = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/); // 08/11/2026 or 11/08/2026
+    if(m){
+      let a = +m[1], b = +m[2], y = +m[3]; if(y < 100) y += 2000;
+      const mo = a > 12 ? b : a, d = a > 12 ? a : b;         // if first number >12 it must be the day
+      t = new Date(y, mo - 1, d).getTime();
+    }
+  }
+  return isNaN(t) ? 0 : t;
+}
+function postCreatedValue(x){
+  return Number(x.createdAt) || idStamp(x.id) || 0;
+}
 function sortNewestFirst(list){
   return (list || []).slice().sort((a, b) => {
-    const da = String(a.date || ""), db = String(b.date || "");
-    if(da !== db) return db.localeCompare(da);          // newer date on top
-    return idStamp(b.id) - idStamp(a.id);               // same day: newest post on top
+    const d = postDateValue(b) - postDateValue(a);           // newest date first
+    if(d !== 0) return d;
+    return postCreatedValue(b) - postCreatedValue(a);        // same date: newest post first
   });
 }
 
