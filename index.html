@@ -3792,6 +3792,153 @@ async function initApp(){
   handleHashRoute();
 }
 
+// ===== DAILY BIBLE TRIVIA + QUESTION OF THE DAY (auto-rotates every 8:00 AM PH time) =====
+const TRIVIA_BANK = [
+  { tag:"OLD TESTAMENT", title:"The Longest & Shortest Chapter", text:"Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!" },
+  { tag:"NEW TESTAMENT", title:"The Shortest Verse", text:"John 11:35 – “Jesus wept.” – is the shortest verse in most English Bibles, showing the compassion of Christ at the tomb of Lazarus." },
+  { tag:"WHOLE BIBLE", title:"66 Books, One Story", text:"The Bible contains 66 books: 39 in the Old Testament and 27 in the New Testament, written over many centuries yet pointing to Jesus." },
+  { tag:"OLD TESTAMENT", title:"The Oldest Man", text:"Methuselah lived 969 years (Genesis 5:27), making him the longest-living person recorded in the Bible." },
+  { tag:"NEW TESTAMENT", title:"The Twelve", text:"Jesus chose twelve apostles from among His many disciples to be with Him and to be sent out to preach (Luke 6:12–16)." },
+  { tag:"OLD TESTAMENT", title:"Three Days & Three Nights", text:"Jonah spent three days and three nights inside the great fish before God brought him safely to land (Jonah 1:17; 2:10)." },
+  { tag:"OLD TESTAMENT", title:"The Longest Book", text:"Psalms is the longest book of the Bible by chapters, with 150 chapters of prayers, praises and songs." },
+  { tag:"NEW TESTAMENT", title:"The Fruit of the Spirit", text:"Galatians 5:22–23 lists nine fruits of the Spirit: love, joy, peace, patience, kindness, goodness, faithfulness, gentleness and self-control." },
+  { tag:"OLD TESTAMENT", title:"Forty Days & Forty Nights", text:"During the flood in Noah's time, rain fell on the earth for forty days and forty nights (Genesis 7:12)." },
+  { tag:"NEW TESTAMENT", title:"The First Miracle", text:"Jesus' first recorded miracle was turning water into wine at a wedding in Cana of Galilee (John 2:1–11)." },
+  { tag:"OLD TESTAMENT", title:"Solomon's Request", text:"When God offered Solomon anything he wanted, he asked for a wise and discerning heart to lead God's people (1 Kings 3:5–12)." },
+  { tag:"OLD TESTAMENT", title:"The Ten Commandments", text:"God gave Moses the Ten Commandments on two stone tablets at Mount Sinai (Exodus 31:18; 34:28)." },
+  { tag:"WHOLE BIBLE", title:"Three Original Languages", text:"The Bible was originally written mostly in Hebrew (Old Testament), with some Aramaic, and in Greek (New Testament)." },
+  { tag:"NEW TESTAMENT", title:"The Shortest Book", text:"2 John has only 13 verses, the fewest of any book in the Bible. Obadiah, with 21 verses, is the shortest book of the Old Testament." },
+  { tag:"NEW TESTAMENT", title:"Letters of Paul", text:"The apostle Paul is traditionally credited with writing 13 letters of the New Testament, from Romans to Philemon." }
+];
+
+const QUIZ_BANK = [
+  { q:"Who was the prophet called by God as a young boy in the temple under Eli?", c:["Samuel","David","Jeremiah"], a:0, ref:"1 Samuel 3:1–10",
+    exp:"The Lord called Samuel three times while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he told Samuel to answer, 'Speak, Lord, for your servant is listening.'" },
+  { q:"Who built the ark to save his family from the flood?", c:["Abraham","Noah","Moses"], a:1, ref:"Genesis 6:13–22",
+    exp:"God told Noah to build an ark because of the coming flood. Noah obeyed, and he and his family were saved." },
+  { q:"Who was thrown into the lions' den for praying to God?", c:["Daniel","Joseph","Elijah"], a:0, ref:"Daniel 6:10–23",
+    exp:"Daniel kept praying to God even when it was forbidden. God shut the mouths of the lions and kept him safe." },
+  { q:"How many days did Jesus fast in the wilderness before being tempted?", c:["7 days","21 days","40 days"], a:2, ref:"Matthew 4:1–2",
+    exp:"After His baptism, Jesus was led by the Spirit into the wilderness, where He fasted forty days and forty nights." },
+  { q:"Which disciple denied Jesus three times?", c:["Thomas","Peter","Judas"], a:1, ref:"Matthew 26:69–75",
+    exp:"Peter denied knowing Jesus three times before the rooster crowed, then wept bitterly. Jesus later restored him." },
+  { q:"Which prophet was swallowed by a great fish?", c:["Jeremiah","Elijah","Jonah"], a:2, ref:"Jonah 1:17",
+    exp:"Jonah ran from God's call to Nineveh. God sent a great fish to swallow him, and he was inside for three days and three nights." },
+  { q:"What is the first book of the Bible?", c:["Genesis","Exodus","Psalms"], a:0, ref:"Genesis 1:1",
+    exp:"The Bible begins with Genesis: 'In the beginning God created the heavens and the earth.'" },
+  { q:"Which young shepherd defeated the giant Goliath?", c:["Saul","Jonathan","David"], a:2, ref:"1 Samuel 17:45–50",
+    exp:"David trusted in the name of the Lord and defeated Goliath with a sling and a stone." },
+  { q:"In which town was Jesus born?", c:["Nazareth","Bethlehem","Jerusalem"], a:1, ref:"Luke 2:4–7",
+    exp:"Joseph and Mary traveled to Bethlehem, the town of David, where Jesus was born." },
+  { q:"Who led the Israelites out of slavery in Egypt?", c:["Moses","Joshua","Aaron"], a:0, ref:"Exodus 3:10; 14:21–22",
+    exp:"God called Moses to lead His people out of Egypt, and the Lord parted the Red Sea so they could cross on dry ground." },
+  { q:"Who was the first man God created?", c:["Seth","Cain","Adam"], a:2, ref:"Genesis 2:7",
+    exp:"The Lord God formed Adam from the dust of the ground and breathed life into him." },
+  { q:"Which disciple was a tax collector before following Jesus?", c:["Matthew","Peter","John"], a:0, ref:"Matthew 9:9",
+    exp:"Jesus saw Matthew sitting at the tax collector's booth and said, 'Follow me.' Matthew got up and followed Him." },
+  { q:"Whom did Jesus raise from the dead after he had been in the tomb four days?", c:["Lazarus","Jairus' daughter","Tabitha"], a:0, ref:"John 11:38–44",
+    exp:"Jesus called out, 'Lazarus, come out!' and the man who had died came out of the tomb alive." },
+  { q:"Which brave woman became queen and risked her life to save her people?", c:["Ruth","Esther","Deborah"], a:1, ref:"Esther 4:14–16; 7:3–6",
+    exp:"Esther approached the king uninvited to plead for the Jews, and God used her 'for such a time as this.'" },
+  { q:"Which disciple walked on the water toward Jesus?", c:["Andrew","John","Peter"], a:2, ref:"Matthew 14:28–31",
+    exp:"Peter stepped out of the boat and walked on the water toward Jesus until he took his eyes off Him; Jesus caught him." }
+];
+
+// ----- Day helpers (flip exactly at 8:00 AM Philippine time) -----
+const DAY_MS = 86400000;
+function phDayIdx(){ return Math.floor(Date.now() / DAY_MS); }      // 8:00 AM PH == 00:00 UTC
+function phDayKey(){ return new Date(phDayIdx() * DAY_MS).toISOString().slice(0, 10); }
+function todayTrivia(){ return TRIVIA_BANK[phDayIdx() % TRIVIA_BANK.length]; }
+function todayQuiz(){ return QUIZ_BANK[phDayIdx() % QUIZ_BANK.length]; }
+function nextResetText(){
+  const left = Math.max(0, (phDayIdx() + 1) * DAY_MS - Date.now());
+  const h = Math.floor(left / 3600000), m = Math.floor((left % 3600000) / 60000);
+  return `New in ${h}h ${m}m · resets 8:00 AM PH time`;
+}
+
+// ----- Saved answer is stored per day, so a new day = a fresh question -----
+function quizStoreKey(){ return "jt_quiz_" + phDayKey(); }
+function getQuizAnswer(){
+  try{
+    const v = localStorage.getItem(quizStoreKey());
+    return v !== null ? parseInt(v, 10) : -1;
+  }catch(err){ return -1; }
+}
+function handleQuizChoice(idx){
+  if(getQuizAnswer() !== -1) return;
+  localStorage.setItem(quizStoreKey(), String(idx));
+  if(idx === todayQuiz().a) triggerQuizConfetti();
+  render();
+}
+function resetQuizForAdmin(){
+  localStorage.removeItem(quizStoreKey());
+  render();
+}
+
+function trivia(){
+  const t = todayTrivia();
+  return `<section class="tv">
+    <div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu" id="trivia_cd">${nextResetText()}</span></div>
+    <div class="tvi">
+      <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&q=80" alt="Holy Scripture Scroll">
+      <span class="tvtag">${e(t.tag)}</span>
+    </div>
+    <div class="tvc">
+      <h3>${e(t.title)}</h3>
+      <p>${e(t.text)}</p>
+    </div>
+  </section>`;
+}
+
+function tquiz(){
+  const q = todayQuiz();
+  const pick = getQuizAnswer();
+  const done = pick !== -1;
+  const isCorrect = pick === q.a;
+  return `<section class="tv tqs">
+    <div class="tq">
+      <div class="tqh">❓ Question of the day</div>
+      <div class="tqq">${e(q.q)}</div>
+      <div class="tqo">
+        ${q.c.map((opt, i) => {
+          let cls = "";
+          if(done){ if(i === q.a) cls = "ok"; else if(i === pick) cls = "no"; }
+          return `<button class="${cls}" onclick="handleQuizChoice(${i})" ${done ? "disabled" : ""}>
+              <span class="l">${"abc"[i]}</span><span>${e(opt)}</span></button>`;
+        }).join('')}
+      </div>
+      ${done ? `
+        <div class="tqr ${isCorrect ? 'ok' : 'no'}" style="margin-top:14px;padding:14px;border-radius:10px;background:#ffffff10;border-left:4px solid ${isCorrect ? '#2ecc71' : '#e74c3c'}">
+          <div style="font-size:1.1rem;font-weight:700">
+            ${isCorrect ? '🎉 Congratulations! You got it right!' : '❌ Not quite! The correct answer is ' + "ABC"[q.a] + '. ' + e(q.c[q.a]) + '.'}
+          </div>
+          <div style="margin-top:8px;color:#dfe2ff;line-height:1.55;font-weight:400;font-size:.9rem">
+            <div><b>Scripture Passage:</b> <span style="color:var(--pr);font-weight:bold">${e(q.ref)}</span></div>
+            <div style="margin-top:4px"><b>Why it is correct:</b> ${e(q.exp)}</div>
+          </div>
+          ${admin ? `<div style="margin-top:10px"><button class="btn sm" onclick="resetQuizForAdmin()">Try Question Again (Admin)</button></div>` : ''}
+        </div>
+      ` : `<div class="mu" style="margin-top:8px;font-size:.85rem">Tap a, b, or c to submit your answer. <span id="quiz_cd">${nextResetText()}</span></div>`}
+    </div>
+  </section>`;
+}
+
+// ----- Auto-refresh: swaps in the new trivia/question at 8:00 AM PH while the page is open -----
+let _shownDayIdx = phDayIdx();
+function checkDailyRollover(){
+  const d = phDayIdx();
+  if(d !== _shownDayIdx){
+    _shownDayIdx = d;
+    if(typeof view !== "undefined" && view === "devotion") render();
+  } else {
+    ["trivia_cd", "quiz_cd"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = nextResetText(); });
+  }
+}
+setInterval(checkDailyRollover, 30000);
+document.addEventListener("visibilitychange", () => { if(!document.hidden) checkDailyRollover(); });
+window.addEventListener("focus", checkDailyRollover);
+
+
 initApp();
 
 // ===== Image Lightbox: tap any photo to view it large, zoom, pan and swipe =====
