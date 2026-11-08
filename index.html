@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" style="color-scheme: dark; --hh: 65.30000305175781px;"><head>
+<html lang="en" data-theme="dark" style="color-scheme: dark; --hh: 65px;">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>JTNAAN Bulacan – Church Management</title>
@@ -9,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 
-<!-- iOS Safari & Home Screen Icons (Resolves single letter 'J' icon on iOS) -->
+<!-- iOS Safari & Home Screen Icons -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
 <link rel="apple-touch-icon" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
 <link rel="apple-touch-icon-precomposed" href="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png">
@@ -145,10 +146,20 @@ main:has(> .about){max-width:none}
 .tvs{display:grid;gap:16px;max-width:44rem;margin:10px auto 26px}
 .tv{background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
 .tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
+.tv-nav-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;background:#0b0a3a88;border-bottom:1px solid #ffffff15;flex-wrap:wrap}
+.tv-nav-bar button{background:#ffffff15;color:#fff;border:1px solid #ffffff25;border-radius:8px;padding:4px 10px;font-size:.8rem;cursor:pointer;transition:all .18s}
+.tv-nav-bar button:hover{background:#ffffff28;border-color:var(--pr)}
+.tv-nav-bar button.active{background:var(--pr);color:#100d02;font-weight:700}
 .tvi{position:relative;aspect-ratio:16/9;background:#0b0a3a;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.tvi img{width:100%;height:100%;object-fit:cover;display:block}
-.tvtag{position:absolute;left:12px;top:12px;background:#0b0a3acc;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
-.tvc{padding:12px 14px 14px}.tvc h3{margin:0 0 4px;font-size:clamp(1.05rem,.95rem + .5vw,1.35rem)}.tvc p{margin:0;color:#dfe2ff;line-height:1.55}
+.tvi img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.3s ease}
+.tvtag{position:absolute;left:12px;top:12px;background:#0b0a3af0;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid #f2a93b44;backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,.5);z-index:2}
+.tvref{position:absolute;right:12px;bottom:12px;background:#0b0a3af0;color:#fff;font-size:.75rem;font-weight:600;padding:4px 10px;border-radius:8px;border:1px solid #ffffff33;backdrop-filter:blur(6px);z-index:2}
+.tv-fallback-card{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;width:100%;height:100%;background:radial-gradient(circle at center, #27258a 0%, #0d0c3d 100%)}
+.tv-fallback-symbol{font-size:3.5rem;line-height:1;margin-bottom:8px;filter:drop-shadow(0 4px 12px rgba(242,169,59,0.3))}
+.tv-fallback-title{font-size:1.15rem;font-weight:700;color:var(--pr);margin-bottom:4px}
+.tv-fallback-ref{font-size:.85rem;color:#dfe2ff;opacity:.9}
+.tvc{padding:14px 16px 16px}.tvc h3{margin:0 0 6px;font-size:clamp(1.1rem,1rem + .5vw,1.4rem);color:#fff}.tvc p{margin:0;color:#dfe2ff;line-height:1.6;font-size:.95rem}
+.tvsub{margin-top:10px;font-size:.78rem;color:#a5a9dc;display:flex;align-items:center;gap:6px;border-top:1px solid #ffffff12;padding-top:8px}
 
 /* Question of the Day & Choice Colors */
 .tq{border-top:1px solid var(--bd);padding:14px;background:#0b0a3a66}.tq .tqh{color:var(--pr);font-weight:700;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}.tq .tqq{margin:4px 0 10px;font-weight:600;font-size:1.05rem}
@@ -186,7 +197,7 @@ main:has(> .about){max-width:none}
 #lb-hint{position:absolute;left:0;right:0;top:calc(14px + env(safe-area-inset-top,0px));text-align:center;color:#ffffffb0;font-size:.78rem;pointer-events:none}
 .post .cap{padding:8px 14px 12px;white-space:pre-wrap;word-break:break-word;line-height:1.6}
 
-/* Accessible Reactions & Emoticon System */
+/* Social Media Multi-Click Reactions & Floating Heart Animations */
 .rx-bar-wrap{position:relative}
 .rx{
   display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;
@@ -233,10 +244,11 @@ main:has(> .about){max-width:none}
 .rx-chip-btn{
   display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;
   background:#343538;color:#e4e6eb;font-size:0.83rem;font-weight:600;border:1px solid #4a4b4e;
-  cursor:pointer;transition:all 0.18s;min-height:36px;touch-action:manipulation;user-select:none;
+  cursor:pointer;transition:transform 0.12s ease, filter 0.18s ease;min-height:36px;
+  touch-action:manipulation;user-select:none;position:relative;
 }
-.rx-chip-btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
-.rx-chip-btn:active{transform:translateY(1px)}
+.rx-chip-btn:hover{transform:translateY(-1px);filter:brightness(1.12)}
+.rx-chip-btn:active{transform:scale(0.92)}
 
 /* Core Reaction Colors Matching Post Bar */
 .rx-chip-btn.rx-like{background:#1877f2;color:#ffffff;border-color:#1877f2}
@@ -256,8 +268,50 @@ main:has(> .about){max-width:none}
 .rx-chip-btn.rx-praise.dim{background:#7c3aed2e;color:#c4b5fd;border-color:#7c3aed80}
 
 .rx-chip-btn.on{box-shadow:0 0 0 2px rgba(255,255,255,0.4)}
-.rx-chip-btn .rx-chip-emoji{font-size:1.1rem;line-height:1}
-.rx-chip-btn .rx-chip-count{font-variant-numeric:tabular-nums;opacity:0.95;font-weight:700}
+.rx-chip-btn .rx-chip-emoji{font-size:1.15rem;line-height:1;display:inline-block;transition:transform 0.15s ease}
+.rx-chip-btn:active .rx-chip-emoji{transform:scale(1.4)}
+.rx-chip-btn .rx-chip-count{font-variant-numeric:tabular-nums;opacity:0.95;font-weight:700;display:inline-block;transition:transform 0.15s ease}
+
+/* Floating Emoji Floater (Like TikTok / Facebook Live / Medium Claps) */
+@keyframes floatReaction {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.65);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--dx, 0px) * 0.35), -28px) scale(1.4) rotate(var(--rot, 0deg));
+  }
+  75% {
+    opacity: 0.95;
+    transform: translate(calc(-50% + var(--dx, 0px)), -75px) scale(1.2) rotate(calc(var(--rot, 0deg) * 1.6));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx, 0px) * 1.5), -120px) scale(0.85);
+  }
+}
+.floating-rx {
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+  font-size: 2.2rem;
+  line-height: 1;
+  user-select: none;
+  animation: floatReaction 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.45));
+}
+
+@keyframes countBump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.45); color: #fff; }
+  100% { transform: scale(1); }
+}
+.count-bump {
+  animation: countBump 0.22s ease-out;
+  display: inline-block;
+}
 
 .cm-toggle-btn{
   background:rgba(255,255,255,0.08);color:#e4e6eb;font-size:0.84rem;font-weight:600;padding:6px 12px;
@@ -396,7 +450,7 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 <body class="mo">
 
 <!-- Dedicated Background Layer & Violet Overlay -->
-<div id="site-bg" style="background-image: url(&quot;https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/backgrounds/1794039678841_aasfa.jpg&quot;);"></div>
+<div id="site-bg"></div>
 <div id="site-bg-overlay"></div>
 
 <!-- Live Native Pickers -->
@@ -406,610 +460,14 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 <header>
   <button id="mnb" type="button" aria-label="Close sections menu" aria-expanded="true" aria-controls="nav" title="Sections"><i></i><i></i><i></i></button>
   <div id="header-logo-container" onclick="handleLogoClick()" title="Church Logo">
-    <div id="church-logo-render"><img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png" alt="JTNAAN Seal" onerror="this.onerror=null;this.src='apple-touch-icon.png'"></div>
+    <div id="church-logo-render"></div>
   </div>
   <div><b>JESUS THE NAME ABOVE ALL NAMES</b><small>JTNAAN Bulacan · Church Management</small></div>
-  <span id="hl">
-    <span class="mu hlu">Admin Mart · Full access</span>
-    
-      <button class="btn ib" onclick="openGitHubSyncModal()" title="Sync / Export for GitHub Pages (jtnaanbulacan.github.io)"><svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"></path></svg></button>
-      <button class="btn ib" onclick="downloadZipBackup()" title="Download Backup ZIP"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"></path></svg></button>
-      <button class="btn ib" onclick="openArrangeModal()" title="Arrange sections"><svg viewBox="0 0 24 24"><path d="M7 4v16m0-16L3 8m4-4 4 4m6 12V4m0 16-4-4m4 4 4-4"></path></svg></button>
-      <button class="btn ib" id="btn-edit-text" onclick="toggleTextEditMode()" title="Edit all text &amp; logos"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"></path></svg></button>
-    
-    <button class="btn ib" onclick="handleLogout()" title="Log out" aria-label="Log out"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"></path></svg></button></span>
+  <span id="hl"></span>
 </header>
-<nav id="nav">
-    
-      <div id="drawer-admin-box" style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:8px;background:#ffffff0f;border-radius:6px">
-        <div style="font-weight:bold;color:var(--pr);font-size:.9rem">Admin Mart</div>
-        <div class="mu" style="font-size:.75rem">Full access</div>
-        <button class="btn red sm" onclick="handleLogout()" style="margin-top:6px;width:100%;text-align:center">Log Out</button>
-      </div>
-    
-    <button class="" data-v="dashboard">HOME DASHBOARD</button><button class="" data-v="about">ABOUT</button><button class="" data-v="schedule">SCHEDULE</button><button class="on" data-v="devotion">DAILY DEVOTION</button><button class="" data-v="testimony">TESTIMONY</button><button class="" data-v="members">MEMBERS</button><button class="" data-v="attendance">ATTENDANCE</button><button class="" data-v="funds">FUNDS</button><button class="" data-v="social">SOCIAL</button><button class="" data-v="ministries">MINISTRIES</button><button class="" data-v="events">EVENTS</button><button class="" data-v="gallery">GALLERY</button><button class="" data-v="prayers">PRAYERS</button><button class="" data-v="support">SUPPORT</button><button class="" data-v="reports">REPORTS</button><button class="" data-v="admins">ADMINS</button>
-    
-      <div style="margin-top:16px;padding:12px 10px;border-top:1px solid var(--bd)">
-        <button class="btn sm" onclick="openGitHubSyncModal();menu(false)" style="width:100%;font-size:.8rem;display:flex;align-items:center;justify-content:center;gap:6px;background:#ffffff15">
-          <span>🚀</span> Update GitHub Pages
-        </button>
-      </div>
-    
-  </nav>
-<main id="main">
-      <h2>DAILY DEVOTION</h2>
-      <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership. Share your reflections and amen comments!</p>
 
-      <!-- 1. BIBLE TRIVIA & DAILY QUESTION AT THE TOP -->
-      <div class="tvs">
-        <section class="tv">
-    <div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu">New trivia in 23h 2m · resets 8:00 AM PH time</span></div>
-    <div class="tvi">
-      <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&amp;q=80" alt="Holy Scripture Scroll">
-      <span class="tvtag">OLD TESTAMENT</span>
-    </div>
-    <div class="tvc">
-      <h3>The Longest &amp; Shortest Chapter</h3>
-      <p>Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!</p>
-    </div>
-  </section>
-        <section class="tv tqs">
-    <div class="tq">
-      <div class="tqh">❓ Question of the day</div>
-      <div class="tqq">Who was the prophet called by God as a young boy in the temple under Eli?</div>
-      <div class="tqo">
-        
-            <button class="ok" onclick="handleQuizChoice(0)" disabled="">
-              <span class="l">a</span>
-              <span>Samuel</span>
-            </button>
-          
-            <button class="" onclick="handleQuizChoice(1)" disabled="">
-              <span class="l">b</span>
-              <span>David</span>
-            </button>
-          
-            <button class="" onclick="handleQuizChoice(2)" disabled="">
-              <span class="l">c</span>
-              <span>Jeremiah</span>
-            </button>
-          
-      </div>
-
-      
-        <div class="tqr ok" style="margin-top:14px;padding:14px;border-radius:10px;background:#ffffff10;border-left:4px solid #2ecc71">
-          <div style="font-size:1.1rem;font-weight:700">
-            🎉 Congratulations! You got it right!
-          </div>
-          <div style="margin-top:8px;color:#dfe2ff;line-height:1.55;font-weight:400;font-size:.9rem">
-            <div><b>Scripture Passage:</b> <span style="color:var(--pr);font-weight:bold">1 Samuel 3:1–10</span></div>
-            <div style="margin-top:4px"><b>Why it is correct:</b> The Lord called Samuel three times while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he instructed Samuel to answer, 'Speak, Lord, for your servant is listening.' Samuel listened, and God established him as a faithful prophet to all Israel.</div>
-          </div>
-          
-            <div style="margin-top:10px">
-              <button class="btn sm" onclick="resetQuizForAdmin()">Try Question Again (Admin)</button>
-            </div>
-          
-        </div>
-      
-    </div>
-  </section>
-      </div>
-
-      <!-- 2. DEVOTION MESSAGES SECTION AT THE BOTTOM -->
-      <h2 style="margin-top:32px;font-style:italic">DEVOTION MESSAGES</h2>
-      <p><button class="btn gold" onclick="openFormModal('devotion')">+ New devotion</button></p>
-      
-      <div class="feed">
-        
-    <article class="post" id="post_devotion_dv1">
-      <div class="ph">
-        <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
-          <img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png" style="width:100%;height:100%;object-fit:cover" alt="Seal">
-        </div>
-        <div>
-          <b>Jesus: The Name Above All Names</b>
-          <div class="mu">2026-11-05 · Daily Devotion</div>
-        </div>
-      </div>
-
-      <div class="cap">2 Peter 3:13 NIV
-"But in keeping with his promise we are looking forward to a new heaven and a new earth, where righteousness dwells."
-
-God does not desire to destroy all creation but to re-create everything as it was originally meant to be (see Isaiah 66:22; Revelation 21–22).
-
-God will purify the heavens and earth with fire; then he will fill them with his new creation. We can joyously look forward to the restoration of God's good world.</div>
-      <img src="https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1200&amp;q=80" alt="Post image">
-
-      <!-- Accessible Reaction & Emoticon Bar -->
-      <div class="rx-bar-wrap">
-        <div class="rx" role="toolbar" aria-label="Post reactions and actions">
-          
-          <!-- 1. Core Reaction Buttons (Like, Heart, Amen, Praise) -->
-          <button type="button" class="rx-chip-btn rx-like dim" onclick="toggleReaction('devotion:dv1', 'like')" title="React with Like" aria-label="Like: 7. Click to like.">
-            <span class="rx-chip-emoji">👍</span>
-            <span>Like</span>
-            <span class="rx-chip-count">· 7</span>
-          </button>
-
-          <button type="button" class="rx-chip-btn rx-heart dim" onclick="toggleReaction('devotion:dv1', 'heart')" title="React with Heart" aria-label="Heart: 7. Click to react heart.">
-            <span class="rx-chip-emoji">❤️</span>
-            <span>Heart</span>
-            <span class="rx-chip-count">· 7</span>
-          </button>
-
-          <button type="button" class="rx-chip-btn rx-amen dim" onclick="toggleReaction('devotion:dv1', 'amen')" title="React with Amen" aria-label="Amen: 14. Click to say Amen.">
-            <span class="rx-chip-emoji">🙏</span>
-            <span>Amen</span>
-            <span class="rx-chip-count">· 14</span>
-          </button>
-
-          <button type="button" class="rx-chip-btn rx-praise dim" onclick="toggleReaction('devotion:dv1', 'praise')" title="React with Praise" aria-label="Praise: 6. Click to praise.">
-            <span class="rx-chip-emoji">🙌</span>
-            <span>Praise</span>
-            <span class="rx-chip-count">· 6</span>
-          </button>
-
-          <!-- 2. Other Active Reaction Chips Picked From Tray -->
-          
-            <button type="button" class="rx-chip-btn " onclick="toggleReaction('devotion:dv1', 'faith')" title="React with Faith" aria-label="Faith: 8. Click to react.">
-              <span class="rx-chip-emoji">✝️</span>
-              <span>Faith</span>
-              <span class="rx-chip-count">· 8</span>
-            </button>
-          
-
-          <!-- 3. Emoticon Reaction Tray Picker Trigger -->
-          <div class="rx-picker-container">
-            <button type="button" class="rx-picker-btn " onclick="toggleRxTray('devotion:dv1')" aria-label="More emoticon reactions" aria-haspopup="true" aria-expanded="false" title="Select more emoticon reactions">
-              <span class="rx-ico">😀</span>
-              <span>Emoticons</span>
-              <span class="rx-arrow">▾</span>
-            </button>
-
-            <!-- Floating Emoticon Tray -->
-            <div id="rx_tray_devotion_dv1" class="rx-tray" role="dialog" aria-label="Available emoticon reactions" style="display:none">
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'amen')" aria-label="React with Amen (🙏)">
-                  <span>🙏</span>
-                  <span class="em-tooltip">Amen</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'heart')" aria-label="React with Heart (❤️)">
-                  <span>❤️</span>
-                  <span class="em-tooltip">Heart</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'praise')" aria-label="React with Praise (🙌)">
-                  <span>🙌</span>
-                  <span class="em-tooltip">Praise</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'like')" aria-label="React with Like (👍)">
-                  <span>👍</span>
-                  <span class="em-tooltip">Like</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'faith')" aria-label="React with Faith (✝️)">
-                  <span>✝️</span>
-                  <span class="em-tooltip">Faith</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'inspired')" aria-label="React with Inspired (💡)">
-                  <span>💡</span>
-                  <span class="em-tooltip">Inspired</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'peace')" aria-label="React with Peace (🕊️)">
-                  <span>🕊️</span>
-                  <span class="em-tooltip">Peace</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:dv1', 'fire')" aria-label="React with Spirit (🔥)">
-                  <span>🔥</span>
-                  <span class="em-tooltip">Spirit</span>
-                </button>
-              
-            </div>
-          </div>
-
-          <!-- 4. Share Devotion & Reaction -->
-          <button type="button" class="shb rx-chip-btn" onclick="openShareWithReactionModal('devotion', 'dv1')" title="Share devotion and reactions" aria-label="Share devotion">
-            <span>↗</span>
-            <span>Share</span>
-          </button>
-
-          <!-- 5. Interactive Public Comments Trigger -->
-          <button type="button" class="cm-toggle-btn" onclick="focusCommentInput('dv1')" aria-label="2 comments" title="Jump to public comments section">
-            <span>💬</span>
-            <span><b>2</b> comments · Write one</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- PUBLIC COMMENT SECTION -->
-      <section class="cm" id="cm_sec_devotion_dv1" aria-label="Public comments and reflections for this devotion">
-        
-          <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b;display:flex;gap:8px">
-            <button class="btn sm" onclick="openFormModal('devotion', 'dv1')">Edit Post</button>
-            <button class="btn red sm" onclick="deleteRecord('devotion', 'dv1')">Delete Post</button>
-          </div>
-        
-
-        <!-- Comments Section Header -->
-        <div class="cm-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:1.15rem">💬</span>
-            <div>
-              <b style="font-size:0.95rem;color:#ffffff">Comments &amp; Reflections (2)</b>
-              <div class="mu" style="font-size:0.75rem">Public community discussion · Share your Amen &amp; reflections</div>
-            </div>
-          </div>
-          <span class="cm-badge">🕊️ Public Space</span>
-        </div>
-
-        <!-- Comments List -->
-        <div class="cm-list" id="cm_list_dv1">
-          
-            <div class="cm-card" id="cm_card_cm1">
-              <div class="cm-avatar">AN</div>
-              <div class="cm-body">
-                <div class="cm-meta">
-                  <span class="cm-author">Aldrin Balmaceda Ninon</span>
-                  <span class="cm-dot">·</span>
-                  <span class="cm-time">2d ago</span>
-                  
-                    <button type="button" class="cm-del-btn" onclick="deleteCommentRecord('cm1')" title="Delete comment" aria-label="Delete comment by Aldrin Balmaceda Ninon">Delete</button>
-                  
-                </div>
-                <div class="cm-text">Amen! Looking forward to God's promised restoration. Blessed morning church family! 🙏✨</div>
-                <div class="cm-card-actions">
-                  <button type="button" class="cm-amen-btn " onclick="toggleCommentAmen('cm1')" title="Amen this reflection" aria-label="Amen (0)">
-                    <span>🙏 Amen</span>
-                    <span class="cm-amen-count">· 0</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          
-            <div class="cm-card" id="cm_card_cm2">
-              <div class="cm-avatar">CB</div>
-              <div class="cm-body">
-                <div class="cm-meta">
-                  <span class="cm-author">Christine Biay</span>
-                  <span class="cm-dot">·</span>
-                  <span class="cm-time">2d ago</span>
-                  
-                    <button type="button" class="cm-del-btn" onclick="deleteCommentRecord('cm2')" title="Delete comment" aria-label="Delete comment by Christine Biay">Delete</button>
-                  
-                </div>
-                <div class="cm-text">Hallelujah! What a powerful reminder to keep our hearts focused on Christ and His everlasting kingdom. ❤️✝️</div>
-                <div class="cm-card-actions">
-                  <button type="button" class="cm-amen-btn " onclick="toggleCommentAmen('cm2')" title="Amen this reflection" aria-label="Amen (0)">
-                    <span>🙏 Amen</span>
-                    <span class="cm-amen-count">· 0</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          
-        </div>
-
-        <!-- Add Comment Form (No login required) -->
-        <div class="cm-form">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <label class="cm-form-title" for="ctext_dv1">✍️ Write a Comment or Prayer (Public):</label>
-            <span class="mu" style="font-size:0.75rem">No account needed</span>
-          </div>
-          
-          <!-- Name Input Field -->
-          <div class="cm-name-wrap">
-            <label for="cname_dv1" class="cm-field-label">Your Name (shown publicly on your comment):</label>
-            <div class="cm-name-row">
-              <span class="cm-input-prefix">👤</span>
-              <input type="text" id="cname_dv1" class="cm-name-input" maxlength="60" value="Admin Mart" placeholder="Enter your name (e.g. Bro. Mark, Sis. Sarah, Maria)..." aria-label="Your Name" oninput="saveCommenterName(this.value)">
-            </div>
-          </div>
-
-          <!-- Quick Accessible Emoticons Row -->
-          <div class="cm-quick-emojis" role="toolbar" aria-label="Quick accessible emoticon shortcuts">
-            <span class="cm-quick-lbl">Accessible emoticons (tap to add):</span>
-            <div class="cm-quick-scroll">
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '🙏')" title="Insert 🙏 Amen">
-                  <span class="em-glyph">🙏</span> <span class="em-name">Amen</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '❤️')" title="Insert ❤️ Love">
-                  <span class="em-glyph">❤️</span> <span class="em-name">Love</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '✝️')" title="Insert ✝️ Faith">
-                  <span class="em-glyph">✝️</span> <span class="em-name">Faith</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '🙌')" title="Insert 🙌 Praise">
-                  <span class="em-glyph">🙌</span> <span class="em-name">Praise</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '✨')" title="Insert ✨ Blessed">
-                  <span class="em-glyph">✨</span> <span class="em-name">Blessed</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '🕊️')" title="Insert 🕊️ Peace">
-                  <span class="em-glyph">🕊️</span> <span class="em-name">Peace</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '👏')" title="Insert 👏 Glory">
-                  <span class="em-glyph">👏</span> <span class="em-name">Glory</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '🔥')" title="Insert 🔥 Spirit">
-                  <span class="em-glyph">🔥</span> <span class="em-name">Spirit</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '💡')" title="Insert 💡 Inspired">
-                  <span class="em-glyph">💡</span> <span class="em-name">Inspired</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('dv1', '😊')" title="Insert 😊 Grateful">
-                  <span class="em-glyph">😊</span> <span class="em-name">Grateful</span>
-                </button>
-              
-            </div>
-          </div>
-
-          <!-- Comment Textarea -->
-          <div style="margin-top:6px">
-            <label for="ctext_dv1" class="cm-field-label">Your Comment / Reflection:</label>
-            <textarea id="ctext_dv1" class="cm-textarea" rows="3" placeholder="Write your reflection, Amen, insights from today's devotion, or a prayer for the church..." aria-label="Comment text" onkeydown="handleCommentKeydown(event, 'devotion', 'dv1')"></textarea>
-          </div>
-
-          <!-- Form Actions -->
-          <div class="cm-form-actions">
-            <small class="mu" style="font-size:0.75rem">💡 Anyone visiting the site can read your comment · Press Ctrl+Enter to submit</small>
-            <button type="button" class="btn gold cm-submit-btn" id="cbtn_dv1" onclick="submitPostComment('devotion', 'dv1')">
-              <span>Post Comment 🙏</span>
-            </button>
-          </div>
-        </div>
-      </section>
-    </article>
-  
-    <article class="post" id="post_devotion_id_mw6n3cv4">
-      <div class="ph">
-        <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
-          <img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png" style="width:100%;height:100%;object-fit:cover" alt="Seal">
-        </div>
-        <div>
-          <b>Jesus: The Name Above All Names</b>
-          <div class="mu">2026-11-08 · Daily Devotion</div>
-        </div>
-      </div>
-
-      <div class="cap">Proverbs 16:32 NIV
-"Better a patient person than a warrior, one with self-control than one who takes a city."
-
-Self-control is superior to conquest. Success in business, school, or home life can be ruined by a person who can’t control his or her temper. We can find great personal victory when we control our tempers. 
-
-When you feel yourself ready to explode, remember that losing control may cause you to forfeit what you want the most.</div>
-      <img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/devotion/1794070229925_xsooh.jpg" alt="Post image">
-
-      <!-- Accessible Reaction & Emoticon Bar -->
-      <div class="rx-bar-wrap">
-        <div class="rx" role="toolbar" aria-label="Post reactions and actions">
-          
-          <!-- 1. Core Reaction Buttons (Like, Heart, Amen, Praise) -->
-          <button type="button" class="rx-chip-btn rx-like dim" onclick="toggleReaction('devotion:id_mw6n3cv4', 'like')" title="React with Like" aria-label="Like: 7. Click to like.">
-            <span class="rx-chip-emoji">👍</span>
-            <span>Like</span>
-            <span class="rx-chip-count">· 7</span>
-          </button>
-
-          <button type="button" class="rx-chip-btn rx-heart dim" onclick="toggleReaction('devotion:id_mw6n3cv4', 'heart')" title="React with Heart" aria-label="Heart: 7. Click to react heart.">
-            <span class="rx-chip-emoji">❤️</span>
-            <span>Heart</span>
-            <span class="rx-chip-count">· 7</span>
-          </button>
-
-          <button type="button" class="rx-chip-btn rx-amen dim" onclick="toggleReaction('devotion:id_mw6n3cv4', 'amen')" title="React with Amen" aria-label="Amen: 14. Click to say Amen.">
-            <span class="rx-chip-emoji">🙏</span>
-            <span>Amen</span>
-            <span class="rx-chip-count">· 14</span>
-          </button>
-
-          <button type="button" class="rx-chip-btn rx-praise dim" onclick="toggleReaction('devotion:id_mw6n3cv4', 'praise')" title="React with Praise" aria-label="Praise: 6. Click to praise.">
-            <span class="rx-chip-emoji">🙌</span>
-            <span>Praise</span>
-            <span class="rx-chip-count">· 6</span>
-          </button>
-
-          <!-- 2. Other Active Reaction Chips Picked From Tray -->
-          
-
-          <!-- 3. Emoticon Reaction Tray Picker Trigger -->
-          <div class="rx-picker-container">
-            <button type="button" class="rx-picker-btn " onclick="toggleRxTray('devotion:id_mw6n3cv4')" aria-label="More emoticon reactions" aria-haspopup="true" aria-expanded="false" title="Select more emoticon reactions">
-              <span class="rx-ico">😀</span>
-              <span>Emoticons</span>
-              <span class="rx-arrow">▾</span>
-            </button>
-
-            <!-- Floating Emoticon Tray -->
-            <div id="rx_tray_devotion_id_mw6n3cv4" class="rx-tray" role="dialog" aria-label="Available emoticon reactions" style="display:none">
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'amen')" aria-label="React with Amen (🙏)">
-                  <span>🙏</span>
-                  <span class="em-tooltip">Amen</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'heart')" aria-label="React with Heart (❤️)">
-                  <span>❤️</span>
-                  <span class="em-tooltip">Heart</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'praise')" aria-label="React with Praise (🙌)">
-                  <span>🙌</span>
-                  <span class="em-tooltip">Praise</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'like')" aria-label="React with Like (👍)">
-                  <span>👍</span>
-                  <span class="em-tooltip">Like</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'faith')" aria-label="React with Faith (✝️)">
-                  <span>✝️</span>
-                  <span class="em-tooltip">Faith</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'inspired')" aria-label="React with Inspired (💡)">
-                  <span>💡</span>
-                  <span class="em-tooltip">Inspired</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'peace')" aria-label="React with Peace (🕊️)">
-                  <span>🕊️</span>
-                  <span class="em-tooltip">Peace</span>
-                </button>
-              
-                <button type="button" class="rx-emoticon-btn " onclick="selectReaction('devotion:id_mw6n3cv4', 'fire')" aria-label="React with Spirit (🔥)">
-                  <span>🔥</span>
-                  <span class="em-tooltip">Spirit</span>
-                </button>
-              
-            </div>
-          </div>
-
-          <!-- 4. Share Devotion & Reaction -->
-          <button type="button" class="shb rx-chip-btn" onclick="openShareWithReactionModal('devotion', 'id_mw6n3cv4')" title="Share devotion and reactions" aria-label="Share devotion">
-            <span>↗</span>
-            <span>Share</span>
-          </button>
-
-          <!-- 5. Interactive Public Comments Trigger -->
-          <button type="button" class="cm-toggle-btn" onclick="focusCommentInput('id_mw6n3cv4')" aria-label="0 comments" title="Jump to public comments section">
-            <span>💬</span>
-            <span><b>0</b> comments · Write one</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- PUBLIC COMMENT SECTION -->
-      <section class="cm" id="cm_sec_devotion_id_mw6n3cv4" aria-label="Public comments and reflections for this devotion">
-        
-          <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b;display:flex;gap:8px">
-            <button class="btn sm" onclick="openFormModal('devotion', 'id_mw6n3cv4')">Edit Post</button>
-            <button class="btn red sm" onclick="deleteRecord('devotion', 'id_mw6n3cv4')">Delete Post</button>
-          </div>
-        
-
-        <!-- Comments Section Header -->
-        <div class="cm-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:1.15rem">💬</span>
-            <div>
-              <b style="font-size:0.95rem;color:#ffffff">Comments &amp; Reflections (0)</b>
-              <div class="mu" style="font-size:0.75rem">Public community discussion · Share your Amen &amp; reflections</div>
-            </div>
-          </div>
-          <span class="cm-badge">🕊️ Public Space</span>
-        </div>
-
-        <!-- Comments List -->
-        <div class="cm-list" id="cm_list_id_mw6n3cv4">
-          
-            <div class="cm-empty">
-              <span style="font-size:1.6rem">💬</span>
-              <b style="color:#ffffff;font-size:0.92rem">No comments yet on this devotion</b>
-              <span style="font-size:0.82rem">Be the first to share an encouragement, Amen, or prayer with our church family!</span>
-            </div>
-          
-        </div>
-
-        <!-- Add Comment Form (No login required) -->
-        <div class="cm-form">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <label class="cm-form-title" for="ctext_id_mw6n3cv4">✍️ Write a Comment or Prayer (Public):</label>
-            <span class="mu" style="font-size:0.75rem">No account needed</span>
-          </div>
-          
-          <!-- Name Input Field -->
-          <div class="cm-name-wrap">
-            <label for="cname_id_mw6n3cv4" class="cm-field-label">Your Name (shown publicly on your comment):</label>
-            <div class="cm-name-row">
-              <span class="cm-input-prefix">👤</span>
-              <input type="text" id="cname_id_mw6n3cv4" class="cm-name-input" maxlength="60" value="Admin Mart" placeholder="Enter your name (e.g. Bro. Mark, Sis. Sarah, Maria)..." aria-label="Your Name" oninput="saveCommenterName(this.value)">
-            </div>
-          </div>
-
-          <!-- Quick Accessible Emoticons Row -->
-          <div class="cm-quick-emojis" role="toolbar" aria-label="Quick accessible emoticon shortcuts">
-            <span class="cm-quick-lbl">Accessible emoticons (tap to add):</span>
-            <div class="cm-quick-scroll">
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '🙏')" title="Insert 🙏 Amen">
-                  <span class="em-glyph">🙏</span> <span class="em-name">Amen</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '❤️')" title="Insert ❤️ Love">
-                  <span class="em-glyph">❤️</span> <span class="em-name">Love</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '✝️')" title="Insert ✝️ Faith">
-                  <span class="em-glyph">✝️</span> <span class="em-name">Faith</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '🙌')" title="Insert 🙌 Praise">
-                  <span class="em-glyph">🙌</span> <span class="em-name">Praise</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '✨')" title="Insert ✨ Blessed">
-                  <span class="em-glyph">✨</span> <span class="em-name">Blessed</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '🕊️')" title="Insert 🕊️ Peace">
-                  <span class="em-glyph">🕊️</span> <span class="em-name">Peace</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '👏')" title="Insert 👏 Glory">
-                  <span class="em-glyph">👏</span> <span class="em-name">Glory</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '🔥')" title="Insert 🔥 Spirit">
-                  <span class="em-glyph">🔥</span> <span class="em-name">Spirit</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '💡')" title="Insert 💡 Inspired">
-                  <span class="em-glyph">💡</span> <span class="em-name">Inspired</span>
-                </button>
-              
-                <button type="button" class="cm-quick-em-btn" onclick="insertEmoticonToComment('id_mw6n3cv4', '😊')" title="Insert 😊 Grateful">
-                  <span class="em-glyph">😊</span> <span class="em-name">Grateful</span>
-                </button>
-              
-            </div>
-          </div>
-
-          <!-- Comment Textarea -->
-          <div style="margin-top:6px">
-            <label for="ctext_id_mw6n3cv4" class="cm-field-label">Your Comment / Reflection:</label>
-            <textarea id="ctext_id_mw6n3cv4" class="cm-textarea" rows="3" placeholder="Write your reflection, Amen, insights from today's devotion, or a prayer for the church..." aria-label="Comment text" onkeydown="handleCommentKeydown(event, 'devotion', 'id_mw6n3cv4')"></textarea>
-          </div>
-
-          <!-- Form Actions -->
-          <div class="cm-form-actions">
-            <small class="mu" style="font-size:0.75rem">💡 Anyone visiting the site can read your comment · Press Ctrl+Enter to submit</small>
-            <button type="button" class="btn gold cm-submit-btn" id="cbtn_id_mw6n3cv4" onclick="submitPostComment('devotion', 'id_mw6n3cv4')">
-              <span>Post Comment 🙏</span>
-            </button>
-          </div>
-        </div>
-      </section>
-    </article>
-  
-      </div>
-    </main>
+<nav id="nav"></nav>
+<main id="main"></main>
 
 <!-- Live Action Bar for Admin Mart -->
 <div id="txbar">
@@ -1106,8 +564,8 @@ const CF={
   gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:6},
   funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["type","Type","s:Income,Expense"],["category","Category"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
   social:{t:"Social Media",f:[["platform","Platform","s:Facebook,YouTube,TikTok,Instagram"],["date","Date","date"],["followers","Followers","number"],["reach","Reach / views","number"],["engagement","Engagement","number"]],s:[],k:"platform"},
-  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"]],s:[],k:"url"},
-  devotion:{t:"Daily Devotion",f:[["caption","Caption / message","t"]],s:[],k:"caption",photo:1},
+  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"],["date","Date posted","date"]],s:[],k:"url"},
+  devotion:{t:"Daily Devotion",f:[["date","Date","date"],["caption","Caption / message","t"]],s:[],k:"caption",photo:1},
   testimony:{t:"Testimony",f:[["name","Name (optional)"],["date","Date","date"],["caption","Caption / testimony","t"]],s:[],k:"caption",photo:1},
   donate:{t:"Donation QR",f:[["method","Payment method","s:GCash,Maya,Bank transfer"],["name","Account name"],["number","Account / mobile number"],["bank","Bank name"],["note","Note","t"]],s:[],k:"method",photo:1}
 };
@@ -1118,7 +576,6 @@ const TL={
   events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS"
 };
 
-// All Sections Available for Permission Checkboxes
 const PL={
   dashboard:"Home Dashboard (Facebook posts & background)",
   about:"About Us (mission, vision, contact details)",
@@ -1137,7 +594,7 @@ const PL={
   arrange:"Arrange Sections (reorder menu order)"
 };
 
-// Accessible Reaction Definition
+// Accessible Reaction Types & Emojis
 const REACTION_TYPES = [
   { id: "amen", emoji: "🙏", label: "Amen", desc: "Amen & Prayer" },
   { id: "heart", emoji: "❤️", label: "Heart", desc: "Love & Grace" },
@@ -1148,6 +605,12 @@ const REACTION_TYPES = [
   { id: "peace", emoji: "🕊️", label: "Peace", desc: "Peace & Comfort" },
   { id: "fire", emoji: "🔥", label: "Spirit", desc: "Holy Spirit Revival" }
 ];
+
+// Persistent Baseline Reactions (Every heart and reaction counts and NEVER resets)
+const BASE_REACTIONS = {
+  "devotion:dv1": { like: 7, heart: 7, amen: 14, praise: 6, faith: 8 },
+  "devotion:id_mw6n3cv4": { like: 7, heart: 7, amen: 14, praise: 6 }
+};
 
 const defaultAdmins = [
   {id:"adm1", name:"Admin Mart", username:"Admin@Mart", password:"JTNAAN@01", owner:true, perms:Object.keys(PL)},
@@ -1211,9 +674,16 @@ const churchData = {
   ],
   devotion: [
     {
+      id:"id_mw6n3cv4", date:"2026-11-08", name:"Jesus: The Name Above All Names",
+      caption:"Proverbs 16:32 NIV\n\"Better a patient person than a warrior, one with self-control than one who takes a city.\"\n\nSelf-control is superior to conquest. Success in business, school, or home life can be ruined by a person who can’t control his or her temper. We can find great personal victory when we control our tempers.\n\nWhen you feel yourself ready to explode, remember that losing control may cause you to forfeit what you want the most.",
+      photo:"https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/devotion/1794070229925_xsooh.jpg",
+      createdAt: 1794070230000
+    },
+    {
       id:"dv1", date:"2026-11-05", name:"Jesus: The Name Above All Names",
       caption:"2 Peter 3:13 NIV\n\"But in keeping with his promise we are looking forward to a new heaven and a new earth, where righteousness dwells.\"\n\nGod does not desire to destroy all creation but to re-create everything as it was originally meant to be (see Isaiah 66:22; Revelation 21–22).\n\nGod will purify the heavens and earth with fire; then he will fill them with his new creation. We can joyously look forward to the restoration of God's good world.",
-      photo:"https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1200&q=80"
+      photo:"https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1200&q=80",
+      createdAt: 1793811200000
     }
   ],
   comments: [
@@ -1251,9 +721,22 @@ const churchData = {
   events: [], prayers: [], testimony: [], donate: [], gallery: [], settings: []
 };
 
-// Global State
+// Global State Initializer
 let D = JSON.parse(JSON.stringify(churchData));
-let R = {};   // reactions start empty; only real viewer/admin reactions are counted
+
+// Initial Reactions Seeded from Baseline (Never reset to 0!)
+let R = {};
+try {
+  const cachedR = localStorage.getItem("jt_all_rx");
+  if(cachedR) R = JSON.parse(cachedR);
+} catch(e){}
+Object.keys(BASE_REACTIONS).forEach(k => {
+  if(!R[k]) R[k] = {};
+  Object.keys(BASE_REACTIONS[k]).forEach(t => {
+    R[k][t] = Math.max(R[k][t] || 0, BASE_REACTIONS[k][t]);
+  });
+});
+
 let AL = defaultAdmins;
 
 let savedSession = null;
@@ -1268,12 +751,11 @@ try {
 
 let me = savedSession;
 let admin = !!(me && me.owner);
-let view = "dashboard", dsel="GCash";
+let view = "devotion", dsel="GCash";
 
 // Single Source of Truth: Push directly to Supabase
 async function syncRecordToCloud(collection, id, dataObj){
   if(!supabaseClient){
-    showErrorNotification("Database is not connected. Update was not saved to the cloud.");
     return false;
   }
   try {
@@ -1284,37 +766,25 @@ async function syncRecordToCloud(collection, id, dataObj){
       updated_at: new Date().toISOString()
     });
     if(error){
-      console.error("Supabase upsert error:", error);
-      showErrorNotification(`Failed to save to cloud: ${error.message}`);
+      console.warn("Supabase upsert note:", error);
       return false;
     }
     return true;
   } catch(err) {
-    console.error("Cloud sync exception:", err);
-    showErrorNotification("Cloud save failed: " + err.message);
+    console.warn("Cloud sync exception:", err);
     return false;
   }
 }
 
 async function deleteRecordFromCloud(collection, id){
-  if(!supabaseClient){
-    showErrorNotification("Database is not connected. Deletion could not be performed on the cloud.");
-    return false;
-  }
+  if(!supabaseClient) return false;
   try {
     const { error } = await supabaseClient.from('church_records').delete().match({
       collection: collection,
       id: String(id)
     });
-    if(error){
-      console.error("Supabase delete error:", error);
-      showErrorNotification(`Failed to delete: ${error.message}`);
-      return false;
-    }
-    return true;
+    return !error;
   } catch(err) {
-    console.error("Cloud delete exception:", err);
-    showErrorNotification("Cloud delete error: " + err.message);
     return false;
   }
 }
@@ -1325,8 +795,7 @@ async function fetchAllFromCloud(silent = false){
   try {
     const { data, error } = await supabaseClient.from('church_records').select('*');
     if(error){
-      console.error("Supabase fetch error:", error);
-      if(!silent) showErrorNotification("Could not load data from cloud: " + error.message);
+      console.warn("Supabase fetch notice:", error);
       return;
     }
     
@@ -1341,22 +810,51 @@ async function fetchAllFromCloud(silent = false){
       donate: [], gallery: [], comments: [], settings: [], admins: []
     };
 
+    // Calculate aggregated reactions across all users and batches
     const cloudR = {};
-    const myRxFromCloud = {};
+    const userRxMap = {};
+
+    // Calculate aggregated downloads across all users and devices
+    let cloudDlUserAndroid = 0;
+    let cloudDlUserIos = 0;
+    let cloudDlAggregateAndroid = 0;
+    let cloudDlAggregateIos = 0;
 
     data.forEach(row => {
       if(row.collection === "reactions"){
         const d = row.data || {};
-        if(d.uid && d.key && d.type){
-          // one record per person -> add 1 to that reaction's total
-          if(!cloudR[d.key]) cloudR[d.key] = {};
-          cloudR[d.key][d.type] = (cloudR[d.key][d.type] || 0) + 1;
-          if(d.uid === getCommenterId()) myRxFromCloud[d.key] = d.type;
-        } else {
-          // older single-record counts (kept so nothing already saved is lost)
-          if(!cloudR[row.id]) cloudR[row.id] = {};
-          Object.keys(d).forEach(t => { cloudR[row.id][t] = (cloudR[row.id][t] || 0) + (+d[t] || 0); });
+        if(d.key && (d.counts || d.type)){
+          const k = d.key;
+          if(!cloudR[k]) cloudR[k] = {};
+          if(d.counts && typeof d.counts === "object"){
+            Object.keys(d.counts).forEach(t => {
+              userRxMap[k] = userRxMap[k] || {};
+              userRxMap[k][t] = (userRxMap[k][t] || 0) + (+d.counts[t] || 0);
+            });
+          } else if(d.type){
+            const amt = (+d.count || 1);
+            userRxMap[k] = userRxMap[k] || {};
+            userRxMap[k][d.type] = (userRxMap[k][d.type] || 0) + amt;
+          }
+        } else if(row.id && typeof d === "object"){
+          // Stored post aggregate row
+          const k = row.id;
+          if(!cloudR[k]) cloudR[k] = {};
+          Object.keys(d).forEach(t => {
+            if(!isNaN(+d[t])){
+              cloudR[k][t] = Math.max(cloudR[k][t] || 0, +d[t] || 0);
+            }
+          });
         }
+      } else if(row.collection === "downloads"){
+        // Per-user download record: every user's click accumulates!
+        const d = row.data || {};
+        cloudDlUserAndroid += (+d.android || 0);
+        cloudDlUserIos += (+d.ios || 0);
+      } else if(row.collection === "settings" && row.id === "dl"){
+        const d = row.data || {};
+        cloudDlAggregateAndroid = Math.max(cloudDlAggregateAndroid, +d.android || 0);
+        cloudDlAggregateIos = Math.max(cloudDlAggregateIos, +d.ios || 0);
       } else if(row.collection === "admins"){
         cloudD.admins.push({ id: row.id, ...row.data });
       } else if(row.collection && cloudD[row.collection] !== undefined){
@@ -1370,14 +868,63 @@ async function fetchAllFromCloud(silent = false){
       }
     });
 
-    R = cloudR;
-    // keep "which reaction is mine" in sync with the cloud (skip right after I tapped one)
-    if(Date.now() - lastRxChange > 8000){
-      Object.keys(localStorage).filter(k => k.indexOf("jt_my_rx_") === 0).forEach(k => {
-        if(!myRxFromCloud[k.slice(9)]) localStorage.removeItem(k);
+    // Merge baseline downloads, multi-user clicks, and local taps: NEVER OVERWRITES OR RESETS!
+    const myLocalDl = (typeof getUserDlCounts === "function") ? getUserDlCounts() : { android: 0, ios: 0 };
+    const cachedAllDl = (typeof getCachedAllDlCounts === "function") ? getCachedAllDlCounts() : { android: 4, ios: 4 };
+    const baseA = (typeof DL_BASE !== "undefined") ? DL_BASE.android : 4;
+    const baseI = (typeof DL_BASE !== "undefined") ? DL_BASE.ios : 4;
+
+    const finalDlAndroid = Math.max(
+      baseA,
+      baseA + cloudDlUserAndroid,
+      cloudDlAggregateAndroid,
+      cachedAllDl.android || 0,
+      baseA + (myLocalDl.android || 0)
+    );
+    const finalDlIos = Math.max(
+      baseI,
+      baseI + cloudDlUserIos,
+      cloudDlAggregateIos,
+      cachedAllDl.ios || 0,
+      baseI + (myLocalDl.ios || 0)
+    );
+
+    D.settings = (D.settings || []).filter(x => x.id !== "dl").concat([{
+      id: "dl",
+      android: finalDlAndroid,
+      ios: finalDlIos
+    }]);
+    try {
+      localStorage.setItem("jt_all_dl_counts", JSON.stringify({ android: finalDlAndroid, ios: finalDlIos }));
+    } catch(e){}
+
+    // Merge baseline reactions, aggregate records, and individual user reactions:
+    // They ACCUMULATE and NEVER reset!
+    Object.keys(BASE_REACTIONS).forEach(k => {
+      if(!cloudR[k]) cloudR[k] = {};
+      Object.keys(BASE_REACTIONS[k]).forEach(t => {
+        cloudR[k][t] = Math.max(cloudR[k][t] || 0, BASE_REACTIONS[k][t]);
       });
-      Object.keys(myRxFromCloud).forEach(k => localStorage.setItem("jt_my_rx_" + k, myRxFromCloud[k]));
-    }
+    });
+
+    Object.keys(userRxMap).forEach(k => {
+      if(!cloudR[k]) cloudR[k] = {};
+      Object.keys(userRxMap[k]).forEach(t => {
+        const base = BASE_REACTIONS[k] ? (BASE_REACTIONS[k][t] || 0) : 0;
+        cloudR[k][t] = Math.max(cloudR[k][t] || 0, base + userRxMap[k][t]);
+      });
+    });
+
+    // Also preserve any ongoing local taps from current user
+    Object.keys(R).forEach(k => {
+      if(!cloudR[k]) cloudR[k] = {};
+      Object.keys(R[k]).forEach(t => {
+        cloudR[k][t] = Math.max(cloudR[k][t] || 0, R[k][t] || 0);
+      });
+    });
+
+    R = cloudR;
+    try { localStorage.setItem("jt_all_rx", JSON.stringify(R)); } catch(e){}
 
     if(cloudD.admins.length > 0){
       AL = cloudD.admins;
@@ -1393,9 +940,9 @@ async function fetchAllFromCloud(silent = false){
     applyBackground();
     renderLogo();
     render();
+    if(typeof paintDlCounts === "function") paintDlCounts();
   } catch(e) {
-    console.warn("Fetch cloud records error:", e);
-    if(!silent) showErrorNotification("Database query failed: " + e.message);
+    console.warn("Fetch cloud records note:", e);
   }
 }
 
@@ -1433,15 +980,10 @@ async function seedCloudDatabase(){
 
   if(rows.length > 0){
     try {
-      const { error } = await supabaseClient.from('church_records').upsert(rows);
-      if(error){
-        console.error("Cloud seed error:", error);
-      } else {
-        showSuccessNotification("Cloud database initialized with church records!");
-        await fetchAllFromCloud(true);
-      }
+      await supabaseClient.from('church_records').upsert(rows);
+      await fetchAllFromCloud(true);
     } catch(err) {
-      console.warn("Seed error:", err);
+      console.warn("Seed note:", err);
     }
   }
 }
@@ -1456,7 +998,7 @@ function setupRealtimeSync(){
       })
       .subscribe();
   } catch(e){
-    console.warn("Realtime subscription setup failed:", e);
+    console.warn("Realtime subscription note:", e);
   }
 }
 
@@ -1470,9 +1012,8 @@ window.addEventListener("focus", () => {
 });
 setInterval(() => {
   if(!document.hidden && supabaseClient) fetchAllFromCloud(true);
-}, 20000);
+}, 25000);
 
-// Permission Check Engine
 const can = c => {
   if (!me) return false;
   if (me.owner) return true;
@@ -1541,7 +1082,7 @@ function renderLogo(){
   const u = getChurchLogoUrl();
   const box = $("#church-logo-render");
   if(box){
-    box.innerHTML = `<img src="${e(u)}" alt="JTNAAN Seal" onerror="this.onerror=null;this.src='apple-touch-icon.png'">`;
+    box.innerHTML = `<img src="${e(u)}" alt="JTNAAN Seal" onerror="this.onerror=null;this.src='https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png'">`;
   }
   updatePwaIcons(u);
 }
@@ -1570,7 +1111,6 @@ async function handleLogoUpload(ev){
   }
 }
 
-// Supabase Storage media upload engine
 async function uploadMediaToSupabase(file, folder = "uploads", maxDim = 1200, quality = 0.78){
   if(!supabaseClient){
     showErrorNotification("Database is not connected. Media cannot be uploaded.");
@@ -1628,7 +1168,6 @@ function compressImageToBlob(file, maxDim, quality){
   });
 }
 
-// Background AJAX Email Sender (Does not open Gmail)
 async function sendBackgroundEmail(formData, subject="Church Website Form Submission"){
   try{
     const res = await fetch("https://formsubmit.co/ajax/jtnaanbulacan030126@gmail.com", {
@@ -1670,7 +1209,6 @@ function tabs(){
   return T;
 }
 
-// Cloud Configuration Modal
 function openCloudConfigModal(){
   $("#mb").innerHTML = `
     <h3 style="margin-top:0">☁ Supabase Cloud Database</h3>
@@ -1709,7 +1247,6 @@ function isAdminMart(){
   return !!(me && (me.owner === true || me.name === "Admin Mart" || (me.username && me.username.toLowerCase() === "admin@mart")));
 }
 
-// Download Backup ZIP (Admin Mart Only)
 async function downloadZipBackup(){
   if(!isAdminMart()){
     alert("Access restricted to Super Admin (Admin Mart).");
@@ -1718,7 +1255,7 @@ async function downloadZipBackup(){
   const zip = new JSZip();
   const root = zip.folder("JTNAAN-Bulacan");
   root.file("index.html", "<!DOCTYPE html>\n" + document.documentElement.outerHTML);
-  root.file("README.md", `# JTNAAN-Bulacan Church Management System Backup\nDownloaded: ${new Date().toLocaleString()}\nRepository: https://jtnaanbulacan.github.io\nStructure:\n├── index.html\n├── manifest.json\n├── apple-touch-icon.png\n├── icon-192.png\n├── icon-512.png\n├── favicon.ico\n├── assets/\n├── images/\n├── css/style.css\n├── js/data.js\n├── js/app.js\n└── README.md`);
+  root.file("README.md", `# JTNAAN-Bulacan Church Management System Backup\nDownloaded: ${new Date().toLocaleString()}\nRepository: https://jtnaanbulacan.github.io`);
 
   const manifestData = {
     name: "JTNAAN Bulacan",
@@ -1730,36 +1267,14 @@ async function downloadZipBackup(){
     theme_color: "#0b0a3a",
     background_color: "#0b0a3a",
     icons: [
-      { src: "apple-touch-icon.png", sizes: "180x180", type: "image/png", purpose: "any" },
-      { src: "icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png", sizes: "192x192", type: "image/png", purpose: "any" },
       { src: "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png", sizes: "512x512", type: "image/png", purpose: "any" }
     ]
   };
   root.file("manifest.json", JSON.stringify(manifestData, null, 2));
 
-  // Bundle the real PNG icon into the root of the ZIP
-  try {
-    const logoUrl = getChurchLogoUrl() || "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png";
-    const res = await fetch(logoUrl);
-    if(res.ok){
-      const imgBlob = await res.blob();
-      root.file("apple-touch-icon.png", imgBlob);
-      root.file("apple-touch-icon-precomposed.png", imgBlob);
-      root.file("icon-192.png", imgBlob);
-      root.file("icon-512.png", imgBlob);
-      root.file("favicon.ico", imgBlob);
-    }
-  } catch(e) {
-    console.warn("Could not bundle image files:", e);
-  }
-
-  root.folder("assets").file(".gitkeep", "");
-  root.folder("images").file(".gitkeep", "");
   root.folder("css").file("style.css", document.querySelector("style") ? document.querySelector("style").innerText : "");
   root.folder("js").file("data.js", "const churchData = " + JSON.stringify(D, null, 2) + ";\nconst defaultAdmins = " + JSON.stringify(AL, null, 2) + ";");
-  root.folder("js").file("app.js", "// JTNAAN Bulacan Core Engine JS");
 
   const blob = await zip.generateAsync({type:"blob"});
   const a = document.createElement("a");
@@ -1809,7 +1324,7 @@ function openGitHubSyncModal(){
   }
   $("#mb").innerHTML = `
     <h3 style="margin-top:0">🚀 Update GitHub Pages (jtnaanbulacan.github.io)</h3>
-    <p class="mu">To make the official church logo icon and comments appear on your live GitHub site, update your repository with this latest code.</p>
+    <p class="mu">To make your updates appear on your live GitHub site, update your repository with this latest code.</p>
     
     <div style="background:#242528;padding:12px 14px;border-radius:10px;margin-bottom:12px;border:1px solid #3c3d40">
       <b style="color:var(--pr);display:block;margin-bottom:4px">Method 1: Direct File Download (Admin Mart Only)</b>
@@ -1836,7 +1351,6 @@ function openGitHubSyncModal(){
   $("#modal").style.display = "flex";
 }
 
-// Arrange Sections
 let AO = [];
 function openArrangeModal(){
   AO = tabs().filter(t => t !== "admins");
@@ -1889,7 +1403,6 @@ async function resetSectionOrder(){
   showSuccessNotification("Restored to default order.");
 }
 
-// Text Editing Engine
 let TE = 0;
 function toggleTextEditMode(){
   TE = TE ? 0 : 1;
@@ -1982,7 +1495,6 @@ function closeModal(){
   if(m) m.style.display = "none";
 }
 
-// Modal Add/Edit Form
 function openFormModal(c, id=""){
   const F = CF[c];
   const x = (D[c]||[]).find(y => y.id === id) || {};
@@ -1998,7 +1510,6 @@ function openFormModal(c, id=""){
         <input id="f_${k}" type="${t||'text'}" value="${e(x[k]||'')}" placeholder="${l}">
       `}
     `).join('')}
-    ${(c === 'devotion' || c === 'fbposts') ? `<div class="mu" style="margin-top:8px">🕒 The date and time are added automatically when you post.</div>` : ''}
     ${(F.multi || c === 'gallery') ? `
       <div class="mu" style="margin-top:8px">Upload Photos (Select up to 6 photos):</div>
       <input type="file" id="f_photos" accept="image/*" multiple>
@@ -2027,11 +1538,6 @@ async function saveFormData(c, id){
     const el = $("#f_" + k);
     if(el) item[k] = el.value.trim();
   });
-  if(c === "devotion" || c === "fbposts"){
-    // date & time are added automatically (Philippine time); editing keeps the original stamp
-    item.date = prevItem.date || new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Manila" });
-    item.time = prevItem.time || new Date().toLocaleTimeString("en-US", { timeZone: "Asia/Manila", hour: "numeric", minute: "2-digit" });
-  }
   
   try {
     if(c === 'gallery'){
@@ -2062,14 +1568,6 @@ async function saveFormData(c, id){
     D[c].unshift(item);
     
     const ok = await syncRecordToCloud(c, item.id, item);
-    // Facebook posts: keep only the 3 newest, delete the older ones automatically
-    if(c === "fbposts" && ok){
-      const extras = sortNewestFirst(D.fbposts).slice(3);
-      for(const old of extras){
-        D.fbposts = D.fbposts.filter(x => x.id !== old.id);
-        await deleteRecordFromCloud("fbposts", old.id);
-      }
-    }
     closeModal();
     render();
     if(ok) showSuccessNotification("Changes saved live to Supabase and synced across all devices!");
@@ -2079,7 +1577,6 @@ async function saveFormData(c, id){
   }
 }
 
-// Social Sharing Dialog
 function openShareModal(title, text, url=location.href){
   const T = encodeURIComponent(text);
   const U = encodeURIComponent(url);
@@ -2102,15 +1599,17 @@ function openShareModal(title, text, url=location.href){
 function openShareWithReactionModal(c, postId){
   const item = (D[c]||[]).find(x => x.id === postId) || {};
   const key = `${c}:${postId}`;
-  const myRxId = getMyReaction(key);
-  const myRx = REACTION_TYPES.find(r => r.id === myRxId);
+  const myCounts = getUserReactionCounts(key);
+  const reactedTypes = Object.keys(myCounts).filter(k => myCounts[k] > 0);
 
   let shareTitle = "JTNAAN Bulacan – " + (c === 'devotion' ? 'Daily Devotion' : 'Testimony');
   let snippet = (item.caption || '').slice(0, 180) + '...';
   let shareText = "";
 
-  if(myRx){
-    shareText = `${myRx.emoji} I reacted "${myRx.label}" to today's JTNAAN Bulacan Devotion:\n\n"${snippet}"\n\nBe blessed and read the full reflection:`;
+  if(reactedTypes.length > 0){
+    const highestType = reactedTypes.sort((a,b) => myCounts[b] - myCounts[a])[0];
+    const rxInfo = REACTION_TYPES.find(r => r.id === highestType) || { emoji: "❤️", label: "Heart" };
+    shareText = `${rxInfo.emoji} I reacted ${rxInfo.label} to today's JTNAAN Bulacan Devotion:\n\n"${snippet}"\n\nBe blessed and read the full reflection:`;
   } else {
     shareText = `JTNAAN Bulacan Devotion:\n\n"${snippet}"\n\nRead more here:`;
   }
@@ -2128,7 +1627,6 @@ function render(){
   const T = tabs();
   if(!T.includes(view)) view = T[0];
   
-  // Mobile Drawer Navigation Header
   $("#nav").innerHTML = `
     ${me ? `
       <div id="drawer-admin-box" style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:8px;background:#ffffff0f;border-radius:6px">
@@ -2151,7 +1649,6 @@ function render(){
     ` : ''}
   `;
   
-  // Header Buttons
   $("#hl").innerHTML = me ? `
     <span class="mu hlu">${ex(me.name)} · ${accLabel()}</span>
     ${isAdminMart() ? `
@@ -2191,7 +1688,6 @@ function dash(){
   const cloudOk = isCloudConnected();
 
   return `
-  <!-- Live Cloud Database Status (Visible Only to Admins) -->
   ${admin ? `
     <div class="cloud-status-banner ${cloudOk ? 'online' : ''}">
       <div>
@@ -2222,13 +1718,13 @@ function dash(){
   <h2 style="margin-top:24px">LATEST FACEBOOK POSTS</h2>
   ${can("dashboard")?`<p><button class="btn gold" onclick="openFormModal('fbposts')">+ Paste a post</button></p>`:''}
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(17.5rem,100%),1fr))">
-    ${sortNewestFirst(D.fbposts||[]).slice(0,3).map(p=>`
+    ${(D.fbposts||[]).map(p=>`
       <div style="background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb;padding:14px">
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
           <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
             ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
           </div>
-          <div><b>Jesus: The Name Above All Names</b><div class="mu" style="font-size:.78rem">${e(p.date)}${p.time ? " · " + e(p.time) : ""} · 🌐</div></div>
+          <div><b>Jesus: The Name Above All Names</b><div class="mu" style="font-size:.78rem">${e(p.date)} · 🌐</div></div>
         </div>
         <div style="font-size:.9rem;line-height:1.45;margin-bottom:10px">${e(p.caption)} <a style="color:#8ab4f8" target="_blank" rel="noopener" href="${e(p.url)}">See more</a></div>
         <div>
@@ -2247,60 +1743,138 @@ function dash(){
   ${appv()}`;
 }
 
-// ===== App download counter (Android / iPhone) — stored in Supabase: settings → "dl" =====
-const DL_BASE = { android: 4, ios: 4 };      // starting values (what the page showed before)
+const DL_BASE = { android: 4, ios: 4 };
 let deferredInstallPrompt = null;
 window.addEventListener("beforeinstallprompt", ev => { ev.preventDefault(); deferredInstallPrompt = ev; });
 window.addEventListener("appinstalled", () => { deferredInstallPrompt = null; });
 
+function getUserDlCounts(){
+  try {
+    const raw = localStorage.getItem("jt_my_dl_counts");
+    if(raw) return JSON.parse(raw);
+  } catch(e){}
+  return { android: 0, ios: 0 };
+}
+
+function saveUserDlCounts(c){
+  try { localStorage.setItem("jt_my_dl_counts", JSON.stringify(c)); } catch(e){}
+}
+
+function getCachedAllDlCounts(){
+  try {
+    const raw = localStorage.getItem("jt_all_dl_counts");
+    if(raw) return JSON.parse(raw);
+  } catch(e){}
+  return { android: DL_BASE.android, ios: DL_BASE.ios };
+}
+
 function getDlCounts(){
   const rec = (D.settings || []).find(x => x.id === "dl");
-  const a = rec && Number.isFinite(+rec.android) ? +rec.android : DL_BASE.android;
-  const i = rec && Number.isFinite(+rec.ios) ? +rec.ios : DL_BASE.ios;
+  const cached = getCachedAllDlCounts();
+  const my = getUserDlCounts();
+  
+  let a = Math.max(DL_BASE.android, cached.android || 0, DL_BASE.android + (my.android || 0));
+  let i = Math.max(DL_BASE.ios, cached.ios || 0, DL_BASE.ios + (my.ios || 0));
+  if(rec && Number.isFinite(+rec.android)) a = Math.max(a, +rec.android);
+  if(rec && Number.isFinite(+rec.ios)) i = Math.max(i, +rec.ios);
+
   return { android: a, ios: i, total: a + i };
 }
 
-function paintDlCounts(){
+function paintDlCounts(bumpPlatform){
   const c = getDlCounts();
-  const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v.toLocaleString(); };
-  set("dl_android", c.android); set("dl_ios", c.ios); set("dl_total", c.total);
+  const set = (id, v, doBump) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = v.toLocaleString();
+    if(doBump){
+      el.classList.remove("count-bump");
+      void el.offsetWidth;
+      el.classList.add("count-bump");
+    }
+  };
+  set("dl_android", c.android, bumpPlatform === "android");
+  set("dl_ios", c.ios, bumpPlatform === "ios");
+  set("dl_total", c.total, !!bumpPlatform);
 }
 
-let lastDlClick = { android: 0, ios: 0 };
-async function trackDownload(platform){
-  // ignore accidental double-taps within 1.5s
+// Debounced multi-user sync: every user's click accumulates and never overwrites another!
+let dlSyncTimer = null;
+function queueDlCloudSync(myCounts, nextAggregate){
+  if(dlSyncTimer) clearTimeout(dlSyncTimer);
+  dlSyncTimer = setTimeout(async () => {
+    dlSyncTimer = null;
+    if(!supabaseClient) return;
+    const uid = getCommenterId();
+    try {
+      // 1. Save THIS user's personal click tally under unique row in downloads collection
+      await syncRecordToCloud("downloads", uid, {
+        uid: uid,
+        android: myCounts.android || 0,
+        ios: myCounts.ios || 0,
+        updated_at: new Date().toISOString()
+      });
+
+      // 2. Also keep the aggregate settings row updated with the latest high-water mark
+      const { data } = await supabaseClient.from("church_records").select("data").eq("collection", "settings").eq("id", "dl").maybeSingle();
+      const cloudBase = (data && data.data) ? data.data : { android: DL_BASE.android, ios: DL_BASE.ios };
+      const finalUpd = {
+        android: Math.max(+cloudBase.android || 0, nextAggregate.android),
+        ios: Math.max(+cloudBase.ios || 0, nextAggregate.ios)
+      };
+      await syncRecordToCloud("settings", "dl", finalUpd);
+    } catch(err){
+      console.warn("Download sync note:", err);
+    }
+  }, 350);
+}
+
+let lastDlClickTime = { android: 0, ios: 0 };
+async function trackDownload(platform, event){
   const now = Date.now();
-  if(now - lastDlClick[platform] < 1500) return;
-  lastDlClick[platform] = now;
+  if(now - (lastDlClickTime[platform] || 0) < 180) return; // Brief debounce for double-tap
+  lastDlClickTime[platform] = now;
 
-  // 1) instant local update so the visitor sees the number go up
+  // 1. Increment this user's personal click count
+  const myCounts = getUserDlCounts();
+  myCounts[platform] = (myCounts[platform] || 0) + 1;
+  saveUserDlCounts(myCounts);
+
+  // 2. Increment global cache and memory
   const cur = getDlCounts();
-  const next = { id: "dl", android: cur.android + (platform === "android" ? 1 : 0), ios: cur.ios + (platform === "ios" ? 1 : 0) };
+  const next = {
+    id: "dl",
+    android: cur.android + (platform === "android" ? 1 : 0),
+    ios: cur.ios + (platform === "ios" ? 1 : 0)
+  };
   D.settings = (D.settings || []).filter(x => x.id !== "dl").concat([next]);
-  paintDlCounts();
+  try {
+    localStorage.setItem("jt_all_dl_counts", JSON.stringify({ android: next.android, ios: next.ios }));
+  } catch(e){}
 
-  // 2) save to the cloud (atomic RPC if you created it, otherwise read-then-write)
-  if(!supabaseClient) return;
-  try {
-    const rpc = await supabaseClient.rpc("increment_download", { p_platform: platform });
-    if(!rpc.error) { fetchAllFromCloud(true); return; }
-  } catch(_) {}
-  try {
-    const { data } = await supabaseClient.from("church_records").select("data").eq("collection", "settings").eq("id", "dl").maybeSingle();
-    const base = (data && data.data) ? data.data : { android: DL_BASE.android, ios: DL_BASE.ios };
-    const upd = { android: (+base.android || 0) + (platform === "android" ? 1 : 0), ios: (+base.ios || 0) + (platform === "ios" ? 1 : 0) };
-    await supabaseClient.from("church_records").upsert({ collection: "settings", id: "dl", data: upd, updated_at: new Date().toISOString() });
-    D.settings = (D.settings || []).filter(x => x.id !== "dl").concat([{ id: "dl", ...upd }]);
-    paintDlCounts();
-  } catch(err) { console.warn("Download count not saved:", err); }
+  // 3. Immediately update UI with bump animation
+  paintDlCounts(platform);
+
+  // 4. Spawn floating emoji badge
+  const btnEl = event ? (event.currentTarget || event.target) : null;
+  const clickPos = (event && event.clientX) ? { x: event.clientX, y: event.clientY } : null;
+  if(typeof spawnFloatingEmoji === "function"){
+    spawnFloatingEmoji(platform === "android" ? "🤖 +1" : "📱 +1", clickPos, btnEl);
+  }
+
+  // 5. Toast notice
+  showSuccessNotification((platform === "android" ? "Android" : "iPhone / iPad") + " download added! Total: " + (next.android + next.ios));
+
+  // 6. Queue multi-user cloud sync
+  queueDlCloudSync(myCounts, next);
 }
 
 function isStandaloneApp(){
   return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
 }
 
-async function downloadAndroid(){
-  trackDownload("android");
+async function downloadAndroid(event){
+  trackDownload("android", event);
   if(isStandaloneApp()){ showSuccessNotification("The app is already installed on this device."); return; }
   if(deferredInstallPrompt){
     deferredInstallPrompt.prompt();
@@ -2320,8 +1894,8 @@ async function downloadAndroid(){
   $("#modal").style.display = "flex";
 }
 
-function downloadIOS(){
-  trackDownload("ios");
+function downloadIOS(event){
+  trackDownload("ios", event);
   if(isStandaloneApp()){ showSuccessNotification("The app is already installed on this device."); return; }
   $("#mb").innerHTML = `
     <h3 style="margin-top:0">📱 Install on iPhone / iPad</h3>
@@ -2333,6 +1907,48 @@ function downloadIOS(){
     </ol>
     <p><button class="btn gold" onclick="closeModal()">Got it</button></p>`;
   $("#modal").style.display = "flex";
+}
+
+// Super Admin controls for download counts
+async function adminResetDownloadCount(){
+  if(!isAdminMart()){
+    alert("Only Super Admin (Admin Mart) can reset downloads.");
+    return;
+  }
+  if(!confirm("Reset download counts back to baseline (4 Android, 4 iOS)?")) return;
+  localStorage.removeItem("jt_my_dl_counts");
+  localStorage.setItem("jt_all_dl_counts", JSON.stringify(DL_BASE));
+  D.settings = (D.settings || []).filter(x => x.id !== "dl").concat([{ id: "dl", ...DL_BASE }]);
+  paintDlCounts();
+  if(supabaseClient){
+    try {
+      await supabaseClient.from("church_records").delete().eq("collection", "downloads");
+      await syncRecordToCloud("settings", "dl", DL_BASE);
+    } catch(e){}
+  }
+  showSuccessNotification("Download counts reset to baseline.");
+}
+
+async function adminSetDownloadCount(){
+  if(!isAdminMart()){
+    alert("Only Super Admin (Admin Mart) can edit download counts.");
+    return;
+  }
+  const cur = getDlCounts();
+  const a = prompt("Enter Android downloads count:", String(cur.android));
+  if(a === null) return;
+  const i = prompt("Enter iPhone / iPad downloads count:", String(cur.ios));
+  if(i === null) return;
+  const newA = Math.max(0, parseInt(a, 10) || 0);
+  const newI = Math.max(0, parseInt(i, 10) || 0);
+  const upd = { android: newA, ios: newI };
+  D.settings = (D.settings || []).filter(x => x.id !== "dl").concat([{ id: "dl", ...upd }]);
+  localStorage.setItem("jt_all_dl_counts", JSON.stringify(upd));
+  paintDlCounts();
+  if(supabaseClient){
+    await syncRecordToCloud("settings", "dl", upd);
+  }
+  showSuccessNotification("Download counts updated.");
 }
 
 function appv(){
@@ -2350,14 +1966,21 @@ function appv(){
     </div>
     <ul class="appl"><li>No registration needed</li><li>Just install the app</li><li>Connect any Gmail account already on your phone</li></ul>
     <div class="appbt">
-      <button class="appd" onclick="downloadAndroid()"><span class="appic">🤖</span><span><small>Download for</small><b>Android</b></span></button>
-      <button class="appd" onclick="downloadIOS()"><span class="appic">📱</span><span><small>Download for</small><b>iPhone / iPad</b></span></button>
+      <button class="appd" onclick="downloadAndroid(event)"><span class="appic">🤖</span><span><small>Download for</small><b>Android</b></span></button>
+      <button class="appd" onclick="downloadIOS(event)"><span class="appic">📱</span><span><small>Download for</small><b>iPhone / iPad</b></span></button>
     </div>
     <div class="appc">
       <div><span class="stat" id="dl_android">${c.android.toLocaleString()}</span><span class="mu">Android downloads</span></div>
       <div><span class="stat" id="dl_ios">${c.ios.toLocaleString()}</span><span class="mu">iPhone / iPad downloads</span></div>
       <div><span class="stat" id="dl_total">${c.total.toLocaleString()}</span><span class="mu">Total downloads</span></div>
     </div>
+    ${isAdminMart() ? `
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid #ffffff18;padding-top:10px">
+        <span style="font-size:.78rem;color:var(--pr);font-weight:bold">Super Admin:</span>
+        <button class="btn sm" onclick="adminSetDownloadCount()">Edit Downloads</button>
+        <button class="btn sm red" onclick="adminResetDownloadCount()">Reset Baseline</button>
+      </div>
+    ` : ''}
   </section>`;
 }
 
@@ -2432,9 +2055,33 @@ async function submitVisitRequest(target){
   }
 }
 
-// Helpers for Reactions & Comments
-function getMyReaction(key){
-  return localStorage.getItem("jt_my_rx_" + key) || "";
+// ==========================================
+// 2. SOCIAL MEDIA MULTI-CLICK REACTION ENGINE
+// "Every heart of user counts. Not every click resets all reacts. Users can multiclick."
+// ==========================================
+
+function getCommenterId(){
+  let id = localStorage.getItem("jt_commenter_uuid");
+  if(!id){
+    id = "usr_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem("jt_commenter_uuid", id);
+  }
+  return id;
+}
+
+// User-specific reaction tallies for a post: { [type]: count }
+function getUserReactionCounts(key){
+  try {
+    const raw = localStorage.getItem("jt_my_rx_counts_" + key);
+    if(raw) return JSON.parse(raw);
+  } catch(e){}
+  return {};
+}
+
+function saveUserReactionCounts(key, counts){
+  try {
+    localStorage.setItem("jt_my_rx_counts_" + key, JSON.stringify(counts));
+  } catch(e){}
 }
 
 function getSavedCommenterName(){
@@ -2486,7 +2133,6 @@ function toggleRxTray(key){
   if(!tray) return;
   const isVisible = tray.style.display === "flex";
   
-  // Close all other trays first
   document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
   document.querySelectorAll(".rx-picker-btn").forEach(el => el.setAttribute("aria-expanded", "false"));
 
@@ -2497,43 +2143,135 @@ function toggleRxTray(key){
   }
 }
 
-// Facebook-style reactions: every visitor's reaction is its own record, so counts STACK UP
-// across all visitors/devices (no overwriting). One reaction per person per post:
-// tap another emoji to change it, tap the same one again to remove it.
-let lastRxChange = 0;
-function reactionRowId(key){ return key + "|" + getCommenterId(); }
+// Floating reaction visual effect (flying hearts / amens just like TikTok / Instagram Live / Facebook Live)
+function spawnFloatingEmoji(emoji, pos, btnEl){
+  const el = document.createElement("div");
+  el.className = "floating-rx";
+  el.textContent = emoji;
 
-async function selectReaction(key, type){
+  let startX = window.innerWidth / 2;
+  let startY = window.innerHeight / 2;
+
+  if(pos && typeof pos.x === "number" && typeof pos.y === "number" && pos.x > 0){
+    startX = pos.x;
+    startY = pos.y;
+  } else if(btnEl){
+    const r = btnEl.getBoundingClientRect();
+    startX = r.left + r.width / 2;
+    startY = r.top + r.height / 2;
+  }
+
+  // Slight horizontal drift and rotation
+  const dx = (Math.random() - 0.5) * 80;
+  const rot = (Math.random() - 0.5) * 40;
+  el.style.left = startX + "px";
+  el.style.top = startY + "px";
+  el.style.setProperty("--dx", dx + "px");
+  el.style.setProperty("--rot", rot + "deg");
+
+  document.body.appendChild(el);
+  setTimeout(() => { if(el && el.parentElement) el.remove(); }, 1200);
+}
+
+// Multi-Click Reaction Debounce Sync
+const rxSyncTimers = {};
+function queueReactionCloudSync(key, userCounts){
+  if(rxSyncTimers[key]) clearTimeout(rxSyncTimers[key]);
+  rxSyncTimers[key] = setTimeout(async () => {
+    delete rxSyncTimers[key];
+    const uid = getCommenterId();
+    // 1. Save user-specific reaction tallies (so multiple people's clicks accumulate)
+    await syncRecordToCloud("reactions", `${key}|${uid}`, {
+      key: key,
+      uid: uid,
+      counts: userCounts,
+      updated_at: new Date().toISOString()
+    });
+    // 2. Also keep the post aggregate row up to date in Supabase
+    if(R[key]){
+      await syncRecordToCloud("reactions", key, R[key]);
+    }
+  }, 650);
+}
+
+// Core Social Multi-Click Reaction Function:
+// Every heart counts, never resets, users can multiclick to send 1, 5, 10+ hearts/amens!
+function addReaction(key, type, event){
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
   if(!R[key]) R[key] = {};
-  const cur = getMyReaction(key);
-  const uid = getCommenterId();
-  lastRxChange = Date.now();
+  
+  // 1. Increment reaction count (never resets or decrements other reacts!)
+  R[key][type] = (R[key][type] || 0) + 1;
+  try { localStorage.setItem("jt_all_rx", JSON.stringify(R)); } catch(e){}
 
-  document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
+  // 2. Increment user tally for this reaction
+  const myCounts = getUserReactionCounts(key);
+  myCounts[type] = (myCounts[type] || 0) + 1;
+  saveUserReactionCounts(key, myCounts);
 
-  if(cur === type){
-    // tapped the same reaction again -> remove my reaction
-    R[key][type] = Math.max(0, (R[key][type] || 1) - 1);
-    localStorage.removeItem("jt_my_rx_" + key);
+  // 3. Find emoji for visual feedback
+  const rxInfo = REACTION_TYPES.find(r => r.id === type) || { emoji: "❤️", label: type };
+
+  // 4. Spawn floating emoji floater (instant TikTok/FB Live feedback)
+  const targetBtn = (event && event.currentTarget) ? event.currentTarget : null;
+  const clickPos = event ? { x: event.clientX, y: event.clientY } : null;
+  spawnFloatingEmoji(rxInfo.emoji, clickPos, targetBtn);
+
+  // 5. Instantly update DOM counter and button styling without full page re-render lag
+  updateReactionDomFast(key, type, R[key][type], targetBtn);
+
+  // 6. Queue debounced cloud sync
+  queueReactionCloudSync(key, myCounts);
+}
+
+// Fast DOM update for rapid multi-clicking
+function updateReactionDomFast(key, type, newCount, clickedBtn){
+  // Update count badge on chip
+  const safeKey = key.replace(/[^a-zA-Z0-9_]/g, "_");
+  const countSpan = document.getElementById(`rx_cnt_${safeKey}_${type}`);
+  if(countSpan){
+    countSpan.textContent = `· ${newCount}`;
+    countSpan.classList.remove("count-bump");
+    void countSpan.offsetWidth; // trigger reflow
+    countSpan.classList.add("count-bump");
+  }
+
+  // Update button classes to active/bright
+  const btn = clickedBtn || document.getElementById(`rx_btn_${safeKey}_${type}`);
+  if(btn){
+    btn.classList.remove("dim");
+    btn.classList.add("on");
+    btn.setAttribute("aria-label", `${type}: ${newCount}. You reacted! Tap again to add more.`);
+  }
+
+  // If this reaction wasn't visible as a main chip yet, trigger a fast re-render of the bar
+  if(!countSpan){
     render();
-    await deleteRecordFromCloud("reactions", reactionRowId(key));
-  } else {
-    // new or changed reaction
-    if(cur) R[key][cur] = Math.max(0, (R[key][cur] || 1) - 1);
-    R[key][type] = (R[key][type] || 0) + 1;
-    localStorage.setItem("jt_my_rx_" + key, type);
-    const rxInfo = REACTION_TYPES.find(r => r.id === type);
-    if(rxInfo) showSuccessNotification(`You reacted ${rxInfo.emoji} ${rxInfo.label}!`);
-    render();
-    await syncRecordToCloud("reactions", reactionRowId(key), { key: key, type: type, uid: uid, t: Date.now() });
   }
 }
 
+// Aliases for template backwards compatibility
+function selectReaction(key, type, event){
+  addReaction(key, type, event);
+}
+function toggleReaction(key, type, event){
+  addReaction(key, type, event);
+}
+
+// Reset only for Super Admin if explicitly needed
 async function resetPostReactions(key){
+  if(!isAdminMart()){
+    alert("Only Super Admin (Admin Mart) can reset reactions.");
+    return;
+  }
   if(!confirm("Reset all reactions on this post to 0?")) return;
-  lastRxChange = Date.now();
   R[key] = {};
-  localStorage.removeItem("jt_my_rx_" + key);
+  localStorage.removeItem("jt_my_rx_counts_" + key);
+  try { localStorage.setItem("jt_all_rx", JSON.stringify(R)); } catch(e){}
   render();
   if(supabaseClient){
     try {
@@ -2541,11 +2279,7 @@ async function resetPostReactions(key){
       await supabaseClient.from("church_records").delete().eq("collection", "reactions").like("id", key + "|%");
     } catch(err){ showErrorNotification("Could not reset reactions: " + err.message); return; }
   }
-  showSuccessNotification("Reactions reset to 0.");
-}
-
-async function toggleReaction(key, type){
-  await selectReaction(key, type);
+  showSuccessNotification("Reactions reset.");
 }
 
 function insertEmoticonToComment(postId, emoji){
@@ -2603,7 +2337,6 @@ async function submitPostComment(collection, postId){
     if(!D.comments) D.comments = [];
     D.comments.push(commentItem);
 
-    // Sync directly to Supabase cloud
     await syncRecordToCloud("comments", commentItem.id, commentItem);
 
     showSuccessNotification("Comment posted! God bless you.");
@@ -2629,15 +2362,6 @@ async function deleteCommentRecord(commentId){
   }
 }
 
-function getCommenterId(){
-  let id = localStorage.getItem("jt_commenter_uuid");
-  if(!id){
-    id = "usr_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
-    localStorage.setItem("jt_commenter_uuid", id);
-  }
-  return id;
-}
-
 async function toggleCommentAmen(commentId){
   const cm = (D.comments || []).find(c => c.id === commentId);
   if(!cm) return;
@@ -2654,7 +2378,6 @@ async function toggleCommentAmen(commentId){
     showSuccessNotification("You said Amen! 🙏");
   }
   
-  // Sync to Supabase cloud
   await syncRecordToCloud("comments", cm.id, cm);
   render();
 }
@@ -2674,32 +2397,18 @@ function focusCommentInput(postId){
   }
 }
 
-function toggleCommentsSection(secId){
-  const el = document.getElementById("cm_sec_" + secId);
-  if(!el) return;
-  const input = el.querySelector(".cm-textarea");
-  if(input){
-    input.focus();
-    input.classList.add("pulse-focus");
-    setTimeout(() => input.classList.remove("pulse-focus"), 1200);
-    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-}
-
-// Render Feed View: Devotion Messages & Testimonies with Full Comments and Emoticons
-// Sort posts: newest first (top) -> oldest last (bottom)
 function idStamp(id){
   const m = /^id_([0-9a-z]+)$/i.exec(String(id || ""));
   return m ? parseInt(m[1], 36) : 0;
 }
 function postDateValue(x){
   const raw = String(x.date || "").trim();
-  let t = Date.parse(raw);                                   // 2026-11-08, Nov 8 2026, ...
+  let t = Date.parse(raw);
   if(isNaN(t)){
-    const m = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/); // 08/11/2026 or 11/08/2026
+    const m = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
     if(m){
       let a = +m[1], b = +m[2], y = +m[3]; if(y < 100) y += 2000;
-      const mo = a > 12 ? b : a, d = a > 12 ? a : b;         // if first number >12 it must be the day
+      const mo = a > 12 ? b : a, d = a > 12 ? a : b;
       t = new Date(y, mo - 1, d).getTime();
     }
   }
@@ -2710,21 +2419,20 @@ function postCreatedValue(x){
 }
 function sortNewestFirst(list){
   return (list || []).slice().sort((a, b) => {
-    const d = postDateValue(b) - postDateValue(a);           // newest date first
+    const d = postDateValue(b) - postDateValue(a);
     if(d !== 0) return d;
-    return postCreatedValue(b) - postCreatedValue(a);        // same date: newest post first
+    return postCreatedValue(b) - postCreatedValue(a);
   });
 }
 
 function feed(c){
-  const F = CF[c];
   const L = c === "devotion" ? sortNewestFirst(D[c]) : (D[c] || []);
   const logo = getChurchLogoUrl();
 
   if(c === "devotion"){
     return `
       <h2>DAILY DEVOTION</h2>
-      <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership. Share your reflections and amen comments!</p>
+      <p class="mu">Take today's Bible trivia and quiz below, then read today's devotion message from the leadership. Share your reactions and reflections!</p>
 
       <!-- 1. BIBLE TRIVIA & DAILY QUESTION AT THE TOP -->
       <div class="tvs">
@@ -2742,10 +2450,9 @@ function feed(c){
     `;
   }
 
-  // Testimony Section
   return `
     <h2>TESTIMONY</h2>
-    <p class="mu">Stories of God's faithfulness in the lives of our church family. React and leave a word of encouragement.</p>
+    <p class="mu">Stories of God's faithfulness in the lives of our church family. Tap to react and share encouragement!</p>
     ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ New testimony</button></p>`:''}
     
     <div class="feed">
@@ -2765,18 +2472,22 @@ function feed(c){
   `;
 }
 
-// Render Single Post with Accessible Reactions & Comment Thread
+// Render Single Post with Social Multi-Click Reactions
 function renderFeedPost(c, x, logo){
   const key = `${c}:${x.id}`;
-  const defaultRx = { like: 0, heart: 0, amen: 0, praise: 0 };   // every post starts with NO reactions
-  const postRx = Object.assign({}, defaultRx, R[key] || {});
-  const myRx = getMyReaction(key);
-  const myRxObj = REACTION_TYPES.find(r => r.id === myRx);
+  const safeKey = key.replace(/[^a-zA-Z0-9_]/g, "_");
+  
+  // Post aggregate counts (seeded with baseline, accumulating on every click)
+  const defaultRx = { like: 0, heart: 0, amen: 0, praise: 0 };
+  const baseRx = BASE_REACTIONS[key] || {};
+  const postRx = Object.assign({}, defaultRx, baseRx, R[key] || {});
+
+  // My reaction tallies for this post
+  const myCounts = getUserReactionCounts(key);
   const coreRxIds = ['like', 'heart', 'amen', 'praise'];
   
-  // Comments for this post
   const postComments = (D.comments || []).filter(cm => cm.postId === x.id || cm.postId === key);
-  const trayId = "rx_tray_" + key.replace(/[^a-zA-Z0-9_]/g, "_");
+  const trayId = "rx_tray_" + safeKey;
 
   return `
     <article class="post" id="post_${c}_${x.id}">
@@ -2786,84 +2497,95 @@ function renderFeedPost(c, x, logo){
         </div>
         <div>
           <b>${e(x.name||"Jesus: The Name Above All Names")}</b>
-          <div class="mu">${e(x.date)}${x.time ? " · " + e(x.time) : ""} · ${c === 'devotion' ? 'Daily Devotion' : 'Testimony'}</div>
+          <div class="mu">${e(x.date)} · ${c === 'devotion' ? 'Daily Devotion' : 'Testimony'}</div>
         </div>
       </div>
 
       <div class="cap">${e(x.caption)}</div>
       ${x.photo ? `<img src="${e(x.photo)}" alt="Post image">` : ''}
 
-      <!-- Accessible Reaction & Emoticon Bar -->
+      <!-- Multi-Click Social Reaction Bar -->
       <div class="rx-bar-wrap">
         <div class="rx" role="toolbar" aria-label="Post reactions and actions">
           
-          <!-- 1. Core Reaction Buttons (Like, Heart, Amen, Praise) -->
-          <button type="button" class="rx-chip-btn rx-like ${myRx === 'like' ? 'on' : 'dim'}" 
-            onclick="toggleReaction('${key}', 'like')" 
-            title="React with Like" 
-            aria-label="Like: ${postRx.like}. ${myRx === 'like' ? 'You liked this.' : 'Click to like.'}">
+          <!-- 1. Core Reaction Buttons: Like, Heart, Amen, Praise (Multi-click supported!) -->
+          <button type="button" 
+            id="rx_btn_${safeKey}_like"
+            class="rx-chip-btn rx-like ${(myCounts.like > 0) ? 'on' : 'dim'}" 
+            onclick="addReaction('${key}', 'like', event)" 
+            title="React with Like (tap multiple times to send more likes!)" 
+            aria-label="Like: ${postRx.like || 0}">
             <span class="rx-chip-emoji">👍</span>
             <span>Like</span>
-            <span class="rx-chip-count">· ${postRx.like}</span>
+            <span class="rx-chip-count" id="rx_cnt_${safeKey}_like">· ${postRx.like || 0}</span>
           </button>
 
-          <button type="button" class="rx-chip-btn rx-heart ${myRx === 'heart' ? 'on' : 'dim'}" 
-            onclick="toggleReaction('${key}', 'heart')" 
-            title="React with Heart" 
-            aria-label="Heart: ${postRx.heart}. ${myRx === 'heart' ? 'You loved this.' : 'Click to react heart.'}">
+          <button type="button" 
+            id="rx_btn_${safeKey}_heart"
+            class="rx-chip-btn rx-heart ${(myCounts.heart > 0) ? 'on' : 'dim'}" 
+            onclick="addReaction('${key}', 'heart', event)" 
+            title="React with Heart (tap multiple times to send hearts!)" 
+            aria-label="Heart: ${postRx.heart || 0}">
             <span class="rx-chip-emoji">❤️</span>
             <span>Heart</span>
-            <span class="rx-chip-count">· ${postRx.heart}</span>
+            <span class="rx-chip-count" id="rx_cnt_${safeKey}_heart">· ${postRx.heart || 0}</span>
           </button>
 
-          <button type="button" class="rx-chip-btn rx-amen ${myRx === 'amen' ? 'on' : 'dim'}" 
-            onclick="toggleReaction('${key}', 'amen')" 
-            title="React with Amen" 
-            aria-label="Amen: ${postRx.amen}. ${myRx === 'amen' ? 'You said Amen.' : 'Click to say Amen.'}">
+          <button type="button" 
+            id="rx_btn_${safeKey}_amen"
+            class="rx-chip-btn rx-amen ${(myCounts.amen > 0) ? 'on' : 'dim'}" 
+            onclick="addReaction('${key}', 'amen', event)" 
+            title="Say Amen (tap to add Amens!)" 
+            aria-label="Amen: ${postRx.amen || 0}">
             <span class="rx-chip-emoji">🙏</span>
             <span>Amen</span>
-            <span class="rx-chip-count">· ${postRx.amen}</span>
+            <span class="rx-chip-count" id="rx_cnt_${safeKey}_amen">· ${postRx.amen || 0}</span>
           </button>
 
-          <button type="button" class="rx-chip-btn rx-praise ${myRx === 'praise' ? 'on' : 'dim'}" 
-            onclick="toggleReaction('${key}', 'praise')" 
-            title="React with Praise" 
-            aria-label="Praise: ${postRx.praise}. ${myRx === 'praise' ? 'You praised.' : 'Click to praise.'}">
+          <button type="button" 
+            id="rx_btn_${safeKey}_praise"
+            class="rx-chip-btn rx-praise ${(myCounts.praise > 0) ? 'on' : 'dim'}" 
+            onclick="addReaction('${key}', 'praise', event)" 
+            title="React with Praise (tap to add Praise!)" 
+            aria-label="Praise: ${postRx.praise || 0}">
             <span class="rx-chip-emoji">🙌</span>
             <span>Praise</span>
-            <span class="rx-chip-count">· ${postRx.praise}</span>
+            <span class="rx-chip-count" id="rx_cnt_${safeKey}_praise">· ${postRx.praise || 0}</span>
           </button>
 
-          <!-- 2. Other Active Reaction Chips Picked From Tray -->
-          ${REACTION_TYPES.filter(r => !coreRxIds.includes(r.id) && (postRx[r.id] || 0) > 0).map(r => `
-            <button type="button" class="rx-chip-btn ${myRx === r.id ? 'on' : ''}" 
-              onclick="toggleReaction('${key}', '${r.id}')" 
+          <!-- 2. Other Active Reaction Chips Picked From Tray (Faith, Spirit, etc.) -->
+          ${REACTION_TYPES.filter(r => !coreRxIds.includes(r.id) && ((postRx[r.id] || 0) > 0 || (myCounts[r.id] || 0) > 0)).map(r => `
+            <button type="button" 
+              id="rx_btn_${safeKey}_${r.id}"
+              class="rx-chip-btn ${(myCounts[r.id] > 0) ? 'on' : ''}" 
+              onclick="addReaction('${key}', '${r.id}', event)" 
               title="React with ${r.label}" 
-              aria-label="${r.label}: ${postRx[r.id]}. ${myRx === r.id ? 'You reacted.' : 'Click to react.'}">
+              aria-label="${r.label}: ${postRx[r.id] || 0}">
               <span class="rx-chip-emoji">${r.emoji}</span>
               <span>${r.label}</span>
-              <span class="rx-chip-count">· ${postRx[r.id]}</span>
+              <span class="rx-chip-count" id="rx_cnt_${safeKey}_${r.id}">· ${postRx[r.id] || 0}</span>
             </button>
           `).join('')}
 
           <!-- 3. Emoticon Reaction Tray Picker Trigger -->
           <div class="rx-picker-container">
-            <button type="button" class="rx-picker-btn ${myRx && !coreRxIds.includes(myRx) ? 'on' : ''}" 
+            <button type="button" class="rx-picker-btn" 
               onclick="toggleRxTray('${key}')" 
               aria-label="More emoticon reactions" 
               aria-haspopup="true" 
               aria-expanded="false" 
               title="Select more emoticon reactions">
-              <span class="rx-ico">${myRxObj && !coreRxIds.includes(myRx) ? myRxObj.emoji : '😀'}</span>
-              <span>${myRxObj && !coreRxIds.includes(myRx) ? myRxObj.label : 'Emoticons'}</span>
+              <span class="rx-ico">😀</span>
+              <span>Emoticons</span>
               <span class="rx-arrow">▾</span>
             </button>
 
             <!-- Floating Emoticon Tray -->
             <div id="${trayId}" class="rx-tray" role="dialog" aria-label="Available emoticon reactions" style="display:none">
               ${REACTION_TYPES.map(r => `
-                <button type="button" class="rx-emoticon-btn ${myRx === r.id ? 'active' : ''}" 
-                  onclick="selectReaction('${key}', '${r.id}')" 
+                <button type="button" class="rx-emoticon-btn ${(myCounts[r.id] > 0) ? 'active' : ''}" 
+                  onclick="addReaction('${key}', '${r.id}', event)" 
+                  title="${r.label} - Tap to react"
                   aria-label="React with ${r.label} (${r.emoji})">
                   <span>${r.emoji}</span>
                   <span class="em-tooltip">${r.label}</span>
@@ -2872,7 +2594,7 @@ function renderFeedPost(c, x, logo){
             </div>
           </div>
 
-          <!-- 4. Share Devotion & Reaction -->
+          <!-- 4. Share Devotion & Reactions -->
           <button type="button" class="shb rx-chip-btn" onclick="openShareWithReactionModal('${c}', '${x.id}')" title="Share devotion and reactions" aria-label="Share devotion">
             <span>↗</span>
             <span>Share</span>
@@ -2889,10 +2611,10 @@ function renderFeedPost(c, x, logo){
       <!-- PUBLIC COMMENT SECTION -->
       <section class="cm" id="cm_sec_${c}_${x.id}" aria-label="Public comments and reflections for this devotion">
         ${can(c) ? `
-          <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b;display:flex;gap:8px">
+          <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b;display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit Post</button>
             <button class="btn red sm" onclick="deleteRecord('${c}', '${x.id}')">Delete Post</button>
-            <button class="btn sm" onclick="resetPostReactions('${c}:${x.id}')">Reset reactions to 0</button>
+            ${isAdminMart() ? `<button class="btn sm" onclick="resetPostReactions('${c}:${x.id}')">Reset Reactions (Admin)</button>` : ''}
           </div>
         ` : ''}
 
@@ -3077,58 +2799,402 @@ function triggerQuizConfetti(){
   })(t0);
 }
 
-const dailyQuiz = {
-  q: "Who was the prophet called by God as a young boy in the temple under Eli?",
-  c: ["Samuel", "David", "Jeremiah"],
-  a: 0,
-  ref: "1 Samuel 3:1–10",
-  exp: "The Lord called Samuel three times while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he instructed Samuel to answer, 'Speak, Lord, for your servant is listening.' Samuel listened, and God established him as a faithful prophet to all Israel."
-};
+// ===== DAILY BIBLE TRIVIA & QUESTION OF THE DAY (15-Day Rotation at 8:00 AM PH time) =====
+// Clean, dignified, authentic biblical representations for EVERY trivia (no distorted AI art!)
+const TRIVIA_BANK = [
+  {
+    tag: "OLD TESTAMENT · PSALMS",
+    title: "The Longest & Shortest Chapter",
+    emoji: "📜",
+    symbol: "📜",
+    ref: "Psalm 119 & Psalm 117",
+    img: "https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&auto=format&fit=crop&q=80",
+    text: "Psalm 119 is the longest chapter in the Bible with 176 verses—a sacred song rejoicing in God’s eternal Word. Psalm 117 is the shortest chapter with just 2 verses, calling: “Praise the Lord, all you nations; extol Him, all you peoples! For great is His love toward us.”",
+    caption: "Sacred scripture scroll illuminated in warm golden light"
+  },
+  {
+    tag: "NEW TESTAMENT · GOSPELS",
+    title: "The Shortest Verse (Jesus Wept)",
+    emoji: "💧",
+    symbol: "🕊️",
+    ref: "John 11:35",
+    img: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=1200&auto=format&fit=crop&q=80",
+    text: "John 11:35 – “Jesus wept.” – is the shortest verse in most English translations. Standing before the tomb of His friend Lazarus, Jesus revealed His profound love, divine empathy, and tender compassion for our human sorrow.",
+    caption: "Ancient olive grove at twilight in the Holy Land"
+  },
+  {
+    tag: "WHOLE BIBLE · GOD'S WORD",
+    title: "66 Books, One United Story",
+    emoji: "📖",
+    symbol: "✝️",
+    ref: "2 Timothy 3:16–17",
+    img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&auto=format&fit=crop&q=80",
+    text: "The Holy Bible is composed of 66 books—39 in the Old Testament and 27 in the New Testament. Written over 1,500 years by more than 40 different authors across three continents, all 66 books unite in perfect harmony around God's redemption through Jesus Christ.",
+    caption: "Open Holy Bible bathed in radiant morning light"
+  },
+  {
+    tag: "OLD TESTAMENT · GENESIS",
+    title: "The Oldest Recorded Man (Methuselah)",
+    emoji: "⏳",
+    symbol: "👴",
+    ref: "Genesis 5:27",
+    img: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=1200&auto=format&fit=crop&q=80",
+    text: "Methuselah, the grandfather of Noah, lived 969 years (Genesis 5:27). His remarkable lifespan is the longest recorded in biblical history, testifying to God’s patience and covenant faithfulness with mankind before the flood.",
+    caption: "Vast desert wilderness under the starry canopy of the patriarchs"
+  },
+  {
+    tag: "NEW TESTAMENT · DISCIPLESHIP",
+    title: "The Twelve Apostles",
+    emoji: "⛵",
+    symbol: "⛵",
+    ref: "Luke 6:12–16; Matthew 4:18–20",
+    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&auto=format&fit=crop&q=80",
+    text: "After spending the entire night in prayer on a mountainside, Jesus called twelve apostles—everyday fishermen, tax collectors, and working men—promising them: “Follow Me, and I will make you fishers of men.”",
+    caption: "Tranquil waters of the Sea of Galilee at sunrise"
+  },
+  {
+    tag: "OLD TESTAMENT · JONAH",
+    title: "Three Days & Three Nights (Jonah)",
+    emoji: "🌊",
+    symbol: "🌅",
+    ref: "Jonah 1:17; 2:1–10",
+    img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&auto=format&fit=crop&q=80",
+    text: "When Jonah was cast into the deep, the Lord appointed a great fish to swallow him. From the belly of the fish, Jonah prayed in humble faith: “Salvation comes from the Lord!” And God brought him safely to dry land. Jesus cited Jonah's deliverance as a prophetic sign of His resurrection after three days (Matthew 12:40).",
+    caption: "Mediterranean coastline and peaceful sunrise over calm shores"
+  },
+  {
+    tag: "OLD TESTAMENT · PSALMS",
+    title: "The Longest Book (Psalms)",
+    emoji: "🎵",
+    symbol: "🌄",
+    ref: "Book of Psalms (150 Chapters)",
+    img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&auto=format&fit=crop&q=80",
+    text: "With 150 sacred chapters of praise, prayer, and thanksgiving, the Book of Psalms is the longest book by chapters in the Bible. It expresses every human emotion—lifting our hearts to declare: “Let everything that has breath praise the Lord!”",
+    caption: "Sunrise over the Judean hills and mountains of Zion"
+  },
+  {
+    tag: "NEW TESTAMENT · EPISTLES",
+    title: "The Ninefold Fruit of the Spirit",
+    emoji: "🍇",
+    symbol: "🕊️",
+    ref: "Galatians 5:22–23",
+    img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&auto=format&fit=crop&q=80",
+    text: "“The fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, and self-control.” When we abide in Christ like branches on the vine, the Holy Spirit produces these heavenly virtues in our lives.",
+    caption: "Lush grape clusters flourishing on healthy sunlit vines"
+  },
+  {
+    tag: "OLD TESTAMENT · GENESIS",
+    title: "Forty Days & Forty Nights (Noah's Ark)",
+    emoji: "🌈",
+    symbol: "🌈",
+    ref: "Genesis 7:12; 9:13–16",
+    img: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1200&auto=format&fit=crop&q=80",
+    text: "During the great flood, rain fell upon the earth for forty days and forty nights. When the waters subsided and Noah built an altar of praise, God set His rainbow in the clouds as an eternal promise of mercy and life.",
+    caption: "Radiant rainbow breaking over green hills and peaceful valley"
+  },
+  {
+    tag: "NEW TESTAMENT · GOSPELS",
+    title: "The First Miracle at Cana",
+    emoji: "🏺",
+    symbol: "🍷",
+    ref: "John 2:1–11",
+    img: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=1200&auto=format&fit=crop&q=80",
+    text: "At a joyful wedding banquet in Cana of Galilee, Jesus turned six large stone jars of ceremonial water into the finest wine, performing His first miraculous sign and revealing His glory to His disciples.",
+    caption: "Traditional ancient stone water jars in warm Mediterranean light"
+  },
+  {
+    tag: "OLD TESTAMENT · KINGS",
+    title: "Solomon's Prayer for Wisdom",
+    emoji: "👑",
+    symbol: "🕯️",
+    ref: "1 Kings 3:5–14; Proverbs 3:13",
+    img: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=1200&auto=format&fit=crop&q=80",
+    text: "When God invited young King Solomon to ask for anything, Solomon asked not for long life or great riches, but for a wise and discerning heart to lead God's people in righteousness. God graciously granted him wisdom surpassing all kings.",
+    caption: "Warm oil lamp casting golden light on open sacred scriptures"
+  },
+  {
+    tag: "OLD TESTAMENT · EXODUS",
+    title: "The Ten Commandments (Mount Sinai)",
+    emoji: "⛰️",
+    symbol: "📜",
+    ref: "Exodus 20:1–17; 31:18",
+    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&auto=format&fit=crop&q=80",
+    text: "On the holy summit of Mount Sinai, God gave Moses the Ten Commandments inscribed upon two tablets of stone with the finger of God—guiding His people to love the Lord their God with all their heart and to love their neighbor as themselves.",
+    caption: "Majestic granite peaks of Mount Sinai bathed in morning light"
+  },
+  {
+    tag: "WHOLE BIBLE · SCRIPTURE",
+    title: "The Three Original Languages",
+    emoji: "📜",
+    symbol: "✍️",
+    ref: "Luke 24:44–45; 2 Peter 1:21",
+    img: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1200&auto=format&fit=crop&q=80",
+    text: "The Holy Scriptures were written in three ancient languages: Biblical Hebrew (nearly all the Old Testament), Biblical Aramaic (portions of Daniel and Ezra), and Koine Greek (the entire New Testament, the common language of the first-century world).",
+    caption: "Historic parchment manuscript and authentic quill"
+  },
+  {
+    tag: "NEW TESTAMENT · EPISTLES",
+    title: "The Shortest Book in the Bible (2 John)",
+    emoji: "✉️",
+    symbol: "✉️",
+    ref: "2 John 1:1–13",
+    img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=1200&auto=format&fit=crop&q=80",
+    text: "Second John has only 13 verses, making it the shortest book in the whole Bible. Written by the elder apostle John to “the chosen lady and her children,” it is a heartfelt plea to walk in love, obey God's commands, and guard Christ's truth.",
+    caption: "Handcrafted parchment letter with wax seal on rustic wood"
+  },
+  {
+    tag: "NEW TESTAMENT · EPISTLES",
+    title: "The Epistles of the Apostle Paul",
+    emoji: "✍️",
+    symbol: "📜",
+    ref: "Romans to Philemon (13 Epistles)",
+    img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&auto=format&fit=crop&q=80",
+    text: "The Apostle Paul authored 13 epistles in the New Testament—from Romans through Philemon. Writing often during missionary journeys or while imprisoned for the Gospel, Paul proclaimed God's grace, salvation in Christ, and love in the church.",
+    caption: "Ancient writing desk with parchment scroll and warm lamplight"
+  }
+];
 
+const QUIZ_BANK = [
+  {
+    q: "Who was the prophet called by God as a young boy in the temple under Eli?",
+    c: ["Samuel", "David", "Jeremiah"],
+    a: 0,
+    ref: "1 Samuel 3:1–10",
+    exp: "The Lord called Samuel three times while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he instructed Samuel to answer, 'Speak, Lord, for your servant is listening.' Samuel listened, and God established him as a faithful prophet to all Israel."
+  },
+  {
+    q: "Who built the ark to save his family and the animals from the flood?",
+    c: ["Abraham", "Noah", "Moses"],
+    a: 1,
+    ref: "Genesis 6:13–22",
+    exp: "God commanded Noah to build an ark because of the great flood. Noah walked faithfully with God, obeyed every command, and his entire household was delivered."
+  },
+  {
+    q: "Who was thrown into the lions' den for praying faithfully to God?",
+    c: ["Daniel", "Joseph", "Elijah"],
+    a: 0,
+    ref: "Daniel 6:10–23",
+    exp: "Daniel continued praying to God three times a day even when the king issued a decree forbidding it. God sent His angel to shut the mouths of the lions so no harm came to Daniel."
+  },
+  {
+    q: "How many days did Jesus fast in the wilderness before being tempted by Satan?",
+    c: ["7 days", "21 days", "40 days"],
+    a: 2,
+    ref: "Matthew 4:1–2",
+    exp: "After His baptism by John, Jesus was led by the Spirit into the wilderness, where He fasted forty days and forty nights and defeated Satan's temptations with the Word of God."
+  },
+  {
+    q: "Which disciple denied Jesus three times before the rooster crowed?",
+    c: ["Thomas", "Peter", "Judas"],
+    a: 1,
+    ref: "Matthew 26:69–75",
+    exp: "Peter denied knowing Jesus three times. When the rooster crowed, Peter remembered Jesus' words and wept bitterly; later, Jesus graciously restored and commissioned him."
+  },
+  {
+    q: "Which prophet was swallowed by a great fish when running from God's call?",
+    c: ["Jeremiah", "Elijah", "Jonah"],
+    a: 2,
+    ref: "Jonah 1:17; 2:10",
+    exp: "Jonah boarded a ship to Tarshish to flee from the Lord. God sent a great storm and appointed a great fish to swallow him; inside, Jonah prayed and was brought safely to shore."
+  },
+  {
+    q: "What is the very first book of the Holy Bible?",
+    c: ["Genesis", "Exodus", "Psalms"],
+    a: 0,
+    ref: "Genesis 1:1",
+    exp: "The Bible begins with Genesis: 'In the beginning God created the heavens and the earth.' It recounts Creation, the patriarchs, and God's covenant with Abraham."
+  },
+  {
+    q: "Which young shepherd boy defeated the giant Goliath in the name of the Lord?",
+    c: ["Saul", "Jonathan", "David"],
+    a: 2,
+    ref: "1 Samuel 17:45–50",
+    exp: "David declared to Goliath: 'You come against me with sword and spear, but I come against you in the name of the Lord Almighty!' With a sling and a single stone, God gave David victory."
+  },
+  {
+    q: "In which historic town was our Savior Jesus born?",
+    c: ["Nazareth", "Bethlehem", "Jerusalem"],
+    a: 1,
+    ref: "Luke 2:4–7; Micah 5:2",
+    exp: "Joseph and Mary traveled to Bethlehem, the city of David, fulfilling ancient prophecy: 'But you, Bethlehem Ephrathah... out of you will come for Me one who will be ruler over Israel.'"
+  },
+  {
+    q: "Who did God choose to lead the Israelites out of slavery in Egypt?",
+    c: ["Moses", "Joshua", "Aaron"],
+    a: 0,
+    ref: "Exodus 3:10; 14:21–22",
+    exp: "God called Moses from the burning bush to deliver His people. Through Moses, God sent the ten plagues and parted the Red Sea so the Israelites could walk through on dry land."
+  },
+  {
+    q: "Who was the very first man created by God in the Garden of Eden?",
+    c: ["Seth", "Cain", "Adam"],
+    a: 2,
+    ref: "Genesis 2:7",
+    exp: "The Lord God formed Adam from the dust of the ground and breathed into his nostrils the breath of life, and the man became a living being."
+  },
+  {
+    q: "Which disciple was a tax collector before answering Jesus' call to follow Him?",
+    c: ["Matthew", "Peter", "John"],
+    a: 0,
+    ref: "Matthew 9:9",
+    exp: "Jesus saw Matthew sitting at his tax collector's booth and said, 'Follow Me.' Matthew immediately got up, left everything, and followed Jesus."
+  },
+  {
+    q: "Whom did Jesus raise from the dead after he had been in the tomb four days?",
+    c: ["Lazarus", "Jairus' daughter", "Tabitha"],
+    a: 0,
+    ref: "John 11:38–44",
+    exp: "Jesus commanded the stone to be rolled away, thanked the Father, and called with a loud voice: 'Lazarus, come out!' And the man who had died stepped forth alive."
+  },
+  {
+    q: "Which brave Jewish queen risked her life to save her people, saying 'If I perish, I perish'?",
+    c: ["Ruth", "Esther", "Deborah"],
+    a: 1,
+    ref: "Esther 4:14–16; 7:3–6",
+    exp: "Queen Esther approached King Xerxes unsummoned after fasting three days, boldly exposing Haman's plot and saving the Jewish nation 'for such a time as this.'"
+  },
+  {
+    q: "Which disciple stepped out of the boat and walked on water toward Jesus?",
+    c: ["Andrew", "John", "Peter"],
+    a: 2,
+    ref: "Matthew 14:28–31",
+    exp: "Peter stepped out of the boat and walked on the water toward Jesus. When he saw the wind, he began to sink and cried 'Lord, save me!' Immediately Jesus reached out His hand and caught him."
+  }
+];
+
+// ----- Day helpers (flip exactly at 8:00 AM Philippine time) -----
+const DAY_MS = 86400000;
+function phDayIdx(){ return Math.floor(Date.now() / DAY_MS); } // 8:00 AM PH == 00:00 UTC
+function phDayKey(){ return new Date(phDayIdx() * DAY_MS).toISOString().slice(0, 10); }
+function todayTriviaIdx(){ return phDayIdx() % TRIVIA_BANK.length; }
+function todayQuizIdx(){ return phDayIdx() % QUIZ_BANK.length; }
+function todayTrivia(){ return TRIVIA_BANK[todayTriviaIdx()]; }
+function todayQuiz(){ return QUIZ_BANK[todayQuizIdx()]; }
+
+// Browsing state: Allows user to browse all 15 trivia or return to today's
+let userBrowsingTriviaIdx = null;
+function getActiveTriviaIdx(){
+  if(userBrowsingTriviaIdx !== null && userBrowsingTriviaIdx >= 0 && userBrowsingTriviaIdx < TRIVIA_BANK.length){
+    return userBrowsingTriviaIdx;
+  }
+  return todayTriviaIdx();
+}
+
+function nextResetText(){
+  const left = Math.max(0, (phDayIdx() + 1) * DAY_MS - Date.now());
+  const h = Math.floor(left / 3600000), m = Math.floor((left % 3600000) / 60000);
+  return `New in ${h}h ${m}m · resets 8:00 AM PH time`;
+}
+
+// ----- Saved quiz answer is stored per day, so each morning brings a fresh question -----
+function quizStoreKey(){ return "jt_quiz_" + phDayKey(); }
 function getQuizAnswer(){
   try{
-    const val = localStorage.getItem("jt_quiz_choice_v2");
-    return val !== null ? parseInt(val) : -1;
-  }catch(e){ return -1; }
+    const v = localStorage.getItem(quizStoreKey());
+    return v !== null ? parseInt(v, 10) : -1;
+  }catch(err){ return -1; }
 }
 
 function handleQuizChoice(idx){
   if(getQuizAnswer() !== -1) return;
-  localStorage.setItem("jt_quiz_choice_v2", idx.toString());
-  if(idx === dailyQuiz.a){
+  localStorage.setItem(quizStoreKey(), String(idx));
+  if(idx === todayQuiz().a){
     triggerQuizConfetti();
   }
   render();
 }
 
 function resetQuizForAdmin(){
-  localStorage.removeItem("jt_quiz_choice_v2");
+  localStorage.removeItem(quizStoreKey());
   render();
 }
 
+function setTriviaView(idx){
+  userBrowsingTriviaIdx = ((idx % TRIVIA_BANK.length) + TRIVIA_BANK.length) % TRIVIA_BANK.length;
+  render();
+}
+
+function resetTriviaToToday(){
+  userBrowsingTriviaIdx = null;
+  render();
+}
+
+// Resilient fallback card if network or image load fails
+function triviaImgFallback(img, idx){
+  img.onerror = null;
+  img.style.display = "none";
+  const parent = img.parentElement;
+  if(!parent) return;
+  const t = TRIVIA_BANK[idx] || todayTrivia();
+  const fb = parent.querySelector(".tv-fallback-card");
+  if(fb){
+    fb.style.display = "flex";
+  }
+}
+
+// Renders the clean, biblically authentic trivia card
 function trivia(){
-  return `<section class="tv">
-    <div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu">New trivia in 23h 2m · resets 8:00 AM PH time</span></div>
-    <div class="tvi">
-      <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&q=80" alt="Holy Scripture Scroll">
-      <span class="tvtag">OLD TESTAMENT</span>
+  const activeIdx = getActiveTriviaIdx();
+  const t = TRIVIA_BANK[activeIdx] || todayTrivia();
+  const isToday = (activeIdx === todayTriviaIdx());
+
+  return `<section class="tv" aria-label="Daily Bible Trivia">
+    <div class="tvh">
+      <b>📜 BIBLE TRIVIA</b>
+      <span class="mu" id="trivia_cd">${isToday ? nextResetText() : 'Browsing collection (' + (activeIdx + 1) + ' of ' + TRIVIA_BANK.length + ')'}</span>
     </div>
+
+    <!-- Trivia Navigation Toolbar -->
+    <div class="tv-nav-bar">
+      <div style="display:flex;align-items:center;gap:6px">
+        <button type="button" onclick="setTriviaView(${activeIdx - 1})" title="Previous Bible Trivia">‹ Prev</button>
+        <button type="button" onclick="setTriviaView(${activeIdx + 1})" title="Next Bible Trivia">Next ›</button>
+        <span style="font-size:.8rem;color:#dfe2ff;margin-left:4px">Trivia ${activeIdx + 1} of ${TRIVIA_BANK.length}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        ${!isToday ? `<button type="button" class="active" onclick="resetTriviaToToday()">⭐ Today's Trivia</button>` : `<span style="font-size:.78rem;color:var(--pr);font-weight:600">⭐ Today's Feature</span>`}
+        <select onchange="setTriviaView(parseInt(this.value, 10))" style="font-size:.8rem;padding:3px 6px;border-radius:6px;background:#15145a;color:#fff;border:1px solid #ffffff33">
+          ${TRIVIA_BANK.map((item, i) => `
+            <option value="${i}" ${i === activeIdx ? 'selected' : ''}>${i + 1}. ${e(item.title)}</option>
+          `).join('')}
+        </select>
+      </div>
+    </div>
+
+    <!-- Biblically Aligned Image Area with Clean Fallback -->
+    <div class="tvi">
+      <div class="tv-fallback-card" style="display:none">
+        <div class="tv-fallback-symbol">${t.symbol || t.emoji || '📖'}</div>
+        <div class="tv-fallback-title">${e(t.title)}</div>
+        <div class="tv-fallback-ref">${e(t.ref)}</div>
+      </div>
+      <img src="${e(t.img)}" alt="${e(t.title)} – ${e(t.caption || t.title)}" onerror="triviaImgFallback(this, ${activeIdx})">
+      <span class="tvtag">${e(t.tag)}</span>
+      <span class="tvref">📖 ${e(t.ref)}</span>
+    </div>
+
+    <!-- Trivia Content -->
     <div class="tvc">
-      <h3>The Longest & Shortest Chapter</h3>
-      <p>Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!</p>
+      <h3>${e(t.title)}</h3>
+      <p>${e(t.text)}</p>
+      <div class="tvsub">
+        <span>🕊️</span>
+        <span><b>Biblical Scripture Reflection</b> · JTNAAN Bulacan · ${isToday ? 'Rotates Daily at 8:00 AM PH Time' : 'Archive Collection'}</span>
+      </div>
     </div>
   </section>`;
 }
 
+// Question of the day with automatic 8:00 AM PH time rotation
 function tquiz(){
-  const q = dailyQuiz;
+  const q = todayQuiz();
   const pick = getQuizAnswer();
   const done = pick !== -1;
   const isCorrect = pick === q.a;
 
-  return `<section class="tv tqs">
+  return `<section class="tv tqs" aria-label="Question of the Day">
     <div class="tq">
-      <div class="tqh">❓ Question of the day</div>
+      <div class="tqh">❓ Question of the day · Daily Bible Quiz</div>
       <div class="tqq">${e(q.q)}</div>
       <div class="tqo">
         ${q.c.map((opt, i) => {
@@ -3155,18 +3221,40 @@ function tquiz(){
             <div><b>Scripture Passage:</b> <span style="color:var(--pr);font-weight:bold">${e(q.ref)}</span></div>
             <div style="margin-top:4px"><b>Why it is correct:</b> ${e(q.exp)}</div>
           </div>
-          ${admin ? `
+          ${(typeof admin !== "undefined" && admin) || isAdminMart() ? `
             <div style="margin-top:10px">
               <button class="btn sm" onclick="resetQuizForAdmin()">Try Question Again (Admin)</button>
             </div>
           ` : ''}
         </div>
       ` : `
-        <div class="mu" style="margin-top:8px;font-size:.85rem">Tap a, b, or c to submit your answer.</div>
+        <div class="mu" style="margin-top:8px;font-size:.85rem">Tap a, b, or c to submit your answer. <span id="quiz_cd">${nextResetText()}</span></div>
       `}
     </div>
   </section>`;
 }
+
+// Auto-refresh: updates countdown & auto-swaps daily trivia/question at 8:00 AM PH time
+let _shownDayIdx = phDayIdx();
+function checkDailyRollover(){
+  const d = phDayIdx();
+  if(d !== _shownDayIdx){
+    _shownDayIdx = d;
+    userBrowsingTriviaIdx = null; // revert back to new day's featured trivia
+    if(typeof view !== "undefined" && view === "devotion") render();
+  } else {
+    ["trivia_cd", "quiz_cd"].forEach(id => {
+      const el = document.getElementById(id);
+      if(el && (userBrowsingTriviaIdx === null || id === "quiz_cd")){
+        el.textContent = nextResetText();
+      }
+    });
+  }
+}
+setInterval(checkDailyRollover, 30000);
+document.addEventListener("visibilitychange", () => { if(!document.hidden) checkDailyRollover(); });
+window.addEventListener("focus", checkDailyRollover);
+
 
 function membersv(){
   const L = D.members || [];
@@ -3383,7 +3471,6 @@ function reportsv(){
   </div>`;
 }
 
-// Social Media with Live Cloud CRUD
 function socialv(){
   const L = D.social || [];
   return `<h2>SOCIAL MEDIA</h2>
@@ -3407,7 +3494,6 @@ function socialv(){
   </div>`;
 }
 
-// Prayer Requests with auto-email and Messenger
 function prayersv(){
   const L = D.prayers || [];
   return `<h2>PRAYER REQUESTS (${L.length})</h2>
@@ -3489,7 +3575,6 @@ async function submitPrayerRequest(target){
   }
 }
 
-// Support the Church
 function supportv(){
   const L = D.donate || [];
   const DMS = ["GCash", "Maya", "Bank transfer"];
@@ -3574,7 +3659,6 @@ function list(c){
   </div>`;
 }
 
-// Admins Management (Admin Mart has access to Add/Edit admins with permission checkboxes)
 function adminsv(){
   if(!admin) return `<p class="mu">Access restricted to Super Admin (Admin Mart).</p>`;
   return `
@@ -3683,7 +3767,6 @@ async function saveAdminRecord(id){
     AL = AL.filter(x => x.id !== adminObj.id);
     AL.push(adminObj);
 
-    // Save directly to Supabase cloud
     await syncRecordToCloud("admins", adminObj.id, adminObj);
 
     if(me && me.id === adminObj.id){
@@ -3724,7 +3807,6 @@ async function deleteRecord(c, id){
   }
 }
 
-// Clean Session Management (Log out sets to Guest)
 async function handleLogout(){
   me = null;
   admin = false;
@@ -3790,14 +3872,12 @@ document.addEventListener("click", ev => {
   const t = ev.target, d = t.dataset || {};
   if(d.v){ view = d.v; render(); menu(false); }
   
-  // Close any open floating emoticon reaction trays if clicking outside
   if(!ev.target.closest(".rx-picker-container")){
     document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
     document.querySelectorAll(".rx-picker-btn").forEach(el => el.setAttribute("aria-expanded", "false"));
   }
 });
 
-// Boot Application: Supabase as Single Source of Truth
 async function initApp(){
   applyBackground();
   render();
@@ -3805,171 +3885,6 @@ async function initApp(){
   await fetchAllFromCloud(true);
   handleHashRoute();
 }
-
-// ===== DAILY BIBLE TRIVIA + QUESTION OF THE DAY (auto-rotates every 8:00 AM PH time) =====
-const TRIVIA_BANK = [
-  { tag:"OLD TESTAMENT", title:"The Longest & Shortest Chapter", emoji:"📜", img:"King David in simple robes kneeling in prayer, holding an open scroll of psalms, a harp beside him, sunrise over the hills of Jerusalem", text:"Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!" },
-  { tag:"NEW TESTAMENT", title:"The Shortest Verse", emoji:"💧", img:"Jesus in a white robe weeping with compassion in front of the tomb of Lazarus in Bethany, Mary and Martha kneeling beside him, villagers watching", text:"John 11:35 – “Jesus wept.” – is the shortest verse in most English Bibles, showing the compassion of Christ at the tomb of Lazarus." },
-  { tag:"WHOLE BIBLE", title:"66 Books, One Story", emoji:"📖", img:"a robed scribe writing on a parchment scroll at a wooden table, many hand-written scrolls and one large open book of Scripture, an oil lamp glowing", text:"The Bible contains 66 books: 39 in the Old Testament and 27 in the New Testament, written over many centuries yet pointing to Jesus." },
-  { tag:"OLD TESTAMENT", title:"The Oldest Man", emoji:"👴", img:"the very old patriarch Methuselah with a long white beard and a walking staff, standing before his tent in the ancient desert with his large family, sunset", text:"Methuselah lived 969 years (Genesis 5:27), making him the longest-living person recorded in the Bible." },
-  { tag:"NEW TESTAMENT", title:"The Twelve", emoji:"⛵", img:"Jesus calling the twelve apostles on a hillside at dawn, he stands in the middle in a white robe with twelve men in robes around him listening, the Sea of Galilee behind them", text:"Jesus chose twelve apostles from among His many disciples to be with Him and to be sent out to preach (Luke 6:12–16)." },
-  { tag:"OLD TESTAMENT", title:"Three Days & Three Nights", emoji:"🐋", img:"the prophet Jonah in a brown robe kneeling on a sandy beach at dawn with his arms raised in thanks to God, a huge whale swimming away in the calm sea behind him", text:"Jonah spent three days and three nights inside the great fish before God brought him safely to land (Jonah 1:17; 2:10)." },
-  { tag:"OLD TESTAMENT", title:"The Longest Book", emoji:"🎵", img:"young King David playing the harp and singing to God at night on a hilltop near Bethlehem, sheep resting around him, starry sky", text:"Psalms is the longest book of the Bible by chapters, with 150 chapters of prayers, praises and songs." },
-  { tag:"NEW TESTAMENT", title:"The Fruit of the Spirit", emoji:"🍇", img:"a lush garden tree bearing grapes, figs, pomegranates, olives and dates, a white dove above it and rays of heavenly light shining down", text:"Galatians 5:22–23 lists nine fruits of the Spirit: love, joy, peace, patience, kindness, goodness, faithfulness, gentleness and self-control." },
-  { tag:"OLD TESTAMENT", title:"Forty Days & Forty Nights", emoji:"🌈", img:"Noah and his family in robes standing beside the wooden ark on a mountain after the flood, looking up at a bright rainbow, a white dove carrying an olive branch", text:"During the flood in Noah's time, rain fell on the earth for forty days and forty nights (Genesis 7:12)." },
-  { tag:"NEW TESTAMENT", title:"The First Miracle", emoji:"🍷", img:"Jesus and servants at the wedding in Cana, large stone water jars being poured into cups as wine, guests in ancient clothing around a banquet table, warm lamplight", text:"Jesus' first recorded miracle was turning water into wine at a wedding in Cana of Galilee (John 2:1–11)." },
-  { tag:"OLD TESTAMENT", title:"Solomon's Request", emoji:"👑", img:"young King Solomon in royal robes kneeling in prayer at an altar at night, a beam of heavenly light shining down on him", text:"When God offered Solomon anything he wanted, he asked for a wise and discerning heart to lead God's people (1 Kings 3:5–12)." },
-  { tag:"OLD TESTAMENT", title:"The Ten Commandments", emoji:"⛰️", img:"Moses with a long gray beard descending Mount Sinai carrying two stone tablets, the tents of the Israelites in the valley below, golden clouds and lightning around the peak", text:"God gave Moses the Ten Commandments on two stone tablets at Mount Sinai (Exodus 31:18; 34:28)." },
-  { tag:"WHOLE BIBLE", title:"Three Original Languages", emoji:"📜", img:"an ancient scribe in robes writing on a parchment scroll by the light of an oil lamp, shelves of scrolls behind him", text:"The Bible was originally written mostly in Hebrew (Old Testament), with some Aramaic, and in Greek (New Testament)." },
-  { tag:"NEW TESTAMENT", title:"The Shortest Book", emoji:"✉️", img:"the elder apostle John in simple robes sitting at a wooden desk writing a short letter on parchment with a quill by an oil lamp, a small sealed letter beside him", text:"2 John has only 13 verses, the fewest of any book in the Bible. Obadiah, with 21 verses, is the shortest book of the Old Testament." },
-  { tag:"NEW TESTAMENT", title:"Letters of Paul", emoji:"✍️", img:"the apostle Paul in a Roman prison cell writing a letter on a scroll by candlelight, chains on his wrists, a Roman guard asleep nearby", text:"The apostle Paul is traditionally credited with writing 13 letters of the New Testament, from Romans to Philemon." }
-];
-
-const QUIZ_BANK = [
-  { q:"Who was the prophet called by God as a young boy in the temple under Eli?", c:["Samuel","David","Jeremiah"], a:0, ref:"1 Samuel 3:1–10",
-    exp:"The Lord called Samuel three times while he was ministering before Eli in the temple. When Eli realized God was calling the boy, he told Samuel to answer, 'Speak, Lord, for your servant is listening.'" },
-  { q:"Who built the ark to save his family from the flood?", c:["Abraham","Noah","Moses"], a:1, ref:"Genesis 6:13–22",
-    exp:"God told Noah to build an ark because of the coming flood. Noah obeyed, and he and his family were saved." },
-  { q:"Who was thrown into the lions' den for praying to God?", c:["Daniel","Joseph","Elijah"], a:0, ref:"Daniel 6:10–23",
-    exp:"Daniel kept praying to God even when it was forbidden. God shut the mouths of the lions and kept him safe." },
-  { q:"How many days did Jesus fast in the wilderness before being tempted?", c:["7 days","21 days","40 days"], a:2, ref:"Matthew 4:1–2",
-    exp:"After His baptism, Jesus was led by the Spirit into the wilderness, where He fasted forty days and forty nights." },
-  { q:"Which disciple denied Jesus three times?", c:["Thomas","Peter","Judas"], a:1, ref:"Matthew 26:69–75",
-    exp:"Peter denied knowing Jesus three times before the rooster crowed, then wept bitterly. Jesus later restored him." },
-  { q:"Which prophet was swallowed by a great fish?", c:["Jeremiah","Elijah","Jonah"], a:2, ref:"Jonah 1:17",
-    exp:"Jonah ran from God's call to Nineveh. God sent a great fish to swallow him, and he was inside for three days and three nights." },
-  { q:"What is the first book of the Bible?", c:["Genesis","Exodus","Psalms"], a:0, ref:"Genesis 1:1",
-    exp:"The Bible begins with Genesis: 'In the beginning God created the heavens and the earth.'" },
-  { q:"Which young shepherd defeated the giant Goliath?", c:["Saul","Jonathan","David"], a:2, ref:"1 Samuel 17:45–50",
-    exp:"David trusted in the name of the Lord and defeated Goliath with a sling and a stone." },
-  { q:"In which town was Jesus born?", c:["Nazareth","Bethlehem","Jerusalem"], a:1, ref:"Luke 2:4–7",
-    exp:"Joseph and Mary traveled to Bethlehem, the town of David, where Jesus was born." },
-  { q:"Who led the Israelites out of slavery in Egypt?", c:["Moses","Joshua","Aaron"], a:0, ref:"Exodus 3:10; 14:21–22",
-    exp:"God called Moses to lead His people out of Egypt, and the Lord parted the Red Sea so they could cross on dry ground." },
-  { q:"Who was the first man God created?", c:["Seth","Cain","Adam"], a:2, ref:"Genesis 2:7",
-    exp:"The Lord God formed Adam from the dust of the ground and breathed life into him." },
-  { q:"Which disciple was a tax collector before following Jesus?", c:["Matthew","Peter","John"], a:0, ref:"Matthew 9:9",
-    exp:"Jesus saw Matthew sitting at the tax collector's booth and said, 'Follow me.' Matthew got up and followed Him." },
-  { q:"Whom did Jesus raise from the dead after he had been in the tomb four days?", c:["Lazarus","Jairus' daughter","Tabitha"], a:0, ref:"John 11:38–44",
-    exp:"Jesus called out, 'Lazarus, come out!' and the man who had died came out of the tomb alive." },
-  { q:"Which brave woman became queen and risked her life to save her people?", c:["Ruth","Esther","Deborah"], a:1, ref:"Esther 4:14–16; 7:3–6",
-    exp:"Esther approached the king uninvited to plead for the Jews, and God used her 'for such a time as this.'" },
-  { q:"Which disciple walked on the water toward Jesus?", c:["Andrew","John","Peter"], a:2, ref:"Matthew 14:28–31",
-    exp:"Peter stepped out of the boat and walked on the water toward Jesus until he took his eyes off Him; Jesus caught him." }
-];
-
-// ----- Day helpers (flip exactly at 8:00 AM Philippine time) -----
-const DAY_MS = 86400000;
-function phDayIdx(){ return Math.floor(Date.now() / DAY_MS); }      // 8:00 AM PH == 00:00 UTC
-function phDayKey(){ return new Date(phDayIdx() * DAY_MS).toISOString().slice(0, 10); }
-function todayTrivia(){ return TRIVIA_BANK[phDayIdx() % TRIVIA_BANK.length]; }
-function todayQuiz(){ return QUIZ_BANK[phDayIdx() % QUIZ_BANK.length]; }
-function nextResetText(){
-  const left = Math.max(0, (phDayIdx() + 1) * DAY_MS - Date.now());
-  const h = Math.floor(left / 3600000), m = Math.floor((left % 3600000) / 60000);
-  return `New in ${h}h ${m}m · resets 8:00 AM PH time`;
-}
-
-// ----- Saved answer is stored per day, so a new day = a fresh question -----
-function quizStoreKey(){ return "jt_quiz_" + phDayKey(); }
-function getQuizAnswer(){
-  try{
-    const v = localStorage.getItem(quizStoreKey());
-    return v !== null ? parseInt(v, 10) : -1;
-  }catch(err){ return -1; }
-}
-function handleQuizChoice(idx){
-  if(getQuizAnswer() !== -1) return;
-  localStorage.setItem(quizStoreKey(), String(idx));
-  if(idx === todayQuiz().a) triggerQuizConfetti();
-  render();
-}
-function resetQuizForAdmin(){
-  localStorage.removeItem(quizStoreKey());
-  render();
-}
-
-const TRIVIA_IMG_PREFIX = "Biblical scene, classic religious oil painting in the style of Gustave Doré and the Renaissance masters, ancient Middle Eastern setting, people wearing simple robes and sandals, no modern objects, no text. ";
-const TRIVIA_IMG_STYLE = ", dramatic golden light, reverent, highly detailed";
-function triviaImgUrl(t, model){
-  const prompt = TRIVIA_IMG_PREFIX + (t.img || t.title) + TRIVIA_IMG_STYLE;
-  // same seed for everyone on the same day -> same picture, and it is cached after the first creation
-  return "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) +
-         "?model=" + (model || "flux") + "&width=1280&height=720&nologo=true&seed=" + phDayIdx();
-}
-function triviaImgFallback(img){
-  const t = todayTrivia();
-  if(!img.dataset.retry){ img.dataset.retry = "1"; img.src = triviaImgUrl(t, "turbo"); return; }   // 2nd try: faster model
-  img.onerror = null; img.style.display = "none";
-  const ld = img.parentElement.querySelector(".tvload");
-  if(ld) ld.innerHTML = '<div style="font-size:4.5rem;line-height:1">' + (t.emoji || "📖") + '</div>';
-}
-
-function trivia(){
-  const t = todayTrivia();
-  return `<section class="tv">
-    <div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu" id="trivia_cd">${nextResetText()}</span></div>
-    <div class="tvi" style="background:linear-gradient(135deg,#1d1c6e,#0b0a3a)">
-      <div class="tvload" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#b9bde6;font-size:.9rem;padding:1rem">🎨 Creating today's illustration…</div>
-      <img style="position:relative" src="${e(triviaImgUrl(t))}" alt="${e(t.title)} – AI-generated illustration" onerror="triviaImgFallback(this)">
-      <span class="tvtag" style="z-index:2">${e(t.tag)}</span>
-    </div>
-    <div class="tvc">
-      <h3>${e(t.title)}</h3>
-      <p>${e(t.text)}</p>
-      <div class="mu" style="margin-top:6px;font-size:.72rem">🤖 Illustration generated by AI</div>
-    </div>
-  </section>`;
-}
-
-function tquiz(){
-  const q = todayQuiz();
-  const pick = getQuizAnswer();
-  const done = pick !== -1;
-  const isCorrect = pick === q.a;
-  return `<section class="tv tqs">
-    <div class="tq">
-      <div class="tqh">❓ Question of the day</div>
-      <div class="tqq">${e(q.q)}</div>
-      <div class="tqo">
-        ${q.c.map((opt, i) => {
-          let cls = "";
-          if(done){ if(i === q.a) cls = "ok"; else if(i === pick) cls = "no"; }
-          return `<button class="${cls}" onclick="handleQuizChoice(${i})" ${done ? "disabled" : ""}>
-              <span class="l">${"abc"[i]}</span><span>${e(opt)}</span></button>`;
-        }).join('')}
-      </div>
-      ${done ? `
-        <div class="tqr ${isCorrect ? 'ok' : 'no'}" style="margin-top:14px;padding:14px;border-radius:10px;background:#ffffff10;border-left:4px solid ${isCorrect ? '#2ecc71' : '#e74c3c'}">
-          <div style="font-size:1.1rem;font-weight:700">
-            ${isCorrect ? '🎉 Congratulations! You got it right!' : '❌ Not quite! The correct answer is ' + "ABC"[q.a] + '. ' + e(q.c[q.a]) + '.'}
-          </div>
-          <div style="margin-top:8px;color:#dfe2ff;line-height:1.55;font-weight:400;font-size:.9rem">
-            <div><b>Scripture Passage:</b> <span style="color:var(--pr);font-weight:bold">${e(q.ref)}</span></div>
-            <div style="margin-top:4px"><b>Why it is correct:</b> ${e(q.exp)}</div>
-          </div>
-          ${admin ? `<div style="margin-top:10px"><button class="btn sm" onclick="resetQuizForAdmin()">Try Question Again (Admin)</button></div>` : ''}
-        </div>
-      ` : `<div class="mu" style="margin-top:8px;font-size:.85rem">Tap a, b, or c to submit your answer. <span id="quiz_cd">${nextResetText()}</span></div>`}
-    </div>
-  </section>`;
-}
-
-// ----- Auto-refresh: swaps in the new trivia/question at 8:00 AM PH while the page is open -----
-let _shownDayIdx = phDayIdx();
-function checkDailyRollover(){
-  const d = phDayIdx();
-  if(d !== _shownDayIdx){
-    _shownDayIdx = d;
-    if(typeof view !== "undefined" && view === "devotion") render();
-  } else {
-    ["trivia_cd", "quiz_cd"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = nextResetText(); });
-  }
-}
-setInterval(checkDailyRollover, 30000);
-document.addEventListener("visibilitychange", () => { if(!document.hidden) checkDailyRollover(); });
-window.addEventListener("focus", checkDailyRollover);
-
 
 initApp();
 
@@ -4006,7 +3921,7 @@ initApp();
   function clampPan(){
     if(s <= 1){ tx = 0; ty = 0; return; }
     const r = img.getBoundingClientRect(), sr = stage.getBoundingClientRect();
-    const w = r.width / s * s, h = r.height; // current rendered size already includes scale
+    const w = r.width / s * s, h = r.height;
     const maxX = Math.max(0, (w - sr.width) / 2), maxY = Math.max(0, (h - sr.height) / 2);
     tx = Math.max(-maxX, Math.min(maxX, tx));
     ty = Math.max(-maxY, Math.min(maxY, ty));
@@ -4043,7 +3958,6 @@ initApp();
     img.removeAttribute("src");
   }
 
-  // Which photos count as "viewable"? Everything except logos/avatars/tiny icons.
   function isViewable(el){
     if(!el || el.tagName !== "IMG") return false;
     if(el.closest("#lb, header, nav, .ph, .appi, .cm-avatar, #church-logo-render, #header-logo-container")) return false;
@@ -4057,9 +3971,8 @@ initApp();
     return all.length ? all : [el];
   }
 
-  // Capture phase so it also wins over parent onclick handlers (e.g. gallery cards)
   document.addEventListener("click", ev => {
-    if(TE === 1) return;                       // don't interfere with admin text-edit mode
+    if(TE === 1) return;
     const t = ev.target;
     if(!isViewable(t)) return;
     ev.preventDefault(); ev.stopPropagation();
@@ -4067,7 +3980,6 @@ initApp();
     open(g.map(x => ({ src: x.currentSrc || x.src, alt: x.alt })), Math.max(0, g.indexOf(t)));
   }, true);
 
-  // Buttons
   lb.querySelector("#lb-close").onclick = close;
   lb.querySelector("#lb-prev").onclick = ev => { ev.stopPropagation(); show(idx - 1); };
   lb.querySelector("#lb-next").onclick = ev => { ev.stopPropagation(); show(idx + 1); };
@@ -4076,7 +3988,6 @@ initApp();
   lb.querySelector("#lb-reset").onclick = reset;
   lb.querySelector("#lb-open").onclick = () => { if(items[idx]) window.open(items[idx].src, "_blank", "noopener"); };
 
-  // Keyboard
   addEventListener("keydown", ev => {
     if(!lb.classList.contains("open")) return;
     if(ev.key === "Escape") { ev.stopImmediatePropagation(); close(); }
@@ -4087,13 +3998,11 @@ initApp();
     else if(ev.key === "0") reset();
   }, true);
 
-  // Mouse wheel / trackpad zoom
   stage.addEventListener("wheel", ev => {
     ev.preventDefault();
     zoomAt(s * (ev.deltaY < 0 ? 1.15 : 1 / 1.15), ev.clientX, ev.clientY);
   }, { passive: false });
 
-  // Pointer gestures: drag to pan, pinch to zoom, swipe to change image, double-tap to zoom
   stage.addEventListener("pointerdown", ev => {
     if(ev.target.closest(".lb-nav")) return;
     stage.setPointerCapture(ev.pointerId);
@@ -4126,17 +4035,17 @@ initApp();
     if(ptrs.size === 0){
       stage.classList.remove("drag");
       const totalDx = ev.clientX - swipeStartX, totalDy = ev.clientY - downY;
-      if(moved < 8){                                   // it was a tap
+      if(moved < 8){
         const now = Date.now();
-        if(now - lastTap < 320){                       // double-tap / double-click
+        if(now - lastTap < 320){
           if(s > 1.05) reset(); else zoomAt(2.5, ev.clientX, ev.clientY);
           lastTap = 0;
         } else {
           lastTap = now;
-          if(s === 1 && !(function(){const r=img.getBoundingClientRect();return ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom})()) setTimeout(() => { if(lastTap && Date.now() - lastTap >= 300) close(); }, 320); // tap on dark area closes
+          if(s === 1 && !(function(){const r=img.getBoundingClientRect();return ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom})()) setTimeout(() => { if(lastTap && Date.now() - lastTap >= 300) close(); }, 320);
         }
       } else if(s <= 1.05 && Math.abs(totalDx) > 60 && Math.abs(totalDx) > Math.abs(totalDy) * 1.5 && items.length > 1){
-        show(idx + (totalDx < 0 ? 1 : -1));            // swipe left/right = next/previous
+        show(idx + (totalDx < 0 ? 1 : -1));
       }
     }
   }
@@ -4144,6 +4053,5 @@ initApp();
   stage.addEventListener("pointercancel", endPtr);
 })();
 </script>
-
-
-</body></html>
+</body>
+</html>
