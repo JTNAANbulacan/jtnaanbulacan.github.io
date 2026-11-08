@@ -146,10 +146,6 @@ main:has(> .about){max-width:none}
 .tvs{display:grid;gap:16px;max-width:44rem;margin:10px auto 26px}
 .tv{background:linear-gradient(160deg,#1d1c6e,#121150);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px #0006}
 .tvh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;flex-wrap:wrap}.tvh b{color:var(--pr);letter-spacing:1px;text-transform:uppercase;font-size:.95rem}.tvh .mu{font-size:.78rem}
-.tv-nav-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;background:#0b0a3a88;border-bottom:1px solid #ffffff15;flex-wrap:wrap}
-.tv-nav-bar button{background:#ffffff15;color:#fff;border:1px solid #ffffff25;border-radius:8px;padding:4px 10px;font-size:.8rem;cursor:pointer;transition:all .18s}
-.tv-nav-bar button:hover{background:#ffffff28;border-color:var(--pr)}
-.tv-nav-bar button.active{background:var(--pr);color:#100d02;font-weight:700}
 .tvi{position:relative;aspect-ratio:16/9;background:#0b0a3a;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tvi img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.3s ease}
 .tvtag{position:absolute;left:12px;top:12px;background:#0b0a3af0;color:var(--pr);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid #f2a93b44;backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,.5);z-index:2}
@@ -3071,15 +3067,6 @@ function todayQuizIdx(){ return phDayIdx() % QUIZ_BANK.length; }
 function todayTrivia(){ return TRIVIA_BANK[todayTriviaIdx()]; }
 function todayQuiz(){ return QUIZ_BANK[todayQuizIdx()]; }
 
-// Browsing state: Allows user to browse all 15 trivia or return to today's
-let userBrowsingTriviaIdx = null;
-function getActiveTriviaIdx(){
-  if(userBrowsingTriviaIdx !== null && userBrowsingTriviaIdx >= 0 && userBrowsingTriviaIdx < TRIVIA_BANK.length){
-    return userBrowsingTriviaIdx;
-  }
-  return todayTriviaIdx();
-}
-
 function nextResetText(){
   const left = Math.max(0, (phDayIdx() + 1) * DAY_MS - Date.now());
   const h = Math.floor(left / 3600000), m = Math.floor((left % 3600000) / 60000);
@@ -3109,16 +3096,6 @@ function resetQuizForAdmin(){
   render();
 }
 
-function setTriviaView(idx){
-  userBrowsingTriviaIdx = ((idx % TRIVIA_BANK.length) + TRIVIA_BANK.length) % TRIVIA_BANK.length;
-  render();
-}
-
-function resetTriviaToToday(){
-  userBrowsingTriviaIdx = null;
-  render();
-}
-
 // Resilient fallback card if network or image load fails
 function triviaImgFallback(img, idx){
   img.onerror = null;
@@ -3132,33 +3109,15 @@ function triviaImgFallback(img, idx){
   }
 }
 
-// Renders the clean, biblically authentic trivia card
+// Renders the clean, biblically authentic trivia card (automatically refreshes at 8:00 AM PH time)
 function trivia(){
-  const activeIdx = getActiveTriviaIdx();
-  const t = TRIVIA_BANK[activeIdx] || todayTrivia();
-  const isToday = (activeIdx === todayTriviaIdx());
+  const idx = todayTriviaIdx();
+  const t = todayTrivia();
 
   return `<section class="tv" aria-label="Daily Bible Trivia">
     <div class="tvh">
       <b>📜 BIBLE TRIVIA</b>
-      <span class="mu" id="trivia_cd">${isToday ? nextResetText() : 'Browsing collection (' + (activeIdx + 1) + ' of ' + TRIVIA_BANK.length + ')'}</span>
-    </div>
-
-    <!-- Trivia Navigation Toolbar -->
-    <div class="tv-nav-bar">
-      <div style="display:flex;align-items:center;gap:6px">
-        <button type="button" onclick="setTriviaView(${activeIdx - 1})" title="Previous Bible Trivia">‹ Prev</button>
-        <button type="button" onclick="setTriviaView(${activeIdx + 1})" title="Next Bible Trivia">Next ›</button>
-        <span style="font-size:.8rem;color:#dfe2ff;margin-left:4px">Trivia ${activeIdx + 1} of ${TRIVIA_BANK.length}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px">
-        ${!isToday ? `<button type="button" class="active" onclick="resetTriviaToToday()">⭐ Today's Trivia</button>` : `<span style="font-size:.78rem;color:var(--pr);font-weight:600">⭐ Today's Feature</span>`}
-        <select onchange="setTriviaView(parseInt(this.value, 10))" style="font-size:.8rem;padding:3px 6px;border-radius:6px;background:#15145a;color:#fff;border:1px solid #ffffff33">
-          ${TRIVIA_BANK.map((item, i) => `
-            <option value="${i}" ${i === activeIdx ? 'selected' : ''}>${i + 1}. ${e(item.title)}</option>
-          `).join('')}
-        </select>
-      </div>
+      <span class="mu" id="trivia_cd">${nextResetText()}</span>
     </div>
 
     <!-- Biblically Aligned Image Area with Clean Fallback -->
@@ -3168,7 +3127,7 @@ function trivia(){
         <div class="tv-fallback-title">${e(t.title)}</div>
         <div class="tv-fallback-ref">${e(t.ref)}</div>
       </div>
-      <img src="${e(t.img)}" alt="${e(t.title)} – ${e(t.caption || t.title)}" onerror="triviaImgFallback(this, ${activeIdx})">
+      <img src="${e(t.img)}" alt="${e(t.title)} – ${e(t.caption || t.title)}" onerror="triviaImgFallback(this, ${idx})">
       <span class="tvtag">${e(t.tag)}</span>
       <span class="tvref">📖 ${e(t.ref)}</span>
     </div>
@@ -3179,7 +3138,7 @@ function trivia(){
       <p>${e(t.text)}</p>
       <div class="tvsub">
         <span>🕊️</span>
-        <span><b>Biblical Scripture Reflection</b> · JTNAAN Bulacan · ${isToday ? 'Rotates Daily at 8:00 AM PH Time' : 'Archive Collection'}</span>
+        <span><b>Biblical Scripture Reflection</b> · JTNAAN Bulacan · Rotates Daily at 8:00 AM PH Time</span>
       </div>
     </div>
   </section>`;
@@ -3240,18 +3199,17 @@ function checkDailyRollover(){
   const d = phDayIdx();
   if(d !== _shownDayIdx){
     _shownDayIdx = d;
-    userBrowsingTriviaIdx = null; // revert back to new day's featured trivia
     if(typeof view !== "undefined" && view === "devotion") render();
   } else {
     ["trivia_cd", "quiz_cd"].forEach(id => {
       const el = document.getElementById(id);
-      if(el && (userBrowsingTriviaIdx === null || id === "quiz_cd")){
+      if(el){
         el.textContent = nextResetText();
       }
     });
   }
 }
-setInterval(checkDailyRollover, 30000);
+setInterval(checkDailyRollover, 10000);
 document.addEventListener("visibilitychange", () => { if(!document.hidden) checkDailyRollover(); });
 window.addEventListener("focus", checkDailyRollover);
 
