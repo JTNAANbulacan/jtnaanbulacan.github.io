@@ -1106,8 +1106,8 @@ const CF={
   gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:6},
   funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["type","Type","s:Income,Expense"],["category","Category"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
   social:{t:"Social Media",f:[["platform","Platform","s:Facebook,YouTube,TikTok,Instagram"],["date","Date","date"],["followers","Followers","number"],["reach","Reach / views","number"],["engagement","Engagement","number"]],s:[],k:"platform"},
-  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"],["date","Date posted","date"]],s:[],k:"url"},
-  devotion:{t:"Daily Devotion",f:[["date","Date","date"],["caption","Caption / message","t"]],s:[],k:"caption",photo:1},
+  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"]],s:[],k:"url"},
+  devotion:{t:"Daily Devotion",f:[["caption","Caption / message","t"]],s:[],k:"caption",photo:1},
   testimony:{t:"Testimony",f:[["name","Name (optional)"],["date","Date","date"],["caption","Caption / testimony","t"]],s:[],k:"caption",photo:1},
   donate:{t:"Donation QR",f:[["method","Payment method","s:GCash,Maya,Bank transfer"],["name","Account name"],["number","Account / mobile number"],["bank","Bank name"],["note","Note","t"]],s:[],k:"method",photo:1}
 };
@@ -1998,6 +1998,7 @@ function openFormModal(c, id=""){
         <input id="f_${k}" type="${t||'text'}" value="${e(x[k]||'')}" placeholder="${l}">
       `}
     `).join('')}
+    ${(c === 'devotion' || c === 'fbposts') ? `<div class="mu" style="margin-top:8px">🕒 The date and time are added automatically when you post.</div>` : ''}
     ${(F.multi || c === 'gallery') ? `
       <div class="mu" style="margin-top:8px">Upload Photos (Select up to 6 photos):</div>
       <input type="file" id="f_photos" accept="image/*" multiple>
@@ -2026,6 +2027,11 @@ async function saveFormData(c, id){
     const el = $("#f_" + k);
     if(el) item[k] = el.value.trim();
   });
+  if(c === "devotion" || c === "fbposts"){
+    // date & time are added automatically (Philippine time); editing keeps the original stamp
+    item.date = prevItem.date || new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Manila" });
+    item.time = prevItem.time || new Date().toLocaleTimeString("en-US", { timeZone: "Asia/Manila", hour: "numeric", minute: "2-digit" });
+  }
   
   try {
     if(c === 'gallery'){
@@ -2056,6 +2062,14 @@ async function saveFormData(c, id){
     D[c].unshift(item);
     
     const ok = await syncRecordToCloud(c, item.id, item);
+    // Facebook posts: keep only the 3 newest, delete the older ones automatically
+    if(c === "fbposts" && ok){
+      const extras = sortNewestFirst(D.fbposts).slice(3);
+      for(const old of extras){
+        D.fbposts = D.fbposts.filter(x => x.id !== old.id);
+        await deleteRecordFromCloud("fbposts", old.id);
+      }
+    }
     closeModal();
     render();
     if(ok) showSuccessNotification("Changes saved live to Supabase and synced across all devices!");
@@ -2208,13 +2222,13 @@ function dash(){
   <h2 style="margin-top:24px">LATEST FACEBOOK POSTS</h2>
   ${can("dashboard")?`<p><button class="btn gold" onclick="openFormModal('fbposts')">+ Paste a post</button></p>`:''}
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(17.5rem,100%),1fr))">
-    ${(D.fbposts||[]).map(p=>`
+    ${sortNewestFirst(D.fbposts||[]).slice(0,3).map(p=>`
       <div style="background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb;padding:14px">
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
           <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
             ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
           </div>
-          <div><b>Jesus: The Name Above All Names</b><div class="mu" style="font-size:.78rem">${e(p.date)} · 🌐</div></div>
+          <div><b>Jesus: The Name Above All Names</b><div class="mu" style="font-size:.78rem">${e(p.date)}${p.time ? " · " + e(p.time) : ""} · 🌐</div></div>
         </div>
         <div style="font-size:.9rem;line-height:1.45;margin-bottom:10px">${e(p.caption)} <a style="color:#8ab4f8" target="_blank" rel="noopener" href="${e(p.url)}">See more</a></div>
         <div>
@@ -2772,7 +2786,7 @@ function renderFeedPost(c, x, logo){
         </div>
         <div>
           <b>${e(x.name||"Jesus: The Name Above All Names")}</b>
-          <div class="mu">${e(x.date)} · ${c === 'devotion' ? 'Daily Devotion' : 'Testimony'}</div>
+          <div class="mu">${e(x.date)}${x.time ? " · " + e(x.time) : ""} · ${c === 'devotion' ? 'Daily Devotion' : 'Testimony'}</div>
         </div>
       </div>
 
@@ -3794,21 +3808,21 @@ async function initApp(){
 
 // ===== DAILY BIBLE TRIVIA + QUESTION OF THE DAY (auto-rotates every 8:00 AM PH time) =====
 const TRIVIA_BANK = [
-  { tag:"OLD TESTAMENT", title:"The Longest & Shortest Chapter", text:"Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!" },
-  { tag:"NEW TESTAMENT", title:"The Shortest Verse", text:"John 11:35 – “Jesus wept.” – is the shortest verse in most English Bibles, showing the compassion of Christ at the tomb of Lazarus." },
-  { tag:"WHOLE BIBLE", title:"66 Books, One Story", text:"The Bible contains 66 books: 39 in the Old Testament and 27 in the New Testament, written over many centuries yet pointing to Jesus." },
-  { tag:"OLD TESTAMENT", title:"The Oldest Man", text:"Methuselah lived 969 years (Genesis 5:27), making him the longest-living person recorded in the Bible." },
-  { tag:"NEW TESTAMENT", title:"The Twelve", text:"Jesus chose twelve apostles from among His many disciples to be with Him and to be sent out to preach (Luke 6:12–16)." },
-  { tag:"OLD TESTAMENT", title:"Three Days & Three Nights", text:"Jonah spent three days and three nights inside the great fish before God brought him safely to land (Jonah 1:17; 2:10)." },
-  { tag:"OLD TESTAMENT", title:"The Longest Book", text:"Psalms is the longest book of the Bible by chapters, with 150 chapters of prayers, praises and songs." },
-  { tag:"NEW TESTAMENT", title:"The Fruit of the Spirit", text:"Galatians 5:22–23 lists nine fruits of the Spirit: love, joy, peace, patience, kindness, goodness, faithfulness, gentleness and self-control." },
-  { tag:"OLD TESTAMENT", title:"Forty Days & Forty Nights", text:"During the flood in Noah's time, rain fell on the earth for forty days and forty nights (Genesis 7:12)." },
-  { tag:"NEW TESTAMENT", title:"The First Miracle", text:"Jesus' first recorded miracle was turning water into wine at a wedding in Cana of Galilee (John 2:1–11)." },
-  { tag:"OLD TESTAMENT", title:"Solomon's Request", text:"When God offered Solomon anything he wanted, he asked for a wise and discerning heart to lead God's people (1 Kings 3:5–12)." },
-  { tag:"OLD TESTAMENT", title:"The Ten Commandments", text:"God gave Moses the Ten Commandments on two stone tablets at Mount Sinai (Exodus 31:18; 34:28)." },
-  { tag:"WHOLE BIBLE", title:"Three Original Languages", text:"The Bible was originally written mostly in Hebrew (Old Testament), with some Aramaic, and in Greek (New Testament)." },
-  { tag:"NEW TESTAMENT", title:"The Shortest Book", text:"2 John has only 13 verses, the fewest of any book in the Bible. Obadiah, with 21 verses, is the shortest book of the Old Testament." },
-  { tag:"NEW TESTAMENT", title:"Letters of Paul", text:"The apostle Paul is traditionally credited with writing 13 letters of the New Testament, from Romans to Philemon." }
+  { tag:"OLD TESTAMENT", title:"The Longest & Shortest Chapter", emoji:"📜", img:"an ancient open scroll of psalms glowing with golden light on a stone table beside an olive oil lamp", text:"Psalm 119 is the longest chapter in the Bible with 176 verses, while Psalm 117 is the shortest chapter with only 2 verses!" },
+  { tag:"NEW TESTAMENT", title:"The Shortest Verse", emoji:"💧", img:"Jesus weeping with deep compassion near the tomb of Lazarus in Bethany, grieving mourners in the background, soft sorrowful light", text:"John 11:35 – “Jesus wept.” – is the shortest verse in most English Bibles, showing the compassion of Christ at the tomb of Lazarus." },
+  { tag:"WHOLE BIBLE", title:"66 Books, One Story", emoji:"📖", img:"a large old open Bible on a wooden desk surrounded by stacks of ancient books, rays of heavenly light", text:"The Bible contains 66 books: 39 in the Old Testament and 27 in the New Testament, written over many centuries yet pointing to Jesus." },
+  { tag:"OLD TESTAMENT", title:"The Oldest Man", emoji:"👴", img:"a very old wise patriarch with a long white beard standing in an ancient desert landscape at sunset, biblical times", text:"Methuselah lived 969 years (Genesis 5:27), making him the longest-living person recorded in the Bible." },
+  { tag:"NEW TESTAMENT", title:"The Twelve", emoji:"⛵", img:"Jesus walking along the Sea of Galilee at sunrise with twelve disciples following behind him, fishing boats nearby", text:"Jesus chose twelve apostles from among His many disciples to be with Him and to be sent out to preach (Luke 6:12–16)." },
+  { tag:"OLD TESTAMENT", title:"Three Days & Three Nights", emoji:"🐋", img:"a giant great fish in a stormy deep blue sea beside a ship tossed by waves, dramatic light breaking through clouds", text:"Jonah spent three days and three nights inside the great fish before God brought him safely to land (Jonah 1:17; 2:10)." },
+  { tag:"OLD TESTAMENT", title:"The Longest Book", emoji:"🎵", img:"King David playing a harp under a starry night sky in ancient Israel, peaceful hills", text:"Psalms is the longest book of the Bible by chapters, with 150 chapters of prayers, praises and songs." },
+  { tag:"NEW TESTAMENT", title:"The Fruit of the Spirit", emoji:"🍇", img:"a beautiful tree full of nine kinds of colorful fruit glowing with soft divine light in a peaceful garden", text:"Galatians 5:22–23 lists nine fruits of the Spirit: love, joy, peace, patience, kindness, goodness, faithfulness, gentleness and self-control." },
+  { tag:"OLD TESTAMENT", title:"Forty Days & Forty Nights", emoji:"🌈", img:"Noah's ark floating on calm waters after the flood with a bright rainbow across the sky and a white dove", text:"During the flood in Noah's time, rain fell on the earth for forty days and forty nights (Genesis 7:12)." },
+  { tag:"NEW TESTAMENT", title:"The First Miracle", emoji:"🍷", img:"stone water jars at a wedding feast in Cana, servants pouring deep red wine, warm candlelight", text:"Jesus' first recorded miracle was turning water into wine at a wedding in Cana of Galilee (John 2:1–11)." },
+  { tag:"OLD TESTAMENT", title:"Solomon's Request", emoji:"👑", img:"wise King Solomon sitting on a golden throne in an ancient palace, sunlight streaming through tall windows", text:"When God offered Solomon anything he wanted, he asked for a wise and discerning heart to lead God's people (1 Kings 3:5–12)." },
+  { tag:"OLD TESTAMENT", title:"The Ten Commandments", emoji:"⛰️", img:"Moses standing on Mount Sinai holding two stone tablets under dramatic clouds and golden light", text:"God gave Moses the Ten Commandments on two stone tablets at Mount Sinai (Exodus 31:18; 34:28)." },
+  { tag:"WHOLE BIBLE", title:"Three Original Languages", emoji:"📜", img:"ancient parchment manuscripts with beautiful old calligraphy on a table lit by candlelight", text:"The Bible was originally written mostly in Hebrew (Old Testament), with some Aramaic, and in Greek (New Testament)." },
+  { tag:"NEW TESTAMENT", title:"The Shortest Book", emoji:"✉️", img:"a small folded letter sealed with red wax beside an olive branch and a quill pen, warm soft light", text:"2 John has only 13 verses, the fewest of any book in the Bible. Obadiah, with 21 verses, is the shortest book of the Old Testament." },
+  { tag:"NEW TESTAMENT", title:"Letters of Paul", emoji:"✍️", img:"the apostle Paul writing a letter by candlelight in a Roman prison cell surrounded by scrolls", text:"The apostle Paul is traditionally credited with writing 13 letters of the New Testament, from Romans to Philemon." }
 ];
 
 const QUIZ_BANK = [
@@ -3875,17 +3889,34 @@ function resetQuizForAdmin(){
   render();
 }
 
+const TRIVIA_IMG_STYLE = ", cinematic oil painting, warm golden light, reverent, highly detailed, no text, no letters, no words";
+function triviaImgUrl(t, model){
+  const prompt = (t.img || t.title) + TRIVIA_IMG_STYLE;
+  // same seed for everyone on the same day -> same picture, and it is cached after the first creation
+  return "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) +
+         "?model=" + (model || "flux") + "&width=1280&height=720&nologo=true&seed=" + phDayIdx();
+}
+function triviaImgFallback(img){
+  const t = todayTrivia();
+  if(!img.dataset.retry){ img.dataset.retry = "1"; img.src = triviaImgUrl(t, "turbo"); return; }   // 2nd try: faster model
+  img.onerror = null; img.style.display = "none";
+  const ld = img.parentElement.querySelector(".tvload");
+  if(ld) ld.innerHTML = '<div style="font-size:4.5rem;line-height:1">' + (t.emoji || "📖") + '</div>';
+}
+
 function trivia(){
   const t = todayTrivia();
   return `<section class="tv">
     <div class="tvh"><b>📜 BIBLE TRIVIA</b><span class="mu" id="trivia_cd">${nextResetText()}</span></div>
-    <div class="tvi">
-      <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?w=1200&q=80" alt="Holy Scripture Scroll">
-      <span class="tvtag">${e(t.tag)}</span>
+    <div class="tvi" style="background:linear-gradient(135deg,#1d1c6e,#0b0a3a)">
+      <div class="tvload" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#b9bde6;font-size:.9rem;padding:1rem">🎨 Creating today's illustration…</div>
+      <img style="position:relative" src="${e(triviaImgUrl(t))}" alt="${e(t.title)} – AI-generated illustration" onerror="triviaImgFallback(this)">
+      <span class="tvtag" style="z-index:2">${e(t.tag)}</span>
     </div>
     <div class="tvc">
       <h3>${e(t.title)}</h3>
       <p>${e(t.text)}</p>
+      <div class="mu" style="margin-top:6px;font-size:.72rem">🤖 Illustration generated by AI</div>
     </div>
   </section>`;
 }
