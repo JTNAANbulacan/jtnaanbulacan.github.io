@@ -1862,7 +1862,7 @@ function openFormModal(c, id=""){
     ${(F.multi || c === 'gallery') ? `
       <div class="mu" style="margin-top:8px">Upload Photos (Select up to ${F.max || 6} photos):</div>
       <input type="file" id="f_photos" accept="image/*" multiple>
-      <div class="mu" style="font-size:.78rem;margin-top:3px">Choose multiple pictures. Facebook posts display them in a square gallery.</div>
+      <div class="mu" style="font-size:.78rem;margin-top:3px">Choose multiple pictures. Photos will be displayed in a compact square gallery.</div>
     ` : ''}
     ${F.photo && c !== 'gallery' ? `
       <div class="mu" style="margin-top:6px">Photo / Image:</div>
