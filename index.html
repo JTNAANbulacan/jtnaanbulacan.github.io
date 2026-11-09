@@ -2170,8 +2170,6 @@ function dash(){
       <div class="mu" style="font-size:0.85rem">Latest church updates · newest posts first</div>
     </div>
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-      <div class="dtabs" style="margin:0">
-      </div>
       ${can("dashboard")?`
         <button class="btn sm" onclick="openFormModal('fbposts')">+ Post</button>
       `:''}
@@ -2226,10 +2224,7 @@ function dash(){
             <button class="btn sm" style="background:#ffffff15" onclick="openShareModal('Facebook Post', '${e(p.caption).replace(/'/g, "'")}', '${e(p.url || 'https://www.facebook.com/profile.php?id=61556921121315')}')">
               <span>↗</span> Share
             </button>
-            ${can("dashboard")?`
-              <button class="btn sm" onclick="openFormModal('fbposts', '${p.id}')">Edit</button>
-              <button class="btn red sm" onclick="deleteRecord('fbposts', '${p.id}')">Delete</button>
-            `:''}
+
           </div>
         </div>
       `).join('') || '<div class="card mu" style="grid-column:1/-1">No Facebook posts yet. Admins with Dashboard access can use + Post.</div>'}
