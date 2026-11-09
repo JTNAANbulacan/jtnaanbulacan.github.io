@@ -478,6 +478,8 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 /* Mobile: keep the site header and section menu button visible while scrolling.
    Fixed positioning avoids sticky-header issues in iOS Safari and Android browsers. */
 @media(max-width:759.98px){
+  /* Keep horizontal clipping on the root without creating an iOS Safari scroll container. */
+  html{overflow-x:clip !important;overflow-y:visible !important}
   /* iOS Safari can treat body overflow clipping as a fixed-position containing block.
      Keep horizontal clipping on the document, not the body, so the header stays viewport-fixed. */
   body{overflow-x:visible !important;padding-top:calc(var(--hh) + env(safe-area-inset-top,0px)) !important}
