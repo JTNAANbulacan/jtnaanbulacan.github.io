@@ -4457,7 +4457,12 @@ function prayersv(){
     </select>
     <div id="pr-feedback" class="mu" style="margin-bottom:6px"></div>
     <button class="btn gold" onclick="submitPrayerRequest('auto')">🙏 Send Prayer Request (Auto-send to Church Email)</button>
-    <button class="btn" onclick="submitPrayerRequest('fb')">Send to Facebook Page (Messenger)</button>
+    <button class="btn" onclick="submitPrayerRequest('fb')">Open Facebook Page (Messenger)</button>
+    <button class="btn" onclick="openPrayerGmailDraft()">Open Gmail Draft</button>
+    <button class="btn" onclick="copyPrayerRequest()">📋 Copy Prayer Request</button>
+    <div class="mu" style="margin-top:8px;padding:10px;border:1px solid var(--bd);border-radius:8px">
+      <b style="color:var(--pr)">Note:</b> Messenger cannot be pre-filled automatically. Use “Copy Prayer Request,” then paste the message in Messenger. “Open Gmail Draft” opens Gmail with your message already filled in; you only need to review and press Send.
+    </div>
   </div>
   
   <div class="grid" style="margin-top:14px">
@@ -4475,6 +4480,45 @@ function prayersv(){
       </div>
     `).join('')}
   </div>`;
+}
+
+function getPrayerRequestMessage(){
+  const cat = $("#pc").value;
+  const name = $("#pn").value.trim() || "Anonymous";
+  const contact = $("#pcn").value.trim();
+  const forWhom = $("#pfor").value.trim();
+  const req = $("#pt").value.trim();
+  const priv = $("#pv").value;
+  if(!req){ alert("Please describe your prayer request."); return null; }
+  return {cat,name,contact,forWhom,req,priv,
+    message:`Prayer Request: ${cat}\nName: ${name}\nContact: ${contact}\nPrayer For: ${forWhom}\nDetails: ${req}\nPrivacy: ${priv}`};
+}
+
+async function copyPrayerRequest(){
+  const data = getPrayerRequestMessage();
+  if(!data) return;
+  try{
+    await navigator.clipboard.writeText(data.message);
+    showSuccessNotification("Prayer request copied. Open Messenger or another app and paste it into the message box.");
+    const fb=$("#pr-feedback");
+    if(fb) fb.textContent="✓ Prayer request copied. Paste it into your Messenger message.";
+  }catch(err){
+    const box=document.createElement("textarea");
+    box.value=data.message;box.style.position="fixed";box.style.opacity="0";
+    document.body.appendChild(box);box.select();
+    const ok=document.execCommand("copy");box.remove();
+    if(ok) showSuccessNotification("Prayer request copied. Paste it into your message.");
+    else alert("Copy was blocked by your browser. Please select and copy the message manually.");
+  }
+}
+
+async function openPrayerGmailDraft(){
+  const data=getPrayerRequestMessage();
+  if(!data) return;
+  const subject=`Prayer Request [${data.cat}] - ${data.name}`;
+  const url="https://mail.google.com/mail/?view=cm&fs=1&to="+encodeURIComponent("jtnaanbulacan030126@gmail.com")+
+    "&su="+encodeURIComponent(subject)+"&body="+encodeURIComponent(data.message);
+  window.open(url,"_blank","noopener");
 }
 
 async function submitPrayerRequest(target){
@@ -4508,9 +4552,7 @@ async function submitPrayerRequest(target){
       submitPrayerRequest('fb');
     }
   } else {
-    const msg = `Prayer Request: ${cat}\nName: ${name}\nContact: ${contact}\nPrayer For: ${forWhom}\nDetails: ${req}\nPrivacy: ${priv}`;
-    if(navigator.clipboard) navigator.clipboard.writeText(msg);
-    showSuccessNotification("Prayer details copied! Opening Facebook Messenger...");
+    await copyPrayerRequest();
     window.open("https://m.me/61556921121315", "_blank");
   }
 }
