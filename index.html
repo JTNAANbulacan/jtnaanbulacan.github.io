@@ -1818,17 +1818,17 @@ const FUND_CATEGORIES = {
   ]
 };
 function fundTypeOptions(selected){
-  return ["Income","Expense"].map(type=>\`<label style="display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;flex:1;min-width:120px">
-    <input type="checkbox" name="fund_type_choice" value="\${type}" \${selected===type?'checked':''} onchange="selectFundType(this)" style="width:17px;height:17px">
-    <b>\${type}</b>
-  </label>\`).join('');
+  return ["Income","Expense"].map(type=>`<label style="display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;flex:1;min-width:120px">
+    <input type="checkbox" name="fund_type_choice" value="${type}" ${selected===type?'checked':''} onchange="selectFundType(this)" style="width:17px;height:17px">
+    <b>${type}</b>
+  </label>`).join('');
 }
 function fundCategoryOptions(type,selected){
   const choices=FUND_CATEGORIES[type]||[];
-  return choices.map((category,i)=>\`<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:7px;cursor:pointer">
-    <input type="checkbox" name="fund_category_choice" value="\${e(category)}" \${selected===category?'checked':''} onchange="selectFundCategory(this)" style="width:16px;height:16px">
-    <span>\${e(category)}</span>
-  </label>\`).join('');
+  return choices.map((category,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:7px;cursor:pointer">
+    <input type="checkbox" name="fund_category_choice" value="${e(category)}" ${selected===category?'checked':''} onchange="selectFundCategory(this)" style="width:16px;height:16px">
+    <span>${e(category)}</span>
+  </label>`).join('');
 }
 function selectFundType(input){
   if(!input.checked){input.checked=true;return;}
@@ -4020,31 +4020,31 @@ function ministriesv(){
 
 function galleryv(){
   const L = D.gallery || [];
-  return \`<h2>GALLERY (\${L.length})</h2>
-  \${can("gallery")?\`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (up to 6 Photos)</button></p>\`:''}
+  return `<h2>GALLERY (${L.length})</h2>
+  ${can("gallery")?`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (up to 6 Photos)</button></p>`:''}
   <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr));gap:12px">
-    \${L.map(a=>{
+    ${L.map(a=>{
       const P = a.photos || [];
       const shown=P.slice(0,4);
-      return \`
+      return `
         <div class="card" style="padding:0;overflow:hidden">
           <div style="padding:10px 12px">
-            <b style="font-size:.98rem">\${e(a.cap)}</b>
-            <div class="mu">\${P.length} photo\${P.length===1?'':'s'} · tap to view</div>
+            <b style="font-size:.98rem">${e(a.cap)}</b>
+            <div class="mu">${P.length} photo${P.length===1?'':'s'} · tap to view</div>
           </div>
-          <div onclick="openAlbumViewer('\${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:0 8px 8px">
-            \${shown.map((u,i)=>\`<div style="position:relative;aspect-ratio:1/1;min-width:0;overflow:hidden;border-radius:5px"><img src="\${e(u)}" alt="Album photo \${i+1}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">\${i===3 && P.length>4?\`<div style="position:absolute;inset:0;background:#0009;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:700">+\${P.length-4}</div>\`:''}</div>\`).join('')}
+          <div onclick="openAlbumViewer('${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:0 8px 8px">
+            ${shown.map((u,i)=>`<div style="position:relative;aspect-ratio:1/1;min-width:0;overflow:hidden;border-radius:5px"><img src="${e(u)}" alt="Album photo ${i+1}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">${i===3 && P.length>4?`<div style="position:absolute;inset:0;background:#0009;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:700">+${P.length-4}</div>`:''}</div>`).join('')}
           </div>
-          \${can("gallery")?\`
+          ${can("gallery")?`
             <div style="padding:0 10px 10px">
-              <button class="btn sm" onclick="openFormModal('gallery', '\${a.id}')">Edit / Add Photos</button>
-              <button class="btn red sm" onclick="deleteRecord('gallery', '\${a.id}')">Delete</button>
+              <button class="btn sm" onclick="openFormModal('gallery', '${a.id}')">Edit / Add Photos</button>
+              <button class="btn red sm" onclick="deleteRecord('gallery', '${a.id}')">Delete</button>
             </div>
-          \`:''}
+          `:''}
         </div>
-      \`;
+      `;
     }).join('')||'<p class="mu">Nothing yet.</p>'}
-  </div>\`;
+  </div>`;
 }
 
 function openAlbumViewer(id){
