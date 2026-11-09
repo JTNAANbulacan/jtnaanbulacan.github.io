@@ -4769,9 +4769,7 @@ function openAdminModal(id){
       <div class="mu" style="margin-top:8px">Username:</div>
       <input id="adm_username" maxlength="40" autocomplete="off" value="${e(a.username || "")}" placeholder="e.g. Admin05">
       
-      <div class="mu" style="margin-top:8px">Password ${nw ? "(required)" : "(leave blank to keep current password)"}:</div>
-      <input id="adm_password" type="password" autocomplete="new-password">
-      <label class="chk"><input type="checkbox" onchange="$('#adm_password').type = this.checked ? 'text' : 'password'"> Show password</label>
+      <p class="mu" style="margin-top:8px">Admins set their own password through a one-time activation link generated after saving.</p>
 
       ${a.owner ? `
         <p class="mu" style="margin-top:10px">Admin Mart is the Super Admin and always has full access to every section.</p>
@@ -4801,73 +4799,34 @@ function openAdminModal(id){
 }
 
 async function saveAdminRecord(id){
-  if(!isAdminMart()) return alert("Only Admin Mart can manage admin accounts.");
-  const nw = id === "_new";
-  const name = $("#adm_name").value.trim();
-  const username = $("#adm_username").value.trim();
-  const password = $("#adm_password").value;
-  const errEl = $("#adm_error");
-  const btn = $("#btn-save-admin");
-
-  if(!name || !username){
-    errEl.textContent = "Please fill in both name and username.";
-    return;
-  }
-  if(nw && !password){
-    errEl.textContent = "Please enter a password for the new admin.";
-    return;
-  }
-
-  const existing = (AL || []).find(x => x.id === id);
-  const isOwner = existing ? !!existing.owner : false;
-  const perms = isOwner ? Object.keys(PL) : Array.from(document.querySelectorAll("[data-adp]:checked")).map(i => i.dataset.adp);
-
-  const adminObj = {
-    id: nw ? ("adm_" + Date.now().toString(36)) : id,
-    name: name,
-    username: username,
-    password: password ? password : (existing ? existing.password : ""),
-    owner: isOwner,
-    perms: perms
-  };
-
-  btn.disabled = true;
-  btn.textContent = "Saving to Cloud...";
-
-  try {
-    AL = AL.filter(x => x.id !== adminObj.id);
-    AL.push(adminObj);
-
-    await syncRecordToCloud("admins", adminObj.id, adminObj);
-
-    if(me && me.id === adminObj.id){
-      me = adminObj;
-      localStorage.setItem("jt_active_session", JSON.stringify(me));
-    }
-
-    closeModal();
-    render();
-    showSuccessNotification("Admin account saved and synced to cloud!");
-  } catch(err) {
-    errEl.textContent = err.message;
-    btn.disabled = false;
-    btn.textContent = "Save Admin";
+  if(!isAdminMart())return alert("Only Admin Mart can manage admin accounts.");
+  const nw=id==="_new",name=$("#adm_name").value.trim(),username=$("#adm_username").value.trim().toLowerCase(),errEl=$("#adm_error"),btn=$("#btn-save-admin");
+  if(!name||!username){errEl.textContent="Please fill in both name and username.";return;}
+  const existing=(AL||[]).find(x=>x.id===id),isOwner=existing?!!existing.owner:false;
+  const perms=isOwner?Object.keys(PL):Array.from(document.querySelectorAll("[data-adp]:checked")).map(i=>i.dataset.adp);
+  btn.disabled=true;btn.textContent="Saving securely…";
+  const action=nw?"create_admin":"update_admin";
+  const payload=nw?{action,name,username,permissions:perms}:{action,id,name,permissions:perms};
+  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:payload});
+  if(error||!data?.ok){errEl.textContent=data?.error||error?.message||"Could not save administrator.";btn.disabled=false;btn.textContent="Save Admin";return;}
+  if(nw){
+    const a=data.admin;AL.push(a);
+    const link=location.origin+location.pathname+"?setup="+encodeURIComponent(data.setup_token);
+    $("#mb").innerHTML='<h3>Administrator created</h3><p>Send this private one-time activation link to '+e(name)+'. It expires in 7 days and can only be used once.</p><input readonly id="admin_setup_link" value="'+e(link)+'" style="width:100%"><p><button class="btn gold" onclick="navigator.clipboard.writeText(document.getElementById(\'admin_setup_link\').value);showSuccessNotification(\'Activation link copied\')">Copy activation link</button> <button onclick="closeModal()">Close</button></p>';
+    $("#modal").style.display="flex";
+  }else{
+    const idx=AL.findIndex(x=>x.id===id);if(idx>=0)AL[idx]={...AL[idx],name,perms};
+    closeModal();render();showSuccessNotification("Administrator permissions updated.");
   }
 }
 
 async function deleteAdminRecord(id){
-  if(!isAdminMart()) return alert("Only Admin Mart can manage admin accounts.");
-  const target = AL.find(a => a.id === id);
-  if(!target) return;
-  if(target.owner){
-    return alert("Cannot remove the Super Admin account (Admin Mart).");
-  }
-  if(confirm(`Remove admin account for "${target.name}" (${target.username})?`)){
-    AL = AL.filter(a => a.id !== id);
-    await deleteRecordFromCloud("admins", id);
-    render();
-    showSuccessNotification("Admin removed live from database!");
-  }
+  if(!isAdminMart())return alert("Only Admin Mart can remove administrator accounts.");
+  const target=AL.find(a=>a.id===id);if(!target||target.owner)return alert("Cannot remove the Super Admin account.");
+  if(!confirm("Remove administrator "+target.name+" and revoke their access?"))return;
+  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"delete_admin",id}});
+  if(error||!data?.ok){showErrorNotification(data?.error||error?.message||"Could not remove administrator.");return;}
+  AL=AL.filter(a=>a.id!==id);render();showSuccessNotification("Administrator access revoked.");
 }
 
 async function deleteRecord(c, id){
@@ -4880,18 +4839,18 @@ async function deleteRecord(c, id){
   }
 }
 
-async async function handleLogout(){
+async function handleLogout(){
   if(supabaseClient) await supabaseClient.auth.signOut();
   me=null;admin=false;render();
   showSuccessNotification("Logged out. Viewing in Public Visitor mode.");
 }
-const ADMIN_EMAILS={"admin@mart":"adm1@admins.jtnaan.invalid","admin02":"adm2@admins.jtnaan.invalid","admin03":"adm3@admins.jtnaan.invalid","admin04":"adm4@admins.jtnaan.invalid"};
+const adminEmailFor = id => String(id)+"@admins.jtnaan.invalid";
 async function restoreAdminSession(){
   if(!supabaseClient)return;
   const {data:{session}}=await supabaseClient.auth.getSession();if(!session)return;
   const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"list_registrations"}});
   if(error||!data?.admin){await supabaseClient.auth.signOut();return;}
-  me={id:data.admin.admin_id,name:data.admin.display_name,username:data.admin.username,owner:data.admin.is_owner,perms:data.admin.permissions||[]};admin=true;render();
+  me={id:data.admin.admin_id,name:data.admin.display_name,username:data.admin.username,owner:data.admin.is_owner,perms:data.admin.permissions||[]};admin=true;if(data.admins?.length)AL=data.admins;render();
 }
 function adminSetupForm(token){
   $("#mb").innerHTML=`<h3>Activate Admin Account</h3><p class="mu">Create a new password with at least 12 characters. This one-time link can only be used once.</p><form onsubmit="handleAdminActivation(event)"><input type="hidden" id="setup_token" value="${e(token)}"><label class="mu">New password</label><input id="setup_password" type="password" minlength="12" maxlength="128" required><label class="mu">Confirm password</label><input id="setup_password2" type="password" minlength="12" maxlength="128" required><div id="setup_error" style="color:#ff8a80;min-height:22px"></div><p><button class="btn gold" type="submit">Activate Account</button></p></form>`;$ ("#modal").style.display="flex";
@@ -4942,10 +4901,10 @@ function loginForm(msg){
   setTimeout(() => { const el = $("#lu"); if(el) el.focus(); }, 60);
 }
 
-async function handleLoginSubmit(ev){
-  ev.preventDefault();const u=$("#lu").value.trim().toLowerCase(),p=$("#lp").value,email=ADMIN_EMAILS[u];
-  if(!email){$("#le").textContent="Invalid username or password.";return;}
-  const {error}=await supabaseClient.auth.signInWithPassword({email,password:p});
+async async function handleLoginSubmit(ev){
+  ev.preventDefault();const u=$("#lu").value.trim().toLowerCase(),p=$("#lp").value,found=(AL||[]).find(a=>String(a.username).toLowerCase()===u);
+  if(!found){$("#le").textContent="Invalid username or password.";return;}
+  const {error}=await supabaseClient.auth.signInWithPassword({email:adminEmailFor(found.id),password:p});
   if(error){$("#le").textContent="Invalid username or password. First-time admins must activate their account using the setup link.";return;}
   await restoreAdminSession();if(!me){$("#le").textContent="Administrator account is not activated.";return;}
   closeModal();showSuccessNotification(`Welcome back, ${me.name}!`);
@@ -4988,6 +4947,7 @@ async function initApp(){
   initSupabaseClient();
   await fetchAllFromCloud(true);
   await restoreAdminSession();
+  if(me) await fetchAllFromCloud(true);
   await loadDailyBibleContent(true);
   handleHashRoute();
   const setupToken=new URLSearchParams(location.search).get("setup");
