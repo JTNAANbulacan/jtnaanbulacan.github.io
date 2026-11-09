@@ -493,7 +493,11 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
     min-height:64px !important;
     align-items:center !important;
     transform:none !important;
+    -webkit-transform:translateZ(0);
+    will-change:transform;
   }
+  /* Lower the menu, logo, church name and header action icons closer to the bottom divider. */
+  header > *{position:relative;top:5px}
   /* Give the three-line section control a clearer, easier-to-tap area on phones. */
   #mnb{
     width:2.85rem !important;
@@ -503,9 +507,6 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
     margin-bottom:2px !important;
   }
   #mnb i{width:1.35rem !important;height:2px !important}
-    -webkit-transform:translateZ(0);
-    will-change:transform;
-  }
   nav#nav{
     position:fixed !important;
     top:calc(var(--hh) + env(safe-area-inset-top,0px)) !important;
