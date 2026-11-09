@@ -125,7 +125,7 @@ Select a passage reference that is a real, short, self-contained passage. Return
           {
             role: "user",
             content: "Passage reference: " + passage.reference + "\nPassage text (World English Bible):\n" + passage.text +
-              "\n\nCreate the trivia and question based only on this passage. Trivia should be a concise factual discovery (title, short paragraph, category tag, and image caption). The quiz must have four distinct plausible options, exactly one correct answer, and a clear explanation. Avoid questions that depend on outside Bible knowledge."
+              "\n\nCreate the trivia, question, and image prompt based only on this passage. Trivia should be a concise factual discovery (title, short paragraph, category tag, and image caption). The image prompt must depict only details supported by the passage and avoid invented historical specifics. The quiz must have four distinct plausible options, exactly one correct answer, and a clear explanation. Avoid questions that depend on outside Bible knowledge."
           }
         ],
         text: {
