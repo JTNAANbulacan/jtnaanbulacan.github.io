@@ -4165,8 +4165,8 @@ function reportsv(){
   let html="<h2>REPORTS</h2>";
   if(canSeeFunds){
     html+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>Church funds report</b><div class="dtabs" style="margin:0">';
-    html+='<button class="'+(reportPeriod==="monthly"?"gold":"btn")+' sm" onclick="setReportPeriod('monthly')">Monthly</button>';
-    html+='<button class="'+(reportPeriod==="annual"?"gold":"btn")+' sm" onclick="setReportPeriod('annual')">Annual</button></div></div>';
+    html+='<button class="'+(reportPeriod==="monthly"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;monthly&quot;)">Monthly</button>';
+    html+='<button class="'+(reportPeriod==="annual"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;annual&quot;)">Annual</button></div></div>';
     html+='<div class="grid" style="margin-top:12px"><div class="card"><div class="stat">₱'+totalIncome.toLocaleString("en-PH")+'</div>Recorded income</div><div class="card"><div class="stat">₱'+totalExpense.toLocaleString("en-PH")+'</div>Recorded expenses</div><div class="card"><div class="stat">₱'+(totalIncome-totalExpense).toLocaleString("en-PH")+'</div>Recorded balance</div></div>';
     html+='<div style="display:flex;align-items:flex-end;gap:10px;min-height:190px;padding:18px 8px 8px;margin-top:14px;border-bottom:1px solid var(--bd);overflow-x:auto">';
     html+=chartRows.map(row=>'<div style="flex:1;min-width:42px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:170px"><div style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:140px;width:100%"><div title="Income ₱'+row.income.toLocaleString("en-PH")+'" style="width:42%;max-width:24px;height:'+(row.income?Math.max(3,row.income/maxAmount*130):0)+'px;background:var(--pr);border-radius:4px 4px 0 0"></div><div title="Expense ₱'+row.expense.toLocaleString("en-PH")+'" style="width:42%;max-width:24px;height:'+(row.expense?Math.max(3,row.expense/maxAmount*130):0)+'px;background:#6f8fff;border-radius:4px 4px 0 0"></div></div><span class="mu" style="font-size:.72rem;white-space:nowrap">'+e(row.label)+'</span></div>').join("");
@@ -4371,14 +4371,14 @@ function adminsv(){
   const visibleAdmins=canManageAdmins?(AL||[]):(AL||[]).filter(a=>a.id===me.id);
   let html='<h2>ADMINS MANAGEMENT <span>('+ (canManageAdmins?AL.length:visibleAdmins.length) +')</span></h2>';
   html+='<p class="mu">'+(canManageAdmins?'Admin Mart can add admins and assign one or more sections. Each admin can edit only their assigned sections.':'Your admin account and assigned sections are shown below. For additional access, contact Admin Mart.')+'</p>';
-  if(canManageAdmins) html+='<p><button class="btn gold" onclick="openAdminModal('_new')">+ Add Admin</button></p>';
+  if(canManageAdmins) html+='<p><button class="btn gold" onclick="openAdminModal(&quot;_new&quot;)">+ Add Admin</button></p>';
   html+='<div class="grid">'+visibleAdmins.map(a=>{
     let card='<div class="card"><b style="font-size:1.1rem;color:var(--pr)">'+e(a.name)+'</b>';
     if(canManageAdmins) card+='<div class="mu" style="margin:4px 0">Username: <b>'+e(a.username)+'</b></div>';
     card+='<div style="margin:8px 0">';
     card+=a.owner?'<span class="adch on">Full access to every section (Super Admin)</span>':((a.perms&&a.perms.length)?a.perms.map(p=>'<span class="adch">'+e(PL[p]||p)+'</span>').join(''):'<span class="mu" style="font-size:.8rem">No edit permissions assigned.</span>');
     card+='</div>';
-    if(canManageAdmins){card+='<button class="btn sm" onclick="openAdminModal(''+e(a.id)+'')">Edit</button>';if(!a.owner)card+=' <button class="btn red sm" onclick="deleteAdminRecord(''+e(a.id)+'')">Remove</button>';}
+    if(canManageAdmins){card+='<button class="btn sm" onclick="openAdminModal(&quot;'+e(a.id)+'&quot;)">Edit</button>';if(!a.owner)card+=' <button class="btn red sm" onclick="deleteAdminRecord(&quot;'+e(a.id)+'&quot;)">Remove</button>';}
     return card+'</div>';
   }).join('')+'</div>';
   return html;
