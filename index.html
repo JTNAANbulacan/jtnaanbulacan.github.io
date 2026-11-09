@@ -835,7 +835,7 @@ const CF={
   gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:6},
   funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["type","Type","s:Income,Expense"],["category","Category"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
   social:{t:"Social Media",f:[["platform","Platform","s:Facebook,YouTube,TikTok,Instagram"],["date","Date","date"],["followers","Followers","number"],["reach","Reach / views","number"],["engagement","Engagement","number"]],s:[],k:"platform"},
-  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"],["date","Date posted","date"]],s:[],k:"url",photo:1},
+  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"],["date","Date posted","date"]],s:[],k:"url",multi:1,max:6},
   devotion:{t:"Daily Devotion",f:[["date","Date","date"],["caption","Caption / message","t"]],s:[],k:"caption",photo:1},
   testimony:{t:"Testimony",f:[["name","Name (optional)"],["date","Date","date"],["caption","Caption / testimony","t"]],s:[],k:"caption",photo:1},
   donate:{t:"Donation QR",f:[["method","Payment method","s:GCash,Maya,Bank transfer"],["name","Account name"],["number","Account / mobile number"],["bank","Bank name"],["note","Note","t"]],s:[],k:"method",photo:1}
@@ -1816,9 +1816,9 @@ function openFormModal(c, id=""){
       `}
     `).join('')}
     ${(F.multi || c === 'gallery') ? `
-      <div class="mu" style="margin-top:8px">Upload Photos (Select up to 6 photos):</div>
+      <div class="mu" style="margin-top:8px">Upload Photos (Select up to ${F.max || 6} photos):</div>
       <input type="file" id="f_photos" accept="image/*" multiple>
-      <div class="mu" style="font-size:.78rem;margin-top:3px">Hold Ctrl or Shift to choose multiple pictures.</div>
+      <div class="mu" style="font-size:.78rem;margin-top:3px">Choose multiple pictures. Facebook posts display them in a square gallery.</div>
     ` : ''}
     ${F.photo && c !== 'gallery' ? `
       <div class="mu" style="margin-top:6px">Photo / Image:</div>
@@ -1846,19 +1846,21 @@ async function saveFormData(c, id){
   });
   
   try {
-    if(c === 'gallery'){
+    if(c === 'gallery' || c === 'fbposts'){
       const phInput = $("#f_photos");
       if(phInput && phInput.files.length > 0){
         const upList = [];
-        const files = Array.from(phInput.files).slice(0, 6);
+        const files = Array.from(phInput.files).slice(0, F.max || 6);
         for(const f of files){
-          const pUrl = await uploadMediaToSupabase(f, 'gallery', 1200, 0.78);
+          const pUrl = await uploadMediaToSupabase(f, c === 'fbposts' ? 'facebook-posts' : 'gallery', 1200, 0.78);
           upList.push(pUrl);
         }
         item.photos = upList;
+        if(c === 'fbposts') delete item.photo;
       } else if(id) {
         const old = (D[c]||[]).find(y => y.id === id) || {};
-        item.photos = old.photos || [];
+        if(old.photos && old.photos.length) item.photos = old.photos;
+        else if(old.photo) item.photos = [old.photo];
       }
     }
 
@@ -2211,7 +2213,7 @@ function dash(){
             </div>
           </div>
 
-          ${p.photo ? `<div style="border-radius:8px;overflow:hidden;margin-bottom:10px;max-height:220px;background:#000"><img src="${e(p.photo)}" style="width:100%;height:180px;object-fit:cover;display:block" alt="Post preview"></div>` : ''}
+          \${((Array.isArray(p.photos) && p.photos.length) ? p.photos : (p.photo ? [p.photo] : [])).length ? (() => { const photos=(Array.isArray(p.photos) && p.photos.length) ? p.photos : [p.photo]; const shown=photos.slice(0,4); const count=shown.length; const cols=count===1?1:2; return \`<div style="display:grid;grid-template-columns:repeat(\${cols},minmax(0,1fr));gap:3px;margin:0 -14px 12px;overflow:hidden;background:#18191a">\${shown.map((src,i)=>\`<div style="position:relative;aspect-ratio:1/1;min-width:0;overflow:hidden"><img src="\${e(src)}" alt="Post photo \${i+1}" loading="lazy" style="width:100%;height:100%;display:block;object-fit:cover">\${i===3 && photos.length>4 ? \`<div style="position:absolute;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.8rem;font-weight:700">+\${photos.length-4}</div>\` : ''}</div>\`).join('')}</div>\`; })() : ''}
 
           <div style="font-size:.9rem;line-height:1.5;margin-bottom:12px;flex:1;white-space:pre-wrap;word-break:break-word">
             ${e(p.caption)}
