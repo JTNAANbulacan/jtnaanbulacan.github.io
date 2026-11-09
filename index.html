@@ -1295,39 +1295,27 @@ async function fetchAllFromCloud(silent = false){
     applyBackground();
     renderLogo();
 
-    // Preserve an unfinished prayer-request draft when cloud refresh/realtime
-    // updates rerender the page. The periodic sync must never erase unsent input.
+    // Do not rerender the prayer page while a visitor is actively typing or
+    // choosing a field. When focus has moved elsewhere, preserve the unsent
+    // values across the refresh-driven rerender.
+    const prayerIds = ["pc","pn","pcn","pfor","pt","pv"];
+    const prayerFormActive = view === "prayers" && prayerIds.includes(document.activeElement && document.activeElement.id);
     const prayerDraft = view === "prayers" ? (() => {
-      const ids = ["pc","pn","pcn","pfor","pt","pv"];
-      const active = document.activeElement;
-      const activeId = active && ids.includes(active.id) ? active.id : null;
-      const selection = activeId && typeof active.selectionStart === "number"
-        ? { start: active.selectionStart, end: active.selectionEnd, direction: active.selectionDirection }
-        : null;
       const values = {};
-      ids.forEach(id => {
+      prayerIds.forEach(id => {
         const el = document.getElementById(id);
         if(el) values[id] = el.value;
       });
-      return { values, activeId, selection };
+      return values;
     })() : null;
 
-    render();
+    if(!prayerFormActive) render();
 
-    if(prayerDraft && view === "prayers"){
-      Object.entries(prayerDraft.values).forEach(([id,value]) => {
+    if(prayerDraft && !prayerFormActive && view === "prayers"){
+      Object.entries(prayerDraft).forEach(([id,value]) => {
         const el = document.getElementById(id);
         if(el) el.value = value;
       });
-      if(prayerDraft.activeId){
-        const activeEl = document.getElementById(prayerDraft.activeId);
-        if(activeEl){
-          activeEl.focus({ preventScroll:true });
-          if(prayerDraft.selection && typeof activeEl.setSelectionRange === "function"){
-            try { activeEl.setSelectionRange(prayerDraft.selection.start, prayerDraft.selection.end, prayerDraft.selection.direction); } catch(e){}
-          }
-        }
-      }
     }
     if(typeof paintDlCounts === "function") paintDlCounts();
   } catch(e) {
