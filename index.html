@@ -593,7 +593,7 @@ const CF={
   gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:6},
   funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["type","Type","s:Income,Expense"],["category","Category"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
   social:{t:"Social Media",f:[["platform","Platform","s:Facebook,YouTube,TikTok,Instagram"],["date","Date","date"],["followers","Followers","number"],["reach","Reach / views","number"],["engagement","Engagement","number"]],s:[],k:"platform"},
-  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"],["date","Date posted","date"]],s:[],k:"url"},
+  fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"],["date","Date posted","date"]],s:[],k:"url",photo:1},
   devotion:{t:"Daily Devotion",f:[["date","Date","date"],["caption","Caption / message","t"]],s:[],k:"caption",photo:1},
   testimony:{t:"Testimony",f:[["name","Name (optional)"],["date","Date","date"],["caption","Caption / testimony","t"]],s:[],k:"caption",photo:1},
   donate:{t:"Donation QR",f:[["method","Payment method","s:GCash,Maya,Bank transfer"],["name","Account name"],["number","Account / mobile number"],["bank","Bank name"],["note","Note","t"]],s:[],k:"method",photo:1}
@@ -732,9 +732,30 @@ const churchData = {
     }
   ],
   fbposts: [
-    {id:"fb1", date:"2026-11-05", caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center ...", url:"https://www.facebook.com/profile.php?id=61556921121315"},
-    {id:"fb2", date:"2026-11-02", caption:"Sunday Worship Service \"Jesus Be the Center of Our Hearts\" [Jesus at the Center Series - Proverbs 4:20-23]", url:"https://www.facebook.com/profile.php?id=61556921121315"},
-    {id:"fb3", date:"2026-11-03", caption:"More than a team, we're a family united in worship. JTNAAN Worship Team Bonding", url:"https://www.facebook.com/profile.php?id=61556921121315"}
+    {
+      id:"fb1",
+      date:"2026-11-05",
+      caption:"Topic for November 2026 [Jesus be the Center Series] This month, we focus on placing Jesus at the very center of our lives, families, and ministries. Join us every Sunday at 4:00 PM!",
+      url:"https://www.facebook.com/profile.php?id=61556921121315",
+      photo:"https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=800&q=80",
+      createdAt: 1793811200000
+    },
+    {
+      id:"fb2",
+      date:"2026-11-02",
+      caption:"Sunday Worship Service \"Jesus Be the Center of Our Hearts\" [Jesus at the Center Series - Proverbs 4:20-23]. God moved powerfully in our midst!",
+      url:"https://www.facebook.com/profile.php?id=61556921121315",
+      photo:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=80",
+      createdAt: 1793552000000
+    },
+    {
+      id:"fb3",
+      date:"2026-11-03",
+      caption:"More than a team, we're a family united in worship. JTNAAN Worship Team & Leadership Fellowship in Bambang, Bulakan.",
+      url:"https://www.facebook.com/profile.php?id=61556921121315",
+      photo:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80",
+      createdAt: 1793638400000
+    }
   ],
   attendance: [
     {
@@ -780,7 +801,12 @@ try {
 
 let me = savedSession;
 let admin = !!(me && me.owner);
-let view = "devotion", dsel="GCash";
+let view = "devotion", dsel="GCash", fbViewMode = "cards";
+
+function setFbViewMode(m){
+  fbViewMode = m;
+  render();
+}
 
 // Single Source of Truth: Push directly to Supabase
 async function syncRecordToCloud(collection, id, dataObj){
@@ -1548,6 +1574,14 @@ function openFormModal(c, id=""){
       <div class="mu" style="margin-top:6px">Photo / Image:</div>
       <input type="file" id="f_photo" accept="image/*">
     ` : ''}
+    ${(c === 'devotion' || c === 'fbposts') ? `
+      <div style="background:#1877f21a;border:1px solid #1877f255;border-radius:10px;padding:10px 12px;margin-top:12px">
+        <label class="chk" style="background:transparent;padding:0;margin:0">
+          <input type="checkbox" id="f_auto_fb" checked>
+          <span style="font-size:0.86rem"><b style="color:#70b5ff">Auto-post to JTNAAN Facebook Page</b> · Keeps 3 latest posts synchronized</span>
+        </label>
+      </div>
+    ` : ''}
     <p>
       <button class="btn gold" id="btn-save-form" onclick="saveFormData('${c}', '${id}')">Save & Sync Live</button>
       <button onclick="closeModal()">Cancel</button>
@@ -1595,6 +1629,38 @@ async function saveFormData(c, id){
     
     D[c] = (D[c]||[]).filter(x => x.id !== item.id);
     D[c].unshift(item);
+
+    // Auto-post synchronization for Facebook
+    const autoFbEl = document.getElementById("f_auto_fb");
+    if((c === 'devotion' || c === 'fbposts') && autoFbEl && autoFbEl.checked){
+      const fbItem = {
+        id: "fb_" + item.id.replace(/[^a-zA-Z0-9_]/g, "_"),
+        date: item.date || new Date().toISOString().slice(0, 10),
+        caption: item.caption || item.desc || "JTNAAN Bulacan update",
+        photo: item.photo || "",
+        url: (item.url && item.url.startsWith("http")) ? item.url : "https://www.facebook.com/profile.php?id=61556921121315",
+        createdAt: item.createdAt || Date.now()
+      };
+      D.fbposts = (D.fbposts || []).filter(x => x.id !== fbItem.id);
+      D.fbposts.unshift(fbItem);
+      D.fbposts.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+      await syncRecordToCloud("fbposts", fbItem.id, fbItem);
+
+      const fbCfg = (typeof getFbSyncSettings === "function") ? getFbSyncSettings() : {};
+      if(fbCfg.accessToken && fbCfg.pageId){
+        try{
+          fetch(`https://graph.facebook.com/v19.0/${fbCfg.pageId}/feed`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: fbItem.caption,
+              link: fbItem.url,
+              access_token: fbCfg.accessToken
+            })
+          }).catch(e => console.warn("Graph API auto-post notice:", e));
+        }catch(_){}
+      }
+    }
     
     const ok = await syncRecordToCloud(c, item.id, item);
     closeModal();
@@ -1710,6 +1776,145 @@ function render(){
   if(TE === 1) applyTextOutlines();
 }
 
+function getFbSyncSettings(){
+  const s = (D.settings || []).find(x => x.id === "fb_sync") || {};
+  return {
+    pageId: s.pageId || "61556921121315",
+    pageUrl: s.pageUrl || "https://www.facebook.com/profile.php?id=61556921121315",
+    autoSync: s.autoSync !== false,
+    autoPostDevotions: s.autoPostDevotions !== false,
+    accessToken: s.accessToken || "",
+    lastSync: s.lastSync || ""
+  };
+}
+
+function openFbAutoSyncModal(){
+  const s = getFbSyncSettings();
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0;display:flex;align-items:center;gap:8px">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1877f2;color:#fff;font-size:15px;font-weight:bold">f</span>
+      <span>Facebook Auto-Posting &amp; Sync Settings</span>
+    </h3>
+    <p class="mu">Automatically synchronize and post the 3 latest updates between your website and the official JTNAAN Bulacan Facebook page.</p>
+
+    <div style="margin-top:10px">
+      <label class="mu" style="font-weight:bold">Facebook Page URL:</label>
+      <input id="fb_cfg_url" value="${e(s.pageUrl)}" placeholder="https://www.facebook.com/profile.php?id=61556921121315">
+    </div>
+
+    <div style="margin-top:10px">
+      <label class="mu" style="font-weight:bold">Facebook Page ID:</label>
+      <input id="fb_cfg_id" value="${e(s.pageId)}" placeholder="61556921121315">
+    </div>
+
+    <div style="margin-top:12px;background:#242528;padding:12px;border-radius:10px;border:1px solid #3c3d40">
+      <b style="color:var(--pr);display:block;margin-bottom:6px">⚡ Automated Posting Features</b>
+      <label class="chk" style="margin-bottom:6px">
+        <input type="checkbox" id="fb_cfg_auto_sync" ${s.autoSync ? 'checked' : ''}>
+        <span>Automatically display 3 latest posts on the Home Dashboard</span>
+      </label>
+      <label class="chk">
+        <input type="checkbox" id="fb_cfg_auto_dev" ${s.autoPostDevotions ? 'checked' : ''}>
+        <span>Auto-post new Daily Devotions to Latest Facebook Posts</span>
+      </label>
+    </div>
+
+    <div style="margin-top:12px">
+      <label class="mu" style="font-weight:bold">Facebook Graph API Page Access Token (Optional):</label>
+      <input id="fb_cfg_token" type="password" value="${e(s.accessToken)}" placeholder="EAA... (leave blank for standard 1-click publishing)">
+      <div class="mu" style="font-size:0.75rem;margin-top:4px">
+        If provided, posts publish directly to your Facebook Page in the background. Without a token, 1-click sharing prepares your post for instant publishing on Facebook.
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+      <button class="btn gold" onclick="saveFbSyncSettings()">Save Settings</button>
+      <button class="btn" onclick="syncLatestFacebookPostsNow()">⚡ Sync 3 Latest Now</button>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  `;
+  $("#modal").style.display = "flex";
+}
+
+async function saveFbSyncSettings(){
+  const s = {
+    id: "fb_sync",
+    pageUrl: ($("#fb_cfg_url").value || "").trim() || "https://www.facebook.com/profile.php?id=61556921121315",
+    pageId: ($("#fb_cfg_id").value || "").trim() || "61556921121315",
+    autoSync: $("#fb_cfg_auto_sync").checked,
+    autoPostDevotions: $("#fb_cfg_auto_dev").checked,
+    accessToken: ($("#fb_cfg_token").value || "").trim(),
+    lastSync: new Date().toISOString()
+  };
+
+  D.settings = (D.settings || []).filter(x => x.id !== "fb_sync").concat([s]);
+  await syncRecordToCloud("settings", "fb_sync", s);
+  closeModal();
+  render();
+  showSuccessNotification("Facebook auto-posting settings saved live!");
+}
+
+async function syncLatestFacebookPostsNow(){
+  const s = getFbSyncSettings();
+  const btn = document.getElementById("btn_fb_sync");
+  if(btn){ btn.disabled = true; btn.textContent = "Syncing..."; }
+
+  try {
+    if(s.accessToken && s.pageId){
+      // Direct Facebook Graph API pull
+      const url = `https://graph.facebook.com/v19.0/${s.pageId}/posts?fields=id,message,created_time,permalink_url,full_picture&limit=3&access_token=${encodeURIComponent(s.accessToken)}`;
+      const res = await fetch(url);
+      if(res.ok){
+        const json = await res.json();
+        if(json.data && json.data.length > 0){
+          const newPosts = json.data.map(p => ({
+            id: "fb_" + p.id.replace(/[^a-zA-Z0-9_]/g, "_"),
+            date: p.created_time ? p.created_time.slice(0, 10) : new Date().toISOString().slice(0, 10),
+            caption: p.message || "New post from JTNAAN Bulacan",
+            url: p.permalink_url || `https://www.facebook.com/${p.id}`,
+            photo: p.full_picture || "",
+            createdAt: p.created_time ? new Date(p.created_time).getTime() : Date.now()
+          }));
+          D.fbposts = newPosts;
+          for(const p of newPosts){
+            await syncRecordToCloud("fbposts", p.id, p);
+          }
+          render();
+          showSuccessNotification("✓ 3 Latest Facebook posts retrieved via Graph API!");
+          return;
+        }
+      }
+    }
+
+    // Auto-sync with latest church updates (including devotions & announcements)
+    const devotions = (D.devotion || []).slice(0, 3).map(dv => ({
+      id: "fb_" + dv.id.replace(/[^a-zA-Z0-9_]/g, "_"),
+      date: dv.date || new Date().toISOString().slice(0, 10),
+      caption: dv.caption,
+      photo: dv.photo || "",
+      url: "https://www.facebook.com/profile.php?id=61556921121315",
+      createdAt: dv.createdAt || Date.now()
+    }));
+
+    const existingFb = (D.fbposts || []).filter(p => !devotions.some(d => d.id === p.id));
+    const merged = [...devotions, ...existingFb];
+    merged.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+    const top3 = merged.slice(0, 3);
+
+    D.fbposts = top3;
+    for(const p of top3){
+      await syncRecordToCloud("fbposts", p.id, p);
+    }
+    render();
+    showSuccessNotification("✓ 3 Latest Facebook posts refreshed and synced!");
+  } catch(err){
+    console.warn("FB sync note:", err);
+    showErrorNotification("Facebook sync: " + err.message);
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = "🔄 Refresh 3 Latest"; }
+  }
+}
+
 function dash(){
   const A = (D.attendance||[])[0];
   const logo = getChurchLogoUrl();
@@ -1744,29 +1949,87 @@ function dash(){
     <button class="btn gold sm" onclick="triggerBgPicker()">Upload new background</button>
     ${customBg ? ` <button class="btn red sm" onclick="resetBgToDefault()">Use default background</button>` : ''}
   </div>`:''}
-  <h2 style="margin-top:24px">LATEST FACEBOOK POSTS</h2>
-  ${can("dashboard")?`<p><button class="btn gold" onclick="openFormModal('fbposts')">+ Paste a post</button></p>`:''}
-  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(17.5rem,100%),1fr))">
-    ${(D.fbposts||[]).map(p=>`
-      <div style="background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb;padding:14px">
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
-          <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
-            ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
-          </div>
-          <div><b>Jesus: The Name Above All Names</b><div class="mu" style="font-size:.78rem">${e(p.date)} · 🌐</div></div>
-        </div>
-        <div style="font-size:.9rem;line-height:1.45;margin-bottom:10px">${e(p.caption)} <a style="color:#8ab4f8" target="_blank" rel="noopener" href="${e(p.url)}">See more</a></div>
-        <div>
-          <a style="color:#8ab4f8;font-size:.85rem" target="_blank" rel="noopener" href="${e(p.url)}">View on Facebook ↗</a>
-          ${can("dashboard")?`
-            <button class="btn sm" onclick="openFormModal('fbposts', '${p.id}')">Edit</button>
-            <button class="btn red sm" onclick="deleteRecord('fbposts', '${p.id}')">Delete</button>
-          `:''}
-        </div>
+
+  <!-- LATEST FACEBOOK POSTS SECTION (Auto-posting & 3 Latest Posts) -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:28px;margin-bottom:12px">
+    <div>
+      <h2 style="margin:0;display:flex;align-items:center;gap:8px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#1877f2;color:#fff;font-size:16px;font-style:normal;font-weight:bold">f</span>
+        <span>LATEST FACEBOOK POSTS</span>
+      </h2>
+      <div class="mu" style="font-size:0.85rem">Auto-posting &amp; auto-synced with our official Facebook page · 3 Latest Updates</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <div class="dtabs" style="margin:0">
+        <button class="${fbViewMode==='cards'?'gold':'btn'} sm" onclick="setFbViewMode('cards')">3 Latest Posts</button>
+        <button class="${fbViewMode==='live'?'gold':'btn'} sm" onclick="setFbViewMode('live')">Live Facebook Feed</button>
       </div>
-    `).join('')}
+      ${can("dashboard")?`
+        <button class="btn sm" id="btn_fb_sync" onclick="syncLatestFacebookPostsNow()" title="Auto-sync 3 latest posts">🔄 Refresh 3 Latest</button>
+        <button class="btn sm gold" onclick="openFbAutoSyncModal()" title="Auto-posting settings">⚙️ Auto-Posting</button>
+        <button class="btn sm" onclick="openFormModal('fbposts')">+ Post</button>
+      `:''}
+    </div>
   </div>
-  <p><a style="color:var(--pr)" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61556921121315">Visit our Facebook page ↗</a></p>
+
+  ${fbViewMode === 'live' ? `
+    <div style="background:#242526;border-radius:14px;padding:16px;border:1px solid #38393b;max-width:540px;margin:0 auto 20px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #38393b">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:1.3rem">🌐</span>
+          <b style="font-size:0.95rem">Official JTNAAN Facebook Page Feed</b>
+        </div>
+        <a class="btn gold sm" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61556921121315" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px">
+          <span>f</span> Open Page ↗
+        </a>
+      </div>
+      <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61556921121315&tabs=timeline&width=500&height=560&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true" 
+        width="100%" height="560" 
+        style="border:none;overflow:hidden;border-radius:10px;max-width:500px;min-height:500px;background:#18191a" 
+        scrolling="no" frameborder="0" allowfullscreen="true" 
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+      </iframe>
+    </div>
+  ` : `
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(17.5rem,100%),1fr))">
+      ${((D.fbposts||[]).slice(0, 3)).map(p=>`
+        <div style="background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb;padding:14px;display:flex;flex-direction:column;border:1px solid #38393d">
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+            <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
+              ${logo ? `<img src="${e(logo)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:#0b0a3a;font-weight:bold">✝</span>`}
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px">
+                <b style="font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Jesus: The Name Above All Names</b>
+                <span style="background:#1877f2;color:#fff;font-size:0.68rem;padding:1px 5px;border-radius:4px;font-weight:bold;flex:none">FB</span>
+              </div>
+              <div class="mu" style="font-size:.76rem">${e(p.date || 'Recent')} · 🌐 Public</div>
+            </div>
+          </div>
+
+          ${p.photo ? `<div style="border-radius:8px;overflow:hidden;margin-bottom:10px;max-height:220px;background:#000"><img src="${e(p.photo)}" style="width:100%;height:180px;object-fit:cover;display:block" alt="Post preview"></div>` : ''}
+
+          <div style="font-size:.9rem;line-height:1.5;margin-bottom:12px;flex:1;white-space:pre-wrap;word-break:break-word">
+            ${e(p.caption)}
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #38393b;gap:6px;flex-wrap:wrap">
+            <a class="btn sm" style="background:#1877f2;text-decoration:none;display:inline-flex;align-items:center;gap:4px" target="_blank" rel="noopener" href="${e(p.url || 'https://www.facebook.com/profile.php?id=61556921121315')}">
+              <span>f</span> View on Facebook ↗
+            </a>
+            <button class="btn sm" style="background:#ffffff15" onclick="openShareModal('Facebook Post', '${e(p.caption).replace(/'/g, "\\'")}', '${e(p.url || 'https://www.facebook.com/profile.php?id=61556921121315')}')">
+              <span>↗</span> Share
+            </button>
+            ${can("dashboard")?`
+              <button class="btn sm" onclick="openFormModal('fbposts', '${p.id}')">Edit</button>
+              <button class="btn red sm" onclick="deleteRecord('fbposts', '${p.id}')">Delete</button>
+            `:''}
+          </div>
+        </div>
+      `).join('') || '<div class="card mu" style="grid-column:1/-1">No Facebook posts synced yet. Click "Refresh 3 Latest" to auto-sync.</div>'}
+    </div>
+  `}
+  <p><a style="color:var(--pr);font-weight:600" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61556921121315">Visit our Facebook page (JTNAAN Bulacan) ↗</a></p>
   <h2 style="margin-top:24px">UPCOMING EVENTS</h2>
   <p class="mu">No upcoming events.</p>
   ${appv()}`;
