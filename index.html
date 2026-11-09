@@ -4720,7 +4720,7 @@ function adminsv(){
   const visibleAdmins=canManageAdmins?(AL||[]):(AL||[]).filter(a=>a.id===me.id);
   let html='<h2>ADMINS MANAGEMENT <span>('+ (canManageAdmins?AL.length:visibleAdmins.length) +')</span></h2>';
   html+='<p class="mu">'+(canManageAdmins?'Admin Mart can add admins and assign one or more sections. Each admin can edit only their assigned sections.':'Your admin account and assigned sections are shown below. For additional access, contact Admin Mart.')+'</p>';
-  if(canManageAdmins) html+='<p><button class="btn gold" onclick="openAdminModal(&quot;_new&quot;)">+ Add Admin</button></p>';
+  if(canManageAdmins){const mm=maintenanceSettings();html+='<div class="card" style="margin:12px 0;border:1px solid var(--pr)"><b style="color:var(--pr)">Website Maintenance Mode</b><p class="mu">Only Admin Mart (Super Admin) can activate this. Visitors will see a dedicated maintenance notice while admins retain access.</p><button class="btn '+(mm.enabled?"red":"gold")+'" onclick="toggleMaintenance()">'+(mm.enabled?"Deactivate Maintenance Mode":"Activate Maintenance Mode")+'</button><div class="mu" style="margin-top:6px">Current status: <b>'+(mm.enabled?"ACTIVE":"OFF")+'</b></div></div>';html+='<p><button class="btn gold" onclick="openAdminModal(&quot;_new&quot;)">+ Add Admin</button></p>';}
   html+='<div class="grid">'+visibleAdmins.map(a=>{
     let card='<div class="card"><b style="font-size:1.1rem;color:var(--pr)">'+e(a.name)+'</b>';
     if(canManageAdmins) card+='<div class="mu" style="margin:4px 0">Username: <b>'+e(a.username)+'</b></div>';
