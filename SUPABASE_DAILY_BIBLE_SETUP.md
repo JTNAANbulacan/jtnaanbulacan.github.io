@@ -22,18 +22,18 @@ supabase functions deploy generate-daily-bible --no-verify-jwt
 
 The function uses the existing public `church-media` Storage bucket to save each generated image under `daily-bible/YYYY-MM-DD.jpg`.
 
-## 3. Run the database migration
+## 3. Enable extensions, add Vault values, and run the migration
 
-Run the contents of `supabase/migrations/20261109000000_daily_bible_content.sql` in **Supabase Dashboard → SQL Editor**.
+In **Supabase Dashboard → Database → Extensions**, enable `pg_cron`, `pg_net`, and `supabase_vault`.
 
-Before executing the cron scheduling section, store the same cron secret and project URL in Vault. In SQL Editor, run (replace the placeholder with the exact value saved as `DAILY_BIBLE_CRON_SECRET`):
+Then open **SQL Editor** and run these two statements. Replace the placeholder with the exact value saved as `DAILY_BIBLE_CRON_SECRET` in Edge Function Secrets:
 
 ```sql
 select vault.create_secret('https://sbrnofctchqotcjteqxr.supabase.co', 'daily_bible_project_url');
 select vault.create_secret('REPLACE_WITH_THE_SAME_LONG_RANDOM_CRON_SECRET', 'daily_bible_cron_secret');
 ```
 
-Then run the migration SQL again, or run only its `cron.unschedule` / `cron.schedule` block. Enable `pg_cron`, `pg_net`, and `supabase_vault` under **Database → Extensions** if the SQL reports that an extension is unavailable.
+Now run the complete contents of `supabase/migrations/20261109000000_daily_bible_content.sql` in SQL Editor.
 
 The schedule is `0 0 * * *` UTC, which is exactly **8:00 AM Asia/Manila**. Supabase Cron runs the job; the website itself does not need to stay open.
 
