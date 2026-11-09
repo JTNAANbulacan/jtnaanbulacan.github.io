@@ -2036,6 +2036,7 @@ function openFormModal(c, id=""){
       <div class="mu" style="margin-top:6px">Photo / Image:</div>
       <input type="file" id="f_photo" accept="image/*">
     ` : ''}
+    ${(c === "fbposts" || c === "events") ? `<div class="mu" style="margin-top:10px">Schedule publication (optional):</div><input id="f_publishAt" type="datetime-local" value="${e(x.publishAt||"")}"><div class="mu">Leave blank to publish immediately. Scheduled items remain hidden until their selected time.</div>` : ""}
     <p>
       <button class="btn gold" id="btn-save-form" onclick="saveFormData('${c}', '${id}')">Save & Sync Live</button>
       <button onclick="closeModal()">Cancel</button>
@@ -2052,6 +2053,7 @@ async function saveFormData(c, id){
   const prevItem = id ? ((D[c]||[]).find(y => y.id === id) || {}) : {};
   const item = { id: id || "id_" + Date.now().toString(36) };
   item.createdAt = prevItem.createdAt || Date.now();
+  if(c === "fbposts" || c === "events"){const scheduled=$("#f_publishAt");item.publishAt=scheduled?scheduled.value:(prevItem.publishAt||"");}
   F.f.forEach(([k]) => {
     const el = $("#f_" + k);
     if(el) item[k] = el.value.trim();
@@ -2096,6 +2098,7 @@ async function saveFormData(c, id){
     D[c].unshift(item);
 
     const ok = await syncRecordToCloud(c, item.id, item);
+    if(ok && (c==="fbposts" || c==="events")) await createAdminNotification(c==="fbposts"?"Facebook post saved":"Event announcement saved",item.title||item.caption||"A new item was added.",c==="fbposts"?"dashboard":"events");
     closeModal();
     render();
     if(ok) showSuccessNotification("Changes saved live to Supabase and synced across all devices!");
@@ -2431,7 +2434,7 @@ function dash(){
     </div>
   ` : `
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(17.5rem,100%),1fr))">
-      ${((D.fbposts||[]).slice().sort((a,b) => (Number(b.createdAt)||Date.parse(b.date||"")||0) - (Number(a.createdAt)||Date.parse(a.date||"")||0)).slice(0, 3)).map(p=>`
+      ${((D.fbposts||[]).filter(p=>!p.publishAt||new Date(p.publishAt).getTime()<=Date.now()).slice().sort((a,b) => (Number(b.createdAt)||Date.parse(b.date||"")||0) - (Number(a.createdAt)||Date.parse(a.date||"")||0)).slice(0, 3)).map(p=>`
         <div style="background:#242526;border-radius:12px;overflow:hidden;color:#e4e6eb;padding:14px;display:flex;flex-direction:column;border:1px solid #38393d">
           <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
             <div style="width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--pr);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none">
