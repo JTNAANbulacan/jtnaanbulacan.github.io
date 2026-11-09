@@ -4345,6 +4345,185 @@ async function initApp(){
   handleHashRoute();
 }
 
+// ===== EVENTS (photos + Upcoming Events on dashboard) and ATTENDANCE (editable, auto-clear) =====
+function todayPH(){ return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Manila" }); } // YYYY-MM-DD in PH time
+
+// ---------- EVENTS ----------
+function fmtEventDate(d){
+  if(!d) return "Date to be announced";
+  const t = Date.parse(d + "T00:00:00");
+  if(isNaN(t)) return d;
+  return new Date(t).toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" });
+}
+
+function sortedEvents(){
+  const today = todayPH();
+  const L = (D.events || []).slice();
+  const up = L.filter(x => !x.date || x.date >= today)
+    .sort((a, b) => (a.date || "9999-12-31").localeCompare(b.date || "9999-12-31"));   // soonest first, undated last
+  const past = L.filter(x => x.date && x.date < today)
+    .sort((a, b) => b.date.localeCompare(a.date));                                      // most recent past first
+  return { up, past };
+}
+
+function eventCard(x, canEdit, faded){
+  return `<div class="card" style="padding:0;overflow:hidden;${faded ? 'opacity:.75' : ''}">
+    ${x.photo ? `<img src="${e(x.photo)}" alt="${e(x.title || 'Event')}" style="width:100%;height:180px;object-fit:cover;display:block;margin:0;border-radius:0">` : ''}
+    <div style="padding:12px 14px">
+      <b style="font-size:1.1rem;color:var(--pr)">${e(x.title || '')}</b>
+      <div class="mu" style="margin-top:4px">📅 ${e(fmtEventDate(x.date))}${x.place ? ` · 📍 ${e(x.place)}` : ''}</div>
+      ${x.desc ? `<div style="margin-top:6px;white-space:pre-wrap;word-break:break-word">${e(x.desc)}</div>` : ''}
+      ${canEdit ? `<div style="margin-top:10px">
+        <button class="btn sm" onclick="openFormModal('events', '${x.id}')">Edit</button>
+        <button class="btn red sm" onclick="deleteRecord('events', '${x.id}')">Delete</button>
+      </div>` : ''}
+    </div>
+  </div>`;
+}
+
+function eventsv(){
+  const { up, past } = sortedEvents();
+  const ce = can("events");
+  const grid = arr => `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr))">${arr.join('')}</div>`;
+  return `<h2>EVENTS (${(D.events || []).length})</h2>
+  ${ce ? `<p><button class="btn gold" onclick="openFormModal('events')">+ Add Event</button></p>` : ''}
+  <h3 style="color:var(--pr);margin:14px 0 8px">Upcoming events</h3>
+  ${up.length ? grid(up.map(x => eventCard(x, ce))) : '<p class="mu">No upcoming events yet.</p>'}
+  ${past.length ? `<h3 style="margin:22px 0 8px">Past events</h3>${grid(past.map(x => eventCard(x, ce, true)))}` : ''}`;
+}
+
+function upcomingEventsHtml(){
+  const { up } = sortedEvents();
+  const ce = can("events");
+  return `<h2 style="margin-top:24px">UPCOMING EVENTS</h2>` + (up.length
+    ? `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr))">${up.slice(0, 6).map(x => eventCard(x, ce)).join('')}</div>
+       <p><button class="btn sm" onclick="view='events';render();window.scrollTo({top:0,behavior:'smooth'})">View all events →</button></p>`
+    : `<p class="mu">No upcoming events.</p>`);
+}
+
+// Wrap the existing dashboard + list renderers (no other code changes needed)
+(function(){
+  const dash0 = dash, list0 = list;
+  dash = function(){
+    D.attendance = sortNewestFirst(D.attendance || []);          // "Last attendance" always = newest record
+    return dash0().replace(/<h2[^>]*>UPCOMING EVENTS<\/h2>\s*<p class="mu">No upcoming events\.<\/p>/, upcomingEventsHtml());
+  };
+  list = function(c){ return c === "events" ? eventsv() : list0(c); };
+})();
+
+// Event form: clearer photo field + preview of the current photo when editing
+(function(){
+  const ofm0 = openFormModal;
+  openFormModal = function(c, id){
+    ofm0(c, id);
+    if(c !== "events") return;
+    const inp = $("#f_photo"); if(!inp) return;
+    const lbl = inp.previousElementSibling;
+    if(lbl) lbl.textContent = "Event photo / poster (shown on the Events page and the Home Dashboard):";
+    const x = (D.events || []).find(y => y.id === id) || {};
+    if(x.photo) inp.insertAdjacentHTML("beforebegin", `<img src="${e(x.photo)}" alt="Current event photo" style="width:100%;max-height:150px;object-fit:cover;border-radius:8px;margin:6px 0">`);
+  };
+})();
+
+// ---------- ATTENDANCE ----------
+const ATT_SERVICES = ["Sunday Worship Service", "Leadership & WT Practice", "Midweek Bible Study"];
+let attSel = { date: "", svc: ATT_SERVICES[0], present: [], editingId: null };
+
+function attKey(date, svc){ return date + "_" + svc.replace(/\W/g, ""); }
+function attFind(date, svc){ const k = attKey(date, svc); return (D.attendance || []).find(r => r.id === k); }
+
+function attv(){
+  if(!attSel.date) attSel.date = todayPH();
+  const ce = can("attendance");
+  const M = D.members || [];
+  const saved = sortNewestFirst(D.attendance || []);
+  return `<h2>ATTENDANCE</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input type="date" id="att_date" value="${e(attSel.date)}" style="max-width:200px" onchange="attPick()" ${ce ? '' : 'disabled'}>
+    <select id="att_svc" style="max-width:320px" onchange="attPick()" ${ce ? '' : 'disabled'}>
+      ${ATT_SERVICES.map(s => `<option ${s === attSel.svc ? 'selected' : ''}>${e(s)}</option>`).join('')}
+    </select>
+  </div>
+  <p class="mu">Present: <span id="att_count">${attSel.present.length}</span> of ${M.length}
+    ${attSel.editingId ? ` · <b style="color:var(--pr)">Editing a saved record</b>` : ''}</p>
+  ${ce ? `<div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn gold" onclick="saveAttendanceRecord()">${attSel.editingId ? 'Update attendance' : 'Save attendance'}</button>
+      <button class="btn sm" onclick="attSelectAll(true)">Select all</button>
+      <button class="btn sm" onclick="attSelectAll(false)">Clear</button>
+    </div>` : `<p class="mu">Log in as an admin with Attendance access to take or edit attendance.</p>`}
+  <div style="margin-top:12px">
+    ${M.map(m => `<label class="chk">
+      <input type="checkbox" data-att-id="${m.id}" ${attSel.present.includes(m.id) ? 'checked' : ''} ${ce ? '' : 'disabled'} onchange="attToggle('${m.id}', this.checked)">
+      ${e(m.name)}</label>`).join('')}
+  </div>
+  <h3 style="margin-top:26px">Saved attendance records</h3>
+  <div>
+    ${saved.map(r => `<div class="chk" style="justify-content:space-between;flex-wrap:wrap">
+      <span><b>${e(r.date)}</b> · ${e(r.svc)} · ${(r.present || []).length} present</span>
+      ${ce ? `<span><button class="btn sm" onclick="attEditRec('${r.id}')">Edit</button>
+        <button class="btn red sm" onclick="attDeleteRec('${r.id}')">Delete</button></span>` : ''}
+    </div>`).join('') || '<p class="mu">No attendance saved yet.</p>'}
+  </div>`;
+}
+
+function attPick(){
+  attSel.date = $("#att_date").value || todayPH();
+  attSel.svc = $("#att_svc").value;
+  const r = attFind(attSel.date, attSel.svc);
+  attSel.present = r ? (r.present || []).slice() : [];     // load saved record to edit, or start blank
+  attSel.editingId = r ? r.id : null;
+  render();
+}
+
+function attToggle(id, on){
+  const i = attSel.present.indexOf(id);
+  if(on && i < 0) attSel.present.push(id);
+  if(!on && i >= 0) attSel.present.splice(i, 1);
+  const c = $("#att_count"); if(c) c.textContent = attSel.present.length;
+}
+
+function attSelectAll(on){
+  attSel.present = on ? (D.members || []).map(m => m.id) : [];
+  render();
+}
+
+function attEditRec(id){
+  const r = (D.attendance || []).find(x => x.id === id);
+  if(!r) return;
+  attSel = { date: r.date, svc: r.svc, present: (r.present || []).slice(), editingId: r.id };
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function attDeleteRec(id){
+  if(!can("attendance")) return;
+  if(!confirm("Delete this attendance record?")) return;
+  D.attendance = (D.attendance || []).filter(x => x.id !== id);
+  if(attSel.editingId === id){ attSel.editingId = null; attSel.present = []; }
+  await deleteRecordFromCloud("attendance", id);
+  render();
+  showSuccessNotification("Attendance record deleted.");
+}
+
+async function saveAttendanceRecord(){
+  if(!can("attendance")) return alert("You do not have access to edit attendance.");
+  const date = attSel.date || todayPH(), svc = attSel.svc;
+  const id = attKey(date, svc);
+  const exists = (D.attendance || []).some(r => r.id === id);
+  if(exists && attSel.editingId !== id && !confirm("A record for this date and service already exists. Replace it?")) return;
+  if(exists && attSel.present.length === 0 && !confirm("No one is marked present. Save this record with 0 present?")) return;
+
+  const rec = { id, date, svc, present: attSel.present.slice(), updatedAt: Date.now() };
+  D.attendance = (D.attendance || []).filter(x => x.id !== id);
+  D.attendance.unshift(rec);
+  const ok = await syncRecordToCloud("attendance", id, rec);
+
+  attSel.present = [];          // clear the checkboxes for the next entry
+  attSel.editingId = null;
+  render();
+  showSuccessNotification(ok ? "Attendance saved to the cloud. Form cleared for the next entry." : "Attendance saved on this device only (cloud not connected).");
+}
+
 initApp();
 
 // ===== Image Lightbox: tap any photo to view it large, zoom, pan and swipe =====
