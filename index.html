@@ -1818,29 +1818,23 @@ const FUND_CATEGORIES = {
   ]
 };
 function fundTypeOptions(selected){
-  return ["Income","Expense"].map(type=>`<label style="display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;flex:1;min-width:120px">
-    <input type="checkbox" name="fund_type_choice" value="${type}" ${selected===type?'checked':''} onchange="selectFundType(this)" style="width:17px;height:17px">
-    <b>${type}</b>
-  </label>`).join('');
+  return `<select id="fund-type-select" onchange="updateFundCategoryDropdown()" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)">
+    <option value="">Choose Income or Expense</option>
+    <option value="Income" ${selected==="Income"?"selected":""}>Income</option>
+    <option value="Expense" ${selected==="Expense"?"selected":""}>Expense</option>
+  </select>`;
 }
 function fundCategoryOptions(type,selected){
   const choices=FUND_CATEGORIES[type]||[];
-  return choices.map((category,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:7px;cursor:pointer">
-    <input type="checkbox" name="fund_category_choice" value="${e(category)}" ${selected===category?'checked':''} onchange="selectFundCategory(this)" style="width:16px;height:16px">
-    <span>${e(category)}</span>
-  </label>`).join('');
+  return `<select id="fund-category-select" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)" ${type?"":"disabled"}>
+    <option value="">${type?"Choose a category":"Choose a transaction type first"}</option>
+    ${choices.map(category=>`<option value="${e(category)}" ${selected===category?"selected":""}>${e(category)}</option>`).join("")}
+  </select>`;
 }
-function selectFundType(input){
-  if(!input.checked){input.checked=true;return;}
-  document.querySelectorAll('input[name="fund_type_choice"]').forEach(x=>{if(x!==input)x.checked=false;});
-  const old=document.querySelector('input[name="fund_category_choice"]:checked');
-  const previous=old?old.value:"";
+function updateFundCategoryDropdown(){
+  const type=$("#fund-type-select")?.value||"";
   const container=$("#fund-category-options");
-  if(container) container.innerHTML=fundCategoryOptions(input.value,FUND_CATEGORIES[input.value].includes(previous)?previous:"");
-}
-function selectFundCategory(input){
-  if(!input.checked)return;
-  document.querySelectorAll('input[name="fund_category_choice"]').forEach(x=>{if(x!==input)x.checked=false;});
+  if(container)container.innerHTML=fundCategoryOptions(type,"");
 }
 function openFormModal(c, id=""){
   if(!can(c)) return alert("You do not have permission to edit this section.");
@@ -1848,7 +1842,7 @@ function openFormModal(c, id=""){
   const x = (D[c]||[]).find(y => y.id === id) || {};
   $("#mb").innerHTML = `
     <h3 style="margin-top:0">${id ? "Edit" : "Add"} – ${F.t}</h3>
-    ${c === "funds" ? `<div class="mu" style="margin-top:10px;margin-bottom:6px">Select transaction type:</div><div style="display:flex;gap:8px;flex-wrap:wrap">${fundTypeOptions(x.type||"Income")}</div><div class="mu" style="margin-top:12px;margin-bottom:6px">Select one category:</div><div id="fund-category-options" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px">${fundCategoryOptions(x.type||"Income",x.category||"")}</div>` : ""}
+    ${c === "funds" ? `<div class="mu" style="margin-top:10px;margin-bottom:6px">Transaction type:</div>${fundTypeOptions(x.type||"")}<div class="mu" style="margin-top:12px;margin-bottom:6px">Category:</div><div id="fund-category-options">${fundCategoryOptions(x.type||"",x.category||"")}</div>` : ""}
     ${F.f.map(([k, l, t]) => `
       <div class="mu" style="margin-top:6px">${l}:</div>
       ${(t||"")[1] === ":" ? `
@@ -1889,12 +1883,12 @@ async function saveFormData(c, id){
     if(el) item[k] = el.value.trim();
   });
   if(c === "funds"){
-    const selectedType=document.querySelector('input[name="fund_type_choice"]:checked');
-    const selectedCategory=document.querySelector('input[name="fund_category_choice"]:checked');
+    const selectedType=$("#fund-type-select")?.value||"";
+    const selectedCategory=$("#fund-category-select")?.value||"";
     if(!selectedType){if(btn){btn.disabled=false;btn.textContent="Save & Sync Live";}return alert("Please select Income or Expense.");}
     if(!selectedCategory){if(btn){btn.disabled=false;btn.textContent="Save & Sync Live";}return alert("Please select a fund category.");}
-    item.type=selectedType.value;
-    item.category=selectedCategory.value;
+    item.type=selectedType;
+    item.category=selectedCategory;
   }
   
   try {
