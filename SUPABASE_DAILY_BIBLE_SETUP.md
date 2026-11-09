@@ -11,6 +11,8 @@ In the Supabase project for `sbrnofctchqotcjteqxr`, open **Edge Functions → Se
 
 Do not put either value in `index.html`, GitHub, or a public repository.
 
+OpenAI API usage is billed separately to the API account; it is not included in a ChatGPT subscription. GPT Image access may require API organization verification.
+
 ## 2. Deploy the Edge Function
 
 From the repository root, with the Supabase CLI linked to the existing project:
