@@ -2477,6 +2477,36 @@ function handleCommentKeydown(ev, collection, postId){
   }
 }
 
+function renderCommentCard(cm, c){
+  const canDel = (can(c) || admin || (me && me.name === cm.name));
+  const hasAmened = (cm.amensByUser && cm.amensByUser.includes(getCommenterId()));
+  return `
+    <div class="cm-card" id="cm_card_${cm.id}">
+      <div class="cm-avatar">${getInitials(cm.name)}</div>
+      <div class="cm-body">
+        <div class="cm-meta">
+          <span class="cm-author">${e(cm.name || 'Anonymous')}</span>
+          <span class="cm-dot">·</span>
+          <span class="cm-time">${formatCommentTime(cm.date)}</span>
+          ${canDel ? `
+            <button type="button" class="cm-del-btn" onclick="deleteCommentRecord('${cm.id}', '${c}', '${cm.postId}')" title="Delete comment" aria-label="Delete comment by ${e(cm.name)}">Delete</button>
+          ` : ''}
+        </div>
+        <div class="cm-text">${e(cm.text)}</div>
+        <div class="cm-card-actions">
+          <button type="button" class="cm-amen-btn ${hasAmened ? 'on' : ''}" 
+            onclick="toggleCommentAmen('${cm.id}')" 
+            title="Amen this reflection" 
+            aria-label="Amen (${cm.amens || 0})">
+            <span>🙏 Amen</span>
+            <span class="cm-amen-count">· ${cm.amens || 0}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 async function submitPostComment(collection, postId){
   const nameEl = document.getElementById("cname_" + postId);
   const textEl = document.getElementById("ctext_" + postId);
@@ -2486,23 +2516,26 @@ async function submitPostComment(collection, postId){
   const text = textEl ? textEl.value.trim() : "";
 
   if(!name){
-    alert("Please enter your name so the church family knows who shared this comment.");
-    if(nameEl) nameEl.focus();
+    if(nameEl){
+      nameEl.focus();
+      nameEl.classList.add("pulse-focus");
+      nameEl.placeholder = "⚠️ Please enter your name first...";
+      setTimeout(() => nameEl.classList.remove("pulse-focus"), 1400);
+    }
     return;
   }
 
   if(!text){
-    alert("Please write your comment, reflection, or prayer before posting.");
-    if(textEl) textEl.focus();
+    if(textEl){
+      textEl.focus();
+      textEl.classList.add("pulse-focus");
+      textEl.placeholder = "⚠️ Please write your comment or prayer here...";
+      setTimeout(() => textEl.classList.remove("pulse-focus"), 1400);
+    }
     return;
   }
 
   saveCommenterName(name);
-
-  if(btn){
-    btn.disabled = true;
-    btn.textContent = "Posting...";
-  }
 
   const commentItem = {
     id: "cm_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 6),
@@ -2516,26 +2549,90 @@ async function submitPostComment(collection, postId){
     if(!D.comments) D.comments = [];
     D.comments.push(commentItem);
 
-    await syncRecordToCloud("comments", commentItem.id, commentItem);
-
-    showSuccessNotification("Comment posted! God bless you.");
-    render();
-  }catch(err){
-    showErrorNotification("Could not post comment: " + err.message);
+    // 1. Clear textarea immediately for zero-delay responsiveness
+    if(textEl) textEl.value = "";
     if(btn){
       btn.disabled = false;
-      btn.textContent = "Post Comment";
+      btn.textContent = "Post Comment 🙏";
+    }
+
+    // 2. Insert new comment card into the DOM immediately without full-page redraw or jump
+    const listEl = document.getElementById("cm_list_" + postId);
+    if(listEl){
+      const emptyEl = listEl.querySelector(".cm-empty");
+      if(emptyEl) emptyEl.remove();
+
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = renderCommentCard(commentItem, collection);
+      const newCard = tempDiv.firstElementChild;
+      if(newCard){
+        newCard.style.animation = "fadeIn 0.25s ease-out";
+        listEl.appendChild(newCard);
+      }
+
+      // Update comment count indicators smoothly
+      const key = `${collection}:${postId}`;
+      const sk = safeKey(key);
+      const postComments = (D.comments || []).filter(cm => cm.postId === postId || cm.postId === key);
+      const countLabel = `${postComments.length} ${postComments.length === 1 ? 'comment' : 'comments'}`;
+
+      const hdrCount = document.getElementById("cm_count_hdr_" + postId);
+      if(hdrCount) hdrCount.textContent = `Comments & Reflections (${postComments.length})`;
+
+      const sumEl = document.querySelector(`#rx_sum_${sk} .rx-summary-right span`);
+      if(sumEl) sumEl.textContent = countLabel;
+    } else {
+      render();
+    }
+
+    // 3. Silently save & sync to cloud in the background — no intrusive toast notifications!
+    syncRecordToCloud("comments", commentItem.id, commentItem).catch(err => {
+      console.warn("Silent background comment sync:", err);
+    });
+  }catch(err){
+    console.error("Could not save comment:", err);
+    if(btn){
+      btn.disabled = false;
+      btn.textContent = "Post Comment 🙏";
     }
   }
 }
 
-async function deleteCommentRecord(commentId){
+async function deleteCommentRecord(commentId, collection, postId){
   if(!confirm("Are you sure you want to remove this comment?")) return;
   try{
     D.comments = (D.comments || []).filter(c => c.id !== commentId);
+
+    const card = document.getElementById("cm_card_" + commentId);
+    if(card) card.remove();
+
+    if(postId && collection){
+      const key = `${collection}:${postId}`;
+      const sk = safeKey(key);
+      const postComments = (D.comments || []).filter(cm => cm.postId === postId || cm.postId === key);
+      const countLabel = `${postComments.length} ${postComments.length === 1 ? 'comment' : 'comments'}`;
+
+      const hdrCount = document.getElementById("cm_count_hdr_" + postId);
+      if(hdrCount) hdrCount.textContent = `Comments & Reflections (${postComments.length})`;
+
+      const sumEl = document.querySelector(`#rx_sum_${sk} .rx-summary-right span`);
+      if(sumEl) sumEl.textContent = countLabel;
+
+      const listEl = document.getElementById("cm_list_" + postId);
+      if(listEl && postComments.length === 0){
+        listEl.innerHTML = `
+          <div class="cm-empty">
+            <span style="font-size:1.6rem">💬</span>
+            <b style="color:#ffffff;font-size:0.92rem">No comments yet on this devotion</b>
+            <span style="font-size:0.82rem">Be the first to share an encouragement, Amen, or prayer with our church family!</span>
+          </div>
+        `;
+      }
+    } else {
+      render();
+    }
+
     await deleteRecordFromCloud("comments", commentId);
-    showSuccessNotification("Comment removed.");
-    render();
   }catch(err){
     showErrorNotification("Could not delete comment: " + err.message);
   }
@@ -2548,17 +2645,32 @@ async function toggleCommentAmen(commentId){
   if(!cm.amensByUser) cm.amensByUser = [];
   
   const idx = cm.amensByUser.indexOf(uid);
+  const isAdding = idx < 0;
   if(idx >= 0){
     cm.amensByUser.splice(idx, 1);
     cm.amens = Math.max(0, (cm.amens || 1) - 1);
   } else {
     cm.amensByUser.push(uid);
     cm.amens = (cm.amens || 0) + 1;
-    showSuccessNotification("You said Amen! 🙏");
   }
   
-  await syncRecordToCloud("comments", cm.id, cm);
-  render();
+  // Directly update Amen button in place silently without notification popup
+  const card = document.getElementById("cm_card_" + commentId);
+  if(card){
+    const amenBtn = card.querySelector(".cm-amen-btn");
+    if(amenBtn){
+      if(isAdding){
+        amenBtn.classList.add("on");
+      } else {
+        amenBtn.classList.remove("on");
+      }
+      const countSpan = amenBtn.querySelector(".cm-amen-count");
+      if(countSpan) countSpan.textContent = `· ${cm.amens || 0}`;
+      amenBtn.setAttribute("aria-label", `Amen (${cm.amens || 0})`);
+    }
+  }
+  
+  syncRecordToCloud("comments", cm.id, cm).catch(e => console.warn(e));
 }
 
 function focusCommentInput(postId){
@@ -2760,7 +2872,7 @@ function renderFeedPost(c, x, logo){
           <div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:1.15rem">💬</span>
             <div>
-              <b style="font-size:0.95rem;color:#ffffff">Comments & Reflections (${postComments.length})</b>
+              <b id="cm_count_hdr_${x.id}" style="font-size:0.95rem;color:#ffffff">Comments & Reflections (${postComments.length})</b>
               <div class="mu" style="font-size:0.75rem">Public community discussion · Share your Amen & reflections</div>
             </div>
           </div>
@@ -2769,31 +2881,7 @@ function renderFeedPost(c, x, logo){
 
         <!-- Comments List -->
         <div class="cm-list" id="cm_list_${x.id}">
-          ${postComments.length > 0 ? postComments.map(cm => `
-            <div class="cm-card" id="cm_card_${cm.id}">
-              <div class="cm-avatar">${getInitials(cm.name)}</div>
-              <div class="cm-body">
-                <div class="cm-meta">
-                  <span class="cm-author">${e(cm.name || 'Anonymous')}</span>
-                  <span class="cm-dot">·</span>
-                  <span class="cm-time">${formatCommentTime(cm.date)}</span>
-                  ${(can(c) || admin || (me && me.name === cm.name)) ? `
-                    <button type="button" class="cm-del-btn" onclick="deleteCommentRecord('${cm.id}')" title="Delete comment" aria-label="Delete comment by ${e(cm.name)}">Delete</button>
-                  ` : ''}
-                </div>
-                <div class="cm-text">${e(cm.text)}</div>
-                <div class="cm-card-actions">
-                  <button type="button" class="cm-amen-btn ${(cm.amensByUser && cm.amensByUser.includes(getCommenterId())) ? 'on' : ''}" 
-                    onclick="toggleCommentAmen('${cm.id}')" 
-                    title="Amen this reflection" 
-                    aria-label="Amen (${cm.amens || 0})">
-                    <span>🙏 Amen</span>
-                    <span class="cm-amen-count">· ${cm.amens || 0}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          `).join('') : `
+          ${postComments.length > 0 ? postComments.map(cm => renderCommentCard(cm, c)).join('') : `
             <div class="cm-empty">
               <span style="font-size:1.6rem">💬</span>
               <b style="color:#ffffff;font-size:0.92rem">No comments yet on this devotion</b>
