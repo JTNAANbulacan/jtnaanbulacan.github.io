@@ -1047,7 +1047,7 @@ try {
 }
 
 let me = savedSession;
-let admin = !!(me && me.owner);
+let admin = !!me;
 let view = "dashboard", dsel="GCash", fbViewMode = "cards";
 
 function setFbViewMode(m){
@@ -1234,7 +1234,7 @@ async function fetchAllFromCloud(silent = false){
         const updatedMe = AL.find(a => a.username.toLowerCase() === me.username.toLowerCase());
         if(updatedMe){
           me = updatedMe;
-          admin = !!me.owner;
+          admin = !!me;
         }
       }
     }
@@ -1390,7 +1390,7 @@ function renderLogo(){
 }
 
 function handleLogoClick(){
-  if(admin) triggerLogoPicker();
+  if(can("dashboard")) triggerLogoPicker();
   else goToDashboard();
 }
 
@@ -1514,7 +1514,7 @@ function baseTabs(){
 const okey = t => t == "prayer" ? "prayers" : t;
 function tabs(){
   const T = baseTabs();
-  if(admin) T.push("admins");
+  if(me) T.push("admins");
   return T;
 }
 
@@ -1805,6 +1805,7 @@ function closeModal(){
 }
 
 function openFormModal(c, id=""){
+  if(!can(c)) return alert("You do not have permission to edit this section.");
   const F = CF[c];
   const x = (D[c]||[]).find(y => y.id === id) || {};
   $("#mb").innerHTML = `
@@ -1844,6 +1845,7 @@ function openFormModal(c, id=""){
 }
 
 async function saveFormData(c, id){
+  if(!can(c)) return alert("You do not have permission to edit this section.");
   const F = CF[c];
   const btn = $("#btn-save-form");
   if(btn){ btn.disabled = true; btn.textContent = "Uploading & Syncing..."; }
@@ -2176,7 +2178,7 @@ function dash(){
   const cloudOk = isCloudConnected();
 
   return `
-  ${admin ? `
+  ${can("dashboard") ? `
     <div class="cloud-status-banner ${cloudOk ? 'online' : ''}">
       <div>
         <b>${cloudOk ? '☁ Supabase Database: Live & Syncing to All Devices' : '⚠️ Cloud Database Not Connected (Using Offline Fallback)'}</b>
@@ -2995,7 +2997,7 @@ function handleCommentKeydown(ev, collection, postId){
 }
 
 function renderCommentCard(cm, c){
-  const canDel = (can(c) || admin || (me && me.name === cm.name));
+  const canDel = (can(c) || (me && me.name === cm.name));
   const hasAmened = (cm.amensByUser && cm.amensByUser.includes(getCommenterId()));
   return `
     <div class="cm-card" id="cm_card_${cm.id}">
@@ -3926,7 +3928,7 @@ function tquiz(){
             <div><b>Scripture Passage:</b> <span style="color:var(--pr);font-weight:bold">${e(q.ref)}</span></div>
             <div style="margin-top:4px"><b>Why it is correct:</b> ${e(q.exp)}</div>
           </div>
-          ${(typeof admin !== "undefined" && admin) || isAdminMart() ? `
+          ${isAdminMart() ? `
             <div style="margin-top:10px">
               <button class="btn sm" onclick="resetQuizForAdmin()">Try Question Again (Admin)</button>
             </div>
@@ -4389,6 +4391,7 @@ function adminsv(){
 }
 
 function openAdminModal(id){
+  if(!isAdminMart()) return alert("Only Admin Mart can manage admin accounts.");
   const nw = id === "_new";
   const a = (AL || []).find(x => x.id === id) || { perms: [] };
   const P = a.perms || [];
@@ -4435,6 +4438,7 @@ function openAdminModal(id){
 }
 
 async function saveAdminRecord(id){
+  if(!isAdminMart()) return alert("Only Admin Mart can manage admin accounts.");
   const nw = id === "_new";
   const name = $("#adm_name").value.trim();
   const username = $("#adm_username").value.trim();
@@ -4489,6 +4493,7 @@ async function saveAdminRecord(id){
 }
 
 async function deleteAdminRecord(id){
+  if(!isAdminMart()) return alert("Only Admin Mart can manage admin accounts.");
   const target = AL.find(a => a.id === id);
   if(!target) return;
   if(target.owner){
@@ -4503,6 +4508,7 @@ async function deleteAdminRecord(id){
 }
 
 async function deleteRecord(c, id){
+  if(!can(c)) return alert("You do not have permission to delete records in this section.");
   if(confirm("Are you sure you want to delete this record?")){
     D[c] = (D[c]||[]).filter(x => x.id !== id);
     const ok = await deleteRecordFromCloud(c, id);
@@ -4544,7 +4550,7 @@ async function handleLoginSubmit(ev){
   const found = AL.find(a => a.username.toLowerCase() === u && a.password === p);
   if(found){
     me = found;
-    admin = !!found.owner;
+    admin = true;
     localStorage.setItem("jt_active_session", JSON.stringify(found));
     closeModal();
     render();
@@ -4585,6 +4591,7 @@ document.addEventListener("click", ev => {
 });
 
 async function initApp(){
+  closeModal();
   applyBackground();
   render();
   initSupabaseClient();
