@@ -1308,7 +1308,10 @@ window.addEventListener("focus", () => {
   if(supabaseClient) fetchAllFromCloud(true);
 });
 setInterval(() => {
-  if(!document.hidden && supabaseClient) fetchAllFromCloud(true);
+  if(!document.hidden && supabaseClient){
+    fetchAllFromCloud(true);
+    loadDailyBibleContent();
+  }
 }, 25000);
 
 const can = c => {
@@ -3799,14 +3802,60 @@ const QUIZ_BANK = [
   }
 ];
 
+// ----- Shared AI-generated daily Bible content (stored centrally in Supabase) -----
+let dailyBibleContent = null;
+let dailyBibleLoadedFor = "";
+let dailyBibleLoadPromise = null;
+
+async function loadDailyBibleContent(force = false){
+  if(!supabaseClient) return false;
+  const dayKey = phDayKey();
+  if(!force && dailyBibleLoadedFor === dayKey && dailyBibleContent) return true;
+  if(dailyBibleLoadPromise) return dailyBibleLoadPromise;
+
+  dailyBibleLoadPromise = (async () => {
+    try{
+      const { data, error } = await supabaseClient
+        .from("daily_bible_content")
+        .select("day_key, content, image_url")
+        .eq("day_key", dayKey)
+        .maybeSingle();
+      if(error) throw error;
+      if(data && data.content && data.content.trivia && data.content.question){
+        dailyBibleContent = { ...data.content, image_url: data.image_url || "" };
+        dailyBibleLoadedFor = dayKey;
+        if(typeof view !== "undefined" && view === "devotion") render();
+        return true;
+      }
+      dailyBibleContent = null;
+      dailyBibleLoadedFor = "";
+      return false;
+    }catch(err){
+      console.warn("Daily Bible content is not available yet:", err);
+      return false;
+    }finally{
+      dailyBibleLoadPromise = null;
+    }
+  })();
+  return dailyBibleLoadPromise;
+}
+
 // ----- Day helpers (flip exactly at 8:00 AM Philippine time) -----
 const DAY_MS = 86400000;
 function phDayIdx(){ return Math.floor(Date.now() / DAY_MS); } // 8:00 AM PH == 00:00 UTC
 function phDayKey(){ return new Date(phDayIdx() * DAY_MS).toISOString().slice(0, 10); }
 function todayTriviaIdx(){ return phDayIdx() % TRIVIA_BANK.length; }
 function todayQuizIdx(){ return phDayIdx() % QUIZ_BANK.length; }
-function todayTrivia(){ return TRIVIA_BANK[todayTriviaIdx()]; }
-function todayQuiz(){ return QUIZ_BANK[todayQuizIdx()]; }
+function todayTrivia(){
+  if(dailyBibleContent && dailyBibleContent.trivia){
+    return { ...dailyBibleContent.trivia, img: dailyBibleContent.image_url };
+  }
+  return TRIVIA_BANK[todayTriviaIdx()];
+}
+function todayQuiz(){
+  if(dailyBibleContent && dailyBibleContent.question) return dailyBibleContent.question;
+  return QUIZ_BANK[todayQuizIdx()];
+}
 
 function nextResetText(){
   const left = Math.max(0, (phDayIdx() + 1) * DAY_MS - Date.now());
@@ -3940,6 +3989,11 @@ function checkDailyRollover(){
   const d = phDayIdx();
   if(d !== _shownDayIdx){
     _shownDayIdx = d;
+    dailyBibleContent = null;
+    dailyBibleLoadedFor = "";
+    loadDailyBibleContent(true).then(() => {
+      if(typeof view !== "undefined" && view === "devotion") render();
+    });
     if(typeof view !== "undefined" && view === "devotion") render();
   } else {
     ["trivia_cd", "quiz_cd"].forEach(id => {
@@ -4652,6 +4706,7 @@ async function initApp(){
   render();
   initSupabaseClient();
   await fetchAllFromCloud(true);
+  await loadDailyBibleContent(true);
   handleHashRoute();
 }
 
