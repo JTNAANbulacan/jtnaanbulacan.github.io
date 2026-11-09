@@ -873,7 +873,7 @@ function initSupabaseClient(){
   if(SUPABASE_URL && SUPABASE_ANON && !SUPABASE_URL.includes("YOUR_SUPABASE") && window.supabase){
     try {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+        auth: { persistSession: false },
         realtime: { params: { eventsPerSecond: 10 } }
       });
       console.log("☁ Supabase Cloud Connected!");
@@ -991,7 +991,7 @@ const CF={
 const TL={
   dashboard:"HOME DASHBOARD",about:"ABOUT",schedule:"SCHEDULE",devotion:"DAILY DEVOTION",testimony:"TESTIMONY",
   members:"MEMBERS",attendance:"ATTENDANCE",funds:"FUNDS",social:"SOCIAL",ministries:"MINISTRIES",
-  events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS",activity:"ACTIVITY LOGS",notifications:"NOTIFICATIONS",registrations:"REGISTERED USERS"
+  events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS",activity:"ACTIVITY LOGS",notifications:"NOTIFICATIONS"
 };
 
 const PL={
@@ -1031,10 +1031,10 @@ const BASE_REACTIONS = {
 };
 
 const defaultAdmins = [
-  {id:"adm1",name:"Admin Mart",username:"admin@mart",owner:true,perms:Object.keys(PL)},
-  {id:"adm2",name:"Admin Ella - Treasurer",username:"admin02",owner:false,perms:["members","attendance","funds"]},
-  {id:"adm3",name:"Attendance Personnel",username:"admin03",owner:false,perms:["attendance"]},
-  {id:"adm4",name:"Admin Gelo - Media",username:"admin04",owner:false,perms:["social","gallery"]}
+  {id:"adm1", name:"Admin Mart", username:"Admin@Mart", password:"JTNAAN@01", owner:true, perms:Object.keys(PL)},
+  {id:"adm2", name:"Treasurer", username:"Admin02", password:"JTNAAN02", owner:false, perms:["funds"]},
+  {id:"adm3", name:"Attendance Personnel", username:"Admin03", password:"JTNAAN03", owner:false, perms:["attendance"]},
+  {id:"adm4", name:"Media", username:"Admin04", password:"JTNAAN04", owner:false, perms:["gallery"]}
 ];
 
 const churchData = {
@@ -1178,8 +1178,18 @@ Object.keys(BASE_REACTIONS).forEach(k => {
 
 let AL = defaultAdmins;
 
-let me = null;
-let admin = false;
+let savedSession = null;
+try {
+  const raw = localStorage.getItem("jt_active_session");
+  if(raw && raw !== "null"){
+    savedSession = JSON.parse(raw);
+  }
+} catch(e){
+  savedSession = null;
+}
+
+let me = savedSession;
+let admin = !!me;
 let view = "dashboard", dsel="GCash", fbViewMode = "cards";
 
 function setFbViewMode(m){
@@ -1303,7 +1313,6 @@ async function fetchAllFromCloud(silent = false){
         D[k] = cloudD[k];
       }
     });
-    if(cloudD.admins.length) AL = cloudD.admins.map(a => ({...a, password:undefined}));
 
     // Merge baseline downloads, multi-user clicks, and local taps: NEVER OVERWRITES OR RESETS!
     const myLocalDl = (typeof getUserDlCounts === "function") ? getUserDlCounts() : { android: 0, ios: 0 };
@@ -1687,7 +1696,7 @@ function baseTabs(){
 const okey = t => t == "prayer" ? "prayers" : t;
 function tabs(){
   const T = baseTabs();
-  if(me){T.push("admins");T.push("registrations");T.push("activity");T.push("notifications");}
+  if(me){T.push("admins");T.push("activity");T.push("notifications");}
   return T;
 }
 
@@ -2191,7 +2200,6 @@ function render(){
     ` : `
       <div id="drawer-admin-box" style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:8px">
         <button class="btn gold sm" onclick="loginForm();menu(false)" style="width:100%;text-align:center">Admin Login</button>
-        <button class="btn sm" onclick="registerForm();menu(false)" style="width:100%;text-align:center;margin-top:7px">Register Account</button>
       </div>
     `}
     ${T.map(t => `<button class="${t==view?"on":""}" data-v="${t}">${TL[t]||t.toUpperCase()}</button>`).join("")}
@@ -2220,13 +2228,12 @@ function render(){
   applyMaintenanceMode();
 
   if(view=="admins") $("#main").innerHTML = adminsv();
-  else if(view=="registrations"){ $("#main").innerHTML = registrationsv(); loadRegistrationRows(); }
   else if(view=="activity") $("#main").innerHTML = activityLogView();
   else if(view=="notifications") $("#main").innerHTML = notificationsView();
   else if(view=="devotion"||view=="testimony") $("#main").innerHTML = feed(view);
   else if(view=="prayers") $("#main").innerHTML = prayersv();
   else if(view=="support") $("#main").innerHTML = supportv();
-  else if(view=="reports"){ $("#main").innerHTML = reportsv(); loadRegistrationReportStats(); }
+  else if(view=="reports") $("#main").innerHTML = reportsv();
   else if(view=="funds") $("#main").innerHTML = fundsv();
   else if(view=="social") $("#main").innerHTML = socialv();
   else if(view=="about") $("#main").innerHTML = about();
@@ -4398,16 +4405,6 @@ async function saveAttendanceRecord(){
 }
 
 let reportPeriod = "monthly";
-let registrationReportRows=[];
-let registrationReportLoaded=false;
-async function loadRegistrationReportStats(){
-  if(registrationReportLoaded||!supabaseClient)return;
-  registrationReportLoaded=true;
-  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"registration_stats"}});
-  if(error||!data?.ok){registrationReportLoaded=false;return;}
-  registrationReportRows=data.created_at||[];
-  if(view==="reports"){const main=$("#main");if(main)main.innerHTML=reportsv();}
-}
 function setReportPeriod(period){
   reportPeriod = ["weekly","monthly","annual"].includes(period) ? period : "monthly";
   const main = document.getElementById("main");
@@ -4457,7 +4454,6 @@ function reportsv(){
     label:p.label,
     count:byPeriod(members,"joined",p.key).length
   }));
-  const websiteRegistrationRows=periods.map(p=>({label:p.label,count:registrationReportRows.filter(value=>periodKey(value)===p.key).length}));
   const fundRows = periods.map(p=>{
     const rows=byPeriod(funds,"date",p.key);
     return {label:p.label,
@@ -4496,12 +4492,11 @@ function reportsv(){
   const followerTotal=social.reduce((n,x)=>n+(Number(x.followers)||0),0);
   const reachTotal=social.reduce((n,x)=>n+(Number(x.reach)||0),0);
   let html='<h2>CHURCH STATISTICS &amp; REPORTS</h2>';
-  html+='<div class="grid" style="margin-bottom:14px"><div class="card"><div class="stat">'+members.length+'</div>Registered members</div><div class="card"><div class="stat">'+registrationReportRows.length+'</div>Website registrations</div><div class="card"><div class="stat">'+(latestAttendance?(latestAttendance.present||[]).length:0)+'</div>Latest attendance<div class="mu">'+(latestAttendance?e(latestAttendance.date+" · "+(latestAttendance.svc||"")):"No attendance records yet")+'</div></div><div class="card"><div class="stat">'+attendance.length+'</div>Attendance records</div><div class="card"><div class="stat">'+followerTotal.toLocaleString("en-PH")+'</div>Social followers<div class="mu">'+reachTotal.toLocaleString("en-PH")+' recorded reach / views</div></div></div>';
+  html+='<div class="grid" style="margin-bottom:14px"><div class="card"><div class="stat">'+members.length+'</div>Registered members</div><div class="card"><div class="stat">'+(latestAttendance?(latestAttendance.present||[]).length:0)+'</div>Latest attendance<div class="mu">'+(latestAttendance?e(latestAttendance.date+" · "+(latestAttendance.svc||"")):"No attendance records yet")+'</div></div><div class="card"><div class="stat">'+attendance.length+'</div>Attendance records</div><div class="card"><div class="stat">'+followerTotal.toLocaleString("en-PH")+'</div>Social followers<div class="mu">'+reachTotal.toLocaleString("en-PH")+' recorded reach / views</div></div></div>';
   html+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><b>Statistics period</b><select aria-label="Select report period" onchange="setReportPeriod(this.value)" style="min-width:170px;max-width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font:inherit;font-weight:600"><option value="weekly" '+(reportPeriod==="weekly"?"selected":"")+'>Weekly</option><option value="monthly" '+(reportPeriod==="monthly"?"selected":"")+'>Monthly</option><option value="annual" '+(reportPeriod==="annual"?"selected":"")+'>Annual</option></select></div><div class="mu" style="margin-top:6px">Charts below are calculated from saved records for the selected period.</div></div>';
   const periodLabel=reportPeriod==="annual"?"year":reportPeriod==="weekly"?"week":"month";
   html+=renderReportChart("Attendance by "+periodLabel,attendanceRows,[{key:"count",label:"People present",color:"#3978d4"}]);
   html+=renderReportChart("New member registrations by "+periodLabel,memberRows,[{key:"count",label:"New members",color:"#159b76"}]);
-  html+=renderReportChart("Website account registrations by "+periodLabel,websiteRegistrationRows,[{key:"count",label:"New registrations",color:"#9a70d6"}]);
   if(canSeeFunds){
     html+='<section class="card" style="margin-bottom:14px"><div style="font-weight:700;margin-bottom:8px">Church funds summary</div><div class="grid"><div class="card"><div class="stat">₱'+totalIncome.toLocaleString("en-PH")+'</div>Recorded income</div><div class="card"><div class="stat">₱'+totalExpense.toLocaleString("en-PH")+'</div>Recorded expenses</div><div class="card"><div class="stat">₱'+(totalIncome-totalExpense).toLocaleString("en-PH")+'</div>Recorded balance</div></div></section>';
     html+=renderReportChart("Income and expenses by "+periodLabel,fundRows,[{key:"income",label:"Income",color:"#159b76"},{key:"expense",label:"Expenses",color:"#d45b5b"}],"₱");
@@ -4781,7 +4776,9 @@ function openAdminModal(id){
       <div class="mu" style="margin-top:8px">Username:</div>
       <input id="adm_username" maxlength="40" autocomplete="off" value="${e(a.username || "")}" placeholder="e.g. Admin05">
       
-      <p class="mu" style="margin-top:8px">Admins set their own password through a one-time activation link generated after saving.</p>
+      <div class="mu" style="margin-top:8px">Password ${nw ? "(required)" : "(leave blank to keep current password)"}:</div>
+      <input id="adm_password" type="password" autocomplete="new-password">
+      <label class="chk"><input type="checkbox" onchange="$('#adm_password').type = this.checked ? 'text' : 'password'"> Show password</label>
 
       ${a.owner ? `
         <p class="mu" style="margin-top:10px">Admin Mart is the Super Admin and always has full access to every section.</p>
@@ -4811,34 +4808,73 @@ function openAdminModal(id){
 }
 
 async function saveAdminRecord(id){
-  if(!isAdminMart())return alert("Only Admin Mart can manage admin accounts.");
-  const nw=id==="_new",name=$("#adm_name").value.trim(),username=$("#adm_username").value.trim().toLowerCase(),errEl=$("#adm_error"),btn=$("#btn-save-admin");
-  if(!name||!username){errEl.textContent="Please fill in both name and username.";return;}
-  const existing=(AL||[]).find(x=>x.id===id),isOwner=existing?!!existing.owner:false;
-  const perms=isOwner?Object.keys(PL):Array.from(document.querySelectorAll("[data-adp]:checked")).map(i=>i.dataset.adp);
-  btn.disabled=true;btn.textContent="Saving securely…";
-  const action=nw?"create_admin":"update_admin";
-  const payload=nw?{action,name,username,permissions:perms}:{action,id,name,permissions:perms};
-  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:payload});
-  if(error||!data?.ok){errEl.textContent=data?.error||error?.message||"Could not save administrator.";btn.disabled=false;btn.textContent="Save Admin";return;}
-  if(nw){
-    const a=data.admin;AL.push(a);
-    const link=location.origin+location.pathname+"?setup="+encodeURIComponent(data.setup_token);
-    $("#mb").innerHTML='<h3>Administrator created</h3><p>Send this private one-time activation link to '+e(name)+'. It expires in 7 days and can only be used once.</p><input readonly id="admin_setup_link" value="'+e(link)+'" style="width:100%"><p><button class="btn gold" onclick="navigator.clipboard.writeText(document.getElementById(\'admin_setup_link\').value);showSuccessNotification(\'Activation link copied\')">Copy activation link</button> <button onclick="closeModal()">Close</button></p>';
-    $("#modal").style.display="flex";
-  }else{
-    const idx=AL.findIndex(x=>x.id===id);if(idx>=0)AL[idx]={...AL[idx],name,perms};
-    closeModal();render();showSuccessNotification("Administrator permissions updated.");
+  if(!isAdminMart()) return alert("Only Admin Mart can manage admin accounts.");
+  const nw = id === "_new";
+  const name = $("#adm_name").value.trim();
+  const username = $("#adm_username").value.trim();
+  const password = $("#adm_password").value;
+  const errEl = $("#adm_error");
+  const btn = $("#btn-save-admin");
+
+  if(!name || !username){
+    errEl.textContent = "Please fill in both name and username.";
+    return;
+  }
+  if(nw && !password){
+    errEl.textContent = "Please enter a password for the new admin.";
+    return;
+  }
+
+  const existing = (AL || []).find(x => x.id === id);
+  const isOwner = existing ? !!existing.owner : false;
+  const perms = isOwner ? Object.keys(PL) : Array.from(document.querySelectorAll("[data-adp]:checked")).map(i => i.dataset.adp);
+
+  const adminObj = {
+    id: nw ? ("adm_" + Date.now().toString(36)) : id,
+    name: name,
+    username: username,
+    password: password ? password : (existing ? existing.password : ""),
+    owner: isOwner,
+    perms: perms
+  };
+
+  btn.disabled = true;
+  btn.textContent = "Saving to Cloud...";
+
+  try {
+    AL = AL.filter(x => x.id !== adminObj.id);
+    AL.push(adminObj);
+
+    await syncRecordToCloud("admins", adminObj.id, adminObj);
+
+    if(me && me.id === adminObj.id){
+      me = adminObj;
+      localStorage.setItem("jt_active_session", JSON.stringify(me));
+    }
+
+    closeModal();
+    render();
+    showSuccessNotification("Admin account saved and synced to cloud!");
+  } catch(err) {
+    errEl.textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = "Save Admin";
   }
 }
 
 async function deleteAdminRecord(id){
-  if(!isAdminMart())return alert("Only Admin Mart can remove administrator accounts.");
-  const target=AL.find(a=>a.id===id);if(!target||target.owner)return alert("Cannot remove the Super Admin account.");
-  if(!confirm("Remove administrator "+target.name+" and revoke their access?"))return;
-  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"delete_admin",id}});
-  if(error||!data?.ok){showErrorNotification(data?.error||error?.message||"Could not remove administrator.");return;}
-  AL=AL.filter(a=>a.id!==id);render();showSuccessNotification("Administrator access revoked.");
+  if(!isAdminMart()) return alert("Only Admin Mart can manage admin accounts.");
+  const target = AL.find(a => a.id === id);
+  if(!target) return;
+  if(target.owner){
+    return alert("Cannot remove the Super Admin account (Admin Mart).");
+  }
+  if(confirm(`Remove admin account for "${target.name}" (${target.username})?`)){
+    AL = AL.filter(a => a.id !== id);
+    await deleteRecordFromCloud("admins", id);
+    render();
+    showSuccessNotification("Admin removed live from database!");
+  }
 }
 
 async function deleteRecord(c, id){
@@ -4852,46 +4888,11 @@ async function deleteRecord(c, id){
 }
 
 async function handleLogout(){
-  if(supabaseClient) await supabaseClient.auth.signOut();
-  me=null;admin=false;render();
+  me = null;
+  admin = false;
+  localStorage.setItem("jt_active_session", "null");
+  render();
   showSuccessNotification("Logged out. Viewing in Public Visitor mode.");
-}
-async function restoreAdminSession(){
-  if(!supabaseClient)return;
-  const {data:{session}}=await supabaseClient.auth.getSession();if(!session)return;
-  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"list_registrations"}});
-  if(error||!data?.admin){await supabaseClient.auth.signOut();return;}
-  me={id:data.admin.admin_id,name:data.admin.display_name,username:data.admin.username,owner:data.admin.is_owner,perms:data.admin.permissions||[]};admin=true;if(data.admins?.length)AL=data.admins;render();
-}
-function adminSetupForm(token){
-  $("#mb").innerHTML=`<h3>Activate Admin Account</h3><p class="mu">Create a new password with at least 12 characters. This one-time link can only be used once.</p><form onsubmit="handleAdminActivation(event)"><input type="hidden" id="setup_token" value="${e(token)}"><label class="mu">New password</label><input id="setup_password" type="password" minlength="12" maxlength="128" required><label class="mu">Confirm password</label><input id="setup_password2" type="password" minlength="12" maxlength="128" required><div id="setup_error" style="color:#ff8a80;min-height:22px"></div><p><button class="btn gold" type="submit">Activate Account</button></p></form>`;$ ("#modal").style.display="flex";
-}
-async function handleAdminActivation(ev){
-  ev.preventDefault();const token=$("#setup_token").value,password=$("#setup_password").value;
-  if(password!==$("#setup_password2").value){$("#setup_error").textContent="Passwords do not match.";return;}
-  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"bootstrap",token,password}});
-  if(error||!data?.ok){$("#setup_error").textContent=data?.error||error?.message||"Activation failed.";return;}
-  const {error:le}=await supabaseClient.auth.signInWithPassword({email:data.email,password});
-  if(le){$("#setup_error").textContent="Account created. Please sign in using Admin Login.";return;}
-  closeModal();await restoreAdminSession();showSuccessNotification("Admin account activated with your new password.");history.replaceState(null,"",location.pathname+location.hash);
-}
-function registerForm(){
-  $("#mb").innerHTML=`<h3>Register Account</h3><p class="mu">Register with JTNAAN Bulacan to receive website updates. Your information is stored privately.</p><form onsubmit="handleRegistrationSubmit(event)"><label class="mu">Full name *</label><input id="reg_name" maxlength="120" required><label class="mu">Age *</label><input id="reg_age" type="number" min="1" max="120" required><label class="mu">Church *</label><input id="reg_church" maxlength="160" required><label class="mu">Ministry *</label><input id="reg_ministry" maxlength="160" required><label class="mu">Phone (optional)</label><input id="reg_phone" maxlength="40"><label class="mu">Location (optional)</label><input id="reg_location" maxlength="160"><label class="chk"><input id="reg_optin" type="checkbox"> I agree to receive website updates.</label><div id="reg_error" style="color:#ff8a80;min-height:22px"></div><p><button class="btn gold" id="reg_submit">Submit Registration</button></p></form>`;$ ("#modal").style.display="flex";
-}
-async function handleRegistrationSubmit(ev){
-  ev.preventDefault();const payload={action:"register",full_name:$("#reg_name").value,age:Number($("#reg_age").value),church:$("#reg_church").value,ministry:$("#reg_ministry").value,phone:$("#reg_phone").value,location:$("#reg_location").value,notification_opt_in:$("#reg_optin").checked};
-  const btn=$("#reg_submit");btn.disabled=true;btn.textContent="Submitting…";
-  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:payload});
-  if(error||!data?.ok){$("#reg_error").textContent=data?.error||error?.message||"Registration failed.";btn.disabled=false;btn.textContent="Submit Registration";return;}
-  $("#mb").innerHTML=`<div style="text-align:center;padding:24px 8px"><h2>Welcome to JTNAAN Website!</h2><p>Thank you for registering. You'll be notified about new posts, events, announcements, and other updates on our website.</p><button class="btn gold" onclick="closeModal()">Continue</button></div>`;
-}
-function registrationsv(){return '<h2>REGISTERED USERS</h2><p class="mu">Loading private registration records…</p>';}
-async function loadRegistrationRows(){
-  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"list_registrations"}});
-  const main=$("#main");if(!main||view!=="registrations")return;
-  if(error||!data?.ok){main.innerHTML="<h2>REGISTERED USERS</h2><p>Unable to load registrations.</p>";return;}
-  const rows=data.registrations||[];
-  main.innerHTML='<h2>REGISTERED USERS ('+rows.length+')</h2><p class="mu">Private list · newest first</p>'+(rows.length?'<div class="table-wrap"><table><thead><tr><th>Name</th><th>Age</th><th>Church / Ministry</th><th>Phone / Location</th><th>Updates</th><th>Status</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+e(r.full_name)+'</td><td>'+e(r.age)+'</td><td>'+e(r.church)+'<br>'+e(r.ministry)+'</td><td>'+e(r.phone||"—")+'<br>'+e(r.location||"—")+'</td><td>'+(r.notification_opt_in?"Yes":"No")+'</td><td>'+e(r.status)+'</td></tr>').join("")+'</tbody></table></div>':'<p>No registrations yet.</p>');
 }
 
 function loginForm(msg){
@@ -4913,13 +4914,20 @@ function loginForm(msg){
 }
 
 async function handleLoginSubmit(ev){
-  ev.preventDefault();const u=$("#lu").value.trim().toLowerCase(),p=$("#lp").value;
-  const {data:lookup,error:lookupError}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"lookup_admin",username:u}});
-  if(lookupError||!lookup?.email){$("#le").textContent="Invalid username or password.";return;}
-  const {error}=await supabaseClient.auth.signInWithPassword({email:lookup.email,password:p});
-  if(error){$("#le").textContent="Invalid username or password. First-time admins must activate their account using the one-time setup link.";return;}
-  await restoreAdminSession();if(!me){$("#le").textContent="Administrator account is not activated.";return;}
-  closeModal();showSuccessNotification(`Welcome back, ${me.name}!`);
+  ev.preventDefault();
+  const u = $("#lu").value.trim().toLowerCase();
+  const p = $("#lp").value;
+  const found = AL.find(a => a.username.toLowerCase() === u && a.password === p);
+  if(found){
+    me = found;
+    admin = true;
+    localStorage.setItem("jt_active_session", JSON.stringify(found));
+    closeModal();
+    render();
+    showSuccessNotification(`Welcome back, ${found.name}!`);
+  } else {
+    $("#le").textContent = "Invalid username or password.";
+  }
 }
 
 function handleHashRoute(){
@@ -4958,12 +4966,8 @@ async function initApp(){
   render();
   initSupabaseClient();
   await fetchAllFromCloud(true);
-  await restoreAdminSession();
-  if(me) await fetchAllFromCloud(true);
   await loadDailyBibleContent(true);
   handleHashRoute();
-  const setupToken=new URLSearchParams(location.search).get("setup");
-  if(setupToken) adminSetupForm(setupToken);
 }
 
 // ===== EVENTS (photos + Upcoming Events on dashboard) and ATTENDANCE (editable, auto-clear) =====
