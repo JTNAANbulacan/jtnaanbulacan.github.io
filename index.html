@@ -1824,14 +1824,6 @@ function openFormModal(c, id=""){
       <div class="mu" style="margin-top:6px">Photo / Image:</div>
       <input type="file" id="f_photo" accept="image/*">
     ` : ''}
-    ${(c === 'devotion' || c === 'fbposts') ? `
-      <div style="background:#1877f21a;border:1px solid #1877f255;border-radius:10px;padding:10px 12px;margin-top:12px">
-        <label class="chk" style="background:transparent;padding:0;margin:0">
-          <input type="checkbox" id="f_auto_fb" checked>
-          <span style="font-size:0.86rem"><b style="color:#70b5ff">Auto-post to JTNAAN Facebook Page</b> · Keeps 3 latest posts synchronized</span>
-        </label>
-      </div>
-    ` : ''}
     <p>
       <button class="btn gold" id="btn-save-form" onclick="saveFormData('${c}', '${id}')">Save & Sync Live</button>
       <button onclick="closeModal()">Cancel</button>
@@ -1881,38 +1873,6 @@ async function saveFormData(c, id){
     D[c] = (D[c]||[]).filter(x => x.id !== item.id);
     D[c].unshift(item);
 
-    // Auto-post synchronization for Facebook
-    const autoFbEl = document.getElementById("f_auto_fb");
-    if((c === 'devotion' || c === 'fbposts') && autoFbEl && autoFbEl.checked){
-      const fbItem = {
-        id: "fb_" + item.id.replace(/[^a-zA-Z0-9_]/g, "_"),
-        date: item.date || new Date().toISOString().slice(0, 10),
-        caption: item.caption || item.desc || "JTNAAN Bulacan update",
-        photo: item.photo || "",
-        url: (item.url && item.url.startsWith("http")) ? item.url : "https://www.facebook.com/profile.php?id=61556921121315",
-        createdAt: item.createdAt || Date.now()
-      };
-      D.fbposts = (D.fbposts || []).filter(x => x.id !== fbItem.id);
-      D.fbposts.unshift(fbItem);
-      D.fbposts.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-      await syncRecordToCloud("fbposts", fbItem.id, fbItem);
-
-      const fbCfg = (typeof getFbSyncSettings === "function") ? getFbSyncSettings() : {};
-      if(fbCfg.accessToken && fbCfg.pageId){
-        try{
-          fetch(`https://graph.facebook.com/v19.0/${fbCfg.pageId}/feed`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              message: fbItem.caption,
-              link: fbItem.url,
-              access_token: fbCfg.accessToken
-            })
-          }).catch(e => console.warn("Graph API auto-post notice:", e));
-        }catch(_){}
-      }
-    }
-    
     const ok = await syncRecordToCloud(c, item.id, item);
     closeModal();
     render();
@@ -4052,6 +4012,7 @@ function openAlbumViewer(id){
 }
 
 function fundsv(){
+  if(!can("funds")) return '<p class="mu">Church funds are private. You do not have permission to view this section.</p>';
   const L = D.funds || [];
   let inc = 0, exp = 0;
   L.forEach(f => {
