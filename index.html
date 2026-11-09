@@ -2226,7 +2226,7 @@ function render(){
   else if(view=="devotion"||view=="testimony") $("#main").innerHTML = feed(view);
   else if(view=="prayers") $("#main").innerHTML = prayersv();
   else if(view=="support") $("#main").innerHTML = supportv();
-  else if(view=="reports") $("#main").innerHTML = reportsv();
+  else if(view=="reports"){ $("#main").innerHTML = reportsv(); loadRegistrationReportStats(); }
   else if(view=="funds") $("#main").innerHTML = fundsv();
   else if(view=="social") $("#main").innerHTML = socialv();
   else if(view=="about") $("#main").innerHTML = about();
@@ -4398,6 +4398,16 @@ async function saveAttendanceRecord(){
 }
 
 let reportPeriod = "monthly";
+let registrationReportRows=[];
+let registrationReportLoaded=false;
+async function loadRegistrationReportStats(){
+  if(registrationReportLoaded||!supabaseClient)return;
+  registrationReportLoaded=true;
+  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"registration_stats"}});
+  if(error||!data?.ok){registrationReportLoaded=false;return;}
+  registrationReportRows=data.created_at||[];
+  if(view==="reports"){const main=$("#main");if(main)main.innerHTML=reportsv();}
+}
 function setReportPeriod(period){
   reportPeriod = ["weekly","monthly","annual"].includes(period) ? period : "monthly";
   const main = document.getElementById("main");
@@ -4447,6 +4457,7 @@ function reportsv(){
     label:p.label,
     count:byPeriod(members,"joined",p.key).length
   }));
+  const websiteRegistrationRows=periods.map(p=>({label:p.label,count:registrationReportRows.filter(value=>periodKey(value)===p.key).length}));
   const fundRows = periods.map(p=>{
     const rows=byPeriod(funds,"date",p.key);
     return {label:p.label,
@@ -4485,11 +4496,12 @@ function reportsv(){
   const followerTotal=social.reduce((n,x)=>n+(Number(x.followers)||0),0);
   const reachTotal=social.reduce((n,x)=>n+(Number(x.reach)||0),0);
   let html='<h2>CHURCH STATISTICS &amp; REPORTS</h2>';
-  html+='<div class="grid" style="margin-bottom:14px"><div class="card"><div class="stat">'+members.length+'</div>Registered members</div><div class="card"><div class="stat">'+(latestAttendance?(latestAttendance.present||[]).length:0)+'</div>Latest attendance<div class="mu">'+(latestAttendance?e(latestAttendance.date+" · "+(latestAttendance.svc||"")):"No attendance records yet")+'</div></div><div class="card"><div class="stat">'+attendance.length+'</div>Attendance records</div><div class="card"><div class="stat">'+followerTotal.toLocaleString("en-PH")+'</div>Social followers<div class="mu">'+reachTotal.toLocaleString("en-PH")+' recorded reach / views</div></div></div>';
+  html+='<div class="grid" style="margin-bottom:14px"><div class="card"><div class="stat">'+members.length+'</div>Registered members</div><div class="card"><div class="stat">'+registrationReportRows.length+'</div>Website registrations</div><div class="card"><div class="stat">'+(latestAttendance?(latestAttendance.present||[]).length:0)+'</div>Latest attendance<div class="mu">'+(latestAttendance?e(latestAttendance.date+" · "+(latestAttendance.svc||"")):"No attendance records yet")+'</div></div><div class="card"><div class="stat">'+attendance.length+'</div>Attendance records</div><div class="card"><div class="stat">'+followerTotal.toLocaleString("en-PH")+'</div>Social followers<div class="mu">'+reachTotal.toLocaleString("en-PH")+' recorded reach / views</div></div></div>';
   html+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><b>Statistics period</b><select aria-label="Select report period" onchange="setReportPeriod(this.value)" style="min-width:170px;max-width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font:inherit;font-weight:600"><option value="weekly" '+(reportPeriod==="weekly"?"selected":"")+'>Weekly</option><option value="monthly" '+(reportPeriod==="monthly"?"selected":"")+'>Monthly</option><option value="annual" '+(reportPeriod==="annual"?"selected":"")+'>Annual</option></select></div><div class="mu" style="margin-top:6px">Charts below are calculated from saved records for the selected period.</div></div>';
   const periodLabel=reportPeriod==="annual"?"year":reportPeriod==="weekly"?"week":"month";
   html+=renderReportChart("Attendance by "+periodLabel,attendanceRows,[{key:"count",label:"People present",color:"#3978d4"}]);
   html+=renderReportChart("New member registrations by "+periodLabel,memberRows,[{key:"count",label:"New members",color:"#159b76"}]);
+  html+=renderReportChart("Website account registrations by "+periodLabel,websiteRegistrationRows,[{key:"count",label:"New registrations",color:"#9a70d6"}]);
   if(canSeeFunds){
     html+='<section class="card" style="margin-bottom:14px"><div style="font-weight:700;margin-bottom:8px">Church funds summary</div><div class="grid"><div class="card"><div class="stat">₱'+totalIncome.toLocaleString("en-PH")+'</div>Recorded income</div><div class="card"><div class="stat">₱'+totalExpense.toLocaleString("en-PH")+'</div>Recorded expenses</div><div class="card"><div class="stat">₱'+(totalIncome-totalExpense).toLocaleString("en-PH")+'</div>Recorded balance</div></div></section>';
     html+=renderReportChart("Income and expenses by "+periodLabel,fundRows,[{key:"income",label:"Income",color:"#159b76"},{key:"expense",label:"Expenses",color:"#d45b5b"}],"₱");
