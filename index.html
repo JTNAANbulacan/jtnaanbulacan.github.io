@@ -902,6 +902,53 @@ function showErrorNotification(msg){
   setTimeout(()=>{ if(t && t.parentElement) t.remove(); }, 8000);
 }
 
+
+function installSiteSearch(){
+ if($("#site-search-wrap"))return;const nav=$("#nav");if(!nav)return;
+ const w=document.createElement("div");w.id="site-search-wrap";w.style.cssText="padding:8px 12px;background:#0b0a3af2;border-bottom:1px solid var(--bd)";
+ w.innerHTML='<input id="site-search" type="search" placeholder="🔎 Search the website..." aria-label="Search website" oninput="searchWebsite(this.value)" style="max-width:760px;display:block;margin:auto"><div id="site-search-results" style="max-width:760px;margin:6px auto 0"></div>';
+ nav.parentNode.insertBefore(w,nav.nextSibling);
+}
+function searchWebsite(q){
+ const box=$("#site-search-results");if(!box)return;const term=q.trim().toLowerCase();if(!term){box.innerHTML="";return;}
+ const groups=[["members","Members",D.members],["ministries","Ministries",D.ministries],["events","Events",D.events],["devotion","Devotions",D.devotion],["testimony","Testimonies",D.testimony],["gallery","Gallery",D.gallery],["dashboard","Facebook posts",D.fbposts]],hits=[];
+ groups.forEach(([tab,label,arr])=>(arr||[]).forEach(x=>{const body=[x.name,x.title,x.caption,x.desc,x.req,x.place].filter(Boolean).join(" ");if((!x.publishAt||new Date(x.publishAt).getTime()<=Date.now())&&body.toLowerCase().includes(term))hits.push({tab,label,title:x.title||x.name||label,body});}));
+ box.innerHTML=hits.slice(0,10).map(h=>'<button class="btn sm" style="display:block;width:100%;text-align:left;white-space:normal;margin:3px 0" onclick="view=\''+h.tab+'\';render()"><b>'+ex(h.title)+'</b><div class="mu">'+ex(h.label)+' · '+ex(h.body.slice(0,130))+'</div></button>').join("")||'<div class="mu">No matching content found.</div>';
+}
+function activityLogView(){
+ if(!me)return '<p>Admin login required.</p>';const rows=(D.activity||[]).slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+ return '<h2>ADMIN ACTIVITY LOGS</h2><p class="mu">Visible only to signed-in administrators.</p>'+rows.slice(0,300).map(a=>'<div class="card" style="margin:6px 0"><b>'+ex(a.actor)+'</b> '+ex(a.action)+' <b>'+ex(a.collection)+'</b><div class="mu">'+new Date(a.createdAt).toLocaleString()+' · '+ex(a.recordId)+'</div></div>').join("")||'<p class="mu">No activity recorded yet.</p>';
+}
+function notificationsView(){
+ if(!me)return '<p>Admin login required.</p>';const rows=(D.notifications||[]).slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+ return '<h2>NOTIFICATION CENTER</h2><p class="mu">New submissions and admin alerts.</p>'+rows.map(n=>'<div class="card" style="margin:6px 0"><b>'+ex(n.title)+'</b><div>'+ex(n.message)+'</div><div class="mu">'+new Date(n.createdAt).toLocaleString()+'</div></div>').join("")||'<p class="mu">No notifications yet.</p>';
+}
+function logAdminActivity(action,collection,id){
+ if(!me||collection==="activity"||collection==="notifications"||!supabaseClient)return;
+ const a={id:"log_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6),actor:me.name||me.username,action,collection,recordId:String(id||""),createdAt:Date.now()};
+ D.activity=D.activity||[];D.activity.unshift(a);D.activity=D.activity.slice(0,500);
+ supabaseClient.from("church_records").upsert({collection:"activity",id:a.id,data:a,updated_at:new Date().toISOString()}).then(()=>{}).catch(()=>{});
+}
+async function createAdminNotification(title,message,section){
+ const n={id:"notice_"+Date.now().toString(36),title,message,section,createdAt:Date.now()};D.notifications=D.notifications||[];D.notifications.unshift(n);
+ if(supabaseClient)await supabaseClient.from("church_records").upsert({collection:"notifications",id:n.id,data:n,updated_at:new Date().toISOString()});
+}
+function maintenanceSettings(){return (D.settings||[]).find(x=>x.id==="maintenance")||{enabled:false};}
+function applyMaintenanceMode(){
+ const m=maintenanceSettings();let el=$("#maintenance-overlay");
+ if(!m.enabled||isAdminMart()){if(el)el.remove();return;}
+ if(!el){el=document.createElement("div");el.id="maintenance-overlay";el.style.cssText="position:fixed;inset:0;z-index:999999;background:radial-gradient(circle at top,#29256f,#080827 70%);display:flex;align-items:center;justify-content:center;padding:22px;text-align:center;color:white";document.body.appendChild(el);}
+ el.innerHTML='<div style="max-width:620px;padding:clamp(24px,5vw,52px);border:1px solid #f2a93b88;border-radius:24px;background:#15145af2;box-shadow:0 24px 80px #0009"><div style="font-size:3rem">🛠️</div><div style="color:#f2a93b;letter-spacing:3px;font-weight:800">JTNAAN BULACAN</div><h1 style="font-size:clamp(2rem,6vw,3.5rem);margin:10px 0">We’ll Be Back Soon</h1><p style="font-size:1.05rem;line-height:1.7;color:#d9dcff">'+ex(m.notice||"Our website is undergoing scheduled maintenance. We’re making improvements to serve you better. Thank you for your patience.")+'</p><div style="margin-top:22px;color:#f2a93b;font-weight:700">Thank you for your understanding and prayers.</div></div>';
+}
+async function toggleMaintenance(){
+ if(!isAdminMart())return alert("Only Admin Mart (Super Admin) can control Maintenance Mode.");
+ const old=maintenanceSettings(),enabled=!old.enabled;let notice=old.notice||"Our website is undergoing scheduled maintenance. We’re making improvements to serve you better. Thank you for your patience.";
+ if(enabled){notice=prompt("Enter the notice visitors will see:",notice);if(notice===null)return;if(!notice.trim())return alert("Please enter a notice.");}
+ const data={enabled,notice,updatedAt:Date.now(),updatedBy:me.name};
+ if(!await syncRecordToCloud("settings","maintenance",data))return alert("Could not save maintenance settings. Check cloud connection.");
+ D.settings=(D.settings||[]).filter(x=>x.id!=="maintenance").concat([{id:"maintenance",...data}]);applyMaintenanceMode();render();
+}
+
 function showSuccessNotification(msg){
   let t = document.getElementById("db-success-toast");
   if(!t){
@@ -944,7 +991,7 @@ const CF={
 const TL={
   dashboard:"HOME DASHBOARD",about:"ABOUT",schedule:"SCHEDULE",devotion:"DAILY DEVOTION",testimony:"TESTIMONY",
   members:"MEMBERS",attendance:"ATTENDANCE",funds:"FUNDS",social:"SOCIAL",ministries:"MINISTRIES",
-  events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS"
+  events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS",activity:"ACTIVITY LOGS",notifications:"NOTIFICATIONS"
 };
 
 const PL={
@@ -1166,6 +1213,7 @@ async function syncRecordToCloud(collection, id, dataObj){
       console.warn("Supabase upsert note:", error);
       return false;
     }
+    if(me)logAdminActivity("Added / updated",collection,id);
     return true;
   } catch(err) {
     console.warn("Cloud sync exception:", err);
@@ -1180,6 +1228,7 @@ async function deleteRecordFromCloud(collection, id){
       collection: collection,
       id: String(id)
     });
+    if(!error&&me)logAdminActivity("Deleted",collection,id);
     return !error;
   } catch(err) {
     return false;
@@ -1204,7 +1253,7 @@ async function fetchAllFromCloud(silent = false){
     const cloudD = {
       members: [], ministries: [], funds: [], fbposts: [], devotion: [],
       attendance: [], social: [], events: [], prayers: [], testimony: [],
-      donate: [], gallery: [], comments: [], settings: [], admins: []
+      donate: [], gallery: [], comments: [], settings: [], admins: [], activity: [], notifications: []
     };
 
     // Calculate aggregated reactions across all users and batches
@@ -1634,7 +1683,7 @@ function baseTabs(){
 const okey = t => t == "prayer" ? "prayers" : t;
 function tabs(){
   const T = baseTabs();
-  if(me) T.push("admins");
+  if(me){T.push("admins");T.push("activity");T.push("notifications");}
   return T;
 }
 
@@ -2148,8 +2197,12 @@ function render(){
     `<button class="btn ib" onclick="loginForm()" title="Admin login" aria-label="Admin login"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>`;
   
   renderLogo();
+  installSiteSearch();
+  applyMaintenanceMode();
 
   if(view=="admins") $("#main").innerHTML = adminsv();
+  else if(view=="activity") $("#main").innerHTML = activityLogView();
+  else if(view=="notifications") $("#main").innerHTML = notificationsView();
   else if(view=="devotion"||view=="testimony") $("#main").innerHTML = feed(view);
   else if(view=="prayers") $("#main").innerHTML = prayersv();
   else if(view=="support") $("#main").innerHTML = supportv();
@@ -4455,6 +4508,7 @@ function prayersv(){
   ${can("prayers")?`<p><button class="btn gold" onclick="openFormModal('prayers')">+ Add Request (Admin)</button></p>`:''}
   
   <div class="card prayer-request-card">
+    <input id="pr_website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px" placeholder="Leave empty">
     <b style="color:var(--pr)">Send a Prayer Request</b>
     <div class="mu" style="margin:4px 0 8px">We would love to pray with you. Fill this out and it will be sent directly to our church prayer team.</div>
     <select id="pc">
@@ -4543,7 +4597,10 @@ async function submitPrayerRequest(target){
   const forWhom = $("#pfor").value.trim();
   const req = $("#pt").value.trim();
   const priv = $("#pv").value;
+  if($("#pr_website")?.value)return;
+  const last=+(localStorage.getItem("jt_prayer_last_submit")||0);if(Date.now()-last<30000)return alert("Please wait 30 seconds before sending another request.");
   if(!req) return alert("Please describe your prayer request.");
+  localStorage.setItem("jt_prayer_last_submit",String(Date.now()));
 
   if(target === 'auto'){
     const fb = $("#pr-feedback");
@@ -4561,6 +4618,7 @@ async function submitPrayerRequest(target){
       const item = { id: "pr_" + Date.now().toString(36), name: name + " (" + cat + ")", req: req, status: "Open" };
       D.prayers.unshift(item);
       await syncRecordToCloud("prayers", item.id, item);
+      await createAdminNotification("New prayer request","A visitor submitted a new prayer request.","prayers");
       render();
       showSuccessNotification("Prayer request saved and delivered to church email!");
     } else {
