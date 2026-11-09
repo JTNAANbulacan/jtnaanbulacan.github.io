@@ -4107,30 +4107,68 @@ function reportsv(){
   if(reportPeriod === "annual"){
     for(let i=4;i>=0;i--){const y=now.getFullYear()-i;periods.push({key:String(y),label:String(y)});}
   } else {
-    for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);periods.push({key:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),label:d.toLocaleDateString("en-PH",{month:"short"})});}
+    for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);periods.push({key:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),label:d.toLocaleDateString("en-PH",{month:"short",year:"2-digit"})});}
   }
-  const chartRows = periods.map(p=>{
-    const rows=funds.filter(f=>String(f.date||"").slice(0,reportPeriod==="annual"?4:7)===p.key);
-    return {key:p.key,label:p.label,
+  const periodKey = value => String(value||"").slice(0,reportPeriod==="annual"?4:7);
+  const byPeriod = (rows, dateField, key) => rows.filter(x=>periodKey(x[dateField])===key);
+  const attendanceRows = periods.map(p=>({
+    label:p.label,
+    count:byPeriod(attendance,"date",p.key).reduce((n,r)=>n+(Array.isArray(r.present)?r.present.length:0),0)
+  }));
+  const memberRows = periods.map(p=>({
+    label:p.label,
+    count:byPeriod(members,"joined",p.key).length
+  }));
+  const fundRows = periods.map(p=>{
+    const rows=byPeriod(funds,"date",p.key);
+    return {label:p.label,
       income:rows.filter(f=>f.type!=="Expense").reduce((n,f)=>n+(Number(f.amount)||0),0),
       expense:rows.filter(f=>f.type==="Expense").reduce((n,f)=>n+(Number(f.amount)||0),0)};
   });
-  const maxAmount=Math.max(1,...chartRows.flatMap(x=>[x.income,x.expense]));
+  const renderReportChart = (title, rows, datasets, suffix="") => {
+    const width=Math.max(620,rows.length*100+80), height=270, left=62, right=20, top=20, bottom=72;
+    const plotW=width-left-right, plotH=180, max=Math.max(1,...rows.flatMap((r)=>datasets.map(d=>Number(r[d.key])||0)));
+    const niceMax=Math.pow(10,Math.floor(Math.log10(max)))*Math.ceil(max/Math.pow(10,Math.floor(Math.log10(max))));
+    const step=niceMax/4, groupW=plotW/Math.max(1,rows.length), barW=Math.min(30,groupW/(datasets.length+1));
+    let svg='<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="'+e(title)+' chart" style="display:block;width:100%;min-width:'+width+'px;height:auto">';
+    for(let g=0;g<=4;g++){
+      const y=top+plotH-(g*plotH/4), val=niceMax*g/4;
+      svg+='<line x1="'+left+'" y1="'+y+'" x2="'+(width-right)+'" y2="'+y+'" stroke="currentColor" opacity=".16" stroke-dasharray="3 4"/>';
+      svg+='<text x="'+(left-9)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="currentColor" opacity=".75">'+(suffix==="₱"?Math.round(val).toLocaleString("en-PH"):Math.round(val).toLocaleString("en-PH"))+'</text>';
+    }
+    rows.forEach((row,i)=>{
+      const center=left+groupW*(i+.5);
+      datasets.forEach((ds,j)=>{
+        const value=Math.max(0,Number(row[ds.key])||0), h=value/niceMax*plotH;
+        const x=center-(datasets.length*barW+(datasets.length-1)*5)/2+j*(barW+5), y=top+plotH-h;
+        svg+='<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(value?2:0,h)+'" rx="3" fill="'+ds.color+'"><title>'+e(row.label)+' · '+e(ds.label)+': '+suffix+value.toLocaleString("en-PH")+'</title></rect>';
+      });
+      svg+='<text x="'+center+'" y="'+(top+plotH+23)+'" text-anchor="middle" font-size="11" fill="currentColor">'+e(row.label)+'</text>';
+    });
+    let lx=left;
+    datasets.forEach(ds=>{
+      svg+='<rect x="'+lx+'" y="'+(height-25)+'" width="10" height="10" rx="2" fill="'+ds.color+'"/><text x="'+(lx+15)+'" y="'+(height-16)+'" font-size="11" fill="currentColor">'+e(ds.label)+'</text>';
+      lx+=Math.max(95,ds.label.length*7+30);
+    });
+    svg+='</svg>';
+    return '<section class="card" style="margin-bottom:14px"><div style="font-weight:700;margin-bottom:8px">'+e(title)+'</div><div style="overflow-x:auto">'+svg+'</div></section>';
+  };
   const latestAttendance=attendance[0];
   const followerTotal=social.reduce((n,x)=>n+(Number(x.followers)||0),0);
-  let html="<h2>REPORTS</h2>";
+  const reachTotal=social.reduce((n,x)=>n+(Number(x.reach)||0),0);
+  let html='<h2>CHURCH STATISTICS &amp; REPORTS</h2>';
+  html+='<div class="grid" style="margin-bottom:14px"><div class="card"><div class="stat">'+members.length+'</div>Registered members</div><div class="card"><div class="stat">'+(latestAttendance?(latestAttendance.present||[]).length:0)+'</div>Latest attendance<div class="mu">'+(latestAttendance?e(latestAttendance.date+" · "+(latestAttendance.svc||"")):"No attendance records yet")+'</div></div><div class="card"><div class="stat">'+attendance.length+'</div>Attendance records</div><div class="card"><div class="stat">'+followerTotal.toLocaleString("en-PH")+'</div>Social followers<div class="mu">'+reachTotal.toLocaleString("en-PH")+' recorded reach / views</div></div></div>';
+  html+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>Statistics period</b><div class="dtabs" style="margin:0"><button class="'+(reportPeriod==="monthly"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;monthly&quot;)">Monthly</button><button class="'+(reportPeriod==="annual"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;annual&quot;)">Annual</button></div></div><div class="mu" style="margin-top:6px">Charts below are calculated from saved records for the selected period.</div></div>';
+  html+=renderReportChart("Attendance by "+(reportPeriod==="annual"?"year":"month"),attendanceRows,[{key:"count",label:"People present",color:"#3978d4"}]);
+  html+=renderReportChart("New member registrations by "+(reportPeriod==="annual"?"year":"month"),memberRows,[{key:"count",label:"New members",color:"#159b76"}]);
   if(canSeeFunds){
-    html+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>Church funds report</b><div class="dtabs" style="margin:0">';
-    html+='<button class="'+(reportPeriod==="monthly"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;monthly&quot;)">Monthly</button>';
-    html+='<button class="'+(reportPeriod==="annual"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;annual&quot;)">Annual</button></div></div>';
-    html+='<div class="grid" style="margin-top:12px"><div class="card"><div class="stat">₱'+totalIncome.toLocaleString("en-PH")+'</div>Recorded income</div><div class="card"><div class="stat">₱'+totalExpense.toLocaleString("en-PH")+'</div>Recorded expenses</div><div class="card"><div class="stat">₱'+(totalIncome-totalExpense).toLocaleString("en-PH")+'</div>Recorded balance</div></div>';
-    html+='<div style="display:flex;align-items:flex-end;gap:10px;min-height:190px;padding:18px 8px 8px;margin-top:14px;border-bottom:1px solid var(--bd);overflow-x:auto">';
-    html+=chartRows.map(row=>'<div style="flex:1;min-width:42px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:170px"><div style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:140px;width:100%"><div title="Income ₱'+row.income.toLocaleString("en-PH")+'" style="width:42%;max-width:24px;height:'+(row.income?Math.max(3,row.income/maxAmount*130):0)+'px;background:var(--pr);border-radius:4px 4px 0 0"></div><div title="Expense ₱'+row.expense.toLocaleString("en-PH")+'" style="width:42%;max-width:24px;height:'+(row.expense?Math.max(3,row.expense/maxAmount*130):0)+'px;background:#6f8fff;border-radius:4px 4px 0 0"></div></div><span class="mu" style="font-size:.72rem;white-space:nowrap">'+e(row.label)+'</span></div>').join("");
-    html+='</div><div class="mu" style="margin-top:10px"><span style="color:var(--pr)">■</span> Income &nbsp; <span style="color:#6f8fff">■</span> Expenses · Based on recorded entries</div></div>';
+    html+='<section class="card" style="margin-bottom:14px"><div style="font-weight:700;margin-bottom:8px">Church funds summary</div><div class="grid"><div class="card"><div class="stat">₱'+totalIncome.toLocaleString("en-PH")+'</div>Recorded income</div><div class="card"><div class="stat">₱'+totalExpense.toLocaleString("en-PH")+'</div>Recorded expenses</div><div class="card"><div class="stat">₱'+(totalIncome-totalExpense).toLocaleString("en-PH")+'</div>Recorded balance</div></div></section>';
+    html+=renderReportChart("Income and expenses by "+(reportPeriod==="annual"?"year":"month"),fundRows,[{key:"income",label:"Income",color:"#159b76"},{key:"expense",label:"Expenses",color:"#d45b5b"}],"₱");
   } else {
     html+='<div class="card" style="margin-bottom:14px"><b>Church funds report</b><p class="mu" style="margin-bottom:0">Financial figures are private and visible only to admins assigned to Church Funds.</p></div>';
   }
-  html+='<div class="grid"><div class="card"><div class="stat">'+members.length+'</div>Registered members</div><div class="card"><div class="stat">'+(latestAttendance?(latestAttendance.present||[]).length:0)+'</div>Latest attendance<div class="mu">'+(latestAttendance?e(latestAttendance.date+" · "+(latestAttendance.svc||"")):"No attendance records yet")+'</div></div><div class="card"><div class="stat">'+followerTotal.toLocaleString("en-PH")+'</div>Social media followers</div></div>';
+  const socialRows=social.map(x=>({label:x.platform,followers:Number(x.followers)||0,reach:Number(x.reach)||0}));
+  if(socialRows.length) html+=renderReportChart("Social media performance (current saved totals)",socialRows,[{key:"followers",label:"Followers",color:"#3978d4"},{key:"reach",label:"Reach / views",color:"#9a70d6"}]);
   return html;
 }
 function socialv(){
