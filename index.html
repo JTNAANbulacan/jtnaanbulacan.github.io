@@ -482,7 +482,7 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
   html{overflow-x:clip !important;overflow-y:visible !important}
   /* iOS Safari can treat body overflow clipping as a fixed-position containing block.
      Keep horizontal clipping on the document, not the body, so the header stays viewport-fixed. */
-  body{overflow-x:visible !important;padding-top:calc(var(--hh) + env(safe-area-inset-top,0px)) !important}
+  body{overflow-x:visible !important;padding-top:var(--hh) !important}
   header{
     position:fixed !important;
     inset:0 0 auto 0 !important;
@@ -509,10 +509,46 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
   #mnb i{width:1.35rem !important;height:2px !important}
   nav#nav{
     position:fixed !important;
-    top:calc(var(--hh) + env(safe-area-inset-top,0px)) !important;
+    top:var(--hh) !important;
     bottom:0 !important;
     z-index:999 !important;
   }
+  /* Reduce the gap between the fixed header divider and every section's content. */
+  main{padding:10px 12px 64px !important}
+  main h2{margin-top:0 !important;margin-bottom:10px !important}
+}
+/* Prayer request form expands to the available width and adapts its controls to screen size. */
+#main .prayer-request-card{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+  padding:clamp(12px,2vw,22px) !important;
+}
+#main .prayer-request-card input,
+#main .prayer-request-card select,
+#main .prayer-request-card textarea{
+  display:block;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  padding:clamp(10px,1.2vw,14px) !important;
+  margin:6px 0 !important;
+  font-size:16px !important;
+}
+#main .prayer-request-card textarea{
+  min-height:clamp(130px,20vh,260px);
+  resize:vertical;
+}
+#main .prayer-request-card button{
+  max-width:100%;
+  white-space:normal;
+  margin:4px 6px 4px 0;
+}
+@media(max-width:480px){
+  #main .prayer-request-card{padding:12px !important}
+  #main .prayer-request-card button{width:100%;margin:5px 0}
 }
 </style>
 
@@ -4403,7 +4439,7 @@ function prayersv(){
   return `<h2>PRAYER REQUESTS (${L.length})</h2>
   ${can("prayers")?`<p><button class="btn gold" onclick="openFormModal('prayers')">+ Add Request (Admin)</button></p>`:''}
   
-  <div class="card">
+  <div class="card prayer-request-card">
     <b style="color:var(--pr)">Send a Prayer Request</b>
     <div class="mu" style="margin:4px 0 8px">We would love to pray with you. Fill this out and it will be sent directly to our church prayer team.</div>
     <select id="pc">
