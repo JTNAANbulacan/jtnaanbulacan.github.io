@@ -1485,6 +1485,19 @@ setInterval(() => {
   }
 }, 25000);
 
+// Reveal scheduled Daily Devotions automatically when their publication time arrives.
+let _publishedDevotionState = "";
+function checkScheduledDevotions(){
+  const state=(D.devotion||[]).filter(isPublishedItem).map(x=>x.id).sort().join("|");
+  if(state!==_publishedDevotionState){
+    _publishedDevotionState=state;
+    if(typeof view!=="undefined" && (view==="devotion" || view==="dashboard")) render();
+  }
+}
+setInterval(checkScheduledDevotions,10000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkScheduledDevotions();});
+window.addEventListener("focus",checkScheduledDevotions);
+
 const can = c => {
   if (!me) return false;
   if (me.owner) return true;
@@ -2010,6 +2023,14 @@ function updateFundCategoryDropdown(){
   const container=$("#fund-category-options");
   if(container)container.innerHTML=fundCategoryOptions(type,"");
 }
+function localDateTimeValue(value){
+  if(!value) return "";
+  const d=new Date(value); if(isNaN(d.getTime())) return "";
+  const p=n=>String(n).padStart(2,"0");
+  return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes());
+}
+function isPublishedItem(item){return !item.publishAt || !isFinite(Date.parse(item.publishAt)) || Date.parse(item.publishAt)<=Date.now();}
+
 function openFormModal(c, id=""){
   if(!can(c)) return alert("You do not have permission to edit this section.");
   const F = CF[c];
@@ -2036,7 +2057,7 @@ function openFormModal(c, id=""){
       <div class="mu" style="margin-top:6px">Photo / Image:</div>
       <input type="file" id="f_photo" accept="image/*">
     ` : ''}
-    ${(c === "fbposts" || c === "events") ? `<div class="mu" style="margin-top:10px">Schedule publication (optional):</div><input id="f_publishAt" type="datetime-local" value="${e(x.publishAt||"")}"><div class="mu">Leave blank to publish immediately. Scheduled items remain hidden until their selected time.</div>` : ""}
+    ${(c === "fbposts" || c === "events" || c === "devotion") ? `<div class="mu" style="margin-top:10px">Schedule publication (optional):</div><input id="f_publishAt" type="datetime-local" value="${e(localDateTimeValue(x.publishAt||""))}"><div class="mu">Leave blank to publish immediately. Daily Devotions automatically appear on the website at the selected date and time (Philippines local time).</div>` : ""}
     <p>
       <button class="btn gold" id="btn-save-form" onclick="saveFormData('${c}', '${id}')">Save & Sync Live</button>
       <button onclick="closeModal()">Cancel</button>
@@ -2053,7 +2074,10 @@ async function saveFormData(c, id){
   const prevItem = id ? ((D[c]||[]).find(y => y.id === id) || {}) : {};
   const item = { id: id || "id_" + Date.now().toString(36) };
   item.createdAt = prevItem.createdAt || Date.now();
-  if(c === "fbposts" || c === "events"){const scheduled=$("#f_publishAt");item.publishAt=scheduled?scheduled.value:(prevItem.publishAt||"");}
+  if(c === "fbposts" || c === "events" || c === "devotion"){
+    const scheduled=$("#f_publishAt"); const raw=scheduled?scheduled.value:(prevItem.publishAt||"");
+    item.publishAt=raw ? new Date(raw).toISOString() : "";
+  }
   F.f.forEach(([k]) => {
     const el = $("#f_" + k);
     if(el) item[k] = el.value.trim();
@@ -2336,7 +2360,7 @@ async function syncLatestFacebookPostsNow(){
     }
 
     // Auto-sync with latest church updates (including devotions & announcements)
-    const devotions = (D.devotion || []).slice(0, 3).map(dv => ({
+    const devotions = (D.devotion || []).filter(isPublishedItem).slice(0, 3).map(dv => ({
       id: "fb_" + dv.id.replace(/[^a-zA-Z0-9_]/g, "_"),
       date: dv.date || new Date().toISOString().slice(0, 10),
       caption: dv.caption,
@@ -3420,7 +3444,8 @@ function sortNewestFirst(list){
 }
 
 function feed(c){
-  const L = c === "devotion" ? sortNewestFirst(D[c]) : (D[c] || []);
+  const devotionItems=D.devotion||[];
+  const L = c === "devotion" ? sortNewestFirst(can(c)?devotionItems:devotionItems.filter(isPublishedItem)) : (D[c] || []);
   const logo = getChurchLogoUrl();
 
   if(c === "devotion"){
@@ -3493,7 +3518,7 @@ function renderFeedPost(c, x, logo){
         </div>
         <div>
           <b>${e(x.name||"Jesus: The Name Above All Names")}</b>
-          <div class="mu">${e(x.date)} · ${c === 'devotion' ? 'Daily Devotion' : 'Testimony'}</div>
+          <div class="mu">${e(x.date)} · ${c === 'devotion' ? 'Daily Devotion' : 'Testimony'}${can(c) && x.publishAt && !isPublishedItem(x) ? ' · <span style="color:#f2a93b;font-weight:700">SCHEDULED · '+e(new Date(x.publishAt).toLocaleString("en-PH",{timeZone:"Asia/Manila"}))+'</span>' : ''}</div>
         </div>
       </div>
 
