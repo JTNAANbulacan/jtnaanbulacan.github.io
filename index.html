@@ -492,7 +492,7 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
   <div id="header-logo-container" onclick="handleLogoClick()" title="Church Logo">
     <div id="church-logo-render"></div>
   </div>
-  <div><b>JESUS THE NAME ABOVE ALL NAMES</b><small>JTNAAN Bulacan · Church Management</small></div>
+  <div onclick="goToDashboard()" style="cursor:pointer" title="Go to Home Dashboard"><b>JESUS THE NAME ABOVE ALL NAMES</b><small>JTNAAN Bulacan · Church Management</small></div>
   <span id="hl"></span>
 </header>
 
@@ -801,7 +801,7 @@ try {
 
 let me = savedSession;
 let admin = !!(me && me.owner);
-let view = "devotion", dsel="GCash", fbViewMode = "cards";
+let view = "dashboard", dsel="GCash", fbViewMode = "cards";
 
 function setFbViewMode(m){
   fbViewMode = m;
@@ -1144,6 +1144,13 @@ function renderLogo(){
 
 function handleLogoClick(){
   if(admin) triggerLogoPicker();
+  else goToDashboard();
+}
+
+function goToDashboard(){
+  view = "dashboard";
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function triggerLogoPicker(){
@@ -4307,6 +4314,9 @@ function handleHashRoute(){
     if(!me){
       loginForm();
     }
+  } else if(h === "#dashboard" || h === "#home" || search.get("tab") === "dashboard" || search.get("tab") === "home"){
+    view = "dashboard";
+    render();
   } else if(h === "#devotion" || h === "#daily-devotion" || h === "#devotions" || search.get("tab") === "devotion"){
     view = "devotion";
     render();
