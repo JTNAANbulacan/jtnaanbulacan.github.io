@@ -4090,7 +4090,7 @@ async function saveAttendanceRecord(){
 
 let reportPeriod = "monthly";
 function setReportPeriod(period){
-  reportPeriod = period === "annual" ? "annual" : "monthly";
+  reportPeriod = ["weekly","monthly","annual"].includes(period) ? period : "monthly";
   const main = document.getElementById("main");
   if(main) main.innerHTML = reportsv();
 }
@@ -4104,12 +4104,31 @@ function reportsv(){
   const totalExpense = funds.filter(f=>f.type==="Expense").reduce((n,f)=>n+(Number(f.amount)||0),0);
   const now = new Date();
   const periods = [];
+  const parseLocalDate = value => {
+    const parts=String(value||"").slice(0,10).split("-").map(Number);
+    return parts.length===3 && parts.every(Number.isFinite) ? new Date(parts[0],parts[1]-1,parts[2]) : null;
+  };
+  const weekStart = value => {
+    const d=parseLocalDate(value);
+    if(!d || Number.isNaN(d.getTime())) return "";
+    d.setDate(d.getDate()-((d.getDay()+6)%7));
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  };
   if(reportPeriod === "annual"){
     for(let i=4;i>=0;i--){const y=now.getFullYear()-i;periods.push({key:String(y),label:String(y)});}
+  } else if(reportPeriod === "weekly"){
+    const monday=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    monday.setDate(monday.getDate()-((monday.getDay()+6)%7));
+    for(let i=7;i>=0;i--){
+      const d=new Date(monday);d.setDate(monday.getDate()-i*7);
+      const key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+      const end=new Date(d);end.setDate(d.getDate()+6);
+      periods.push({key,label:d.toLocaleDateString("en-PH",{month:"short",day:"numeric"})+"–"+end.toLocaleDateString("en-PH",{month:"short",day:"numeric"})});
+    }
   } else {
     for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);periods.push({key:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),label:d.toLocaleDateString("en-PH",{month:"short",year:"2-digit"})});}
   }
-  const periodKey = value => String(value||"").slice(0,reportPeriod==="annual"?4:7);
+  const periodKey = value => reportPeriod==="annual" ? String(value||"").slice(0,4) : reportPeriod==="weekly" ? weekStart(value) : String(value||"").slice(0,7);
   const byPeriod = (rows, dateField, key) => rows.filter(x=>periodKey(x[dateField])===key);
   const attendanceRows = periods.map(p=>({
     label:p.label,
@@ -4158,12 +4177,13 @@ function reportsv(){
   const reachTotal=social.reduce((n,x)=>n+(Number(x.reach)||0),0);
   let html='<h2>CHURCH STATISTICS &amp; REPORTS</h2>';
   html+='<div class="grid" style="margin-bottom:14px"><div class="card"><div class="stat">'+members.length+'</div>Registered members</div><div class="card"><div class="stat">'+(latestAttendance?(latestAttendance.present||[]).length:0)+'</div>Latest attendance<div class="mu">'+(latestAttendance?e(latestAttendance.date+" · "+(latestAttendance.svc||"")):"No attendance records yet")+'</div></div><div class="card"><div class="stat">'+attendance.length+'</div>Attendance records</div><div class="card"><div class="stat">'+followerTotal.toLocaleString("en-PH")+'</div>Social followers<div class="mu">'+reachTotal.toLocaleString("en-PH")+' recorded reach / views</div></div></div>';
-  html+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>Statistics period</b><div class="dtabs" style="margin:0"><button class="'+(reportPeriod==="monthly"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;monthly&quot;)">Monthly</button><button class="'+(reportPeriod==="annual"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;annual&quot;)">Annual</button></div></div><div class="mu" style="margin-top:6px">Charts below are calculated from saved records for the selected period.</div></div>';
-  html+=renderReportChart("Attendance by "+(reportPeriod==="annual"?"year":"month"),attendanceRows,[{key:"count",label:"People present",color:"#3978d4"}]);
-  html+=renderReportChart("New member registrations by "+(reportPeriod==="annual"?"year":"month"),memberRows,[{key:"count",label:"New members",color:"#159b76"}]);
+  html+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>Statistics period</b><div class="dtabs" style="margin:0"><button class="'+(reportPeriod==="weekly"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;weekly&quot;)">Weekly</button><button class="'+(reportPeriod==="monthly"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;monthly&quot;)">Monthly</button><button class="'+(reportPeriod==="annual"?"gold":"btn")+' sm" onclick="setReportPeriod(&quot;annual&quot;)">Annual</button></div></div><div class="mu" style="margin-top:6px">Charts below are calculated from saved records for the selected period.</div></div>';
+  const periodLabel=reportPeriod==="annual"?"year":reportPeriod==="weekly"?"week":"month";
+  html+=renderReportChart("Attendance by "+periodLabel,attendanceRows,[{key:"count",label:"People present",color:"#3978d4"}]);
+  html+=renderReportChart("New member registrations by "+periodLabel,memberRows,[{key:"count",label:"New members",color:"#159b76"}]);
   if(canSeeFunds){
     html+='<section class="card" style="margin-bottom:14px"><div style="font-weight:700;margin-bottom:8px">Church funds summary</div><div class="grid"><div class="card"><div class="stat">₱'+totalIncome.toLocaleString("en-PH")+'</div>Recorded income</div><div class="card"><div class="stat">₱'+totalExpense.toLocaleString("en-PH")+'</div>Recorded expenses</div><div class="card"><div class="stat">₱'+(totalIncome-totalExpense).toLocaleString("en-PH")+'</div>Recorded balance</div></div></section>';
-    html+=renderReportChart("Income and expenses by "+(reportPeriod==="annual"?"year":"month"),fundRows,[{key:"income",label:"Income",color:"#159b76"},{key:"expense",label:"Expenses",color:"#d45b5b"}],"₱");
+    html+=renderReportChart("Income and expenses by "+periodLabel,fundRows,[{key:"income",label:"Income",color:"#159b76"},{key:"expense",label:"Expenses",color:"#d45b5b"}],"₱");
   } else {
     html+='<div class="card" style="margin-bottom:14px"><b>Church funds report</b><p class="mu" style="margin-bottom:0">Financial figures are private and visible only to admins assigned to Church Funds.</p></div>';
   }
