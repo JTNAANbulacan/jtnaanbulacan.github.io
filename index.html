@@ -2200,6 +2200,7 @@ function render(){
     ` : `
       <div id="drawer-admin-box" style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:8px">
         <button class="btn gold sm" onclick="loginForm();menu(false)" style="width:100%;text-align:center">Admin Login</button>
+        <button class="btn sm" onclick="showSuccessNotification('Public registration is not active yet. The secure registration form is being configured.')" style="width:100%;text-align:center;margin-top:7px">Register Account</button>
       </div>
     `}
     ${T.map(t => `<button class="${t==view?"on":""}" data-v="${t}">${TL[t]||t.toUpperCase()}</button>`).join("")}
