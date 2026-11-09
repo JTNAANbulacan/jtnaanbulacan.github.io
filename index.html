@@ -475,6 +475,22 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 @media(min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
 @media(max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
 </style>
+
+<style id="visual-layout-editor-css">
+.vle-selected{outline:3px solid #f2a93b!important;outline-offset:3px!important;position:relative!important}
+#vle-bar{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:100001;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;width:min(900px,calc(100vw - 20px));padding:10px 12px;background:#15145af7;border:1px solid #f2a93b;border-radius:14px;box-shadow:0 8px 32px #000b;color:#fff}
+#vle-bar label{font-size:12px;color:#c9ccef;display:flex;align-items:center;gap:5px}
+#vle-bar input{width:90px;margin:0;padding:5px}
+#vle-bar input[type=range]{width:110px;padding:0}
+#vle-bar button{font-size:13px;padding:7px 10px}
+#vle-grip-move,#vle-grip-size{position:fixed;z-index:100002;display:none;touch-action:none;user-select:none;box-shadow:0 2px 10px #0009}
+#vle-grip-move{background:#f2a93b;color:#1b1640;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:800;cursor:move}
+#vle-grip-size{width:26px;height:26px;border:3px solid #fff;border-radius:7px;background:#f2a93b;cursor:nwse-resize}
+body.vle-on #main{padding-bottom:150px}
+body.vle-on #main *{cursor:crosshair}
+@media(max-width:600px){#vle-bar{gap:5px;padding:8px}#vle-bar input{width:72px}#vle-bar input[type=range]{width:85px}#vle-bar button{font-size:12px;padding:6px 8px}}
+</style>
+
 </head>
 <body class="">
 
@@ -497,6 +513,7 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
     
       <button class="btn ib" onclick="openGitHubSyncModal()" title="Sync / Export for GitHub Pages (jtnaanbulacan.github.io)"><svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"></path></svg></button>
       <button class="btn ib" onclick="downloadZipBackup()" title="Download Backup ZIP"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"></path></svg></button>
+      <button class="btn ib" onclick="startVisualLayoutEditor()" title="Visual layout editor" aria-label="Visual layout editor"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M4 9h16"/></svg></button>
       <button class="btn ib" onclick="openArrangeModal()" title="Arrange sections"><svg viewBox="0 0 24 24"><path d="M7 4v16m0-16L3 8m4-4 4 4m6 12V4m0 16-4-4m4 4 4-4"></path></svg></button>
       <button class="btn ib" id="btn-edit-text" onclick="toggleTextEditMode()" title="Edit all text &amp; logos"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"></path></svg></button>
     
@@ -2035,6 +2052,7 @@ function render(){
   else if(view=="gallery") $("#main").innerHTML = galleryv();
   else $("#main").innerHTML = list(view);
 
+  applyVisualLayout();
   if(TE === 1) applyTextOutlines();
 }
 
@@ -4888,6 +4906,147 @@ async function saveAttendanceRecord(){
   render();
   showSuccessNotification(ok ? "Attendance saved to the cloud. Form cleared for the next entry." : "Attendance saved on this device only (cloud not connected).");
 }
+
+
+/* ===== Admin Mart Visual Layout Editor =====
+   Layout presets are stored in church_records/settings/visual_layout.
+   Edits apply to all matching component types and all visitors.
+*/
+let visualLayoutDraft = null;
+let visualLayoutKey = "";
+let visualLayoutTarget = null;
+let visualLayoutDrag = null;
+const VLE_TYPES = [
+  [".post","Facebook / devotion post"],[".tv","Devotion trivia card"],[".tq","Bible quiz"],[".tvs","Trivia and quiz section"],
+  [".feed","Post feed"],[".grid","Content grid"],[".card","Content card"]
+];
+function getVisualLayout(){ return ((D.settings||[]).find(x=>x.id==="visual_layout")||{}).items||{}; }
+function visualTypeFor(el){
+  for(const [sel,label] of VLE_TYPES){ if(el.matches(sel)) return {key:sel.slice(1),label}; }
+  return null;
+}
+function applyVisualLayout(){
+  const items=getVisualLayout();
+  VLE_TYPES.forEach(([sel])=>{
+    document.querySelectorAll("#main "+sel).forEach(el=>{
+      const key=sel.slice(1), cfg=items[key];
+      if(!cfg) return;
+      el.style.width=cfg.widthPct ? cfg.widthPct+"%" : "";
+      el.style.maxWidth=cfg.widthPct ? "none" : "";
+      el.style.minHeight=cfg.minHeight ? cfg.minHeight+"px" : "";
+      el.style.translate=(cfg.x||0)+"px "+(cfg.y||0)+"px";
+    });
+  });
+}
+function startVisualLayoutEditor(){
+  if(!isAdminMart()) return alert("Only Admin Mart can edit the global website layout.");
+  if(!supabaseClient) return alert("Connect to the cloud first. Global layout publishing requires the Supabase connection.");
+  if(TE) toggleTextEditMode();
+  visualLayoutDraft=JSON.parse(JSON.stringify(getVisualLayout()));
+  document.body.classList.add("vle-on");
+  const bar=document.createElement("div");
+  bar.id="vle-bar";
+  bar.innerHTML='<b style="color:#f2a93b">Visual Editor</b><span id="vle-selected-label" style="font-size:12px;color:#c9ccef">Click an element to select it</span><label>Width <input id="vle-width" type="range" min="30" max="100" value="100"></label><label>Min height <input id="vle-height" type="number" min="0" max="1000" step="10" value="0"></label><button class="sm" onclick="resetVisualSelection()">Reset selected</button><button class="btn gold" onclick="saveVisualLayout()">Save &amp; Publish</button><button class="sm" onclick="cancelVisualLayout()">Cancel</button>';
+  document.body.appendChild(bar);
+  const move=document.createElement("button"); move.id="vle-grip-move"; move.type="button"; move.textContent="↕ Drag to move"; document.body.appendChild(move);
+  const size=document.createElement("button"); size.id="vle-grip-size"; size.type="button"; size.setAttribute("aria-label","Drag to resize"); document.body.appendChild(size);
+  $("#vle-width").addEventListener("input",ev=>updateVisualDraft({widthPct:+ev.target.value}));
+  $("#vle-height").addEventListener("change",ev=>updateVisualDraft({minHeight:Math.max(0,Math.min(1000,+ev.target.value||0))}));
+  move.addEventListener("pointerdown",ev=>beginVisualDrag(ev,"move"));
+  size.addEventListener("pointerdown",ev=>beginVisualDrag(ev,"size"));
+  document.addEventListener("click",visualLayoutSelectClick,true);
+}
+function visualLayoutSelectClick(ev){
+  if(!document.body.classList.contains("vle-on")) return;
+  if(ev.target.closest("#vle-bar,#vle-grip-move,#vle-grip-size")) return;
+  const el=ev.target.closest("#main .post,#main .tv,#main .tq,#main .tvs,#main .feed,#main .grid,#main .card");
+  if(!el) return;
+  ev.preventDefault();ev.stopPropagation();
+  selectVisualLayoutElement(el);
+}
+function selectVisualLayoutElement(el){
+  if(visualLayoutTarget) visualLayoutTarget.classList.remove("vle-selected");
+  visualLayoutTarget=el;
+  const info=visualTypeFor(el); if(!info) return;
+  visualLayoutKey=info.key;
+  const cfg=visualLayoutDraft[visualLayoutKey]||{};
+  visualLayoutTarget.classList.add("vle-selected");
+  $("#vle-selected-label").textContent=info.label+" · affects all matching items";
+  $("#vle-width").value=cfg.widthPct||100;
+  $("#vle-height").value=cfg.minHeight||0;
+  positionVisualGrips();
+}
+function updateVisualDraft(patch){
+  if(!visualLayoutKey||!visualLayoutTarget) return;
+  visualLayoutDraft[visualLayoutKey]={...(visualLayoutDraft[visualLayoutKey]||{}),...patch};
+  applyVisualDraftToSelection();
+  positionVisualGrips();
+}
+function applyVisualDraftToSelection(){
+  if(!visualLayoutTarget) return;
+  const c=visualLayoutDraft[visualLayoutKey]||{};
+  visualLayoutTarget.style.width=c.widthPct?c.widthPct+"%":"";
+  visualLayoutTarget.style.maxWidth=c.widthPct?"none":"";
+  visualLayoutTarget.style.minHeight=c.minHeight?c.minHeight+"px":"";
+  visualLayoutTarget.style.translate=(c.x||0)+"px "+(c.y||0)+"px";
+}
+function positionVisualGrips(){
+  if(!visualLayoutTarget) return;
+  const r=visualLayoutTarget.getBoundingClientRect();
+  const m=$("#vle-grip-move"),z=$("#vle-grip-size");
+  if(!m||!z) return;
+  m.style.display=z.style.display="block";
+  m.style.left=Math.max(8,Math.min(innerWidth-145,r.left+r.width/2-58))+"px";
+  m.style.top=Math.max(8,r.top-35)+"px";
+  z.style.left=Math.min(innerWidth-30,r.right-13)+"px";
+  z.style.top=Math.min(innerHeight-30,r.bottom-13)+"px";
+}
+function beginVisualDrag(ev,mode){
+  if(!visualLayoutTarget) return;
+  ev.preventDefault();ev.stopPropagation();
+  const c=visualLayoutDraft[visualLayoutKey]||{};
+  visualLayoutDrag={mode,startX:ev.clientX,startY:ev.clientY,x:c.x||0,y:c.y||0,width:visualLayoutTarget.getBoundingClientRect().width};
+  ev.currentTarget.setPointerCapture(ev.pointerId);
+  const move=mv=>{
+    if(!visualLayoutDrag) return;
+    const d=visualLayoutDrag,dx=mv.clientX-d.startX,dy=mv.clientY-d.startY;
+    if(d.mode==="move"){
+      updateVisualDraft({x:Math.max(-180,Math.min(180,Math.round(d.x+dx))),y:Math.max(-180,Math.min(180,Math.round(d.y+dy)))});
+    }else{
+      const parent=visualLayoutTarget.parentElement.getBoundingClientRect();
+      const pct=Math.max(30,Math.min(100,Math.round((d.width+dx)/Math.max(1,parent.width)*100)));
+      $("#vle-width").value=pct;updateVisualDraft({widthPct:pct});
+    }
+  };
+  const end=()=>{visualLayoutDrag=null;window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);};
+  window.addEventListener("pointermove",move);window.addEventListener("pointerup",end);
+}
+function resetVisualSelection(){
+  if(!visualLayoutKey) return;
+  delete visualLayoutDraft[visualLayoutKey];
+  if(visualLayoutTarget){visualLayoutTarget.style.width="";visualLayoutTarget.style.maxWidth="";visualLayoutTarget.style.minHeight="";visualLayoutTarget.style.translate="";}
+  $("#vle-width").value=100;$("#vle-height").value=0;positionVisualGrips();
+}
+function closeVisualLayoutEditor(){
+  document.removeEventListener("click",visualLayoutSelectClick,true);
+  document.body.classList.remove("vle-on");
+  ["vle-bar","vle-grip-move","vle-grip-size"].forEach(id=>document.getElementById(id)?.remove());
+  if(visualLayoutTarget) visualLayoutTarget.classList.remove("vle-selected");
+  visualLayoutTarget=null;visualLayoutKey="";visualLayoutDrag=null;
+}
+function cancelVisualLayout(){closeVisualLayoutEditor();applyVisualLayout();}
+async function saveVisualLayout(){
+  if(!isAdminMart()) return alert("Only Admin Mart can publish the website layout.");
+  const payload={items:visualLayoutDraft||{},updatedAt:Date.now(),updatedBy:me.name||"Admin Mart"};
+  const ok=await syncRecordToCloud("settings","visual_layout",payload);
+  if(!ok) return alert("Could not publish the layout. Please check your internet and Supabase connection, then try again.");
+  D.settings=(D.settings||[]).filter(x=>x.id!=="visual_layout").concat([{id:"visual_layout",...payload}]);
+  closeVisualLayoutEditor();applyVisualLayout();render();
+  showSuccessNotification("Website layout published. The saved changes now apply across visitors' devices.");
+}
+window.addEventListener("resize",()=>{if(document.body.classList.contains("vle-on"))positionVisualGrips();});
+window.addEventListener("scroll",()=>{if(document.body.classList.contains("vle-on"))positionVisualGrips();},true);
+
 
 initApp();
 
