@@ -4856,7 +4856,6 @@ async function handleLogout(){
   me=null;admin=false;render();
   showSuccessNotification("Logged out. Viewing in Public Visitor mode.");
 }
-const adminEmailFor = id => String(id)+"@admins.jtnaan.invalid";
 async function restoreAdminSession(){
   if(!supabaseClient)return;
   const {data:{session}}=await supabaseClient.auth.getSession();if(!session)return;
@@ -4914,10 +4913,11 @@ function loginForm(msg){
 }
 
 async function handleLoginSubmit(ev){
-  ev.preventDefault();const u=$("#lu").value.trim().toLowerCase(),p=$("#lp").value,found=(AL||[]).find(a=>String(a.username).toLowerCase()===u);
-  if(!found){$("#le").textContent="Invalid username or password.";return;}
-  const {error}=await supabaseClient.auth.signInWithPassword({email:adminEmailFor(found.id),password:p});
-  if(error){$("#le").textContent="Invalid username or password. First-time admins must activate their account using the setup link.";return;}
+  ev.preventDefault();const u=$("#lu").value.trim().toLowerCase(),p=$("#lp").value;
+  const {data:lookup,error:lookupError}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"lookup_admin",username:u}});
+  if(lookupError||!lookup?.email){$("#le").textContent="Invalid username or password.";return;}
+  const {error}=await supabaseClient.auth.signInWithPassword({email:lookup.email,password:p});
+  if(error){$("#le").textContent="Invalid username or password. First-time admins must activate their account using the one-time setup link.";return;}
   await restoreAdminSession();if(!me){$("#le").textContent="Administrator account is not activated.";return;}
   closeModal();showSuccessNotification(`Welcome back, ${me.name}!`);
 }
