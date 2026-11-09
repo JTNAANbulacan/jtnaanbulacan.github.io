@@ -552,6 +552,12 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 }
 </style>
 
+<style id="dashboard-caption-css">
+.fb-dashboard-caption.is-collapsed{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;max-height:6em;overflow:hidden}
+.fb-dashboard-caption:not(.is-collapsed){display:block;max-height:none;overflow:visible}
+.fb-caption-toggle{display:inline-block;align-self:flex-start;background:none;border:0;color:#8ab4f8;padding:2px 0 10px;font:600 .88rem system-ui;cursor:pointer}
+</style>
+
 <style id="visual-layout-editor-css">
 .vle-selected{outline:3px solid #f2a93b!important;outline-offset:3px!important;position:relative!important}
 #vle-bar{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:100001;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;width:min(900px,calc(100vw - 20px));padding:10px 12px;background:#15145af7;border:1px solid #f2a93b;border-radius:14px;box-shadow:0 8px 32px #000b;color:#fff}
@@ -2096,6 +2102,14 @@ function copyAndOpenInstagram(rawEncodedText){
   window.open("https://www.instagram.com/", "_blank");
 }
 
+function toggleDashboardCaption(id, button){
+  const caption=document.getElementById(id);
+  if(!caption || !button) return;
+  const expanded=caption.classList.toggle("is-collapsed")===false;
+  button.textContent=expanded?"See less":"See more";
+  button.setAttribute("aria-expanded",expanded?"true":"false");
+}
+
 function render(){
   const T = tabs();
   if(!T.includes(view)) view = T[0];
@@ -2381,9 +2395,10 @@ function dash(){
 
           ${((Array.isArray(p.photos) && p.photos.length) ? p.photos : (p.photo ? [p.photo] : [])).length ? (() => { const photos=(Array.isArray(p.photos) && p.photos.length) ? p.photos : [p.photo]; const shown=photos.slice(0,4); const count=shown.length; const cols=count===1?1:2; return `<div style="display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:3px;margin:0 -14px 12px;overflow:hidden;background:#18191a">${shown.map((src,i)=>`<div style="position:relative;aspect-ratio:1/1;min-width:0;overflow:hidden"><img src="${e(src)}" alt="Post photo ${i+1}" loading="lazy" style="width:100%;height:100%;display:block;object-fit:cover">${i===3 && photos.length>4 ? `<div style="position:absolute;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.8rem;font-weight:700">+${photos.length-4}</div>` : ''}</div>`).join('')}</div>`; })() : ''}
 
-          <div style="font-size:.9rem;line-height:1.5;margin-bottom:12px;flex:1;white-space:pre-wrap;word-break:break-word">
+          <div id="fb_dash_caption_${safeKey(p.id)}" class="fb-dashboard-caption is-collapsed" style="font-size:.9rem;line-height:1.5;margin-bottom:4px;white-space:pre-wrap;word-break:break-word">
             ${e(p.caption)}
           </div>
+          ${(p.caption || '').length > 180 ? `<button type="button" class="fb-caption-toggle" onclick="toggleDashboardCaption('fb_dash_caption_${safeKey(p.id)}',this)" aria-expanded="false">See more</button>` : ''}
 
           <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #38393b;gap:6px;flex-wrap:wrap">
             <a class="btn sm" style="background:#1877f2;text-decoration:none;display:inline-flex;align-items:center;gap:4px" target="_blank" rel="noopener" href="${e(p.url || 'https://www.facebook.com/profile.php?id=61556921121315')}">
