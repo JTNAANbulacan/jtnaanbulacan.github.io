@@ -4901,7 +4901,7 @@ function loginForm(msg){
   setTimeout(() => { const el = $("#lu"); if(el) el.focus(); }, 60);
 }
 
-async async function handleLoginSubmit(ev){
+async function handleLoginSubmit(ev){
   ev.preventDefault();const u=$("#lu").value.trim().toLowerCase(),p=$("#lp").value,found=(AL||[]).find(a=>String(a.username).toLowerCase()===u);
   if(!found){$("#le").textContent="Invalid username or password.";return;}
   const {error}=await supabaseClient.auth.signInWithPassword({email:adminEmailFor(found.id),password:p});
