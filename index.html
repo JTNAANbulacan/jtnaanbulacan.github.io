@@ -873,7 +873,7 @@ function initSupabaseClient(){
   if(SUPABASE_URL && SUPABASE_ANON && !SUPABASE_URL.includes("YOUR_SUPABASE") && window.supabase){
     try {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-        auth: { persistSession: false },
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
         realtime: { params: { eventsPerSecond: 10 } }
       });
       console.log("☁ Supabase Cloud Connected!");
@@ -991,7 +991,7 @@ const CF={
 const TL={
   dashboard:"HOME DASHBOARD",about:"ABOUT",schedule:"SCHEDULE",devotion:"DAILY DEVOTION",testimony:"TESTIMONY",
   members:"MEMBERS",attendance:"ATTENDANCE",funds:"FUNDS",social:"SOCIAL",ministries:"MINISTRIES",
-  events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS",activity:"ACTIVITY LOGS",notifications:"NOTIFICATIONS"
+  events:"EVENTS",gallery:"GALLERY",prayers:"PRAYERS",prayer:"PRAYERS",support:"SUPPORT",reports:"REPORTS",admins:"ADMINS",activity:"ACTIVITY LOGS",notifications:"NOTIFICATIONS",registrations:"REGISTERED USERS"
 };
 
 const PL={
@@ -1031,10 +1031,10 @@ const BASE_REACTIONS = {
 };
 
 const defaultAdmins = [
-  {id:"adm1", name:"Admin Mart", username:"Admin@Mart", password:"JTNAAN@01", owner:true, perms:Object.keys(PL)},
-  {id:"adm2", name:"Treasurer", username:"Admin02", password:"JTNAAN02", owner:false, perms:["funds"]},
-  {id:"adm3", name:"Attendance Personnel", username:"Admin03", password:"JTNAAN03", owner:false, perms:["attendance"]},
-  {id:"adm4", name:"Media", username:"Admin04", password:"JTNAAN04", owner:false, perms:["gallery"]}
+  {id:"adm1",name:"Admin Mart",username:"admin@mart",owner:true,perms:Object.keys(PL)},
+  {id:"adm2",name:"Admin Ella - Treasurer",username:"admin02",owner:false,perms:["members","attendance","funds"]},
+  {id:"adm3",name:"Attendance Personnel",username:"admin03",owner:false,perms:["attendance"]},
+  {id:"adm4",name:"Admin Gelo - Media",username:"admin04",owner:false,perms:["social","gallery"]}
 ];
 
 const churchData = {
@@ -1178,18 +1178,8 @@ Object.keys(BASE_REACTIONS).forEach(k => {
 
 let AL = defaultAdmins;
 
-let savedSession = null;
-try {
-  const raw = localStorage.getItem("jt_active_session");
-  if(raw && raw !== "null"){
-    savedSession = JSON.parse(raw);
-  }
-} catch(e){
-  savedSession = null;
-}
-
-let me = savedSession;
-let admin = !!me;
+let me = null;
+let admin = false;
 let view = "dashboard", dsel="GCash", fbViewMode = "cards";
 
 function setFbViewMode(m){
@@ -1313,6 +1303,7 @@ async function fetchAllFromCloud(silent = false){
         D[k] = cloudD[k];
       }
     });
+    if(cloudD.admins.length) AL = cloudD.admins.map(a => ({...a, password:undefined}));
 
     // Merge baseline downloads, multi-user clicks, and local taps: NEVER OVERWRITES OR RESETS!
     const myLocalDl = (typeof getUserDlCounts === "function") ? getUserDlCounts() : { android: 0, ios: 0 };
@@ -1696,7 +1687,7 @@ function baseTabs(){
 const okey = t => t == "prayer" ? "prayers" : t;
 function tabs(){
   const T = baseTabs();
-  if(me){T.push("admins");T.push("activity");T.push("notifications");}
+  if(me){T.push("admins");T.push("registrations");T.push("activity");T.push("notifications");}
   return T;
 }
 
@@ -2200,7 +2191,7 @@ function render(){
     ` : `
       <div id="drawer-admin-box" style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:8px">
         <button class="btn gold sm" onclick="loginForm();menu(false)" style="width:100%;text-align:center">Admin Login</button>
-        <button class="btn sm" onclick="showSuccessNotification('Public registration is not active yet. The secure registration form is being configured.')" style="width:100%;text-align:center;margin-top:7px">Register Account</button>
+        <button class="btn sm" onclick="registerForm();menu(false)" style="width:100%;text-align:center;margin-top:7px">Register Account</button>
       </div>
     `}
     ${T.map(t => `<button class="${t==view?"on":""}" data-v="${t}">${TL[t]||t.toUpperCase()}</button>`).join("")}
@@ -2229,6 +2220,7 @@ function render(){
   applyMaintenanceMode();
 
   if(view=="admins") $("#main").innerHTML = adminsv();
+  else if(view=="registrations"){ $("#main").innerHTML = registrationsv(); loadRegistrationRows(); }
   else if(view=="activity") $("#main").innerHTML = activityLogView();
   else if(view=="notifications") $("#main").innerHTML = notificationsView();
   else if(view=="devotion"||view=="testimony") $("#main").innerHTML = feed(view);
@@ -4888,12 +4880,48 @@ async function deleteRecord(c, id){
   }
 }
 
-async function handleLogout(){
-  me = null;
-  admin = false;
-  localStorage.setItem("jt_active_session", "null");
-  render();
+async async function handleLogout(){
+  if(supabaseClient) await supabaseClient.auth.signOut();
+  me=null;admin=false;render();
   showSuccessNotification("Logged out. Viewing in Public Visitor mode.");
+}
+const ADMIN_EMAILS={"admin@mart":"adm1@admins.jtnaan.invalid","admin02":"adm2@admins.jtnaan.invalid","admin03":"adm3@admins.jtnaan.invalid","admin04":"adm4@admins.jtnaan.invalid"};
+async function restoreAdminSession(){
+  if(!supabaseClient)return;
+  const {data:{session}}=await supabaseClient.auth.getSession();if(!session)return;
+  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"list_registrations"}});
+  if(error||!data?.admin){await supabaseClient.auth.signOut();return;}
+  me={id:data.admin.admin_id,name:data.admin.display_name,username:data.admin.username,owner:data.admin.is_owner,perms:data.admin.permissions||[]};admin=true;render();
+}
+function adminSetupForm(token){
+  $("#mb").innerHTML=`<h3>Activate Admin Account</h3><p class="mu">Create a new password with at least 12 characters. This one-time link can only be used once.</p><form onsubmit="handleAdminActivation(event)"><input type="hidden" id="setup_token" value="${e(token)}"><label class="mu">New password</label><input id="setup_password" type="password" minlength="12" maxlength="128" required><label class="mu">Confirm password</label><input id="setup_password2" type="password" minlength="12" maxlength="128" required><div id="setup_error" style="color:#ff8a80;min-height:22px"></div><p><button class="btn gold" type="submit">Activate Account</button></p></form>`;$ ("#modal").style.display="flex";
+}
+async function handleAdminActivation(ev){
+  ev.preventDefault();const token=$("#setup_token").value,password=$("#setup_password").value;
+  if(password!==$("#setup_password2").value){$("#setup_error").textContent="Passwords do not match.";return;}
+  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"bootstrap",token,password}});
+  if(error||!data?.ok){$("#setup_error").textContent=data?.error||error?.message||"Activation failed.";return;}
+  const {error:le}=await supabaseClient.auth.signInWithPassword({email:data.email,password});
+  if(le){$("#setup_error").textContent="Account created. Please sign in using Admin Login.";return;}
+  closeModal();await restoreAdminSession();showSuccessNotification("Admin account activated with your new password.");history.replaceState(null,"",location.pathname+location.hash);
+}
+function registerForm(){
+  $("#mb").innerHTML=`<h3>Register Account</h3><p class="mu">Register with JTNAAN Bulacan to receive website updates. Your information is stored privately.</p><form onsubmit="handleRegistrationSubmit(event)"><label class="mu">Full name *</label><input id="reg_name" maxlength="120" required><label class="mu">Age *</label><input id="reg_age" type="number" min="1" max="120" required><label class="mu">Church *</label><input id="reg_church" maxlength="160" required><label class="mu">Ministry *</label><input id="reg_ministry" maxlength="160" required><label class="mu">Phone (optional)</label><input id="reg_phone" maxlength="40"><label class="mu">Location (optional)</label><input id="reg_location" maxlength="160"><label class="chk"><input id="reg_optin" type="checkbox"> I agree to receive website updates.</label><div id="reg_error" style="color:#ff8a80;min-height:22px"></div><p><button class="btn gold" id="reg_submit">Submit Registration</button></p></form>`;$ ("#modal").style.display="flex";
+}
+async function handleRegistrationSubmit(ev){
+  ev.preventDefault();const payload={action:"register",full_name:$("#reg_name").value,age:Number($("#reg_age").value),church:$("#reg_church").value,ministry:$("#reg_ministry").value,phone:$("#reg_phone").value,location:$("#reg_location").value,notification_opt_in:$("#reg_optin").checked};
+  const btn=$("#reg_submit");btn.disabled=true;btn.textContent="Submitting…";
+  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:payload});
+  if(error||!data?.ok){$("#reg_error").textContent=data?.error||error?.message||"Registration failed.";btn.disabled=false;btn.textContent="Submit Registration";return;}
+  $("#mb").innerHTML=`<div style="text-align:center;padding:24px 8px"><h2>Welcome to JTNAAN Website!</h2><p>Thank you for registering. You'll be notified about new posts, events, announcements, and other updates on our website.</p><button class="btn gold" onclick="closeModal()">Continue</button></div>`;
+}
+function registrationsv(){return '<h2>REGISTERED USERS</h2><p class="mu">Loading private registration records…</p>';}
+async function loadRegistrationRows(){
+  const {data,error}=await supabaseClient.functions.invoke("jtnaan-secure",{body:{action:"list_registrations"}});
+  const main=$("#main");if(!main||view!=="registrations")return;
+  if(error||!data?.ok){main.innerHTML="<h2>REGISTERED USERS</h2><p>Unable to load registrations.</p>";return;}
+  const rows=data.registrations||[];
+  main.innerHTML='<h2>REGISTERED USERS ('+rows.length+')</h2><p class="mu">Private list · newest first</p>'+(rows.length?'<div class="table-wrap"><table><thead><tr><th>Name</th><th>Age</th><th>Church / Ministry</th><th>Phone / Location</th><th>Updates</th><th>Status</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+e(r.full_name)+'</td><td>'+e(r.age)+'</td><td>'+e(r.church)+'<br>'+e(r.ministry)+'</td><td>'+e(r.phone||"—")+'<br>'+e(r.location||"—")+'</td><td>'+(r.notification_opt_in?"Yes":"No")+'</td><td>'+e(r.status)+'</td></tr>').join("")+'</tbody></table></div>':'<p>No registrations yet.</p>');
 }
 
 function loginForm(msg){
@@ -4915,20 +4943,12 @@ function loginForm(msg){
 }
 
 async function handleLoginSubmit(ev){
-  ev.preventDefault();
-  const u = $("#lu").value.trim().toLowerCase();
-  const p = $("#lp").value;
-  const found = AL.find(a => a.username.toLowerCase() === u && a.password === p);
-  if(found){
-    me = found;
-    admin = true;
-    localStorage.setItem("jt_active_session", JSON.stringify(found));
-    closeModal();
-    render();
-    showSuccessNotification(`Welcome back, ${found.name}!`);
-  } else {
-    $("#le").textContent = "Invalid username or password.";
-  }
+  ev.preventDefault();const u=$("#lu").value.trim().toLowerCase(),p=$("#lp").value,email=ADMIN_EMAILS[u];
+  if(!email){$("#le").textContent="Invalid username or password.";return;}
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password:p});
+  if(error){$("#le").textContent="Invalid username or password. First-time admins must activate their account using the setup link.";return;}
+  await restoreAdminSession();if(!me){$("#le").textContent="Administrator account is not activated.";return;}
+  closeModal();showSuccessNotification(`Welcome back, ${me.name}!`);
 }
 
 function handleHashRoute(){
@@ -4967,8 +4987,11 @@ async function initApp(){
   render();
   initSupabaseClient();
   await fetchAllFromCloud(true);
+  await restoreAdminSession();
   await loadDailyBibleContent(true);
   handleHashRoute();
+  const setupToken=new URLSearchParams(location.search).get("setup");
+  if(setupToken) adminSetupForm(setupToken);
 }
 
 // ===== EVENTS (photos + Upcoming Events on dashboard) and ATTENDANCE (editable, auto-clear) =====
