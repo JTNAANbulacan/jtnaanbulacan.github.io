@@ -833,7 +833,7 @@ const CF={
   events:{t:"Events",f:[["title","Event title"],["date","Date","date"],["place","Place"],["desc","Details","t"]],s:["date","place","desc"],k:"title",photo:1},
   prayers:{t:"Prayer Requests",f:[["name","Name"],["req","Request","t"],["status","Status (Open / Answered)"]],s:["req","status"],k:"name"},
   gallery:{t:"Albums",f:[["cap","Album title"]],s:[],k:"cap",multi:1,max:6},
-  funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["type","Type","s:Income,Expense"],["category","Category"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
+  funds:{t:"Church Funds",f:[["desc","Description"],["date","Date","date"],["amount","Amount (₱)","number"]],s:[],k:"desc"},
   social:{t:"Social Media",f:[["platform","Platform","s:Facebook,YouTube,TikTok,Instagram"],["date","Date","date"],["followers","Followers","number"],["reach","Reach / views","number"],["engagement","Engagement","number"]],s:[],k:"platform"},
   fbposts:{t:"Facebook Post",f:[["url","Facebook post link"],["caption","Post text","t"],["date","Date posted","date"]],s:[],k:"url",multi:1,max:6},
   devotion:{t:"Daily Devotion",f:[["date","Date","date"],["caption","Caption / message","t"]],s:[],k:"caption",photo:1},
@@ -1799,12 +1799,56 @@ function closeModal(){
   if(m) m.style.display = "none";
 }
 
+const FUND_CATEGORIES = {
+  Income: [
+    "Tithes","Sacrificial Giving","Sunday Offering","Special Offering","Thanksgiving Offering",
+    "Mission Offering","Love Offering Received","Donations","Solicitation","Fundraising",
+    "Government Assistance / Grant","Private Grant / Sponsorship","Church Member Contribution",
+    "Event / Registration Fees","Rental / Facility Use","Interest / Bank Income","Other Income"
+  ],
+  Expense: [
+    "Utilities – Electricity","Utilities – Water","Internet / Phone","Rent / Lease",
+    "Repair & Maintenance","Love Gift / Honorarium","Pastor / Staff Allowance","Food & Refreshments",
+    "Groceries","Gasoline / Fuel","Transportation / Fare","Vehicle Repair & Maintenance",
+    "Church Supplies","Office / Printing Supplies","Worship / Music Equipment","Sound / Media Equipment",
+    "Building / Construction Materials","Missions & Outreach","Evangelism",
+    "Benevolence / Member Assistance","Community Assistance","Church Events / Programs",
+    "Youth / Children Ministry","Training / Seminar","Permits / Government Fees",
+    "Bank / Transfer Charges","Insurance","Cleaning / Sanitation","Security","Other Expense"
+  ]
+};
+function fundTypeOptions(selected){
+  return ["Income","Expense"].map(type=>\`<label style="display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;flex:1;min-width:120px">
+    <input type="checkbox" name="fund_type_choice" value="\${type}" \${selected===type?'checked':''} onchange="selectFundType(this)" style="width:17px;height:17px">
+    <b>\${type}</b>
+  </label>\`).join('');
+}
+function fundCategoryOptions(type,selected){
+  const choices=FUND_CATEGORIES[type]||[];
+  return choices.map((category,i)=>\`<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:7px;cursor:pointer">
+    <input type="checkbox" name="fund_category_choice" value="\${e(category)}" \${selected===category?'checked':''} onchange="selectFundCategory(this)" style="width:16px;height:16px">
+    <span>\${e(category)}</span>
+  </label>\`).join('');
+}
+function selectFundType(input){
+  if(!input.checked){input.checked=true;return;}
+  document.querySelectorAll('input[name="fund_type_choice"]').forEach(x=>{if(x!==input)x.checked=false;});
+  const old=document.querySelector('input[name="fund_category_choice"]:checked');
+  const previous=old?old.value:"";
+  const container=$("#fund-category-options");
+  if(container) container.innerHTML=fundCategoryOptions(input.value,FUND_CATEGORIES[input.value].includes(previous)?previous:"");
+}
+function selectFundCategory(input){
+  if(!input.checked)return;
+  document.querySelectorAll('input[name="fund_category_choice"]').forEach(x=>{if(x!==input)x.checked=false;});
+}
 function openFormModal(c, id=""){
   if(!can(c)) return alert("You do not have permission to edit this section.");
   const F = CF[c];
   const x = (D[c]||[]).find(y => y.id === id) || {};
   $("#mb").innerHTML = `
     <h3 style="margin-top:0">${id ? "Edit" : "Add"} – ${F.t}</h3>
+    ${c === "funds" ? `<div class="mu" style="margin-top:10px;margin-bottom:6px">Select transaction type:</div><div style="display:flex;gap:8px;flex-wrap:wrap">${fundTypeOptions(x.type||"Income")}</div><div class="mu" style="margin-top:12px;margin-bottom:6px">Select one category:</div><div id="fund-category-options" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px">${fundCategoryOptions(x.type||"Income",x.category||"")}</div>` : ""}
     ${F.f.map(([k, l, t]) => `
       <div class="mu" style="margin-top:6px">${l}:</div>
       ${(t||"")[1] === ":" ? `
@@ -1844,6 +1888,14 @@ async function saveFormData(c, id){
     const el = $("#f_" + k);
     if(el) item[k] = el.value.trim();
   });
+  if(c === "funds"){
+    const selectedType=document.querySelector('input[name="fund_type_choice"]:checked');
+    const selectedCategory=document.querySelector('input[name="fund_category_choice"]:checked');
+    if(!selectedType){if(btn){btn.disabled=false;btn.textContent="Save & Sync Live";}return alert("Please select Income or Expense.");}
+    if(!selectedCategory){if(btn){btn.disabled=false;btn.textContent="Save & Sync Live";}return alert("Please select a fund category.");}
+    item.type=selectedType.value;
+    item.category=selectedCategory.value;
+  }
   
   try {
     if(c === 'gallery' || c === 'fbposts'){
@@ -3968,30 +4020,31 @@ function ministriesv(){
 
 function galleryv(){
   const L = D.gallery || [];
-  return `<h2>GALLERY (${L.length})</h2>
-  ${can("gallery")?`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (4 to 6 Photos)</button></p>`:''}
-  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr))">
-    ${L.map(a=>{
+  return \`<h2>GALLERY (\${L.length})</h2>
+  \${can("gallery")?\`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (up to 6 Photos)</button></p>\`:''}
+  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr));gap:12px">
+    \${L.map(a=>{
       const P = a.photos || [];
-      return `
-        <div class="card" style="padding:0;overflow:hidden;background:#242526">
-          <div style="padding:10px 14px">
-            <b style="font-size:1.05rem">${e(a.cap)}</b>
-            <div class="mu">${P.length} photo${P.length===1?'':'s'} · tap to view</div>
+      const shown=P.slice(0,4);
+      return \`
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:10px 12px">
+            <b style="font-size:.98rem">\${e(a.cap)}</b>
+            <div class="mu">\${P.length} photo\${P.length===1?'':'s'} · tap to view</div>
           </div>
-          <div onclick="openAlbumViewer('${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(${P.length>2?3:P.length||1},1fr);gap:2px">
-            ${P.slice(0,6).map(u=>`<img src="${e(u)}" style="width:100%;height:100px;object-fit:cover;display:block">`).join('')}
+          <div onclick="openAlbumViewer('\${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:0 8px 8px">
+            \${shown.map((u,i)=>\`<div style="position:relative;aspect-ratio:1/1;min-width:0;overflow:hidden;border-radius:5px"><img src="\${e(u)}" alt="Album photo \${i+1}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">\${i===3 && P.length>4?\`<div style="position:absolute;inset:0;background:#0009;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:700">+\${P.length-4}</div>\`:''}</div>\`).join('')}
           </div>
-          ${can("gallery")?`
-            <div style="padding:10px 14px">
-              <button class="btn sm" onclick="openFormModal('gallery', '${a.id}')">Edit / Add Photos</button>
-              <button class="btn red sm" onclick="deleteRecord('gallery', '${a.id}')">Delete</button>
+          \${can("gallery")?\`
+            <div style="padding:0 10px 10px">
+              <button class="btn sm" onclick="openFormModal('gallery', '\${a.id}')">Edit / Add Photos</button>
+              <button class="btn red sm" onclick="deleteRecord('gallery', '\${a.id}')">Delete</button>
             </div>
-          `:''}
+          \`:''}
         </div>
-      `;
+      \`;
     }).join('')||'<p class="mu">Nothing yet.</p>'}
-  </div>`;
+  </div>\`;
 }
 
 function openAlbumViewer(id){
