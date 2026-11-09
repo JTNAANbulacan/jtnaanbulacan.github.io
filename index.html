@@ -193,80 +193,114 @@ main:has(> .about){max-width:none}
 #lb-hint{position:absolute;left:0;right:0;top:calc(14px + env(safe-area-inset-top,0px));text-align:center;color:#ffffffb0;font-size:.78rem;pointer-events:none}
 .post .cap{padding:8px 14px 12px;white-space:pre-wrap;word-break:break-word;line-height:1.6}
 
-/* Social Media Multi-Click Reactions & Floating Heart Animations */
-.rx-bar-wrap{position:relative}
-.rx{
-  display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;
-  background:#1e1f20;border-top:1px solid #38393b;border-bottom:1px solid #38393b;
+/* Facebook-Style Reaction System & Floating Dock */
+.post-rx-summary{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px 14px 6px;font-size:0.85rem;color:#b0b3b8;border-top:1px solid #38393b;
+  user-select:none;-webkit-user-select:none;
 }
-.rx-picker-container{position:relative;display:inline-flex}
-.rx-picker-btn{
-  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;
-  background:#343538;color:#fff;font-size:0.83rem;font-weight:600;border:1px solid #4a4b4e;
-  cursor:pointer;transition:all 0.18s;touch-action:manipulation;min-height:36px;
+.rx-summary-left{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  transition:opacity 0.15s;
 }
-.rx-picker-btn:hover{background:#45464a;border-color:var(--pr);transform:translateY(-1px)}
-.rx-picker-btn.on{background:rgba(242,169,59,0.22);color:var(--pr);border-color:var(--pr)}
-.rx-picker-btn .rx-ico{font-size:1.15rem;line-height:1}
-.rx-picker-btn .rx-arrow{font-size:0.75rem;opacity:0.8}
-
-.rx-tray{
-  position:absolute;bottom:calc(100% + 8px);left:0;z-index:90;
-  background:#1b1c1e;border:1px solid #4e5054;border-radius:28px;
-  padding:6px 8px;box-shadow:0 10px 32px rgba(0,0,0,0.65);
-  display:flex;align-items:center;gap:3px;backdrop-filter:blur(10px);
-  animation:rxPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+.rx-summary-left:hover{opacity:0.85}
+.rx-badge-stack{display:inline-flex;align-items:center;margin-right:2px}
+.rx-badge-bubble{
+  width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;
+  justify-content:center;font-size:0.82rem;margin-left:-5px;box-shadow:0 0 0 2px #242526;
+  background:#343538;flex:none;line-height:1;
 }
-@keyframes rxPop{from{opacity:0;transform:translateY(8px) scale(0.92)}to{opacity:1;transform:translateY(0) scale(1)}}
-
-.rx-emoticon-btn{
-  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
-  width:44px;height:44px;border-radius:50%;background:transparent;border:none;cursor:pointer;
-  font-size:1.55rem;transition:transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275),background 0.15s;
-  position:relative;padding:0;touch-action:manipulation;
+.rx-badge-bubble:first-child{margin-left:0}
+.rx-summary-total{font-weight:600;color:#e4e6eb;font-variant-numeric:tabular-nums}
+.rx-summary-right{
+  color:#b0b3b8;cursor:pointer;font-size:0.82rem;transition:color 0.15s;
 }
-.rx-emoticon-btn:hover, .rx-emoticon-btn:focus-visible{
-  transform:scale(1.35) translateY(-5px);z-index:10;background:rgba(255,255,255,0.12);outline:none;
+.rx-summary-right:hover{color:#e4e6eb;text-decoration:underline}
+
+/* Facebook 3-Button Action Bar */
+.fb-actions-bar{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;padding:3px 6px;
+  border-top:1px solid #38393b;background:#242526;position:relative;
+  border-bottom-left-radius:12px;border-bottom-right-radius:12px;
 }
-.rx-emoticon-btn.active{background:rgba(242,169,59,0.3);box-shadow:0 0 0 2px var(--pr)}
-.rx-emoticon-btn .em-tooltip{
-  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
-  background:#050515f0;color:#fff;font-size:0.7rem;font-weight:600;padding:3px 7px;
-  border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s;
-  border:1px solid rgba(255,255,255,0.2);box-shadow:0 4px 12px rgba(0,0,0,0.5);
+.fb-act-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;padding:8px 6px;border-radius:6px;background:transparent;border:none;
+  color:#b0b3b8;font-size:0.9rem;font-weight:600;cursor:pointer;
+  transition:background 0.15s,color 0.15s,transform 0.1s;touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;white-space:nowrap;
 }
-.rx-emoticon-btn:hover .em-tooltip, .rx-emoticon-btn:focus-visible .em-tooltip{opacity:1}
+.fb-act-btn:hover{background:rgba(255,255,255,0.08);color:#e4e6eb}
+.fb-act-btn:active{transform:scale(0.96)}
+.fb-act-btn .fb-act-icon{font-size:1.15rem;line-height:1;display:inline-block;transition:transform 0.18s ease}
+.fb-act-btn:active .fb-act-icon{transform:scale(1.35)}
 
-.rx-chip-btn{
-  display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;
-  background:#343538;color:#e4e6eb;font-size:0.83rem;font-weight:600;border:1px solid #4a4b4e;
-  cursor:pointer;transition:transform 0.12s ease, filter 0.18s ease;min-height:36px;
-  touch-action:manipulation;user-select:none;position:relative;
+/* Colored states when user has reacted */
+.fb-act-btn.reacted-like{color:#2e89ff;font-weight:700}
+.fb-act-btn.reacted-heart{color:#e41e3f;font-weight:700}
+.fb-act-btn.reacted-amen{color:#f2a93b;font-weight:700}
+.fb-act-btn.reacted-praise{color:#a855f7;font-weight:700}
+.fb-act-btn.reacted-faith{color:#38bdf8;font-weight:700}
+.fb-act-btn.reacted-inspired{color:#facc15;font-weight:700}
+.fb-act-btn.reacted-peace{color:#2dd4bf;font-weight:700}
+.fb-act-btn.reacted-fire{color:#fb923c;font-weight:700}
+
+/* Like Button Wrapper & Facebook Reaction Dock */
+.fb-like-btn-wrap{
+  position:relative;width:100%;display:flex;
 }
-.rx-chip-btn:hover{transform:translateY(-1px);filter:brightness(1.12)}
-.rx-chip-btn:active{transform:scale(0.92)}
+/* Invisible hover bridge between button and dock so cursor can travel smoothly */
+.fb-like-btn-wrap::before{
+  content:'';position:absolute;bottom:100%;left:0;right:0;height:14px;
+  display:none;pointer-events:auto;
+}
+.fb-like-btn-wrap:hover::before, .fb-like-btn-wrap.dock-open::before{
+  display:block;
+}
 
-/* Core Reaction Colors Matching Post Bar */
-.rx-chip-btn.rx-like{background:#1877f2;color:#ffffff;border-color:#1877f2}
-.rx-chip-btn.rx-like:hover{background:#166fe5}
-.rx-chip-btn.rx-like.dim{background:#1877f22e;color:#8ab4f8;border-color:#1877f280}
+/* Floating Facebook Reaction Dock */
+.fb-reaction-dock{
+  position:absolute;bottom:calc(100% + 8px);left:0;z-index:150;
+  background:#18191a;border:1px solid #3a3b3c;border-radius:9999px;
+  padding:4px 6px;box-shadow:0 12px 32px rgba(0,0,0,0.85),0 0 0 1px rgba(255,255,255,0.08);
+  display:none;align-items:center;gap:3px;backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  animation:fbDockPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin:bottom left;
+}
+@keyframes fbDockPop{
+  from{opacity:0;transform:translateY(10px) scale(0.85)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
 
-.rx-chip-btn.rx-heart{background:#e41e3f;color:#ffffff;border-color:#e41e3f}
-.rx-chip-btn.rx-heart:hover{background:#d01736}
-.rx-chip-btn.rx-heart.dim{background:#e41e3f2e;color:#ff859d;border-color:#e41e3f80}
+/* Open dock on desktop hover or via class (mouse hover or mobile hold) */
+.fb-like-btn-wrap:hover .fb-reaction-dock,
+.fb-like-btn-wrap.dock-open .fb-reaction-dock{
+  display:flex;
+}
 
-.rx-chip-btn.rx-amen{background:#d97706;color:#ffffff;border-color:#d97706}
-.rx-chip-btn.rx-amen:hover{background:#b45309}
-.rx-chip-btn.rx-amen.dim{background:#d977062e;color:#fcd34d;border-color:#d9770680}
-
-.rx-chip-btn.rx-praise{background:#7c3aed;color:#ffffff;border-color:#7c3aed}
-.rx-chip-btn.rx-praise:hover{background:#6d28d9}
-.rx-chip-btn.rx-praise.dim{background:#7c3aed2e;color:#c4b5fd;border-color:#7c3aed80}
-
-.rx-chip-btn.on{box-shadow:0 0 0 2px rgba(255,255,255,0.4)}
-.rx-chip-btn .rx-chip-emoji{font-size:1.15rem;line-height:1;display:inline-block;transition:transform 0.15s ease}
-.rx-chip-btn:active .rx-chip-emoji{transform:scale(1.4)}
-.rx-chip-btn .rx-chip-count{font-variant-numeric:tabular-nums;opacity:0.95;font-weight:700;display:inline-block;transition:transform 0.15s ease}
+/* Individual Reaction Items inside the Dock */
+.fb-reaction-item{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:42px;height:42px;border-radius:50%;background:transparent;border:none;
+  cursor:pointer;padding:0;font-size:1.75rem;line-height:1;
+  transition:transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.3), filter 0.15s;
+  touch-action:manipulation;user-select:none;-webkit-user-select:none;
+}
+.fb-reaction-item:hover, .fb-reaction-item.active-touch{
+  transform:scale(1.45) translateY(-8px);z-index:20;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,0.6));outline:none;
+}
+.fb-reaction-tooltip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);
+  background:rgba(0,0,0,0.9);color:#fff;font-size:0.72rem;font-weight:700;
+  padding:3px 8px;border-radius:9999px;white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity 0.15s ease, transform 0.15s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.18);
+}
+.fb-reaction-item:hover .fb-reaction-tooltip, .fb-reaction-item.active-touch .fb-reaction-tooltip{
+  opacity:1;transform:translateX(-50%) translateY(0);
+}
 
 /* Floating Emoji Floater (Like TikTok / Facebook Live / Medium Claps) */
 @keyframes floatReaction {
@@ -544,11 +578,10 @@ document.getElementById("mnb").addEventListener("click",()=>menu());
 addEventListener("keydown",ev=>{if(ev.key=="Escape"&&document.body.classList.contains("mo")&&document.getElementById("modal").style.display!="flex")menu(false)});
 document.getElementById("main").addEventListener("click",()=>{if(document.body.classList.contains("mo")&&!matchMedia("(min-width:760px)").matches)menu(false)});
 
-// Close open reaction trays when tapping outside
+// Close open Facebook reaction dock when tapping outside
 document.addEventListener("click", ev => {
-  if(!ev.target.closest(".rx-picker-container")){
-    document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
-    document.querySelectorAll(".rx-picker-btn").forEach(el => el.setAttribute("aria-expanded", "false"));
+  if(!ev.target.closest(".fb-like-btn-wrap")){
+    document.querySelectorAll(".fb-like-btn-wrap.dock-open").forEach(el => el.classList.remove("dock-open"));
   }
 });
 
@@ -2123,20 +2156,163 @@ function formatCommentTime(dateStr){
   }
 }
 
-function toggleRxTray(key){
-  const trayId = "rx_tray_" + key.replace(/[^a-zA-Z0-9_]/g, "_");
-  const tray = document.getElementById(trayId);
-  if(!tray) return;
-  const isVisible = tray.style.display === "flex";
-  
-  document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
-  document.querySelectorAll(".rx-picker-btn").forEach(el => el.setAttribute("aria-expanded", "false"));
+function safeKey(k){
+  return String(k || "").replace(/[^a-zA-Z0-9_]/g, "_");
+}
 
-  if(!isVisible){
-    tray.style.display = "flex";
-    const btn = tray.previousElementSibling;
-    if(btn) btn.setAttribute("aria-expanded", "true");
+function getUserPreferredReaction(key){
+  const myCounts = getUserReactionCounts(key);
+  const types = Object.keys(myCounts).filter(t => (myCounts[t] || 0) > 0);
+  if(types.length === 0) return null;
+  types.sort((a,b) => (myCounts[b] || 0) - (myCounts[a] || 0));
+  const bestId = types[0];
+  return REACTION_TYPES.find(r => r.id === bestId) || null;
+}
+
+function getTotalReactionsCount(postRx){
+  return Object.values(postRx).reduce((acc, v) => acc + (+v || 0), 0);
+}
+
+function renderReactionBadgeStack(postRx){
+  const active = REACTION_TYPES.filter(r => (postRx[r.id] || 0) > 0)
+    .sort((a, b) => (postRx[b.id] || 0) - (postRx[a.id] || 0))
+    .slice(0, 3);
+  if(active.length === 0){
+    return `<span class="rx-badge-bubble">👍</span>`;
   }
+  return active.map(r => `<span class="rx-badge-bubble" title="${r.label}: ${postRx[r.id]}">${r.emoji}</span>`).join('');
+}
+
+let fbTouchTimer = null;
+let fbTouchMoved = false;
+let fbTouchStartX = 0;
+let fbTouchStartY = 0;
+let activeDockKey = null;
+
+function openFbReactionDock(key){
+  activeDockKey = key;
+  const wrap = document.getElementById("fb_wrap_" + safeKey(key));
+  if(wrap){
+    document.querySelectorAll(".fb-like-btn-wrap.dock-open").forEach(el => el.classList.remove("dock-open"));
+    wrap.classList.add("dock-open");
+  }
+}
+
+function closeFbReactionDock(){
+  activeDockKey = null;
+  document.querySelectorAll(".fb-like-btn-wrap.dock-open").forEach(el => el.classList.remove("dock-open"));
+  document.querySelectorAll(".fb-reaction-item.active-touch").forEach(el => el.classList.remove("active-touch"));
+}
+
+function handleFbLikeTouchStart(key, e){
+  const touch = (e.touches && e.touches[0]) ? e.touches[0] : null;
+  if(!touch) return;
+  fbTouchStartX = touch.clientX;
+  fbTouchStartY = touch.clientY;
+  fbTouchMoved = false;
+
+  if(fbTouchTimer) clearTimeout(fbTouchTimer);
+
+  fbTouchTimer = setTimeout(() => {
+    fbTouchTimer = null;
+    openFbReactionDock(key);
+    if(navigator.vibrate) try{ navigator.vibrate(30); }catch(_){}
+  }, 260);
+}
+
+function handleFbLikeTouchMove(key, e){
+  const touch = (e.touches && e.touches[0]) ? e.touches[0] : null;
+  if(!touch) return;
+  const dx = Math.abs(touch.clientX - fbTouchStartX);
+  const dy = Math.abs(touch.clientY - fbTouchStartY);
+
+  if(fbTouchTimer && (dx > 10 || dy > 10)){
+    clearTimeout(fbTouchTimer);
+    fbTouchTimer = null;
+    fbTouchMoved = true;
+    return;
+  }
+
+  if(activeDockKey === key){
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    const item = target ? target.closest(".fb-reaction-item") : null;
+    document.querySelectorAll(`#fb_dock_${safeKey(key)} .fb-reaction-item`).forEach(el => {
+      el.classList.toggle("active-touch", el === item);
+    });
+  }
+}
+
+function handleFbLikeTouchEnd(key, e){
+  if(fbTouchTimer){
+    clearTimeout(fbTouchTimer);
+    fbTouchTimer = null;
+    if(!fbTouchMoved){
+      quickFbLike(key, e);
+    }
+    return;
+  }
+
+  if(activeDockKey === key){
+    const touch = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0] : null;
+    if(touch){
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      const item = target ? target.closest(".fb-reaction-item") : null;
+      if(item && item.dataset && item.dataset.rxType){
+        addReaction(key, item.dataset.rxType, e);
+        closeFbReactionDock();
+        return;
+      }
+    }
+  }
+}
+
+function quickFbLike(key, event){
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const userRx = getUserPreferredReaction(key);
+  const targetType = userRx ? userRx.id : "like";
+  addReaction(key, targetType, event);
+}
+
+function openReactionsDetailModal(key){
+  const postRx = Object.assign({}, BASE_REACTIONS[key] || {}, R[key] || {});
+  const total = getTotalReactionsCount(postRx);
+  const myCounts = getUserReactionCounts(key);
+
+  $("#mb").innerHTML = `
+    <h3 style="margin-top:0;display:flex;align-items:center;gap:8px">
+      <span>Reactions</span>
+      <span class="stat" style="font-size:1.2rem">(${total.toLocaleString()})</span>
+    </h3>
+    <div class="mu" style="margin-bottom:12px">Every heart & reaction counts · Tap any to react</div>
+    <div style="display:grid;gap:8px;max-height:55vh;overflow-y:auto">
+      ${REACTION_TYPES.map(r => {
+        const count = postRx[r.id] || 0;
+        const myCount = myCounts[r.id] || 0;
+        return `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#ffffff0f;border-radius:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:1.6rem">${r.emoji}</span>
+              <div>
+                <b>${r.label}</b>
+                ${myCount > 0 ? `<div style="font-size:0.75rem;color:var(--pr)">You reacted ${myCount} time${myCount === 1 ? '' : 's'}</div>` : ''}
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <b style="font-size:1.1rem;color:#fff">${count}</b>
+              <button class="btn sm" onclick="addReaction('${key}', '${r.id}', event);openReactionsDetailModal('${key}')">+1</button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <p style="margin-top:14px;margin-bottom:0">
+      <button onclick="closeModal()">Close</button>
+    </p>
+  `;
+  $("#modal").style.display = "flex";
 }
 
 // Floating reaction visual effect (flying hearts / amens just like TikTok / Instagram Live / Facebook Live)
@@ -2226,28 +2402,35 @@ function addReaction(key, type, event){
 
 // Fast DOM update for rapid multi-clicking
 function updateReactionDomFast(key, type, newCount, clickedBtn){
-  // Update count badge on chip
-  const safeKey = key.replace(/[^a-zA-Z0-9_]/g, "_");
-  const countSpan = document.getElementById(`rx_cnt_${safeKey}_${type}`);
-  if(countSpan){
-    countSpan.textContent = `· ${newCount}`;
-    countSpan.classList.remove("count-bump");
-    void countSpan.offsetWidth; // trigger reflow
-    countSpan.classList.add("count-bump");
+  const sk = safeKey(key);
+  const postRx = Object.assign({}, BASE_REACTIONS[key] || {}, R[key] || {});
+  const total = getTotalReactionsCount(postRx);
+
+  // 1. Update total reactions text in summary
+  const totalEl = document.getElementById("rx_total_" + sk);
+  if(totalEl){
+    totalEl.textContent = total > 0 ? total.toLocaleString() : "Be first to react";
+    totalEl.classList.remove("count-bump");
+    void totalEl.offsetWidth;
+    totalEl.classList.add("count-bump");
   }
 
-  // Update button classes to active/bright
-  const btn = clickedBtn || document.getElementById(`rx_btn_${safeKey}_${type}`);
-  if(btn){
-    btn.classList.remove("dim");
-    btn.classList.add("on");
-    btn.setAttribute("aria-label", `${type}: ${newCount}. You reacted! Tap again to add more.`);
+  // 2. Update badges stack in summary
+  const badgesEl = document.getElementById("rx_badges_" + sk);
+  if(badgesEl){
+    badgesEl.innerHTML = renderReactionBadgeStack(postRx);
   }
 
-  // If this reaction wasn't visible as a main chip yet, trigger a fast re-render of the bar
-  if(!countSpan){
-    render();
+  // 3. Update Like button appearance to reflect latest reaction
+  const rxInfo = REACTION_TYPES.find(r => r.id === type) || { emoji: "👍", label: "Like" };
+  const likeBtn = document.getElementById("fb_like_btn_" + sk);
+  if(likeBtn){
+    likeBtn.className = "fb-act-btn reacted-" + type;
+    likeBtn.innerHTML = `<span class="fb-act-icon">${rxInfo.emoji}</span> <span>${rxInfo.label}</span>`;
   }
+
+  // 4. Close any open dock
+  closeFbReactionDock();
 }
 
 // Aliases for template backwards compatibility
@@ -2471,19 +2654,21 @@ function feed(c){
 // Render Single Post with Social Multi-Click Reactions
 function renderFeedPost(c, x, logo){
   const key = `${c}:${x.id}`;
-  const safeKey = key.replace(/[^a-zA-Z0-9_]/g, "_");
+  const sk = safeKey(key);
   
   // Post aggregate counts (seeded with baseline, accumulating on every click)
   const defaultRx = { like: 0, heart: 0, amen: 0, praise: 0 };
   const baseRx = BASE_REACTIONS[key] || {};
   const postRx = Object.assign({}, defaultRx, baseRx, R[key] || {});
+  const totalRxCount = getTotalReactionsCount(postRx);
 
-  // My reaction tallies for this post
-  const myCounts = getUserReactionCounts(key);
-  const coreRxIds = ['like', 'heart', 'amen', 'praise'];
+  // My preferred / active reaction for this post
+  const userRx = getUserPreferredReaction(key);
+  const activeEmoji = userRx ? userRx.emoji : "👍";
+  const activeLabel = userRx ? userRx.label : "Like";
+  const activeClass = userRx ? `reacted-${userRx.id}` : "";
   
   const postComments = (D.comments || []).filter(cm => cm.postId === x.id || cm.postId === key);
-  const trayId = "rx_tray_" + safeKey;
 
   return `
     <article class="post" id="post_${c}_${x.id}">
@@ -2500,108 +2685,64 @@ function renderFeedPost(c, x, logo){
       <div class="cap">${e(x.caption)}</div>
       ${x.photo ? `<img src="${e(x.photo)}" alt="Post image">` : ''}
 
-      <!-- Multi-Click Social Reaction Bar -->
-      <div class="rx-bar-wrap">
-        <div class="rx" role="toolbar" aria-label="Post reactions and actions">
-          
-          <!-- 1. Core Reaction Buttons: Like, Heart, Amen, Praise (Multi-click supported!) -->
-          <button type="button" 
-            id="rx_btn_${safeKey}_like"
-            class="rx-chip-btn rx-like ${(myCounts.like > 0) ? 'on' : 'dim'}" 
-            onclick="addReaction('${key}', 'like', event)" 
-            title="React with Like (tap multiple times to send more likes!)" 
-            aria-label="Like: ${postRx.like || 0}">
-            <span class="rx-chip-emoji">👍</span>
-            <span>Like</span>
-            <span class="rx-chip-count" id="rx_cnt_${safeKey}_like">· ${postRx.like || 0}</span>
-          </button>
-
-          <button type="button" 
-            id="rx_btn_${safeKey}_heart"
-            class="rx-chip-btn rx-heart ${(myCounts.heart > 0) ? 'on' : 'dim'}" 
-            onclick="addReaction('${key}', 'heart', event)" 
-            title="React with Heart (tap multiple times to send hearts!)" 
-            aria-label="Heart: ${postRx.heart || 0}">
-            <span class="rx-chip-emoji">❤️</span>
-            <span>Heart</span>
-            <span class="rx-chip-count" id="rx_cnt_${safeKey}_heart">· ${postRx.heart || 0}</span>
-          </button>
-
-          <button type="button" 
-            id="rx_btn_${safeKey}_amen"
-            class="rx-chip-btn rx-amen ${(myCounts.amen > 0) ? 'on' : 'dim'}" 
-            onclick="addReaction('${key}', 'amen', event)" 
-            title="Say Amen (tap to add Amens!)" 
-            aria-label="Amen: ${postRx.amen || 0}">
-            <span class="rx-chip-emoji">🙏</span>
-            <span>Amen</span>
-            <span class="rx-chip-count" id="rx_cnt_${safeKey}_amen">· ${postRx.amen || 0}</span>
-          </button>
-
-          <button type="button" 
-            id="rx_btn_${safeKey}_praise"
-            class="rx-chip-btn rx-praise ${(myCounts.praise > 0) ? 'on' : 'dim'}" 
-            onclick="addReaction('${key}', 'praise', event)" 
-            title="React with Praise (tap to add Praise!)" 
-            aria-label="Praise: ${postRx.praise || 0}">
-            <span class="rx-chip-emoji">🙌</span>
-            <span>Praise</span>
-            <span class="rx-chip-count" id="rx_cnt_${safeKey}_praise">· ${postRx.praise || 0}</span>
-          </button>
-
-          <!-- 2. Other Active Reaction Chips Picked From Tray (Faith, Spirit, etc.) -->
-          ${REACTION_TYPES.filter(r => !coreRxIds.includes(r.id) && ((postRx[r.id] || 0) > 0 || (myCounts[r.id] || 0) > 0)).map(r => `
-            <button type="button" 
-              id="rx_btn_${safeKey}_${r.id}"
-              class="rx-chip-btn ${(myCounts[r.id] > 0) ? 'on' : ''}" 
-              onclick="addReaction('${key}', '${r.id}', event)" 
-              title="React with ${r.label}" 
-              aria-label="${r.label}: ${postRx[r.id] || 0}">
-              <span class="rx-chip-emoji">${r.emoji}</span>
-              <span>${r.label}</span>
-              <span class="rx-chip-count" id="rx_cnt_${safeKey}_${r.id}">· ${postRx[r.id] || 0}</span>
-            </button>
-          `).join('')}
-
-          <!-- 3. Emoticon Reaction Tray Picker Trigger -->
-          <div class="rx-picker-container">
-            <button type="button" class="rx-picker-btn" 
-              onclick="toggleRxTray('${key}')" 
-              aria-label="More emoticon reactions" 
-              aria-haspopup="true" 
-              aria-expanded="false" 
-              title="Select more emoticon reactions">
-              <span class="rx-ico">😀</span>
-              <span>Emoticons</span>
-              <span class="rx-arrow">▾</span>
-            </button>
-
-            <!-- Floating Emoticon Tray -->
-            <div id="${trayId}" class="rx-tray" role="dialog" aria-label="Available emoticon reactions" style="display:none">
-              ${REACTION_TYPES.map(r => `
-                <button type="button" class="rx-emoticon-btn ${(myCounts[r.id] > 0) ? 'active' : ''}" 
-                  onclick="addReaction('${key}', '${r.id}', event)" 
-                  title="${r.label} - Tap to react"
-                  aria-label="React with ${r.label} (${r.emoji})">
-                  <span>${r.emoji}</span>
-                  <span class="em-tooltip">${r.label}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- 4. Share Devotion & Reactions -->
-          <button type="button" class="shb rx-chip-btn" onclick="openShareWithReactionModal('${c}', '${x.id}')" title="Share devotion and reactions" aria-label="Share devotion">
-            <span>↗</span>
-            <span>Share</span>
-          </button>
-
-          <!-- 5. Interactive Public Comments Trigger -->
-          <button type="button" class="cm-toggle-btn" onclick="focusCommentInput('${x.id}')" aria-label="${postComments.length} comments" title="Jump to public comments section">
-            <span>💬</span>
-            <span><b>${postComments.length}</b> ${postComments.length === 1 ? 'comment' : 'comments'} · Write one</span>
-          </button>
+      <!-- Facebook-Style Reaction Summary Row -->
+      <div class="post-rx-summary" id="rx_sum_${sk}">
+        <div class="rx-summary-left" onclick="openReactionsDetailModal('${key}')" title="See who reacted">
+          <span class="rx-badge-stack" id="rx_badges_${sk}">
+            ${renderReactionBadgeStack(postRx)}
+          </span>
+          <span class="rx-summary-total" id="rx_total_${sk}">${totalRxCount > 0 ? totalRxCount.toLocaleString() : 'Be first to react'}</span>
         </div>
+        <div class="rx-summary-right" onclick="focusCommentInput('${x.id}')">
+          <span>${postComments.length} ${postComments.length === 1 ? 'comment' : 'comments'}</span>
+        </div>
+      </div>
+
+      <!-- Facebook 3-Action Buttons Bar: Like, Comment, Share -->
+      <div class="fb-actions-bar" role="toolbar" aria-label="Post actions">
+        
+        <!-- 1. Like Button with Facebook Floating Reaction Dock (hover on desktop or hold on mobile) -->
+        <div class="fb-like-btn-wrap" id="fb_wrap_${sk}" onmouseleave="closeFbReactionDock()">
+          <button type="button" 
+            id="fb_like_btn_${sk}"
+            class="fb-act-btn ${activeClass}"
+            onclick="quickFbLike('${key}', event)"
+            ontouchstart="handleFbLikeTouchStart('${key}', event)"
+            ontouchmove="handleFbLikeTouchMove('${key}', event)"
+            ontouchend="handleFbLikeTouchEnd('${key}', event)"
+            title="Hover or hold for reactions, tap to react"
+            aria-label="${activeLabel}">
+            <span class="fb-act-icon">${activeEmoji}</span>
+            <span>${activeLabel}</span>
+          </button>
+
+          <!-- Floating Facebook Reaction Dock -->
+          <div class="fb-reaction-dock" id="fb_dock_${sk}" role="dialog" aria-label="Reactions dock">
+            ${REACTION_TYPES.map(r => `
+              <button type="button" class="fb-reaction-item" 
+                data-rx-type="${r.id}"
+                onclick="addReaction('${key}', '${r.id}', event)" 
+                title="${r.label}"
+                aria-label="${r.label}">
+                <span>${r.emoji}</span>
+                <span class="fb-reaction-tooltip">${r.label}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 2. Comment Button -->
+        <button type="button" class="fb-act-btn" onclick="focusCommentInput('${x.id}')" title="Comment on this post" aria-label="Comment">
+          <span class="fb-act-icon">💬</span>
+          <span>Comment</span>
+        </button>
+
+        <!-- 3. Share Button -->
+        <button type="button" class="fb-act-btn" onclick="openShareWithReactionModal('${c}', '${x.id}')" title="Share this reflection" aria-label="Share">
+          <span class="fb-act-icon">↗</span>
+          <span>Share</span>
+        </button>
+
       </div>
 
       <!-- PUBLIC COMMENT SECTION -->
@@ -3830,9 +3971,8 @@ document.addEventListener("click", ev => {
   const t = ev.target, d = t.dataset || {};
   if(d.v){ view = d.v; render(); menu(false); }
   
-  if(!ev.target.closest(".rx-picker-container")){
-    document.querySelectorAll(".rx-tray").forEach(el => el.style.display = "none");
-    document.querySelectorAll(".rx-picker-btn").forEach(el => el.setAttribute("aria-expanded", "false"));
+  if(!ev.target.closest(".fb-like-btn-wrap")){
+    document.querySelectorAll(".fb-like-btn-wrap.dock-open").forEach(el => el.classList.remove("dock-open"));
   }
 });
 
