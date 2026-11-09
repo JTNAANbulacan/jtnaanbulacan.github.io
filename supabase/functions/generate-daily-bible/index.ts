@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
     const prompt = `Create one fresh daily Bible trivia item and one multiple-choice Bible question for a Christian church website.
 Use the Protestant 66-book Bible canon. Choose a specific, unambiguous passage reference. The two learning items must both be grounded in that SAME passage and in the actual passage text supplied later.
 Do not invent events, people, numbers, quotations, or details. Do not present interpretation as a direct biblical fact. Avoid disputed chronology, disputed authorship, and denominational controversies. Do not write direct Bible quotations; paraphrase faithfully. Keep the content reverent, welcoming, concise, and understandable to teens and adults.
-Select a passage reference that is a real, short, self-contained passage. Return only the reference and a visual image prompt in the first step.`;
+Select a passage reference that is a real, short, self-contained passage. Return only the reference in the first step.`;
 
     const planRes = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
@@ -100,9 +100,8 @@ Select a passage reference that is a real, short, self-contained passage. Return
               additionalProperties: false,
               properties: {
                 scripture_reference: { type: "string" },
-                image_prompt: { type: "string" }
               },
-              required: ["scripture_reference", "image_prompt"]
+              required: ["scripture_reference"]
             }
           },
           verbosity: "low"
@@ -149,6 +148,7 @@ Select a passage reference that is a real, short, self-contained passage. Return
                   },
                   required: ["tag", "title", "text", "caption"]
                 },
+                image_prompt: { type: "string" },
                 question: {
                   type: "object",
                   additionalProperties: false,
@@ -161,7 +161,7 @@ Select a passage reference that is a real, short, self-contained passage. Return
                   required: ["q", "c", "a", "exp"]
                 }
               },
-              required: ["trivia", "question"]
+              required: ["trivia", "question", "image_prompt"]
             }
           },
           verbosity: "low"
@@ -181,7 +181,7 @@ Select a passage reference that is a real, short, self-contained passage. Return
       body: JSON.stringify({
         model: "gpt-image-2.5-flare",
         prompt: "Create a beautiful, reverent, historically inspired biblical illustration for a church daily devotion website. " +
-          plan.image_prompt + " Depict the passage respectfully and plausibly for its ancient setting. No text, letters, watermark, modern objects, or anachronisms. Wide landscape composition, warm natural light, painterly photorealism.",
+          content.image_prompt + " Depict the passage respectfully and plausibly for its ancient setting. No text, letters, watermark, modern objects, or anachronisms. Wide landscape composition, warm natural light, painterly photorealism.",
         size: "1536x1024",
         quality: "medium",
         output_format: "jpeg",
