@@ -4930,8 +4930,7 @@ function applyVisualLayout(){
   const items=getVisualLayout();
   VLE_TYPES.forEach(([sel])=>{
     document.querySelectorAll("#main "+sel).forEach(el=>{
-      const key=sel.slice(1), cfg=items[key];
-      if(!cfg) return;
+      const key=sel.slice(1), cfg=items[key]||{};
       el.style.width=cfg.widthPct ? cfg.widthPct+"%" : "";
       el.style.maxWidth=cfg.widthPct ? "none" : "";
       el.style.minHeight=cfg.minHeight ? cfg.minHeight+"px" : "";
