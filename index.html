@@ -4697,7 +4697,7 @@ function launchSupportEmail(){
 }
 
 function list(c){
-  const L = (D[c] || []).filter(x=>!x.publishAt||new Date(x.publishAt).getTime()<=Date.now()).slice().sort((a,b)=>c==="funds"?((b.createdAt||new Date(b.date||0).getTime())-(a.createdAt||new Date(a.date||0).getTime())):0);
+  const L = (D[c] || []).filter(x=>can(c)||!x.publishAt||new Date(x.publishAt).getTime()<=Date.now()).slice().sort((a,b)=>c==="funds"?((b.createdAt||new Date(b.date||0).getTime())-(a.createdAt||new Date(a.date||0).getTime())):0);
   return `<h2>${TL[c]||c.toUpperCase()} (${L.length})</h2>
   ${can(c)?`<p><button class="btn gold" onclick="openFormModal('${c}')">+ Add</button></p>`:''}
   <div class="grid">
