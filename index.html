@@ -4089,17 +4089,17 @@ function galleryv(){
   const L = D.gallery || [];
   return `<h2>GALLERY (${L.length})</h2>
   ${can("gallery")?`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (up to 6 Photos)</button></p>`:''}
-  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr));gap:12px">
+  <div class="grid gallery-layout" style="grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr));gap:12px">
     ${L.map(a=>{
       const P = a.photos || [];
       const shown=P.slice(0,4);
       return `
-        <div class="card" style="padding:0;overflow:hidden">
+        <div class="card gallery-album" style="padding:0;overflow:hidden;min-width:0">
           <div style="padding:10px 12px">
             <b style="font-size:.98rem">${e(a.cap)}</b>
             <div class="mu">${P.length} photo${P.length===1?'':'s'} · tap to view</div>
           </div>
-          <div onclick="openAlbumViewer('${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:0 8px 8px">
+          <div class="gallery-photo-grid" onclick="openAlbumViewer('${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:0 8px 8px">
             ${shown.map((u,i)=>`<div style="position:relative;aspect-ratio:1/1;min-width:0;overflow:hidden;border-radius:5px"><img src="${e(u)}" alt="Album photo ${i+1}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">${i===3 && P.length>4?`<div style="position:absolute;inset:0;background:#0009;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:700">+${P.length-4}</div>`:''}</div>`).join('')}
           </div>
           ${can("gallery")?`
@@ -4918,6 +4918,7 @@ let visualLayoutKey = "";
 let visualLayoutTarget = null;
 let visualLayoutDrag = null;
 const VLE_TYPES = [
+  [".gallery-album","Gallery album card"],[".gallery-photo-grid","Gallery photo grid"],[".gallery-layout","Gallery albums layout"],
   [".post","Facebook / devotion post"],[".tv","Devotion trivia card"],[".tq","Bible quiz"],[".tvs","Trivia and quiz section"],
   [".feed","Post feed"],[".grid","Content grid"],[".card","Content card"]
 ];
@@ -4959,7 +4960,7 @@ function startVisualLayoutEditor(){
 function visualLayoutSelectClick(ev){
   if(!document.body.classList.contains("vle-on")) return;
   if(ev.target.closest("#vle-bar,#vle-grip-move,#vle-grip-size")) return;
-  const el=ev.target.closest("#main .post,#main .tv,#main .tq,#main .tvs,#main .feed,#main .grid,#main .card");
+  const el=ev.target.closest("#main .gallery-album,#main .gallery-photo-grid,#main .gallery-layout,#main .post,#main .tv,#main .tq,#main .tvs,#main .feed,#main .grid,#main .card");
   if(!el) return;
   ev.preventDefault();ev.stopPropagation();
   selectVisualLayoutElement(el);
@@ -5005,7 +5006,7 @@ function beginVisualDrag(ev,mode){
   if(!visualLayoutTarget) return;
   ev.preventDefault();ev.stopPropagation();
   const c=visualLayoutDraft[visualLayoutKey]||{};
-  visualLayoutDrag={mode,startX:ev.clientX,startY:ev.clientY,x:c.x||0,y:c.y||0,width:visualLayoutTarget.getBoundingClientRect().width};
+  visualLayoutDrag={mode,startX:ev.clientX,startY:ev.clientY,x:c.x||0,y:c.y||0,width:visualLayoutTarget.getBoundingClientRect().width,height:visualLayoutTarget.getBoundingClientRect().height};
   ev.currentTarget.setPointerCapture(ev.pointerId);
   const move=mv=>{
     if(!visualLayoutDrag) return;
@@ -5014,8 +5015,9 @@ function beginVisualDrag(ev,mode){
       updateVisualDraft({x:Math.max(-180,Math.min(180,Math.round(d.x+dx))),y:Math.max(-180,Math.min(180,Math.round(d.y+dy)))});
     }else{
       const parent=visualLayoutTarget.parentElement.getBoundingClientRect();
-      const pct=Math.max(30,Math.min(100,Math.round((d.width+dx)/Math.max(1,parent.width)*100)));
-      $("#vle-width").value=pct;updateVisualDraft({widthPct:pct});
+      const pct=Math.max(20,Math.min(100,Math.round((d.width+dx)/Math.max(1,parent.width)*100)));
+      const minHeight=Math.max(0,Math.min(1200,Math.round(d.height+dy)));
+      $("#vle-width").value=pct;$("#vle-height").value=minHeight;updateVisualDraft({widthPct:pct,minHeight});
     }
   };
   const end=()=>{visualLayoutDrag=null;window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);};
