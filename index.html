@@ -474,6 +474,19 @@ nav#nav button:hover{background:#ffffff14}nav#nav button.on{background:var(--pr)
 main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s var(--ez)}
 @media(min-width:760px){body.mo main{margin-left:var(--nw);max-width:calc(100% - var(--nw))}}
 @media(max-width:759.98px){body.mo main{transform:translateX(var(--nw))}}
+
+/* Mobile: keep the site header and section menu button visible while scrolling.
+   Fixed positioning avoids sticky-header issues in iOS Safari and Android browsers. */
+@media(max-width:759.98px){
+  header{
+    position:fixed !important;
+    top:0 !important;left:0;right:0;width:100%;
+    z-index:30 !important;
+    padding-top:calc(6px + env(safe-area-inset-top,0px));
+  }
+  body{padding-top:var(--hh) !important}
+  nav#nav{top:var(--hh) !important}
+}
 </style>
 
 <style id="visual-layout-editor-css">
