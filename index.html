@@ -3892,7 +3892,7 @@ function triviaImgFallback(img, idx){
   img.style.display = "none";
   const parent = img.parentElement;
   if(!parent) return;
-  const t = TRIVIA_BANK[idx] || todayTrivia();
+  const t = todayTrivia();
   const fb = parent.querySelector(".tv-fallback-card");
   if(fb){
     fb.style.display = "flex";
