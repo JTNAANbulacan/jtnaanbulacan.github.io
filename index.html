@@ -4137,41 +4137,51 @@ async function saveAttendanceRecord(){
   if(ok) showSuccessNotification("Attendance record saved live to cloud!");
 }
 
-function reportsv(){
-  return `<h2>REPORTS</h2>
-  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(19rem,100%),1fr))">
-    <div class="card">
-      <b>Church funds per month (₱)</b>
-      <div style="height:140px;background:#ffffff0f;border-radius:8px;display:flex;align-items:flex-end;gap:16px;padding:12px;margin:10px 0">
-        <div style="flex:1;background:var(--pr);height:100%;border-radius:4px" title="Income 3171"></div>
-        <div style="flex:1;background:#6f8fff;height:98%;border-radius:4px" title="Expense 3135"></div>
-      </div>
-      <div class="mu"><span style="color:var(--pr)">■</span> Income (₱3,171) &nbsp; <span style="color:#6f8fff">■</span> Expense (₱3,135)</div>
-    </div>
-    <div class="card">
-      <b>Members growth</b>
-      <div style="height:140px;background:#ffffff0f;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:10px 0">
-        <span class="stat">${(D.members||[]).length}</span>
-      </div>
-      <div class="mu">Total registered members</div>
-    </div>
-    <div class="card">
-      <b>Attendance</b>
-      <div style="height:140px;background:#ffffff0f;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:10px 0">
-        <span class="stat">25</span>
-      </div>
-      <div class="mu">2026-11-01 · Sunday Worship Service</div>
-    </div>
-    <div class="card">
-      <b>Social media followers</b>
-      <div style="height:140px;background:#ffffff0f;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:10px 0">
-        <span class="stat">225</span>
-      </div>
-      <div class="mu">Facebook followers</div>
-    </div>
-  </div>`;
+let reportPeriod = "monthly";
+function setReportPeriod(period){
+  reportPeriod = period === "annual" ? "annual" : "monthly";
+  const main = document.getElementById("main");
+  if(main) main.innerHTML = reportsv();
 }
-
+function reportsv(){
+  const members = D.members || [];
+  const attendance = (D.attendance || []).slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+  const social = D.social || [];
+  const canSeeFunds = can("funds");
+  const funds = canSeeFunds ? (D.funds || []) : [];
+  const totalIncome = funds.filter(f=>f.type!=="Expense").reduce((n,f)=>n+(Number(f.amount)||0),0);
+  const totalExpense = funds.filter(f=>f.type==="Expense").reduce((n,f)=>n+(Number(f.amount)||0),0);
+  const now = new Date();
+  const periods = [];
+  if(reportPeriod === "annual"){
+    for(let i=4;i>=0;i--){const y=now.getFullYear()-i;periods.push({key:String(y),label:String(y)});}
+  } else {
+    for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);periods.push({key:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),label:d.toLocaleDateString("en-PH",{month:"short"})});}
+  }
+  const chartRows = periods.map(p=>{
+    const rows=funds.filter(f=>String(f.date||"").slice(0,reportPeriod==="annual"?4:7)===p.key);
+    return {key:p.key,label:p.label,
+      income:rows.filter(f=>f.type!=="Expense").reduce((n,f)=>n+(Number(f.amount)||0),0),
+      expense:rows.filter(f=>f.type==="Expense").reduce((n,f)=>n+(Number(f.amount)||0),0)};
+  });
+  const maxAmount=Math.max(1,...chartRows.flatMap(x=>[x.income,x.expense]));
+  const latestAttendance=attendance[0];
+  const followerTotal=social.reduce((n,x)=>n+(Number(x.followers)||0),0);
+  let html="<h2>REPORTS</h2>";
+  if(canSeeFunds){
+    html+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>Church funds report</b><div class="dtabs" style="margin:0">';
+    html+='<button class="'+(reportPeriod==="monthly"?"gold":"btn")+' sm" onclick="setReportPeriod(\\'monthly\\')">Monthly</button>';
+    html+='<button class="'+(reportPeriod==="annual"?"gold":"btn")+' sm" onclick="setReportPeriod(\\'annual\\')">Annual</button></div></div>';
+    html+='<div class="grid" style="margin-top:12px"><div class="card"><div class="stat">₱'+totalIncome.toLocaleString("en-PH")+'</div>Recorded income</div><div class="card"><div class="stat">₱'+totalExpense.toLocaleString("en-PH")+'</div>Recorded expenses</div><div class="card"><div class="stat">₱'+(totalIncome-totalExpense).toLocaleString("en-PH")+'</div>Recorded balance</div></div>';
+    html+='<div style="display:flex;align-items:flex-end;gap:10px;min-height:190px;padding:18px 8px 8px;margin-top:14px;border-bottom:1px solid var(--bd);overflow-x:auto">';
+    html+=chartRows.map(row=>'<div style="flex:1;min-width:42px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:170px"><div style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:140px;width:100%"><div title="Income ₱'+row.income.toLocaleString("en-PH")+'" style="width:42%;max-width:24px;height:'+(row.income?Math.max(3,row.income/maxAmount*130):0)+'px;background:var(--pr);border-radius:4px 4px 0 0"></div><div title="Expense ₱'+row.expense.toLocaleString("en-PH")+'" style="width:42%;max-width:24px;height:'+(row.expense?Math.max(3,row.expense/maxAmount*130):0)+'px;background:#6f8fff;border-radius:4px 4px 0 0"></div></div><span class="mu" style="font-size:.72rem;white-space:nowrap">'+e(row.label)+'</span></div>').join("");
+    html+='</div><div class="mu" style="margin-top:10px"><span style="color:var(--pr)">■</span> Income &nbsp; <span style="color:#6f8fff">■</span> Expenses · Based on recorded entries</div></div>';
+  } else {
+    html+='<div class="card" style="margin-bottom:14px"><b>Church funds report</b><p class="mu" style="margin-bottom:0">Financial figures are private and visible only to admins assigned to Church Funds.</p></div>';
+  }
+  html+='<div class="grid"><div class="card"><div class="stat">'+members.length+'</div>Registered members</div><div class="card"><div class="stat">'+(latestAttendance?(latestAttendance.present||[]).length:0)+'</div>Latest attendance<div class="mu">'+(latestAttendance?e(latestAttendance.date+" · "+(latestAttendance.svc||"")):"No attendance records yet")+'</div></div><div class="card"><div class="stat">'+followerTotal.toLocaleString("en-PH")+'</div>Social media followers</div></div>';
+  return html;
+}
 function socialv(){
   const L = D.social || [];
   return `<h2>SOCIAL MEDIA</h2>
@@ -4361,30 +4371,23 @@ function list(c){
 }
 
 function adminsv(){
-  if(!admin) return `<p class="mu">Access restricted to Super Admin (Admin Mart).</p>`;
-  return `
-    <h2>ADMINS MANAGEMENT <span>(${AL.length})</span></h2>
-    <p class="mu">Only Admin Mart has access to this section. Add admin accounts, update credentials, and check the sections each admin can update/edit.</p>
-    <p><button class="btn gold" onclick="openAdminModal('_new')">+ Add Admin</button></p>
-    <div class="grid">
-      ${AL.map(a => `
-        <div class="card">
-          <b style="font-size:1.1rem;color:var(--pr)">${e(a.name)}</b>
-          <div class="mu" style="margin:4px 0">Username: <b>${e(a.username)}</b></div>
-          <div style="margin:8px 0">
-            ${a.owner ? '<span class="adch on">Full access to every section (Super Admin)</span>' : 
-              (a.perms && a.perms.length > 0) ? a.perms.map(p => `<span class="adch">${e(PL[p] || p)}</span>`).join('') :
-              '<span class="mu" style="font-size:.8rem">No edit permissions assigned.</span>'
-            }
-          </div>
-          <button class="btn sm" onclick="openAdminModal('${e(a.id)}')">Edit</button>
-          ${!a.owner ? ` <button class="btn red sm" onclick="deleteAdminRecord('${e(a.id)}')">Remove</button>` : ''}
-        </div>
-      `).join('')}
-    </div>
-  `;
+  if(!me) return '<p class="mu">Please log in with an admin account to view this section.</p>';
+  const canManageAdmins=isAdminMart();
+  const visibleAdmins=canManageAdmins?(AL||[]):(AL||[]).filter(a=>a.id===me.id);
+  let html='<h2>ADMINS MANAGEMENT <span>('+ (canManageAdmins?AL.length:visibleAdmins.length) +')</span></h2>';
+  html+='<p class="mu">'+(canManageAdmins?'Admin Mart can add admins and assign one or more sections. Each admin can edit only their assigned sections.':'Your admin account and assigned sections are shown below. For additional access, contact Admin Mart.')+'</p>';
+  if(canManageAdmins) html+='<p><button class="btn gold" onclick="openAdminModal(\\'_new\\')">+ Add Admin</button></p>';
+  html+='<div class="grid">'+visibleAdmins.map(a=>{
+    let card='<div class="card"><b style="font-size:1.1rem;color:var(--pr)">'+e(a.name)+'</b>';
+    if(canManageAdmins) card+='<div class="mu" style="margin:4px 0">Username: <b>'+e(a.username)+'</b></div>';
+    card+='<div style="margin:8px 0">';
+    card+=a.owner?'<span class="adch on">Full access to every section (Super Admin)</span>':((a.perms&&a.perms.length)?a.perms.map(p=>'<span class="adch">'+e(PL[p]||p)+'</span>').join(''):'<span class="mu" style="font-size:.8rem">No edit permissions assigned.</span>');
+    card+='</div>';
+    if(canManageAdmins){card+='<button class="btn sm" onclick="openAdminModal(\\''+e(a.id)+'\\')">Edit</button>';if(!a.owner)card+=' <button class="btn red sm" onclick="deleteAdminRecord(\\''+e(a.id)+'\\')">Remove</button>';}
+    return card+'</div>';
+  }).join('')+'</div>';
+  return html;
 }
-
 function openAdminModal(id){
   if(!isAdminMart()) return alert("Only Admin Mart can manage admin accounts.");
   const nw = id === "_new";
