@@ -1,0 +1,2 @@
+[functions.generate-daily-bible]
+verify_jwt = false
