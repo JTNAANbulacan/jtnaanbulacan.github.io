@@ -4368,7 +4368,7 @@ function sortedEvents(){
 
 function eventCard(x, canEdit, faded){
   return `<div class="card" style="padding:0;overflow:hidden;${faded ? 'opacity:.75' : ''}">
-    ${x.photo ? `<img src="${e(x.photo)}" alt="${e(x.title || 'Event')}" style="width:100%;height:180px;object-fit:cover;display:block;margin:0;border-radius:0">` : ''}
+    ${x.photo ? `<img src="${e(x.photo)}" alt="${e(x.title || 'Event')}" style="width:100%;height:150px;object-fit:cover;display:block;margin:0;border-radius:0">` : ''}
     <div style="padding:12px 14px">
       <b style="font-size:1.1rem;color:var(--pr)">${e(x.title || '')}</b>
       <div class="mu" style="margin-top:4px">📅 ${e(fmtEventDate(x.date))}${x.place ? ` · 📍 ${e(x.place)}` : ''}</div>
@@ -4384,7 +4384,7 @@ function eventCard(x, canEdit, faded){
 function eventsv(){
   const { up, past } = sortedEvents();
   const ce = can("events");
-  const grid = arr => `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr))">${arr.join('')}</div>`;
+  const grid = arr => `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),19rem));justify-content:start">${arr.join('')}</div>`;
   return `<h2>EVENTS (${(D.events || []).length})</h2>
   ${ce ? `<p><button class="btn gold" onclick="openFormModal('events')">+ Add Event</button></p>` : ''}
   <h3 style="color:var(--pr);margin:14px 0 8px">Upcoming events</h3>
@@ -4396,7 +4396,7 @@ function upcomingEventsHtml(){
   const { up } = sortedEvents();
   const ce = can("events");
   return `<h2 style="margin-top:24px">UPCOMING EVENTS</h2>` + (up.length
-    ? `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr))">${up.slice(0, 6).map(x => eventCard(x, ce)).join('')}</div>
+    ? `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),19rem));justify-content:start">${up.slice(0, 6).map(x => eventCard(x, ce)).join('')}</div>
        <p><button class="btn sm" onclick="view='events';render();window.scrollTo({top:0,behavior:'smooth'})">View all events →</button></p>`
     : `<p class="mu">No upcoming events.</p>`);
 }
