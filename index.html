@@ -135,11 +135,11 @@ img,svg,video,iframe{max-width:100%}table{font-size:.9rem}td,th{word-break:break
 
 main:has(> .about){max-width:none}
 .about{width:100%}
-.about .lead{max-width:none;font-size:clamp(1rem,.9rem + .45vw,1.35rem);line-height:1.65;margin:.5rem 0 clamp(1rem,2vw,2rem)}
+.about .lead{max-width:none;font-size:clamp(1rem,.9rem + .45vw,1.35rem);line-height:1.65;margin:.5rem 0 clamp(1rem,2vw,2rem);white-space:pre-wrap;word-break:break-word}
 .about .grid{grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr));gap:clamp(.75rem,1.6vw,1.75rem)}
 .about .card{padding:clamp(1rem,1.8vw,2rem) clamp(1rem,2vw,2.25rem);display:flex;flex-direction:column;gap:.5rem}
 .about .card b{font-size:clamp(1.1rem,.95rem + .6vw,1.6rem)}
-.about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word}
+.about .card .mu{font-size:clamp(.95rem,.85rem + .4vw,1.25rem);line-height:1.6;word-break:break-word;white-space:pre-wrap}
 
 /* Trivia & Quiz Container */
 .tvs{display:grid;gap:16px;max-width:44rem;margin:10px auto 26px}
@@ -1853,14 +1853,45 @@ function getCustomTextsMap(){
   return { ...localMap, ...cloudMap };
 }
 
+let activeEditTargetKey = "";
+let activeEditOriginalDefault = "";
+let activeTargetElement = null;
+
 function applyCustomTexts(root = document.body){
   const map = getCustomTextsMap();
   const keys = Object.keys(map);
   if(!keys.length || !root) return;
 
-  // Longest original phrase first to prevent substring collisions
-  keys.sort((a, b) => b.length - a.length);
+  // 1. Direct element replacements for headings, paragraphs, leads, cards, stats
+  const candidateTags = "h1, h2, h3, h4, p, span, b, strong, em, small, a, label, li, td, th, .stat, .mu, .lead";
+  const elements = root.querySelectorAll ? root.querySelectorAll(candidateTags) : [];
+  elements.forEach(el => {
+    if(el.closest("#txbar") || el.closest("#modal") || el.closest(".fb-reaction-dock") || el.closest(".fb-reaction-trigger-wrap") || el.closest("script") || el.closest("style")) return;
 
+    // If element already has dataset.origText recorded
+    const existingOrig = el.dataset.origText;
+    if(existingOrig && map[existingOrig] !== undefined){
+      if(el.innerText !== map[existingOrig]){
+        el.innerText = map[existingOrig];
+        el.style.whiteSpace = "pre-wrap";
+      }
+      return;
+    }
+
+    // Match element text against map keys
+    const elText = (el.innerText || "").trim();
+    for(const k of keys){
+      const normK = k.trim();
+      if(normK && (elText === normK || el.textContent.trim() === normK)){
+        el.dataset.origText = k;
+        el.innerText = map[k];
+        el.style.whiteSpace = "pre-wrap";
+        break;
+      }
+    }
+  });
+
+  // 2. TreeWalker for inline text nodes not caught by full element replacement
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode(node) {
       if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
@@ -1869,6 +1900,7 @@ function applyCustomTexts(root = document.body){
       const tag = parent.tagName.toLowerCase();
       if(["script", "style", "textarea", "input", "select", "option"].includes(tag)) return NodeFilter.FILTER_REJECT;
       if(parent.closest("#txbar") || parent.closest("#modal") || parent.closest(".fb-reaction-dock") || parent.closest(".fb-reaction-trigger-wrap")) return NodeFilter.FILTER_REJECT;
+      if(parent.dataset && parent.dataset.origText) return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
     }
   });
@@ -1879,14 +1911,19 @@ function applyCustomTexts(root = document.body){
     nodes.push(n);
   }
 
+  const sortedKeys = [...keys].sort((a, b) => b.length - a.length);
   nodes.forEach(node => {
     let text = node.nodeValue;
     let changed = false;
-    for(const orig of keys){
+    for(const orig of sortedKeys){
       const replacement = map[orig];
-      if(text.includes(orig) && orig !== replacement){
+      if(orig !== replacement && text.includes(orig)){
         text = text.split(orig).join(replacement);
         changed = true;
+        if(node.parentElement && !node.parentElement.dataset.origText){
+          node.parentElement.dataset.origText = orig;
+          node.parentElement.style.whiteSpace = "pre-wrap";
+        }
       }
     }
     if(changed) node.nodeValue = text;
@@ -1919,9 +1956,10 @@ function applyTextOutlines(){
     candidateEls.forEach(el => {
       if(el.closest("#txbar") || el.closest("#modal") || el.closest("button") || el.closest("#nav") || el.closest(".no-txe")) return;
       const txt = (el.innerText || "").trim();
-      if(txt.length > 0 && txt.length < 500){
-        // Don't outline huge block wrappers that have multiple headings/paragraphs
-        if(!el.querySelector("p, h1, h2, h3, h4, table, ul, ol, div.card")){
+      // Support paragraphs and content blocks up to 50,000 characters
+      if(txt.length > 0 && txt.length < 50000){
+        // Don't outline wrapper containers that contain multiple major sub-elements UNLESS it's an edited element
+        if(el.dataset.origText || !el.querySelector("p, h1, h2, h3, h4, table, ul, ol, div.card")){
           el.classList.add("txe");
         }
       }
@@ -1929,30 +1967,48 @@ function applyTextOutlines(){
   });
 }
 
-let activeEditTargetKey = "";
-let activeEditOriginalDefault = "";
-
-function openTextEditorModal(rawEncodedText){
+function openTextEditorModal(rawEncodedText, targetEl = null){
   const clickedText = decodeURIComponent(rawEncodedText).trim();
   if(!clickedText) return;
 
   const map = getCustomTextsMap();
-  // Check if this text is an already-customized value or an original key
   let originalKey = clickedText;
   let currentVal = clickedText;
 
-  // If clicked text is in map keys:
-  if(map[clickedText] !== undefined){
+  // 1. If targetEl has dataset.origText
+  if(targetEl && targetEl.dataset && targetEl.dataset.origText){
+    const dKey = targetEl.dataset.origText;
+    if(map[dKey] !== undefined){
+      originalKey = dKey;
+      currentVal = map[dKey];
+    } else {
+      originalKey = dKey;
+      currentVal = targetEl.innerText.trim();
+    }
+  } else if(map[clickedText] !== undefined){
+    // 2. If clickedText is already a key in the custom map
     originalKey = clickedText;
     currentVal = map[clickedText];
   } else {
-    // Check if clickedText is one of the replaced values
-    const foundEntry = Object.entries(map).find(([orig, rep]) => rep === clickedText);
+    // 3. Check if clickedText matches an existing customized replacement
+    const foundEntry = Object.entries(map).find(([orig, rep]) => {
+      return rep === clickedText || rep.trim() === clickedText || orig === clickedText || rep.replace(/\r\n/g, "\n").trim() === clickedText.replace(/\r\n/g, "\n").trim();
+    });
     if(foundEntry){
       originalKey = foundEntry[0];
       currentVal = foundEntry[1];
     }
   }
+
+  // Bind activeTargetElement
+  if(!targetEl){
+    targetEl = document.querySelector(`[data-orig-text="${CSS.escape(originalKey)}"]`) ||
+      Array.from(document.querySelectorAll(".txe, h1, h2, h3, h4, p, span, b, strong, em, small, a, label, li, td, th, .stat, .mu, .lead")).find(el => {
+        const it = (el.innerText || "").trim();
+        return it === currentVal || it === originalKey || (el.dataset && el.dataset.origText === originalKey);
+      });
+  }
+  activeTargetElement = targetEl || null;
 
   activeEditTargetKey = originalKey;
   activeEditOriginalDefault = originalKey;
@@ -1968,10 +2024,10 @@ function openTextEditorModal(rawEncodedText){
     <div class="txo" style="margin-bottom:12px">${ex(originalKey)}</div>
     ${isCustomized ? `
       <div class="mu" style="font-weight:bold;margin-bottom:4px">Current Active Customization:</div>
-      <div style="background:#2a2615;border:1px solid var(--pr);padding:6px 10px;border-radius:6px;color:#f2a93b;font-size:.88rem;margin-bottom:12px;white-space:pre-wrap">${ex(currentVal)}</div>
+      <div style="background:#2a2615;border:1px solid var(--pr);padding:6px 10px;border-radius:6px;color:#f2a93b;font-size:.88rem;margin-bottom:12px;white-space:pre-wrap;max-height:180px;overflow-y:auto">${ex(currentVal)}</div>
     ` : ''}
     <div class="mu" style="font-weight:bold;margin-bottom:4px">Replace With:</div>
-    <textarea id="tx_new_val" rows="4" style="width:100%;font-size:.95rem;padding:8px">${ex(currentVal)}</textarea>
+    <textarea id="tx_new_val" rows="6" style="width:100%;font-size:.95rem;padding:8px;white-space:pre-wrap">${ex(currentVal)}</textarea>
     <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <button class="btn gold" id="btn-save-text" onclick="saveEditedText()">💾 Save & Sync Live</button>
       ${isCustomized ? `<button class="btn red sm" onclick="revertSingleText('${encodeURIComponent(originalKey)}')">↺ Revert to Default</button>` : ''}
@@ -2007,15 +2063,27 @@ async function saveEditedText(){
   // 2. Update memory state
   D.settings = (D.settings || []).filter(x => x.id !== "texts").concat([{ id: "texts", map: curMap }]);
 
-  // 3. Sync to Supabase cloud
-  await syncRecordToCloud("settings", "texts", { map: curMap });
+  // 3. Immediately update target element directly in the DOM
+  if(activeTargetElement){
+    activeTargetElement.dataset.origText = activeEditTargetKey;
+    activeTargetElement.innerText = newVal;
+    activeTargetElement.style.whiteSpace = "pre-wrap";
+    activeTargetElement.classList.add("txe");
+  }
 
-  // 4. Apply to DOM immediately
+  // 4. Close modal immediately so user sees their update without lag
   closeModal();
+
+  // 5. Apply across any other occurrences in DOM and refresh outlines
   applyCustomTexts(document.body);
   if(TE === 1) applyTextOutlines();
 
-  showSuccessNotification("Text updated and saved live across all devices!");
+  showSuccessNotification("Text saved and updated live! Click again anytime to re-edit.");
+
+  // 6. Background cloud sync to Supabase (non-blocking)
+  syncRecordToCloud("settings", "texts", { map: curMap }).catch(err => {
+    console.warn("Background text sync notice:", err);
+  });
 }
 
 async function revertSingleText(rawEncodedKey){
@@ -2028,11 +2096,18 @@ async function revertSingleText(rawEncodedKey){
   } catch(e){}
 
   D.settings = (D.settings || []).filter(x => x.id !== "texts").concat([{ id: "texts", map: curMap }]);
-  await syncRecordToCloud("settings", "texts", { map: curMap });
+
+  if(activeTargetElement && (activeTargetElement.dataset.origText === key || activeTargetElement.innerText.trim() === key)){
+    activeTargetElement.innerText = key;
+    delete activeTargetElement.dataset.origText;
+    activeTargetElement.removeAttribute("data-orig-text");
+    activeTargetElement.classList.add("txe");
+  }
 
   closeModal();
   render();
   if(TE === 1) applyTextOutlines();
+  syncRecordToCloud("settings", "texts", { map: curMap }).catch(err => console.warn(err));
   showSuccessNotification("Text restored to default!");
 }
 
@@ -2059,8 +2134,8 @@ function txList(){
     container.querySelectorAll("h1, h2, h3, h4, p, span, b, strong, em, small, a, label, li, td, th, .stat, .mu, .lead").forEach(el => {
       if(el.closest("#txbar") || el.closest("#modal") || el.closest("button") || el.closest("#nav")) return;
       const t = (el.innerText || "").trim();
-      if(t.length > 1 && t.length < 350 && !textsOnScreen.includes(t)){
-        if(!el.querySelector("p, h1, h2, h3, h4, table, ul, ol, div.card")){
+      if(t.length > 1 && t.length < 5000 && !textsOnScreen.includes(t)){
+        if(!el.querySelector("p, h1, h2, h3, h4, table, ul, ol, div.card") || el.dataset.origText){
           textsOnScreen.push(t);
         }
       }
@@ -2130,7 +2205,8 @@ document.addEventListener("click", ev => {
   if(t && t.innerText && t.innerText.trim().length > 0){
     ev.preventDefault();
     ev.stopPropagation();
-    openTextEditorModal(encodeURIComponent(t.innerText.trim()));
+    const origKey = t.dataset.origText || t.getAttribute("data-orig-text") || t.innerText.trim();
+    openTextEditorModal(encodeURIComponent(origKey), t);
   }
 }, true);
 
