@@ -589,6 +589,17 @@ body.vle-on #main *{cursor:crosshair}
   .gallery-layout{grid-template-columns:minmax(0,1fr) !important;gap:14px !important}
   .gallery-layout > .gallery-album{grid-column:1 !important}
 }
+
+/* Monthly Topic landscape banner */
+.monthly-topic-banner{position:relative;isolation:isolate;width:100%;min-height:230px;aspect-ratio:16/5;overflow:hidden;border-radius:16px;margin:24px 0 20px;background:linear-gradient(115deg,#100e3b 0%,#34276e 48%,#9a7436 100%);border:1px solid #ffffff30;box-shadow:0 8px 26px #0004;display:flex;align-items:center}
+.monthly-topic-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.monthly-topic-banner:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,7,35,.94) 0%,rgba(15,12,48,.78) 55%,rgba(15,12,48,.3) 100%);z-index:-1}
+.monthly-topic-overlay{position:relative;padding:clamp(20px,4vw,42px);max-width:900px;color:#fff}
+.monthly-topic-kicker{font-size:.76rem;letter-spacing:.18em;font-weight:800;color:#f3d38a;margin-bottom:8px}
+.monthly-topic-overlay h2{font-size:clamp(1.3rem,3vw,2.15rem);line-height:1.1;margin:0 0 5px;color:#fff}
+.monthly-topic-month{font-size:clamp(1.05rem,2.2vw,1.5rem);font-weight:800;letter-spacing:.1em;color:#f5d995}
+.monthly-topic-overlay p{font-size:clamp(.92rem,1.5vw,1.08rem);line-height:1.6;margin:10px 0 14px;max-width:760px;color:#fff}
+@media(max-width:600px){.monthly-topic-banner{aspect-ratio:4/3;min-height:220px;border-radius:12px}.monthly-topic-banner:before{background:linear-gradient(0deg,rgba(8,7,35,.96),rgba(15,12,48,.45))}.monthly-topic-overlay{padding:20px}}
 </style>
 
 </head>
@@ -791,7 +802,7 @@ body.vle-on #main *{cursor:crosshair}
       
     </div>
   
-  <p><a style="color:var(--pr);font-weight:600" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61556921121315">Visit our Facebook page (JTNAAN Bulacan) ↗</a></p>
+  ${renderMonthlyTopicSection()}\n  <p><a style="color:var(--pr);font-weight:600" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61556921121315">Visit our Facebook page (JTNAAN Bulacan) ↗</a></p>
   <h2 style="margin-top:24px">UPCOMING EVENTS</h2><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),19rem));justify-content:start"><div class="card" style="padding:0;overflow:hidden;">
     <img src="https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/events/1794188084392_ybgp2.jpg" alt="Evangelism" style="width:100%;height:150px;object-fit:cover;display:block;margin:0;border-radius:0">
     <div style="padding:12px 14px">
@@ -2447,6 +2458,72 @@ async function syncLatestFacebookPostsNow(){
     showErrorNotification("Facebook sync: " + err.message);
   } finally {
     if(btn){ btn.disabled = false; btn.textContent = "🔄 Refresh 3 Latest"; }
+  }
+}
+
+
+function getMonthlyTopicData(){
+  const saved=(D.settings||[]).find(x=>x.id==="topic_month")||{};
+  const monthDefault=new Intl.DateTimeFormat("en-PH",{month:"long",year:"numeric",timeZone:"Asia/Manila"}).format(new Date()).toUpperCase();
+  return {
+    month:saved.month||monthDefault,
+    caption:saved.caption||"A monthly focus to help us grow in faith, live out God's Word, and serve together as one church family.",
+    photo:saved.photo||""
+  };
+}
+function renderMonthlyTopicSection(){
+  const topic=getMonthlyTopicData();
+  return `
+    <section class="monthly-topic-banner" aria-label="Topic for the month">
+      ${topic.photo?`<img class="monthly-topic-photo" src="${e(topic.photo)}" alt="Monthly church topic banner" loading="lazy">`:''}
+      <div class="monthly-topic-overlay">
+        <div class="monthly-topic-kicker">✦ OUR CHURCH MONTHLY FOCUS ✦</div>
+        <h2>TOPIC FOR THE MONTH</h2>
+        <div class="monthly-topic-month">${e(topic.month)}</div>
+        <p>${e(topic.caption)}</p>
+        ${can("dashboard")?`<button class="btn gold sm" onclick="openMonthlyTopicEditor()">✏️ Edit Monthly Topic</button>`:''}
+      </div>
+    </section>`;
+}
+function openMonthlyTopicEditor(){
+  if(!can("dashboard"))return alert("You do not have permission to edit the monthly topic.");
+  const topic=getMonthlyTopicData();
+  $("#mb").innerHTML=`
+    <h3 style="margin-top:0">Edit Topic for the Month</h3>
+    <div class="mu" style="margin:8px 0 5px">Month / Year:</div>
+    <input id="topic_month_value" maxlength="40" value="${e(topic.month)}" placeholder="e.g. NOVEMBER 2026">
+    <div class="mu" style="margin:8px 0 5px">Caption:</div>
+    <textarea id="topic_month_caption" rows="4" maxlength="700" placeholder="Write a short message about this month's topic">${e(topic.caption)}</textarea>
+    <div class="mu" style="margin:8px 0 5px">Landscape banner image (optional):</div>
+    <input id="topic_month_photo" type="file" accept="image/*">
+    <div class="mu" style="font-size:.8rem;margin-top:4px">Recommended landscape image: 16:5 or 16:6. Uploading a new image replaces the current banner image.</div>
+    ${topic.photo?`<div style="margin-top:8px"><img src="${e(topic.photo)}" alt="Current monthly topic banner" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px"></div><label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="topic_month_remove_photo" style="width:auto"> Remove current banner image</label>`:''}
+    <p><button class="btn gold" id="topic_month_save" onclick="saveMonthlyTopic()">Save & Publish</button> <button onclick="closeModal()">Cancel</button></p>`;
+  $("#modal").style.display="flex";
+}
+async function saveMonthlyTopic(){
+  if(!can("dashboard"))return alert("You do not have permission to edit the monthly topic.");
+  const btn=$("#topic_month_save");
+  const month=$("#topic_month_value")?.value.trim()||"";
+  const caption=$("#topic_month_caption")?.value.trim()||"";
+  if(!month)return alert("Please enter the month and year.");
+  if(!caption)return alert("Please enter a caption for this month's topic.");
+  if(btn){btn.disabled=true;btn.textContent="Uploading & Publishing…";}
+  try{
+    const previous=(D.settings||[]).find(x=>x.id==="topic_month")||{};
+    let photo=previous.photo||"";
+    const file=$("#topic_month_photo")?.files?.[0];
+    if(file)photo=await uploadMediaToSupabase(file,"monthly-topic",1800,0.84);
+    if($("#topic_month_remove_photo")?.checked)photo="";
+    const data={month:month.toUpperCase(),caption,photo,updatedAt:Date.now()};
+    const ok=await syncRecordToCloud("settings","topic_month",data);
+    if(!ok)throw new Error("Could not save to the cloud database. Please check your connection and try again.");
+    D.settings=(D.settings||[]).filter(x=>x.id!=="topic_month").concat([{id:"topic_month",...data}]);
+    closeModal();render();
+    showSuccessNotification("Monthly topic published and synced across all devices.");
+  }catch(err){
+    if(btn){btn.disabled=false;btn.textContent="Save & Publish";}
+    showErrorNotification("Could not publish monthly topic: "+err.message);
   }
 }
 
