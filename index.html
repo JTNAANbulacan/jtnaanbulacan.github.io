@@ -4978,6 +4978,7 @@ async function handleLoginSubmit(ev){
     const result=await secureAdminRequest({action:"session"});
     me=result.admin;admin=true;
     localStorage.setItem("jt_active_session",JSON.stringify(me));
+    await fetchAllFromCloud(true);
     closeModal();render();showSuccessNotification(`Welcome back, ${me.name}!`);
   }catch(err){
     if(errorEl)errorEl.textContent=err.message||"Invalid username or password.";
