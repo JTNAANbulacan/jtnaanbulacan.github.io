@@ -571,6 +571,24 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 body.vle-on #main{padding-bottom:150px}
 body.vle-on #main *{cursor:crosshair}
 @media(max-width:600px){#vle-bar{gap:5px;padding:8px}#vle-bar input{width:72px}#vle-bar input[type=range]{width:85px}#vle-bar button{font-size:12px;padding:6px 8px}}
+
+/* FINAL GALLERY LAYOUT: three equal album columns on laptop/tablet landscape; one full-width album per phone row */
+.gallery-layout{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:18px !important;
+  width:100%;
+  align-items:start;
+}
+.gallery-layout > .gallery-album{
+  grid-column:auto !important;
+  width:100% !important;
+  min-width:0 !important;
+}
+@media (max-width:600px){
+  .gallery-layout{grid-template-columns:minmax(0,1fr) !important;gap:14px !important}
+  .gallery-layout > .gallery-album{grid-column:1 !important}
+}
 </style>
 
 </head>
