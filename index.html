@@ -4267,7 +4267,9 @@ window.addEventListener("focus", checkDailyRollover);
 
 
 function membersv(){
-  const L = D.members || [];
+  const L = (D.members || []).slice().sort((a,b) =>
+    String(a.name || "").trim().localeCompare(String(b.name || "").trim(), "en", {sensitivity:"base"})
+  );
   const ministryOrder = ["Church Leader","Member","Worship Team","Media Ministry","Dance Ministry","Youth Ministry","Founder","Pastor","Worship Head"];
   const mCounts = {};
   L.forEach(m => {
@@ -4282,20 +4284,28 @@ function membersv(){
     ${ministryOrder.map(k=>`<div class="card"><div class="stat">${mCounts[k]||0}</div>${e(k)}</div>`).join('')}
   </div>
   ${can("members")?`<p><button class="btn gold" onclick="openFormModal('members')">+ Add Member</button></p>`:''}
-  <div class="grid">
-    ${L.map(m=>`
-      <div class="card">
-        <b style="font-size:1.05rem">${e(m.name)}</b>
-        <div class="mu" style="margin-top:4px"><b>Ministry:</b> ${e(m.ministry)}</div>
-        <div class="mu"><b>Date joined:</b> ${e(m.joined)}</div>
-        ${can("members")?`
-          <div style="margin-top:8px">
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;background:var(--card)">
+      <thead><tr style="border-bottom:2px solid var(--bd)">
+        <th style="text-align:left;padding:10px 8px;color:var(--pr)">#</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--pr)">Name (A–Z)</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--pr)">Ministry</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--pr)">Date joined</th>
+        ${can("members")?`<th style="text-align:right;padding:10px 8px;color:var(--pr)">Actions</th>`:''}
+      </tr></thead>
+      <tbody>
+        ${L.map((m,i)=>`<tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:10px 8px" class="mu">${i+1}</td>
+          <td style="padding:10px 8px"><b>${e(m.name)}</b></td>
+          <td style="padding:10px 8px">${e(m.ministry)}</td>
+          <td style="padding:10px 8px">${e(m.joined)}</td>
+          ${can("members")?`<td style="padding:8px;text-align:right;white-space:nowrap">
             <button class="btn sm" onclick="openFormModal('members', '${m.id}')">Edit</button>
             <button class="btn red sm" onclick="deleteRecord('members', '${m.id}')">Delete</button>
-          </div>
-        `:''}
-      </div>
-    `).join('')}
+          </td>`:''}
+        </tr>`).join('') || `<tr><td colspan="${can("members")?5:4}" style="padding:16px;text-align:center" class="mu">No members added yet.</td></tr>`}
+      </tbody>
+    </table>
   </div>`;
 }
 
