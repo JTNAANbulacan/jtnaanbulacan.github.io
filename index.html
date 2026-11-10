@@ -2561,9 +2561,10 @@ function dash(){
     ${customBg ? ` <button class="btn red sm" onclick="resetBgToDefault()">Use default background</button>` : ''}
   </div>`:''}
 
+  ${renderMonthlyTopicSection()}
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:28px;margin-bottom:12px">
     <div>
-      <h2 style="margin:0;display:flex;  ${renderMonthlyTopicSection()}
+      <h2 style="margin:0;display:flex;
 align-items:center;gap:8px">
         <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#1877f2;color:#fff;font-size:16px;font-style:normal;font-weight:bold">f</span>
         <span>LATEST FACEBOOK POSTS</span>
@@ -2635,8 +2636,7 @@ align-items:center;gap:8px">
       `).join('') || '<div class="card mu" style="grid-column:1/-1">No Facebook posts yet. Admins with Dashboard access can use + Post.</div>'}
     </div>
   `}
-  ${renderMonthlyTopicSection()}
-  <p><a style="color:var(--pr);font-weight:600" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61556921121315">Visit our Facebook page (JTNAAN Bulacan) ↗</a></p>
+<p><a style="color:var(--pr);font-weight:600" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61556921121315">Visit our Facebook page (JTNAAN Bulacan) ↗</a></p>
   <h2 style="margin-top:24px">UPCOMING EVENTS</h2>
   <p class="mu">No upcoming events.</p>
   ${appv()}`;
