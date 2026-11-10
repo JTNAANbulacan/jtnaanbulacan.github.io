@@ -4644,6 +4644,7 @@ function renderPrayerCards(items,isAdmin){
       '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><b>'+e(p.name||"Anonymous")+'</b><span class="adch">'+(isPrivate?'🔒 Private':'🌍 Public')+'</span></div>'+
       '<div class="mu" style="margin:5px 0">'+e(p.category||"Prayer request")+(date?' · '+e(date):'')+'</div>'+
       (p.for_whom?'<div class="mu">Prayer for: '+e(p.for_whom)+'</div>':'')+
+      (isAdmin&&p.contact?'<div class="mu">Contact (confidential): '+e(p.contact)+'</div>':'')+
       '<p style="white-space:pre-wrap;overflow-wrap:anywhere">'+e(p.request||"")+'</p>'+
       '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="mu"><b>Status:</b> '+e(p.status||"Open")+'</span><span class="mu">🙏 <b>'+Number(p.prayer_count||0)+'</b> praying</span></div>'+
       (!isAdmin&&!isPrivate&&p.status!=="Answered"?'<button class="btn sm '+(p.prayed_by_me?'':'gold')+'" style="margin-top:10px" '+(p.prayed_by_me?'disabled':'')+' onclick="prayForRequest(\''+e(p.id)+'\',this)">'+(p.prayed_by_me?'✓ You are praying':'🙏 Pray for this request')+'</button>':'')+
@@ -4703,7 +4704,7 @@ async function openPrayerGmailDraft(){
 
 async function submitPrayerRequest(target){
   const req=$("#pt")?.value.trim()||"",cat=$("#pc")?.value||"Other",name=$("#pn")?.value.trim()||"Anonymous";
-  const forWhom=$("#pfor")?.value.trim()||"",visibility=$("#pv")?.value||"private";
+  const contact=$("#pcn")?.value.trim()||"",forWhom=$("#pfor")?.value.trim()||"",visibility=$("#pv")?.value||"private";
   if($("#pr_website")?.value)return;
   if(!req||req.length<5)return alert("Please describe your prayer request (at least 5 characters).");
   if(!isCloudConnected())return alert("The church database is unavailable right now. Please try again later.");
@@ -4712,7 +4713,7 @@ async function submitPrayerRequest(target){
   const feedback=$("#pr-feedback");if(feedback)feedback.textContent="Sending your request securely…";
   try{
     const id=crypto.randomUUID?crypto.randomUUID():("pr_"+Date.now().toString(36)+Math.random().toString(36).slice(2));
-    await secureAdminRequest({action:"prayer_submit",id,visitor:getPrayerVisitorId(),category:cat,name,for_whom:forWhom,request:req,visibility},false);
+    await secureAdminRequest({action:"prayer_submit",id,visitor:getPrayerVisitorId(),category:cat,name,contact,for_whom:forWhom,request:req,visibility},false);
     localStorage.setItem("jt_prayer_last_submit",String(Date.now()));
     $("#pt").value="";$("#pn").value="";$("#pcn").value="";$("#pfor").value="";
     if(feedback)feedback.innerHTML='<span style="color:#7be38f">✓ Your '+(visibility==="public"?"public":"private")+' prayer request was securely submitted. Thank you for sharing with us.</span>';
