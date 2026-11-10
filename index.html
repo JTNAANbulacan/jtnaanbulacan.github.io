@@ -97,7 +97,7 @@ input,textarea,select{width:100%;font:inherit;padding:8px;margin:3px 0;border:1p
 .chk{display:flex;gap:10px;align-items:center;padding:8px 12px;background:#ffffff0f;border-radius:6px;margin:5px 0}
 .chk input{width:auto}
 .arit{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:4px 0;border:1px solid var(--bd);border-radius:8px;background:#ffffff0d}
-#modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:99;padding:14px}
+#modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:1000001;padding:14px}
 #modal>div{background:var(--card);padding:18px;border-radius:12px;width:100%;max-width:520px;max-height:90vh;overflow:auto}
 
 @media (max-width:760px){.gallery-layout{grid-template-columns:repeat(2,minmax(0,1fr))!important}.gallery-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}\n@media (max-width:480px){.gallery-layout{grid-template-columns:1fr!important}.gallery-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}\n.gallery-layout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}\n@media (max-width:760px){.gallery-layout{grid-template-columns:1fr!important}}\n/* Admin Permissions Checkbox Grid & Badges */
@@ -812,7 +812,7 @@ function applyMaintenanceMode(){
  const m=maintenanceSettings();let el=$("#maintenance-overlay");
  if(!m.enabled||isAdminMart()){if(el)el.remove();return;}
  if(!el){el=document.createElement("div");el.id="maintenance-overlay";el.style.cssText="position:fixed;inset:0;z-index:999999;background:radial-gradient(circle at top,#29256f,#080827 70%);display:flex;align-items:center;justify-content:center;padding:22px;text-align:center;color:white";document.body.appendChild(el);}
- el.innerHTML='<div style="max-width:620px;padding:clamp(24px,5vw,52px);border:1px solid #f2a93b88;border-radius:24px;background:#15145af2;box-shadow:0 24px 80px #0009"><div style="font-size:3rem">🛠️</div><div style="color:#f2a93b;letter-spacing:3px;font-weight:800">JTNAAN BULACAN</div><h1 style="font-size:clamp(2rem,6vw,3.5rem);margin:10px 0">We’ll Be Back Soon</h1><p style="font-size:1.05rem;line-height:1.7;color:#d9dcff">'+ex(m.notice||"Our website is undergoing scheduled maintenance. We’re making improvements to serve you better. Thank you for your patience.")+'</p><div style="margin-top:22px;color:#f2a93b;font-weight:700">Thank you for your understanding and prayers.</div></div>';
+ el.innerHTML='<div style="max-width:620px;padding:clamp(24px,5vw,52px);border:1px solid #f2a93b88;border-radius:24px;background:#15145af2;box-shadow:0 24px 80px #0009"><div style="font-size:3rem">🛠️</div><div style="color:#f2a93b;letter-spacing:3px;font-weight:800">JTNAAN BULACAN</div><h1 style="font-size:clamp(2rem,6vw,3.5rem);margin:10px 0">We’ll Be Back Soon</h1><p style="font-size:1.05rem;line-height:1.7;color:#d9dcff">'+ex(m.notice||"Our website is undergoing scheduled maintenance. We’re making improvements to serve you better. Thank you for your patience.")+'</p><div style="margin-top:22px;color:#f2a93b;font-weight:700">Thank you for your understanding and prayers.</div><button type="button" onclick="loginForm()" style="margin-top:24px;padding:11px 22px;border-radius:9px;background:#f2a93b;color:#241a00;font-weight:800">Administrator Login</button></div>';
 }
 async function toggleMaintenance(){
  if(!isAdminMart())return alert("Only Admin Mart (Super Admin) can control Maintenance Mode.");
