@@ -4368,7 +4368,11 @@ function openAlbumViewer(id){
 
 function fundsv(){
   if(!can("funds")) return '<p class="mu">Church funds are private. You do not have permission to view this section.</p>';
-  const L = D.funds || [];
+  const L = (D.funds || []).slice().sort((a,b) => {
+    const dateDiff = String(b.date || "").localeCompare(String(a.date || ""));
+    if(dateDiff !== 0) return dateDiff;
+    return (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0);
+  });
   let inc = 0, exp = 0;
   L.forEach(f => {
     const a = +f.amount || 0;
