@@ -4590,51 +4590,76 @@ function socialv(){
 
 function prayersv(){
   const L = D.prayers || [];
-  return `<h2>PRAYER REQUESTS (${L.length})</h2>
-  ${can("prayers")?`<p><button class="btn gold" onclick="openFormModal('prayers')">+ Add Request (Admin)</button></p>`:''}
-  
+  setTimeout(loadPrayerCommunity,0);
+  return `<h2>PRAYER COMMUNITY</h2>
   <div class="card prayer-request-card">
     <input id="pr_website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px" placeholder="Leave empty">
-    <b style="color:var(--pr)">Send a Prayer Request</b>
-    <div class="mu" style="margin:4px 0 8px">We would love to pray with you. Fill this out and it will be sent directly to our church prayer team.</div>
-    <select id="pc">
-      <option>Healing</option><option>Family</option><option>Finances / Work</option>
-      <option>Salvation of a loved one</option><option>Guidance / Decision</option>
-      <option>Thanksgiving</option><option>Other</option>
-    </select>
-    <input id="pn" placeholder="Your name (optional)">
-    <input id="pcn" placeholder="Contact number (optional)">
-    <input id="pfor" placeholder="Who is this prayer for? (e.g. myself, my mother)">
-    <textarea id="pt" rows=4 placeholder="How can we pray for you?"></textarea>
-    <select id="pv">
-      <option>Please keep this private (pastor/prayer team only)</option>
-      <option>Okay to share with the church prayer group</option>
-    </select>
-    <div id="pr-feedback" class="mu" style="margin-bottom:6px"></div>
-    <button class="btn gold" onclick="submitPrayerRequest('auto')">🙏 Send Prayer Request (Auto-send to Church Email)</button>
-    <button class="btn" onclick="submitPrayerRequest('fb')">Open Facebook Page (Messenger)</button>
-    <button class="btn" onclick="openPrayerGmailDraft()">Open Gmail Draft</button>
-    <button class="btn" onclick="copyPrayerRequest()">📋 Copy Prayer Request</button>
-    <div class="mu" style="margin-top:8px;padding:10px;border:1px solid var(--bd);border-radius:8px">
-      <b style="color:var(--pr)">Note:</b> Messenger cannot be pre-filled automatically. Use “Copy Prayer Request,” then paste the message in Messenger. “Open Gmail Draft” opens Gmail with your message already filled in; you only need to review and press Send.
-    </div>
+    <b style="color:var(--pr)">Share a Prayer Request</b>
+    <div class="mu" style="margin:4px 0 8px">We would love to pray with you. Choose whether your request can be shared with the church or should remain private with the prayer team.</div>
+    <select id="pc"><option>Healing</option><option>Family</option><option>Finances / Work</option><option>Salvation of a loved one</option><option>Guidance / Decision</option><option>Thanksgiving</option><option>Other</option></select>
+    <input id="pn" maxlength="80" placeholder="Your name (optional)">
+    <input id="pcn" maxlength="40" placeholder="Contact number (optional — private)">
+    <input id="pfor" maxlength="120" placeholder="Who is this prayer for? (optional)">
+    <textarea id="pt" rows="4" maxlength="2000" placeholder="How can we pray for you?"></textarea>
+    <select id="pv"><option value="private">Keep private — pastor/prayer team only</option><option value="public">Share publicly with the church prayer community</option></select>
+    <div id="pr-feedback" class="mu" style="margin:6px 0"></div>
+    <button class="btn gold" onclick="submitPrayerRequest('auto')">🙏 Submit Prayer Request</button>
   </div>
-  
-  <div class="grid" style="margin-top:14px">
-    ${L.map(p=>`
-      <div class="card">
-        <b>${e(p.name)}</b>
-        <div class="mu" style="margin:4px 0">${e(p.req)}</div>
-        <div class="mu"><b>Status:</b> ${e(p.status||'Open')}</div>
-        ${can("prayers")?`
-          <div style="margin-top:8px">
-            <button class="btn sm" onclick="openFormModal('prayers', '${p.id}')">Edit</button>
-            <button class="btn red sm" onclick="deleteRecord('prayers', '${p.id}')">Delete</button>
-          </div>
-        `:''}
-      </div>
-    `).join('')}
-  </div>`;
+  <section style="margin-top:20px">
+    <h3 style="color:var(--pr)">🙏 Church Prayer Wall</h3>
+    <p class="mu">Join others in prayer. Public requests are shown here; private requests are only available to authorized prayer-team admins.</p>
+    <div id="prayer-community-list"><div class="card mu">Loading prayer requests…</div></div>
+  </section>
+  ${can("prayers")?`<section style="margin-top:22px"><h3>Prayer Team Inbox</h3><p class="mu">Includes private requests. Keep these details confidential.</p><div id="prayer-admin-list"><div class="card mu">Loading admin inbox…</div></div></section>`:''}
+  ${can("prayers")?`<section style="margin-top:22px"><h3>Legacy Prayer Records</h3><p class="mu">Previously saved requests remain available below.</p><div class="grid">${L.map(p=>`<div class="card"><b>${e(p.name)}</b><div class="mu" style="margin:4px 0">${e(p.req)}</div><div class="mu"><b>Status:</b> ${e(p.status||'Open')}</div><div style="margin-top:8px"><button class="btn sm" onclick="openFormModal('prayers', '${p.id}')">Edit</button><button class="btn red sm" onclick="deleteRecord('prayers', '${p.id}')">Delete</button></div></div>`).join('')}</div></section>`:''}`;
+}
+
+function getPrayerVisitorId(){
+  let id=localStorage.getItem("jt_prayer_visitor_id");
+  if(!id){id=(crypto.randomUUID?crypto.randomUUID():("v_"+Date.now().toString(36)+Math.random().toString(36).slice(2)));localStorage.setItem("jt_prayer_visitor_id",id);}
+  return id;
+}
+async function loadPrayerCommunity(){
+  const wall=document.getElementById("prayer-community-list");
+  const inbox=document.getElementById("prayer-admin-list");
+  if(!wall&&!inbox)return;
+  try{
+    const publicResult=await secureAdminRequest({action:"prayer_public_list",visitor:getPrayerVisitorId()},false);
+    if(wall)wall.innerHTML=renderPrayerCards(publicResult.prayers||[],false);
+    if(inbox&&can("prayers")){
+      const adminResult=await secureAdminRequest({action:"prayer_admin_list"});
+      inbox.innerHTML=renderPrayerCards(adminResult.prayers||[],true);
+    }
+  }catch(err){
+    if(wall)wall.innerHTML='<div class="card mu">Prayer wall is temporarily unavailable. Please try again shortly.</div>';
+    if(inbox)inbox.innerHTML='<div class="card mu">Could not load the prayer-team inbox: '+e(err.message)+'</div>';
+  }
+}
+function renderPrayerCards(items,isAdmin){
+  if(!items.length)return '<div class="card mu">No '+(isAdmin?'prayer requests in the inbox':'public prayer requests')+' yet. You can be the first to share.</div>';
+  return '<div class="grid">'+items.map(p=>{
+    const isPrivate=p.visibility==="private";
+    const date=p.created_at?new Date(p.created_at).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"}):"";
+    return '<article class="card" style="border-left-color:'+(p.status==="Answered"?'#2ecc71':'var(--pr)')+'">'+
+      '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><b>'+e(p.name||"Anonymous")+'</b><span class="adch">'+(isPrivate?'🔒 Private':'🌍 Public')+'</span></div>'+
+      '<div class="mu" style="margin:5px 0">'+e(p.category||"Prayer request")+(date?' · '+e(date):'')+'</div>'+
+      (p.for_whom?'<div class="mu">Prayer for: '+e(p.for_whom)+'</div>':'')+
+      '<p style="white-space:pre-wrap;overflow-wrap:anywhere">'+e(p.request||"")+'</p>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="mu"><b>Status:</b> '+e(p.status||"Open")+'</span><span class="mu">🙏 <b>'+Number(p.prayer_count||0)+'</b> praying</span></div>'+
+      (!isAdmin&&!isPrivate&&p.status!=="Answered"?'<button class="btn sm '+(p.prayed_by_me?'':'gold')+'" style="margin-top:10px" '+(p.prayed_by_me?'disabled':'')+' onclick="prayForRequest(\''+e(p.id)+'\',this)">'+(p.prayed_by_me?'✓ You are praying':'🙏 Pray for this request')+'</button>':'')+
+      (isAdmin?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="btn sm" onclick="setPrayerStatus(\''+e(p.id)+'\',\'Prayed for\')">🙏 Mark Prayed for</button><button class="btn sm gold" onclick="setPrayerStatus(\''+e(p.id)+'\',\'Answered\')">✓ Mark Answered</button><button class="btn sm" onclick="setPrayerStatus(\''+e(p.id)+'\',\'Open\')">Reopen</button></div>':'')+
+      '</article>';
+  }).join('')+'</div>';
+}
+async function prayForRequest(id,button){
+  if(!button||button.disabled)return;
+  button.disabled=true;button.textContent="Recording your prayer…";
+  try{await secureAdminRequest({action:"prayer_pray",id,visitor:getPrayerVisitorId()},false);await loadPrayerCommunity();}
+  catch(err){button.disabled=false;button.textContent="🙏 Pray for this request";alert(err.message);}
+}
+async function setPrayerStatus(id,status){
+  try{await secureAdminRequest({action:"prayer_admin_status",id,status});await loadPrayerCommunity();showSuccessNotification("Prayer request updated: "+status+".");}
+  catch(err){showErrorNotification(err.message);}
 }
 
 function getPrayerRequestMessage(){
@@ -4677,43 +4702,23 @@ async function openPrayerGmailDraft(){
 }
 
 async function submitPrayerRequest(target){
-  const cat = $("#pc").value;
-  const name = $("#pn").value.trim() || "Anonymous";
-  const contact = $("#pcn").value.trim();
-  const forWhom = $("#pfor").value.trim();
-  const req = $("#pt").value.trim();
-  const priv = $("#pv").value;
+  const req=$("#pt")?.value.trim()||"",cat=$("#pc")?.value||"Other",name=$("#pn")?.value.trim()||"Anonymous";
+  const forWhom=$("#pfor")?.value.trim()||"",visibility=$("#pv")?.value||"private";
   if($("#pr_website")?.value)return;
-  const last=+(localStorage.getItem("jt_prayer_last_submit")||0);if(Date.now()-last<30000)return alert("Please wait 30 seconds before sending another request.");
-  if(!req) return alert("Please describe your prayer request.");
-  localStorage.setItem("jt_prayer_last_submit",String(Date.now()));
-
-  if(target === 'auto'){
-    const fb = $("#pr-feedback");
-    fb.textContent = "Sending your prayer request directly to the church email...";
-    const ok = await sendBackgroundEmail({
-      Category: cat,
-      Name: name,
-      Contact: contact,
-      Prayer_For: forWhom,
-      Request: req,
-      Privacy: priv
-    }, `Prayer Request [${cat}] - ${name}`);
-    if(ok){
-      fb.innerHTML = `<span style="color:#7be38f">✓ Your prayer request has been delivered directly to the church's Gmail!</span>`;
-      const item = { id: "pr_" + Date.now().toString(36), name: name + " (" + cat + ")", req: req, status: "Open" };
-      D.prayers.unshift(item);
-      await syncRecordToCloud("prayers", item.id, item);
-      await createAdminNotification("New prayer request","A visitor submitted a new prayer request.","prayers");
-      render();
-      showSuccessNotification("Prayer request saved and delivered to church email!");
-    } else {
-      submitPrayerRequest('fb');
-    }
-  } else {
-    await copyPrayerRequest();
-    window.open("https://m.me/61556921121315", "_blank");
-  }
+  if(!req||req.length<5)return alert("Please describe your prayer request (at least 5 characters).");
+  if(!isCloudConnected())return alert("The church database is unavailable right now. Please try again later.");
+  const last=+(localStorage.getItem("jt_prayer_last_submit")||0);
+  if(Date.now()-last<30000)return alert("Please wait 30 seconds before sending another request.");
+  const feedback=$("#pr-feedback");if(feedback)feedback.textContent="Sending your request securely…";
+  try{
+    const id=crypto.randomUUID?crypto.randomUUID():("pr_"+Date.now().toString(36)+Math.random().toString(36).slice(2));
+    await secureAdminRequest({action:"prayer_submit",id,visitor:getPrayerVisitorId(),category:cat,name,for_whom:forWhom,request:req,visibility},false);
+    localStorage.setItem("jt_prayer_last_submit",String(Date.now()));
+    $("#pt").value="";$("#pn").value="";$("#pcn").value="";$("#pfor").value="";
+    if(feedback)feedback.innerHTML='<span style="color:#7be38f">✓ Your '+(visibility==="public"?"public":"private")+' prayer request was securely submitted. Thank you for sharing with us.</span>';
+    await loadPrayerCommunity();
+    showSuccessNotification("Your prayer request has been submitted.");
+  }catch(err){if(feedback)feedback.textContent=err.message||"Could not submit your request. Please try again.";else alert(err.message);}
 }
 
 function supportv(){
