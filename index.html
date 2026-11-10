@@ -556,6 +556,8 @@ main{transition:margin-left .4s var(--ez),transform .4s var(--ez),max-width .4s 
 .fb-dashboard-caption.is-collapsed{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;max-height:6em;overflow:hidden}
 .fb-dashboard-caption:not(.is-collapsed){display:block;max-height:none;overflow:visible}
 .fb-caption-toggle{display:inline-block;align-self:flex-start;background:none;border:0;color:#8ab4f8;padding:2px 0 10px;font:600 .88rem system-ui;cursor:pointer}
+.site-caption.is-collapsed{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;max-height:6em;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere}
+.site-caption:not(.is-collapsed){display:block;max-height:none;overflow:visible;white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 
 <style id="visual-layout-editor-css">
@@ -2250,6 +2252,11 @@ function copyAndOpenInstagram(rawEncodedText){
   window.open("https://www.instagram.com/", "_blank");
 }
 
+function renderSiteCaption(value,id,style){
+  const text=String(value||''); if(!text)return '';
+  const key='site_caption_'+safeKey(id), expandable=text.length>180;
+  return '<div id="'+key+'" class="site-caption'+(expandable?' is-collapsed':'')+'" style="'+(style||'')+'">'+e(text)+'</div>'+(expandable?'<button type="button" class="fb-caption-toggle" onclick="toggleDashboardCaption(this.previousElementSibling.id,this)" aria-expanded="false">See more</button>':'');
+}
 function toggleDashboardCaption(id, button){
   const caption=document.getElementById(id);
   if(!caption || !button) return;
@@ -2479,7 +2486,7 @@ function renderMonthlyTopicSection(){
       </header>
       ${topic.photo?`<img class="monthly-topic-photo" src="${e(topic.photo)}" alt="Monthly topic poster" loading="lazy">`:''}
       <div class="monthly-topic-caption">
-        <p>${e(topic.caption)}</p>
+        ${renderSiteCaption(topic.caption,'monthly_topic','')}
         ${can("dashboard")?`<button class="btn gold sm" onclick="openMonthlyTopicEditor()">✏️ Edit Monthly Topic</button>`:''}
       </div>
     </section>`;
@@ -4419,7 +4426,7 @@ function ministriesv(){
         <div style="padding:12px 14px">
           <b style="font-size:1.1rem">${e(m.name)}</b>
           <div class="mu" style="margin-top:4px"><b>Leader:</b> ${e(m.leader)}</div>
-          <div class="mu" style="margin-top:4px"><b>Description:</b> ${e(m.desc)}</div>
+          <div class="mu" style="margin-top:4px"><b>Description:</b></div>${renderSiteCaption(m.desc,'ministry_'+m.id,'margin-top:4px')}
           ${can("ministries")?`
             <div style="margin-top:8px">
               <button class="btn sm" onclick="openFormModal('ministries', '${m.id}')">Edit</button>
@@ -4710,7 +4717,7 @@ function prayersv(){
     <div id="prayer-community-list"><div class="card mu">Loading prayer requests…</div></div>
   </section>
   ${can("prayers")?`<section style="margin-top:22px"><h3>Prayer Team Inbox</h3><p class="mu">Includes private requests. Keep these details confidential.</p><div id="prayer-admin-list"><div class="card mu">Loading admin inbox…</div></div></section>`:''}
-  ${can("prayers")?`<section style="margin-top:22px"><h3>Legacy Prayer Records</h3><p class="mu">Previously saved requests remain available below.</p><div class="grid">${L.map(p=>`<div class="card"><b>${e(p.name)}</b><div class="mu" style="margin:4px 0">${e(p.req)}</div><div class="mu"><b>Status:</b> ${e(p.status||'Open')}</div><div style="margin-top:8px"><button class="btn sm" onclick="openFormModal('prayers', '${p.id}')">Edit</button><button class="btn red sm" onclick="deleteRecord('prayers', '${p.id}')">Delete</button></div></div>`).join('')}</div></section>`:''}`;
+  ${can("prayers")?`<section style="margin-top:22px"><h3>Legacy Prayer Records</h3><p class="mu">Previously saved requests remain available below.</p><div class="grid">${L.map(p=>`<div class="card"><b>${e(p.name)}</b><div class="mu" style="margin:4px 0">${renderSiteCaption(p.req,'legacy_prayer_'+p.id,'')}</div><div class="mu"><b>Status:</b> ${e(p.status||'Open')}</div><div style="margin-top:8px"><button class="btn sm" onclick="openFormModal('prayers', '${p.id}')">Edit</button><button class="btn red sm" onclick="deleteRecord('prayers', '${p.id}')">Delete</button></div></div>`).join('')}</div></section>`:''}`;
 }
 
 function getPrayerVisitorId(){
@@ -4744,7 +4751,7 @@ function renderPrayerCards(items,isAdmin){
       '<div class="mu" style="margin:5px 0">'+e(p.category||"Prayer request")+(date?' · '+e(date):'')+'</div>'+
       (p.for_whom?'<div class="mu">Prayer for: '+e(p.for_whom)+'</div>':'')+
       (isAdmin&&p.contact?'<div class="mu">Contact (confidential): '+e(p.contact)+'</div>':'')+
-      '<p style="white-space:pre-wrap;overflow-wrap:anywhere">'+e(p.request||"")+'</p>'+
+      '+renderSiteCaption(p.request,'prayer_'+p.id,'margin:10px 0')+'
       '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="mu"><b>Status:</b> '+e(p.status||"Open")+'</span><span class="mu">🙏 <b>'+Number(p.prayer_count||0)+'</b> praying</span></div>'+
       (!isAdmin&&!isPrivate&&p.status!=="Answered"?'<button class="btn sm '+(p.prayed_by_me?'':'gold')+'" style="margin-top:10px" '+(p.prayed_by_me?'disabled':'')+' onclick="prayForRequest(\''+e(p.id)+'\',this)">'+(p.prayed_by_me?'✓ You are praying':'🙏 Pray for this request')+'</button>':'')+
       (isAdmin?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="btn sm" onclick="setPrayerStatus(\''+e(p.id)+'\',\'Prayed for\')">🙏 Mark Prayed for</button><button class="btn sm gold" onclick="setPrayerStatus(\''+e(p.id)+'\',\'Answered\')">✓ Mark Answered</button><button class="btn sm" onclick="setPrayerStatus(\''+e(p.id)+'\',\'Open\')">Reopen</button></div>':'')+
@@ -4893,7 +4900,7 @@ function list(c){
       <div class="card">
         <b>${e(x.title||x.name||'')}</b>
         <div class="mu">${e(x.date||'')} · ${e(x.place||'')}</div>
-        <div style="margin:4px 0">${e(x.desc||'')}</div>
+        ${renderSiteCaption(x.desc,'list_'+c+'_'+x.id,'margin:4px 0')}
         ${can(c)?`
           <div style="margin-top:8px">
             <button class="btn sm" onclick="openFormModal('${c}', '${x.id}')">Edit</button>
@@ -5173,7 +5180,7 @@ function eventCard(x, canEdit, faded){
     <div style="padding:12px 14px">
       <b style="font-size:1.1rem;color:var(--pr)">${e(x.title || '')}</b>
       <div class="mu" style="margin-top:4px">📅 ${e(fmtEventDate(x.date))}${x.place ? ` · 📍 ${e(x.place)}` : ''}</div>
-      ${x.desc ? `<div style="margin-top:6px;white-space:pre-wrap;word-break:break-word">${e(x.desc)}</div>` : ''}
+      ${x.desc ? renderSiteCaption(x.desc,'event_'+x.id,'margin-top:6px') : ''}
       ${canEdit ? `<div style="margin-top:10px">
         <button class="btn sm" onclick="openFormModal('events', '${x.id}')">Edit</button>
         <button class="btn red sm" onclick="deleteRecord('events', '${x.id}')">Delete</button>
