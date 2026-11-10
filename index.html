@@ -2648,9 +2648,9 @@ function renderMonthlyTopicSection(){
   const topic=getMonthlyTopicData();
   return `
     <section class="monthly-topic-banner" aria-label="Topic for the month">
-      <header class="monthly-topic-heading">
+      <div class="monthly-topic-heading">
         <h2>TOPIC FOR THE MONTH : <span>${e(topic.month)}</span></h2>
-      </header>
+      </div>
       ${topic.photo?`<img class="monthly-topic-photo" src="${e(topic.photo)}" alt="Monthly topic poster" loading="lazy">`:''}
       <div class="monthly-topic-caption">
         <p>${e(topic.caption)}</p>
