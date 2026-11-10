@@ -100,7 +100,7 @@ input,textarea,select{width:100%;font:inherit;padding:8px;margin:3px 0;border:1p
 #modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:99;padding:14px}
 #modal>div{background:var(--card);padding:18px;border-radius:12px;width:100%;max-width:520px;max-height:90vh;overflow:auto}
 
-/* Admin Permissions Checkbox Grid & Badges */
+@media (max-width:760px){.gallery-layout{grid-template-columns:repeat(2,minmax(0,1fr))!important}.gallery-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}\n@media (max-width:480px){.gallery-layout{grid-template-columns:1fr!important}.gallery-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}\n/* Admin Permissions Checkbox Grid & Badges */
 .adck{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(14rem,100%),1fr));gap:4px 8px;margin-top:6px}
 .adch{display:inline-block;font-size:.78rem;padding:.2rem .55rem;margin:0 .3rem .3rem 0;border-radius:999px;background:#ffffff14;border:1px solid var(--bd)}
 .adch.on{background:var(--pr);color:#1a1446;border-color:transparent;font-weight:700}
@@ -4337,21 +4337,21 @@ function galleryv(){
   const L = D.gallery || [];
   return `<h2>GALLERY (${L.length})</h2>
   ${can("gallery")?`<p><button class="btn gold" onclick="openFormModal('gallery')">+ Add Album (up to 6 Photos)</button></p>`:''}
-  <div class="grid gallery-layout" style="grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:18px">
+  <div class="grid gallery-layout" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px">
     ${L.map(a=>{
       const P = a.photos || [];
       const shown=P.slice(0,4);
       return `
-        <div class="card gallery-album" style="padding:0;overflow:hidden;min-width:0;box-shadow:0 4px 16px #0002">
-          <div style="padding:14px 15px 12px">
-            <b style="font-size:1.08rem">${e(a.cap)}</b>
+        <div class="card gallery-album" style="grid-column:1/-1;width:100%;padding:0;overflow:hidden;min-width:0;box-shadow:0 6px 22px #0003">
+          <div style="padding:20px 22px 16px">
+            <b style="font-size:1.35rem">${e(a.cap)}</b>
             <div class="mu">${P.length} photo${P.length===1?'':'s'} · tap to view</div>
           </div>
-          <div class="gallery-photo-grid" onclick="openAlbumViewer('${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:0 10px 10px">
-            ${shown.map((u,i)=>`<div style="position:relative;aspect-ratio:1/1;min-width:0;overflow:hidden;border-radius:7px"><img src="${e(u)}" alt="Album photo ${i+1}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">${i===3 && P.length>4?`<div style="position:absolute;inset:0;background:#0009;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:700">+${P.length-4}</div>`:''}</div>`).join('')}
+          <div class="gallery-photo-grid" onclick="openAlbumViewer('${a.id}')" style="cursor:pointer;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:0 18px 18px">
+            ${shown.map((u,i)=>`<div style="position:relative;aspect-ratio:4/3;min-width:0;overflow:hidden;border-radius:9px"><img src="${e(u)}" alt="Album photo ${i+1}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">${i===3 && P.length>4?`<div style="position:absolute;inset:0;background:#0009;color:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700">+${P.length-4}</div>`:''}</div>`).join('')}
           </div>
           ${can("gallery")?`
-            <div style="padding:0 10px 10px">
+            <div style="padding:0 18px 18px">
               <button class="btn sm" onclick="openFormModal('gallery', '${a.id}')">Edit / Add Photos</button>
               <button class="btn red sm" onclick="deleteRecord('gallery', '${a.id}')">Delete</button>
             </div>
