@@ -1065,10 +1065,11 @@ const BASE_REACTIONS = {
 };
 
 const defaultAdmins = [
-  {id:"adm1", name:"Admin Mart", username:"Admin@Mart", password:"JTNAAN@01", owner:true, perms:Object.keys(PL)},
-  {id:"adm2", name:"Treasurer", username:"Admin02", password:"JTNAAN02", owner:false, perms:["funds"]},
-  {id:"adm3", name:"Attendance Personnel", username:"Admin03", password:"JTNAAN03", owner:false, perms:["attendance"]},
-  {id:"adm4", name:"Media", username:"Admin04", password:"JTNAAN04", owner:false, perms:["gallery"]}
+  // Public fallback metadata only. Passwords are verified by the secure server endpoint.
+  {id:"adm1", name:"Admin Mart", username:"Admin@Mart", owner:true, perms:Object.keys(PL)},
+  {id:"adm2", name:"Treasurer", username:"Admin02", owner:false, perms:["funds"]},
+  {id:"adm3", name:"Attendance Personnel", username:"Admin03", owner:false, perms:["attendance"]},
+  {id:"adm4", name:"Media", username:"Admin04", owner:false, perms:["gallery"]}
 ];
 
 const churchData = {
