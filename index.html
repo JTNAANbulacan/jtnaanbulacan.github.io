@@ -873,7 +873,7 @@ function initSupabaseClient(){
   if(SUPABASE_URL && SUPABASE_ANON && !SUPABASE_URL.includes("YOUR_SUPABASE") && window.supabase){
     try {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-        auth: { persistSession: false },
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
         realtime: { params: { eventsPerSecond: 10 } }
       });
       console.log("☁ Supabase Cloud Connected!");
@@ -888,6 +888,40 @@ function initSupabaseClient(){
 function isCloudConnected(){
   return !!supabaseClient;
 }
+
+// Secure server-side administrator actions. Never trust the local session cache.
+async function secureAdminRequest(body, requireSession=true){
+  if(!supabaseClient) throw new Error("Cloud connection is unavailable.");
+  let token="";
+  if(requireSession){
+    const {data:{session},error}=await supabaseClient.auth.getSession();
+    if(error||!session?.access_token) throw new Error("Please log in again.");
+    token=session.access_token;
+  }
+  const response=await fetch(SUPABASE_URL+"/functions/v1/jtnaan-secure",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON,...(token?{Authorization:"Bearer "+token}:{})},
+    body:JSON.stringify(body)
+  });
+  const result=await response.json().catch(()=>({error:"Invalid server response."}));
+  if(!response.ok||result.error) throw new Error(result.error||"Secure request failed.");
+  return result;
+}
+async function restoreAdminSession(){
+  if(!supabaseClient)return;
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){me=null;admin=false;localStorage.setItem("jt_active_session","null");return;}
+  try{
+    const result=await secureAdminRequest({action:"session"});
+    me=result.admin;admin=true;
+    localStorage.setItem("jt_active_session",JSON.stringify(me));
+  }catch(err){
+    await supabaseClient.auth.signOut();
+    me=null;admin=false;localStorage.setItem("jt_active_session","null");
+    console.warn("Admin session validation failed:",err);
+  }
+}
+
 
 // Visual Notification Toast System
 function showErrorNotification(msg){
@@ -1188,8 +1222,8 @@ try {
   savedSession = null;
 }
 
-let me = savedSession;
-let admin = !!me;
+let me = null;
+let admin = false;
 let view = "dashboard", dsel="GCash", fbViewMode = "cards";
 
 function setFbViewMode(m){
@@ -2118,6 +2152,15 @@ async function saveFormData(c, id){
       if(old.photo) item.photo = old.photo;
     }
     
+    if(c === "funds"){
+      const result=await secureAdminRequest({action:"save_fund",data:item});
+      const saved=result.data||item;
+      D.funds=(D.funds||[]).filter(x=>x.id!==saved.id);
+      D.funds.unshift(saved);
+      closeModal();render();
+      showSuccessNotification("Fund record securely saved to the database.");
+      return;
+    }
     D[c] = (D[c]||[]).filter(x => x.id !== item.id);
     D[c].unshift(item);
 
@@ -4880,6 +4923,14 @@ async function deleteAdminRecord(id){
 async function deleteRecord(c, id){
   if(!can(c)) return alert("You do not have permission to delete records in this section.");
   if(confirm("Are you sure you want to delete this record?")){
+    if(c === "funds"){
+      try{
+        await secureAdminRequest({action:"delete_fund",id:String(id)});
+        D.funds=(D.funds||[]).filter(x=>x.id!==id);
+        render();showSuccessNotification("Fund record securely deleted.");
+      }catch(err){showErrorNotification("Fund delete failed: "+err.message);}
+      return;
+    }
     D[c] = (D[c]||[]).filter(x => x.id !== id);
     const ok = await deleteRecordFromCloud(c, id);
     render();
@@ -4888,6 +4939,7 @@ async function deleteRecord(c, id){
 }
 
 async function handleLogout(){
+  if(supabaseClient) await supabaseClient.auth.signOut();
   me = null;
   admin = false;
   localStorage.setItem("jt_active_session", "null");
@@ -4915,18 +4967,20 @@ function loginForm(msg){
 
 async function handleLoginSubmit(ev){
   ev.preventDefault();
-  const u = $("#lu").value.trim().toLowerCase();
-  const p = $("#lp").value;
-  const found = AL.find(a => a.username.toLowerCase() === u && a.password === p);
-  if(found){
-    me = found;
-    admin = true;
-    localStorage.setItem("jt_active_session", JSON.stringify(found));
-    closeModal();
-    render();
-    showSuccessNotification(`Welcome back, ${found.name}!`);
-  } else {
-    $("#le").textContent = "Invalid username or password.";
+  const u=$("#lu").value.trim().toLowerCase(),p=$("#lp").value;
+  const errorEl=$("#le"),submit=$("#lf button[type=submit]");
+  if(submit){submit.disabled=true;submit.textContent="Signing in...";}
+  try{
+    const lookup=await secureAdminRequest({action:"prepare_login",username:u,password:p},false);
+    const {data,error}=await supabaseClient.auth.signInWithPassword({email:lookup.email,password:p});
+    if(error||!data?.session)throw new Error("Invalid username or password.");
+    const result=await secureAdminRequest({action:"session"});
+    me=result.admin;admin=true;
+    localStorage.setItem("jt_active_session",JSON.stringify(me));
+    closeModal();render();showSuccessNotification(`Welcome back, ${me.name}!`);
+  }catch(err){
+    if(errorEl)errorEl.textContent=err.message||"Invalid username or password.";
+    if(submit){submit.disabled=false;submit.textContent="Log in";}
   }
 }
 
@@ -4965,6 +5019,7 @@ async function initApp(){
   applyBackground();
   render();
   initSupabaseClient();
+  await restoreAdminSession();
   await fetchAllFromCloud(true);
   await loadDailyBibleContent(true);
   handleHashRoute();
