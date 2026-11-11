@@ -2724,7 +2724,7 @@ async function saveMonthlyTopic(){
 }
 
 function dash(){
-  const A = (D.attendance||[])[0];
+  const A = sortAttendanceNewestFirst(D.attendance || [])[0] || null;
   const logo = getChurchLogoUrl();
   const customBg = (D.settings||[]).find(x => x.id === "bg");
   const cloudOk = isCloudConnected();
@@ -3775,6 +3775,23 @@ function postDateValue(x){
 function postCreatedValue(x){
   return Number(x.createdAt) || idStamp(x.id) || 0;
 }
+// Attendance is sorted by the actual service date, never by array/cloud return order.
+// ISO dates (the format used by the attendance date input) are compared directly,
+// avoiding timezone shifts; older display-formatted dates are also supported.
+function attendanceDateSortValue(record){
+  const raw = String(record && record.date || "").trim();
+  const iso = raw.match(/^(\\d{4})-(\\d{2})-(\\d{2})/);
+  if(iso) return Number(iso[1] + iso[2] + iso[3]);
+  const parsed = postDateValue({date: raw});
+  return parsed ? Number(new Date(parsed).getFullYear() + String(new Date(parsed).getMonth()+1).padStart(2,"0") + String(new Date(parsed).getDate()).padStart(2,"0")) : 0;
+}
+function sortAttendanceNewestFirst(list){
+  return (list || []).slice().sort((a,b) => {
+    const dateDiff = attendanceDateSortValue(b) - attendanceDateSortValue(a);
+    if(dateDiff) return dateDiff;
+    return (Number(b.updatedAt) || 0) - (Number(a.updatedAt) || 0);
+  });
+}
 function sortNewestFirst(list){
   return (list || []).slice().sort((a, b) => {
     const d = postDateValue(b) - postDateValue(a);
@@ -4766,7 +4783,7 @@ function setReportPeriod(period){
 }
 function reportsv(){
   const members = D.members || [];
-  const attendance = (D.attendance || []).slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+  const attendance = sortAttendanceNewestFirst(D.attendance || []);
   const social = D.social || [];
   const canSeeFunds = can("funds");
   const funds = canSeeFunds ? (D.funds || []) : [];
@@ -5440,7 +5457,7 @@ function attv(){
   if(!attSel.date) attSel.date = todayPH();
   const ce = can("attendance");
   const M = D.members || [];
-  const saved = sortNewestFirst(D.attendance || []);
+  const saved = sortAttendanceNewestFirst(D.attendance || []);
   return `<h2>ATTENDANCE</h2>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <input type="date" id="att_date" value="${e(attSel.date)}" style="max-width:200px" onchange="attPick()" ${ce ? '' : 'disabled'}>
