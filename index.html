@@ -2379,8 +2379,13 @@ async function saveFormData(c, id){
 
 let activeSharePayload = null;
 
-function openShareModal(title, text, url=location.href){
-  activeSharePayload = {title:String(title||"JTNAAN Bulacan"), text:String(text||""), url:String(url||location.href)};
+function openShareModal(title, text, url=location.href, imageUrl=""){
+  activeSharePayload = {title:String(title||"JTNAAN Bulacan"), text:String(text||""), url:String(url||location.href), imageFile:null, imageReady:false};
+  if(imageUrl){
+    fetch(imageUrl).then(response=>{if(!response.ok)throw new Error("Image unavailable");return response.blob();})
+      .then(blob=>{const ext=(blob.type.split("/")[1]||"jpg").split(";")[0];activeSharePayload.imageFile=new File([blob],"jtnaan-post."+ext,{type:blob.type||"image/jpeg"});activeSharePayload.imageReady=true;})
+      .catch(()=>{if(activeSharePayload)activeSharePayload.imageReady=false;});
+  }
   const preview = activeSharePayload.text.length > 360 ? activeSharePayload.text.slice(0,360)+"…" : activeSharePayload.text;
   const U = encodeURIComponent(activeSharePayload.url);
   $("#mb").innerHTML =
@@ -2420,6 +2425,9 @@ async function copyShareTextThenOpen(target,label){
 async function sharePostUsingDevice(){
   if(!activeSharePayload)return;
   const payload={title:activeSharePayload.title,text:activeSharePayload.text,url:activeSharePayload.url};
+  if(activeSharePayload.imageReady && activeSharePayload.imageFile && navigator.canShare && navigator.canShare({files:[activeSharePayload.imageFile]})){
+    payload.files=[activeSharePayload.imageFile];
+  }
   if(navigator.share){
     try{ await navigator.share(payload); }
     catch(err){ if(err && err.name!=="AbortError") showErrorNotification("Device sharing is unavailable. Use one of the platform buttons instead."); }
@@ -2435,7 +2443,7 @@ function openShareWithReactionModal(c, postId){
   const shareText = title + "\n\n" + content + "\n\nBe blessed. Read and join the conversation at JTNAAN Bulacan:";
   const shareUrl = new URL(location.href);
   shareUrl.hash = "post_" + c + "_" + postId;
-  openShareModal(title, shareText, shareUrl.toString());
+  openShareModal(title, shareText, shareUrl.toString(), item.photo || "");
 }
 
 function toggleDashboardCaption(id, button){
