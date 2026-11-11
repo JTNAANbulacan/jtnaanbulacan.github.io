@@ -2377,50 +2377,65 @@ async function saveFormData(c, id){
   }
 }
 
+let activeSharePayload = null;
+
 function openShareModal(title, text, url=location.href){
-  const T = encodeURIComponent(text);
-  const U = encodeURIComponent(url);
-  $("#mb").innerHTML = `
-    <h3 style="margin-top:0">Share to Social Media</h3>
-    <div class="mu" style="margin-bottom:10px">${ex(title)}</div>
-    <div class="shg">
-      <button style="background:#1877f2" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${U}', '_blank')"><span class="ic">f</span> Facebook</button>
-      <button style="background:#0084ff" onclick="window.open('https://m.me/61556921121315', '_blank')"><span class="ic">✉</span> Messenger</button>
-      <button style="background:#25d366" onclick="window.open('https://api.whatsapp.com/send?text=${T}%20${U}', '_blank')"><span class="ic">✆</span> WhatsApp</button>
-      <button style="background:#d62976" onclick="copyAndOpenInstagram('${encodeURIComponent(text)}')"><span class="ic">◎</span> Instagram</button>
-      <button style="background:#000" onclick="window.open('https://twitter.com/intent/tweet?text=${T}&url=${U}', '_blank')"><span class="ic">𝕏</span> X / Twitter</button>
-      <button style="background:#3b3bd0" onclick="navigator.clipboard.writeText('${url}');showSuccessNotification('Link copied to clipboard!')"><span class="ic">⧉</span> Copy Link</button>
-    </div>
-    <p><button onclick="closeModal()">Close</button></p>
-  `;
+  activeSharePayload = {title:String(title||"JTNAAN Bulacan"), text:String(text||""), url:String(url||location.href)};
+  const preview = activeSharePayload.text.length > 360 ? activeSharePayload.text.slice(0,360)+"…" : activeSharePayload.text;
+  const U = encodeURIComponent(activeSharePayload.url);
+  $("#mb").innerHTML =
+    '<h3 style="margin-top:0">Share this post</h3>' +
+    '<div class="mu" style="margin-bottom:10px">'+ex(activeSharePayload.title)+'</div>' +
+    '<div style="padding:12px;border:1px solid #ffffff30;border-radius:10px;margin-bottom:14px;max-height:170px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--tx)">'+ex(preview)+'</div>' +
+    '<p class="mu" style="font-size:.82rem;margin:0 0 10px">Choose a platform. Your post caption will be included wherever the platform allows it.</p>' +
+    '<div class="shg">' +
+    '<button style="background:#1877f2" onclick="copyShareTextThenOpen(\'https://www.facebook.com/sharer/sharer.php?u='+U+'\',\'Facebook\')"><span class="ic">f</span> Facebook</button>' +
+    '<button style="background:#0084ff" onclick="copyShareTextThenOpen(\'https://www.messenger.com/\',\'Messenger\')"><span class="ic">✉</span> Messenger</button>' +
+    '<button style="background:#25d366" onclick="window.open(\'https://wa.me/?text=\'+encodeURIComponent(activeSharePayload.text+\'\\n\\n\'+activeSharePayload.url),\'_blank\',\'noopener\')"><span class="ic">✆</span> WhatsApp</button>' +
+    '<button style="background:#d62976" onclick="copyShareTextThenOpen(\'https://www.instagram.com/\',\'Instagram\')"><span class="ic">◎</span> Instagram</button>' +
+    '<button style="background:#000" onclick="window.open(\'https://twitter.com/intent/tweet?text=\'+encodeURIComponent(activeSharePayload.text.length>240?activeSharePayload.text.slice(0,237)+\'…\':activeSharePayload.text)+\'&url=\'+encodeURIComponent(activeSharePayload.url),\'_blank\',\'noopener\')"><span class="ic">𝕏</span> X / Twitter</button>' +
+    '<button style="background:#3b3bd0" onclick="copyShareText()"><span class="ic">⧉</span> Copy Caption + Link</button>' +
+    '</div>' +
+    '<button class="btn gold" style="width:100%;margin-top:12px" onclick="sharePostUsingDevice()">Share using this device</button>' +
+    '<p class="mu" style="font-size:.75rem;margin:8px 0 0">Facebook and Instagram may require you to paste the copied caption. Their websites control the final posting screen.</p>' +
+    '<p><button onclick="closeModal()">Close</button></p>';
   $("#modal").style.display = "flex";
+}
+
+async function copyShareText(){
+  if(!activeSharePayload)return;
+  const value=activeSharePayload.text+"\n\n"+activeSharePayload.url;
+  try{ await navigator.clipboard.writeText(value); showSuccessNotification("Full caption and post link copied!"); }
+  catch(err){ showErrorNotification("Clipboard access was blocked. Please select and copy the caption from the preview."); }
+}
+
+async function copyShareTextThenOpen(target,label){
+  if(!activeSharePayload)return;
+  const value=activeSharePayload.text+"\n\n"+activeSharePayload.url;
+  try{ await navigator.clipboard.writeText(value); showSuccessNotification("Caption and link copied. Paste them into "+label+"."); }
+  catch(err){ showErrorNotification("Clipboard access was blocked. You can copy the caption from the preview."); }
+  window.open(target,"_blank","noopener");
+}
+
+async function sharePostUsingDevice(){
+  if(!activeSharePayload)return;
+  const payload={title:activeSharePayload.title,text:activeSharePayload.text,url:activeSharePayload.url};
+  if(navigator.share){
+    try{ await navigator.share(payload); }
+    catch(err){ if(err && err.name!=="AbortError") showErrorNotification("Device sharing is unavailable. Use one of the platform buttons instead."); }
+  }else{
+    await copyShareText();
+  }
 }
 
 function openShareWithReactionModal(c, postId){
   const item = (D[c]||[]).find(x => x.id === postId) || {};
-  const key = `${c}:${postId}`;
-  const myCounts = getUserReactionCounts(key);
-  const reactedTypes = Object.keys(myCounts).filter(k => myCounts[k] > 0);
-
-  let shareTitle = "JTNAAN Bulacan – " + (c === 'devotion' ? 'Daily Devotion' : 'Testimony');
-  let snippet = (item.caption || '').slice(0, 180) + '...';
-  let shareText = "";
-
-  if(reactedTypes.length > 0){
-    const highestType = reactedTypes.sort((a,b) => myCounts[b] - myCounts[a])[0];
-    const rxInfo = REACTION_TYPES.find(r => r.id === highestType) || { emoji: "❤️", label: "Heart" };
-    shareText = `${rxInfo.emoji} I reacted ${rxInfo.label} to today's JTNAAN Bulacan Devotion:\n\n"${snippet}"\n\nBe blessed and read the full reflection:`;
-  } else {
-    shareText = `JTNAAN Bulacan Devotion:\n\n"${snippet}"\n\nRead more here:`;
-  }
-
-  openShareModal(shareTitle, shareText);
-}
-
-function copyAndOpenInstagram(rawEncodedText){
-  if(navigator.clipboard) navigator.clipboard.writeText(decodeURIComponent(rawEncodedText));
-  showSuccessNotification("Caption & link copied! Opening Instagram...");
-  window.open("https://www.instagram.com/", "_blank");
+  const title = "JTNAAN Bulacan – " + (c === "devotion" ? "Daily Devotion" : "Testimony");
+  const content = String(item.caption || "").trim();
+  const shareText = title + "\n\n" + content + "\n\nBe blessed. Read and join the conversation at JTNAAN Bulacan:";
+  const shareUrl = new URL(location.href);
+  shareUrl.hash = "post_" + c + "_" + postId;
+  openShareModal(title, shareText, shareUrl.toString());
 }
 
 function toggleDashboardCaption(id, button){
