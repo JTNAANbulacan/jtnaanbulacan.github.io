@@ -305,6 +305,15 @@ function wxFitPart(index=W.sec){
 function wxMark(go){
  document.querySelectorAll('.sw').forEach((e,i)=>e.classList.toggle('cur',i==W.sec));
  document.querySelectorAll('#strip button').forEach(b=>b.classList.toggle('on',+b.dataset.i==W.sec));
+ if(go&&ctl()&&live?.is_live){
+   // A part-button/section change is a discrete command: publish it immediately,
+   // even when the target is already on screen and no scroll event would fire.
+   const v=Math.max(0,W.sec)*1000;
+   W.partSyncUntil=Date.now()+1100;
+   if(live)live.scroll_position=v;
+   wxSend({k:'sc',v,at:Date.now()});
+   wxSave({scroll_position:v});
+ }
  requestAnimationFrame(()=>{
    wxFitPart(W.sec);
    if(go){
@@ -384,8 +393,8 @@ function wxPos(){const y=window.scrollY+90;let s=0,fr=0;document.querySelectorAl
 function wxApply(v){const idx=Math.floor(v/1000),e=$('sw'+idx);if(!e)return;if(idx!==W.sec){W.sec=idx;wxMark(false)}const t=e.getBoundingClientRect().top+window.scrollY+((v%1000)/999)*e.offsetHeight-90;window.scrollTo({top:Math.max(0,t),behavior:'auto'})}
 function wxFollow(){if(ctl()||!W.follow||!live)return;wxApply(live.scroll_position||0)}
 setInterval(()=>{if(user&&W.follow&&live?.is_live)liveSync()},2500);
-window.addEventListener('scroll',()=>{if(!ctl()||!current||W.sct)return;W.sct=setTimeout(()=>{W.sct=0;const v=wxPos();wxSend({k:'sc',v});clearTimeout(W.ss);W.ss=setTimeout(()=>wxSave({scroll_position:v}),800)},60)},{passive:true});
-function wxRecv(p){if(!p)return;if(['pt','mk','un','cl','note'].includes(p.k)&&!live?.is_live)return;if(p.k==='state'){if(!ctl()&&W.follow)liveSync();return}if(p.k==='pt'){const t=W.tmp[p.m.id]||(W.tmp[p.m.id]={...p.m,pts:[]});t.pts.push(...p.m.pts);wxRender();return}if(p.k==='mk'){delete W.tmp[p.m.id];if(!W.ann.some(x=>x.id===p.m.id))W.ann.push(p.m);wxRender();if(ctl())wxPersist();return}if(p.k==='un'){W.ann=W.ann.filter(x=>x.id!==p.id);wxRender();if(ctl())wxPersist();return}if(p.k==='cl'){W.ann=W.ann.filter(x=>x.song!==p.song);wxRender();if(ctl())wxPersist();return}if(p.k==='note'){live.annotations=[...(live?.annotations||[]).filter(x=>!x.t&&!W.ann.some(a=>a.id===x.id)),p.m,...W.ann];draw();if(ctl())wxSave({annotations:live.annotations});return}if(ctl())return;if(p.k==='sc'&&W.follow)wxApply(p.v)}
+window.addEventListener('scroll',()=>{if(!ctl()||!current||W.sct||Date.now()<(W.partSyncUntil||0))return;W.sct=setTimeout(()=>{W.sct=0;if(Date.now()<(W.partSyncUntil||0))return;const v=wxPos();if(live)live.scroll_position=v;wxSend({k:'sc',v,at:Date.now()});clearTimeout(W.ss);W.ss=setTimeout(()=>wxSave({scroll_position:v}),350)},60)},{passive:true});
+function wxRecv(p){if(!p)return;if(['pt','mk','un','cl','note'].includes(p.k)&&!live?.is_live)return;if(p.k==='state'){if(!ctl()&&W.follow)liveSync();return}if(p.k==='pt'){const t=W.tmp[p.m.id]||(W.tmp[p.m.id]={...p.m,pts:[]});t.pts.push(...p.m.pts);wxRender();return}if(p.k==='mk'){delete W.tmp[p.m.id];if(!W.ann.some(x=>x.id===p.m.id))W.ann.push(p.m);wxRender();if(ctl())wxPersist();return}if(p.k==='un'){W.ann=W.ann.filter(x=>x.id!==p.id);wxRender();if(ctl())wxPersist();return}if(p.k==='cl'){W.ann=W.ann.filter(x=>x.song!==p.song);wxRender();if(ctl())wxPersist();return}if(p.k==='note'){live.annotations=[...(live?.annotations||[]).filter(x=>!x.t&&!W.ann.some(a=>a.id===x.id)),p.m,...W.ann];draw();if(ctl())wxSave({annotations:live.annotations});return}if(ctl())return;if(p.k==='sc'&&W.follow){if(live)live.scroll_position=p.v;wxApply(p.v)}}
 /* drawing layer (anchored to each section so it lines up on any screen size) */
 const cv=$('cv'),c2=cv.getContext('2d'),wxId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);let dr=null;
 function wxSize(){const r=$('lw');if(!r)return;const d=window.devicePixelRatio||1,w=r.clientWidth,h=r.clientHeight;cv.width=w*d;cv.height=h*d;cv.style.width=w+'px';cv.style.height=h+'px';c2.setTransform(d,0,0,d,0,0);wxRender();wxFitPart(W.sec)}
