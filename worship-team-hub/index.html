@@ -417,24 +417,24 @@ function tunerPitch(buf,sr){
  let energy=0;for(let i=0;i<size;i+=step){const v=buf[i]-mean;energy+=v*v}
  const rms=Math.sqrt(energy/Math.ceil(size/step));if(rms<.0025)return null;
  const minLag=Math.max(2,Math.floor(sr/650)),maxLag=Math.min(Math.floor(sr/35),Math.floor((size/2)-2));
- const diff=new Float32Array(maxLag+1);let running=0;
+ const diff=new Float32Array(maxLag+1),cmnd=new Float32Array(maxLag+1);let running=0;
  for(let lag=1;lag<=maxLag;lag++){
   let sum=0,count=0;
   for(let i=0;i<size-maxLag;i+=step){const a=buf[i]-mean,b=buf[i+lag]-mean,d=a-b;sum+=d*d;count++}
   diff[lag]=sum/Math.max(1,count);
  }
- for(let lag=1;lag<=maxLag;lag++){running+=diff[lag];diff[lag]=running>0?diff[lag]*lag/running:1}
+ for(let lag=1;lag<=maxLag;lag++){running+=diff[lag];cmnd[lag]=running>0?diff[lag]*lag/running:1}
  let chosen=-1;
  for(let lag=minLag;lag<maxLag;lag++){
-  if(diff[lag]<.18){while(lag+1<maxLag&&diff[lag+1]<diff[lag])lag++;chosen=lag;break}
+  if(cmnd[lag]<.18){while(lag+1<maxLag&&cmnd[lag+1]<cmnd[lag])lag++;chosen=lag;break}
  }
  if(chosen<0){
-  let best=1;for(let lag=minLag;lag<=maxLag;lag++)if(diff[lag]<best){best=diff[lag];chosen=lag}
+  let best=1;for(let lag=minLag;lag<=maxLag;lag++)if(cmnd[lag]<best){best=cmnd[lag];chosen=lag}
   if(chosen<0||best>.32)return null;
  }
  let refined=chosen;
  if(chosen>minLag&&chosen<maxLag){
-  const left=diff[chosen-1],center=diff[chosen],right=diff[chosen+1],den=left-2*center+right;
+  const left=cmnd[chosen-1],center=cmnd[chosen],right=cmnd[chosen+1],den=left-2*center+right;
   if(Math.abs(den)>1e-9)refined+=.5*(left-right)/den;
  }
  const hz=sr/(refined*step);
