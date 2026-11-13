@@ -84,6 +84,41 @@ h1{font-size:clamp(15px,2vw,19px);margin:0}h2{font-size:clamp(22px,3.4vw,32px);m
 #dtools .sc{width:28px;height:28px;border-radius:50%;padding:0;border:3px solid transparent}#dtools .sc.on{border-color:#fff}
 .fz .cl-l,.fz .notesc{display:none}.fz .deck{grid-template-columns:1fr;grid-template-areas:"s" "c"}
 .logo img{width:100%;height:100%;object-fit:cover;display:block}.logo.edit{cursor:pointer;outline:2px dashed #c4b5fd88;outline-offset:2px}
+
+/* Compact responsive frozen playback lane */
+.playbox{
+  top:68px;
+  gap:7px;
+  padding:9px 10px;
+  margin-bottom:10px;
+  max-height:clamp(132px,24vh,210px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:#7770cf transparent;
+}
+.playbox-head{gap:6px}
+.playbox-title{font-size:clamp(10px,.7vw,12px)}
+.playbox-controls{grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px}
+.playbox button{min-height:36px;padding:6px 8px;border-radius:9px;font-size:clamp(11px,.8vw,13px);line-height:1.2}
+#play{font-size:14px;grid-column:span 1}
+.part-buttons{gap:5px}
+.part-buttons button{flex:1 1 90px;min-width:0;padding:6px 8px;font-size:clamp(10px,.75vw,12px);line-height:1.2}
+.parts-head{margin-top:0;font-size:11px}
+#lyrics{scroll-margin-top:clamp(150px,28vh,230px)}
+@media(max-width:900px){
+  .playbox{top:68px;max-height:clamp(128px,25vh,195px)}
+  .playbox-controls{grid-template-columns:repeat(auto-fit,minmax(105px,1fr))}
+}
+@media(max-width:520px){
+  .playbox{top:90px;max-height:clamp(116px,27svh,175px);padding:7px;gap:5px;border-radius:12px}
+  .playbox-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+  .playbox button{min-height:33px;padding:5px 6px;font-size:11px}
+  .playbox-title{font-size:10px}
+  .part-buttons{gap:4px}
+  .part-buttons button{flex:1 1 76px;padding:5px 6px;font-size:10px}
+  #lyrics{scroll-margin-top:190px}
+}
 </style></head><body><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><button id="logout" class="hidden">Sign out</button></div></header>
 <section id="auth" class="panel auth"><h2>Welcome to your songbook</h2><p class="muted">Sign in or create your Worship Team account. No email or Gmail required.</p><label>Username<input id="username" autocomplete="username" placeholder="Your username (e.g. Juan123)"></label><br><label>Password<input id="pass" type="password" autocomplete="current-password" placeholder="At least 8 characters"></label><div class="tools"><button class="primary" id="login">Sign in</button><button id="signup">Create account</button></div><p class="hint" id="msg">New accounts are Members. Only the Super Admin can promote members to Admin.</p><details style="margin-top:12px"><summary style="cursor:pointer;color:var(--gold)">Initial Super Admin setup</summary><p class="hint">Use this one-time setup only for the owner account. Username is fixed as Admin@Mart.</p><label>One-time setup code<input id="bootstrapToken" autocomplete="off" placeholder="Setup code"></label><label>Choose Super Admin password<input id="bootstrapPass" type="password" autocomplete="new-password" placeholder="At least 8 characters"></label><button id="bootstrap" class="primary" style="margin-top:10px">Create Super Admin account</button></details></section>
 <div id="welcome" class="modal"><div class="panel" style="max-width:520px;text-align:center;padding:30px"><div style="font-size:42px;color:var(--gold)">♫</div><h2>Welcome to JTNAAN Worship Team Hub!</h2><p>Thank you for joining our Worship Team community. We’re grateful to have you with us as we serve together through music and worship. May God bless you and use your gifts to glorify Him!</p><button id="welcomeClose" class="primary">Let’s get started</button></div></div><div id="app" class="hidden"><div class="deck">
