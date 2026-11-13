@@ -39,6 +39,8 @@ h1{font-size:clamp(15px,2vw,19px);margin:0}h2{font-size:clamp(22px,3.4vw,32px);m
 .trn{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .trn button{padding:14px}#prev,#next{background:#14402a;border-color:#4cae77}
 .playbox{display:grid;gap:10px;margin-bottom:14px;padding:14px;border:1px solid #5650a8;border-radius:16px;background:linear-gradient(145deg,#191653,#100e3e);box-shadow:0 8px 22px #0003}
+.playbox{position:sticky;top:78px;z-index:8;background:#12103f;box-shadow:0 10px 24px #0009;border-color:#7770cf}
+@media(max-width:520px){.playbox{top:112px}}
 .playbox-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .playbox-title{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c8c5ff}
 .playbox-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
