@@ -1,53 +1,84 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101a18"><title>JTNAAN Worship Team Hub</title><style>
-:root{color-scheme:dark;--bg:#0b0a3a;--card:#15145a;--card2:#1d1c6e;--gold:#f2a93b;--line:#3a3a9a;--muted:#b9bde6;--txt:#fff}
-*{box-sizing:border-box}
-html{min-height:100%;background:var(--bg)}
-body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 90% 0,rgba(42,42,168,.5),transparent 48%),linear-gradient(180deg,#0b0a3a,#09082e);color:var(--txt);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0820"><title>JTNAAN Worship Team Hub</title><style>
+:root{color-scheme:dark;--bg:#0b0820;--p1:#1a1535;--p2:#241d4d;--line:#3a2f72;--pu:#8b5cf6;--pu2:#6d28d9;--tx:#f5f3ff;--mu:#b4abdc;--ch:#6cb4ff;--gr:#2f8f55;--go:#e0a53b;--rd:#ef4444}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;background:radial-gradient(900px 420px at 100% 0,#4c1d9555,transparent 60%),var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 button,input,textarea,select{font:inherit}
-button{background:#ffffff12;border:1px solid var(--line);color:var(--txt);padding:9px 13px;border-radius:9px;cursor:pointer;transition:background .18s,border-color .18s}
-button:hover{background:#ffffff22;border-color:#7777d9}
-button.primary{background:var(--gold);border-color:var(--gold);color:#241a00;font-weight:800}
-button.primary:hover{background:#ffc15b}
-button:disabled{opacity:.4;cursor:not-allowed}
-input,textarea,select{width:100%;padding:10px 12px;margin-top:5px;background:#0b0a3a;border:1px solid var(--line);border-radius:9px;color:#fff;outline:none}
-input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px #f2a93b22}
-select option{background:#15145a;color:#fff}
-textarea{min-height:160px;resize:vertical}
-label{display:block;font-weight:600;color:#f4f2ff}
-.wrap{max-width:1400px;margin:auto;padding:18px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:10;margin:-18px -18px 0;padding:12px 18px;background:#0b0a3af7;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+button{background:var(--p2);border:2px solid #5b43c4;color:var(--tx);padding:9px 13px;border-radius:12px;cursor:pointer;font-weight:600;transition:background .15s,transform .1s}
+button:hover{background:#322866}button:active{transform:scale(.97)}
+button.primary{background:var(--go);border-color:var(--go);color:#1d1400}
+button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid #c4b5fd;outline-offset:2px}
+input,textarea,select{width:100%;padding:10px 12px;margin-top:5px;background:#0e0a28;border:1px solid var(--line);border-radius:10px;color:#fff;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--pu)}select option{background:#1a1535}textarea{min-height:160px;resize:vertical}
+label{display:block;font-weight:600}
+.wrap{max-width:1500px;margin:auto;padding:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:10;margin:-14px -14px 12px;padding:10px 14px;background:#0b0820f2;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{display:flex;gap:12px;align-items:center;min-width:0}
-.logo{width:44px;height:44px;display:grid;place-items:center;flex:none;background:#fff;color:#241a00;border:2px solid var(--gold);border-radius:50%;font-size:24px;box-shadow:0 2px 10px #0006}
-.muted,.hint{color:var(--muted);font-size:13px}
-.panel{background:linear-gradient(145deg,#19185fef,#12114fee);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 8px 24px #0003}
-.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;margin-top:18px}
-.side{display:grid;gap:14px;align-content:start}
-.section{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:750}
-.list{display:grid;gap:6px}
-.item{width:100%;text-align:left;background:transparent;border-color:transparent;white-space:normal}
-.item.active{background:#f2a93b20;border-color:var(--gold);color:#fff}
-.item small{display:block;color:var(--muted);font-size:12px}
-h1{font-size:clamp(16px,2vw,20px);margin:0;letter-spacing:.35px}
-h2{font-size:clamp(25px,4vw,38px);margin:0}
-.pill{border:1px solid var(--line);border-radius:30px;padding:5px 10px;color:var(--muted);font-size:12px;background:#ffffff09}
-.key{display:flex;align-items:center;gap:9px;border:1px solid var(--line);padding:7px;border-radius:10px;background:#0b0a3a66}
-.key strong{font-size:22px;color:var(--gold)}
-.lyrics{white-space:pre-wrap;overflow-wrap:anywhere;font:600 clamp(17px,2vw,22px)/1.9 ui-monospace,SFMono-Regular,Consolas,monospace;min-height:300px;margin-top:24px}
-.chord{color:var(--gold);font-weight:900}
-.tools{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
-.note{background:#ffffff0d;border-left:3px solid var(--gold);padding:10px;border-radius:5px;margin-top:8px}
-.auth{max-width:460px;margin:8vh auto}
-.modal{display:none;position:fixed;inset:0;background:#000b;z-index:1000001;place-items:center;padding:15px}
-.modal.show{display:grid}
-.modal .panel{width:min(600px,100%);display:grid;gap:12px;max-height:90vh;overflow:auto}
-.hidden{display:none!important}
-@media(max-width:760px){.wrap{padding:11px}.top{margin:-11px -11px 0;padding:9px 11px}.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.side .panel:last-child{grid-column:1/-1}.panel{padding:13px}}
-@media(max-width:480px){.side{grid-template-columns:1fr}.side .panel:last-child{grid-column:auto}.top{gap:8px}.brand{flex:1 1 100%}.top>.row{width:100%;justify-content:flex-end}.tools button{flex:1 1 auto}}
+.logo{width:42px;height:42px;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,#8b5cf6,#6d28d9);border-radius:12px;font-size:22px}
+.muted,.hint{color:var(--mu);font-size:13px}
+.panel{background:var(--p1);border:1px solid var(--line);border-radius:16px;padding:14px}
+.section{font-size:12px;color:var(--mu);margin-bottom:8px;font-weight:700}
+.list{display:grid;gap:0}
+h1{font-size:clamp(15px,2vw,19px);margin:0}h2{font-size:clamp(22px,3.4vw,32px);margin:0;line-height:1.15}
+.pill{border:1px solid var(--line);border-radius:30px;padding:5px 11px;color:var(--mu);font-size:12px;background:#ffffff0a}
+.auth{max-width:460px;margin:8vh auto}.tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:1000001;place-items:center;padding:15px}.modal.show{display:grid}
+.modal .panel{width:min(600px,100%);display:grid;gap:12px;max-height:90vh;overflow:auto}.hidden{display:none!important}
+/* deck */
+#strip{display:flex;overflow-x:auto;background:linear-gradient(90deg,#7c3aed,#4c1d95);border-radius:14px;padding:4px;margin-bottom:12px;scrollbar-width:none}
+#strip:empty{display:none}#strip button{flex:0 0 auto;background:transparent;border:0;border-radius:10px;font-size:13px;padding:12px 16px;color:#ffffffb8;font-weight:600}
+#strip button.on{background:#ffffff30;color:#fff}
+.deck{display:grid;gap:12px;grid-template-columns:270px minmax(0,1fr) 260px;grid-template-areas:"l s n" "l c c";align-items:start}
+.cl-l{grid-area:l;display:grid;gap:12px;position:sticky;top:76px}.stage{grid-area:s;min-height:380px}.notesc{grid-area:n;background:linear-gradient(160deg,#4c1d95,#2e1065);border-color:#7c3aed}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips .row{flex:1 1 100%}
+.item{width:100%;text-align:left;background:transparent;border:0;border-radius:0;white-space:normal;font-weight:600;font-size:14px;padding:13px 12px;border-bottom:3px solid var(--bg);text-transform:uppercase;background:#ffffff0c}
+.item.active{background:linear-gradient(90deg,#2f8f55,#1f5c3a)}.item small{display:block;color:#ffffff99;font-size:11px;text-transform:none;font-weight:500}
+#playlists .item{text-transform:none;border-radius:10px;border:0;padding:9px 12px;font-size:13px}
+#songlist{border-radius:12px;overflow:hidden}
+.tile{width:100%;background:#14402a;border:0;color:#7be0a0;font-size:20px;border-radius:12px;padding:12px}
+.trn{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.trn button{padding:14px}#prev,#next{background:#14402a;border-color:#4cae77}#restart{background:#4a2a08;border-color:var(--go)}
+#play{background:#14402a;border-color:#4cae77;font-size:22px}#loop{border-color:#3b82f6}#loop.on{background:#2563eb}
+.stg{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.key{display:flex;align-items:center;gap:9px;border:1px solid var(--line);padding:6px;border-radius:12px;background:#0e0a28}.key strong{font-size:22px;color:var(--ch)}
+#lyrics{margin-top:18px;font-size:clamp(17px,1.9vw,22px);line-height:1.35;min-height:260px}
+.sw{opacity:.55;padding:2px 0 8px;transition:opacity .2s}.sw.cur{opacity:1}.sp{display:inline-block;background:#ffffff16;border-radius:999px;padding:2px 12px;font-size:12px;margin:10px 0 4px;font-weight:700;text-transform:uppercase}
+.ln{display:flex;flex-wrap:wrap;margin:.3em 0;align-items:flex-end}.sg{display:inline-flex;flex-direction:column}
+.ch{color:var(--ch);font-weight:700;font-size:.8em;min-height:1.5em;padding-right:.7em;white-space:pre}
+.tx{white-space:pre}.cp{display:flex;gap:6px;flex-wrap:wrap;margin:.4em 0}.cp span{background:#6cb4ff22;color:var(--ch);padding:1px 9px;border-radius:7px;font-weight:700;font-size:.85em}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.92em}.mono.cl{color:var(--ch);font-weight:700}.gap{height:.7em}
+.note{background:#ffffff14;border-left:3px solid var(--go);padding:8px 10px;border-radius:8px;margin-top:8px;font-size:14px}
+.cons{grid-area:c;display:grid;gap:12px;grid-template-columns:110px minmax(0,1fr) 84px 84px;align-items:stretch}
+.tiles{display:grid;gap:10px}.tiles button{padding:16px 6px}#panic{background:#4a0f18;border-color:var(--rd);color:#fca5a5}#focus{background:#4a2a08;border-color:var(--go);color:#fcd34d}#addnote{background:#0b3a45;border-color:#22b8cf;color:#67e8f9}
+.pad{background:#241d4d;border-color:#5b43c4;display:grid;grid-template-columns:1fr 64px 64px;gap:10px}.pad h3{grid-column:1/-1;margin:0;color:#a78bfa;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+#keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;grid-column:1}#keys button{padding:12px 0}#keys button.on{background:#a78bfa;color:#120b24;border-color:#c4b5fd}
+#pstyle{grid-column:1/-1;background:#4c1d95;border-color:#8b5cf6}
+.fd{display:flex;flex-direction:column;align-items:center;gap:6px;background:#2d2050;border:2px solid var(--go);border-radius:14px;padding:10px 6px}.fd.pv{border-color:#8b5cf6;padding:8px 4px}
+.fd input[type=range]{writing-mode:vertical-lr;direction:rtl;height:130px;width:30px;padding:0;margin:0;accent-color:var(--go);background:none;border:0}.fd.pv input{accent-color:#a78bfa}
+.fd small{font-weight:700;color:var(--mu);font-size:12px}.fd button{width:100%;padding:5px 0;font-size:11px;border-radius:8px}.fd button.on{background:var(--go);color:#1d1400}.fd button.mu.on{background:var(--rd);color:#fff}
+#pon{width:100%;padding:6px 0}#pon.on{background:#a78bfa;color:#120b24}
+@media(max-width:900px){.deck{grid-template-columns:1fr;grid-template-areas:"s" "c" "n" "l"}.cl-l{position:static}.cons{grid-template-columns:1fr 1fr 1fr}.pad{grid-column:1/-1}.tiles{grid-auto-flow:column}}
+@media(max-width:520px){.wrap{padding:9px}.cons{grid-template-columns:1fr 1fr}.tiles{grid-column:1/-1}.pad{grid-template-columns:1fr 56px 56px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body><div class="wrap"><header class="top"><div class="brand"><div class="logo">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="who">Signed out</span><button id="logout" class="hidden">Sign out</button></div></header>
 <section id="auth" class="panel auth"><h2>Welcome to your songbook</h2><p class="muted">Sign in or create your Worship Team account. No email or Gmail required.</p><label>Username<input id="username" autocomplete="username" placeholder="Your username (e.g. Juan123)"></label><br><label>Password<input id="pass" type="password" autocomplete="current-password" placeholder="At least 8 characters"></label><div class="tools"><button class="primary" id="login">Sign in</button><button id="signup">Create account</button></div><p class="hint" id="msg">New accounts are Members. Only the Super Admin can promote members to Admin.</p><details style="margin-top:12px"><summary style="cursor:pointer;color:var(--gold)">Initial Super Admin setup</summary><p class="hint">Use this one-time setup only for the owner account. Username is fixed as Admin@Mart.</p><label>One-time setup code<input id="bootstrapToken" autocomplete="off" placeholder="Setup code"></label><label>Choose Super Admin password<input id="bootstrapPass" type="password" autocomplete="new-password" placeholder="At least 8 characters"></label><button id="bootstrap" class="primary" style="margin-top:10px">Create Super Admin account</button></details></section>
-<div id="welcome" class="modal"><div class="panel" style="max-width:520px;text-align:center;padding:30px"><div style="font-size:42px;color:var(--gold)">♫</div><h2>Welcome to JTNAAN Worship Team Hub!</h2><p>Thank you for joining our Worship Team community. We’re grateful to have you with us as we serve together through music and worship. May God bless you and use your gifts to glorify Him!</p><button id="welcomeClose" class="primary">Let’s get started</button></div></div><div id="app" class="hidden"><div class="layout"><aside class="side"><section class="panel"><div class="section">Playlists / sets</div><div id="playlists" class="list"></div><button id="newlist" style="width:100%;margin-top:10px">＋ New playlist</button></section><section class="panel"><div class="section">Songs in this set</div><div id="songlist" class="list"></div><button id="newsong" style="width:100%;margin-top:10px">＋ Add song</button></section><section class="panel"><div class="section">Live session</div><p id="controller" class="muted">No controller assigned</p><button id="claim" class="primary" style="width:100%">Become main controller</button><button id="release" style="width:100%;margin-top:8px">Release control</button><p class="hint">The controller leads song selection, key and scrolling for everyone.</p></section></aside>
-<main class="panel"><div class="row"><div><div class="section" id="setname">Choose a playlist</div><h2 id="title">Select a song</h2><div class="muted" id="artist">Your shared songbook</div></div><div class="key"><button id="down">−</button><div><div class="muted">KEY</div><strong id="key">—</strong></div><button id="up">＋</button></div></div><div class="tools"><button id="prev">← Previous</button><button id="next" class="primary">Next song →</button><button id="edit">Edit song</button><button id="focus">Focus view</button></div><div id="lyrics" class="lyrics">Create a playlist and add your first song.</div><section class="panel" style="margin-top:18px;background:#101a17"><div class="row"><b>Stage notes & annotations</b><button id="addnote">＋ Add note</button></div><div id="notes" class="muted">Notes from the controller appear here.</div></section></main></div><p class="muted" style="text-align:center;margin-top:18px">Worship Team Hub · Live shared songbook</p></div></div>
+<div id="welcome" class="modal"><div class="panel" style="max-width:520px;text-align:center;padding:30px"><div style="font-size:42px;color:var(--gold)">♫</div><h2>Welcome to JTNAAN Worship Team Hub!</h2><p>Thank you for joining our Worship Team community. We’re grateful to have you with us as we serve together through music and worship. May God bless you and use your gifts to glorify Him!</p><button id="welcomeClose" class="primary">Let’s get started</button></div></div><div id="app" class="hidden"><div id="strip" role="tablist" aria-label="Song sections"></div>
+<div class="deck">
+<aside class="cl-l">
+<section class="panel"><div class="section">Playlists</div><div id="playlists" class="list chips"></div><button id="newlist" style="width:100%;margin-top:10px">＋ New playlist</button></section>
+<section class="panel" style="padding:0;overflow:hidden"><div class="section" style="padding:14px 14px 0">Songs in this set</div><div id="songlist" class="list"></div><div style="padding:10px;display:grid;gap:8px"><button id="newsong" style="width:100%">＋ Add song</button><button class="tile" id="bpmTile" title="Edit tempo and time signature">— BPM</button></div></section>
+<section class="panel trn"><button id="prev" aria-label="Previous song">◀ Song</button><button id="next" class="primary" aria-label="Next song">Song ▶</button><button id="restart" aria-label="Back to start">⏮</button><button id="loop" aria-label="Loop section">⟲ Loop</button><button id="play" style="grid-column:1/-1">▶ Play</button></section>
+<section class="panel"><p id="controller" class="muted" style="margin:0">No controller assigned</p><button id="claim" class="primary" style="width:100%">Become main controller</button><button id="release" style="width:100%;margin-top:8px">Release control</button></section>
+</aside>
+<main class="panel stage"><div class="stg"><div><div class="muted" id="setname">Choose a playlist</div><h2 id="title">Select a song</h2><div class="muted" id="artist">Your shared songbook</div></div><div class="tools" style="margin:0;align-items:center"><button id="edit">✎ Edit song</button><div class="key"><button id="down" aria-label="Key down">−</button><div><div class="muted">KEY</div><strong id="key">—</strong></div><button id="up" aria-label="Key up">＋</button></div></div></div><div id="lyrics">Create a playlist and add your first song.</div></main>
+<aside class="panel notesc"><div class="section" style="color:#ddd6fe">Notes</div><div id="notes" class="muted">Notes from the controller appear here.</div></aside>
+<section class="cons">
+<div class="tiles"><button id="panic">✋ Panic</button><button id="focus">Focus</button><button id="addnote">Notes ＋</button></div>
+<div class="panel pad"><h3>PAD PLAYER <span id="pname" class="muted"></span></h3><div id="keys"></div><div class="fd pv"><button id="pon" aria-label="Pad power">⏻</button><input id="pflt" type="range" min="0" max="100" value="60" aria-label="Filter"><small>Filter</small></div><div class="fd pv"><span></span><input id="pvol" type="range" min="0" max="100" value="50" aria-label="Pad volume"><small>Volume</small></div><button id="pstyle">Warm</button></div>
+<div class="fd"><input id="gvol" type="range" min="0" max="100" value="80" aria-label="Guide volume"><small>Guide</small><button data-s="g">Solo</button><button data-m="g" class="mu">Mute</button></div>
+<div class="fd"><input id="cvol" type="range" min="0" max="100" value="80" aria-label="Click volume"><small>Click</small><button data-s="c">Solo</button><button data-m="c" class="mu">Mute</button></div>
+</section></div></div>
+
 <div id="modal" class="modal"><div class="panel"><div class="row"><h2 id="mtitle">Create</h2><button id="close">✕</button></div><div id="fields"></div><div class="tools"><button id="save" class="primary">Save</button><button id="cancel">Cancel</button></div></div></div>
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.49.1';
@@ -58,7 +89,7 @@ const isSuperAdmin=()=>!!user&&user.app_metadata?.role==='super_admin';const isA
 function rootChord(c,n){let m=c.match(/^([A-G])([#b]?)(.*)$/);if(!m)return c;let roots=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],r=m[1]+m[2],flat={Db:'C#',Eb:'D#',Gb:'F#',Ab:'G#',Bb:'A#'};r=flat[r]||r;let i=roots.indexOf(r);return i<0?c:roots[(i+n%12+12)%12]+m[3]}
 function chord(c,n){return c.split('/').map(x=>rootChord(x,n)).join('/')}
 function trans(s,n){return s.replace(/\[([A-G](?:#|b)?(?:m|maj|min|dim|aug|sus|add)?\d*(?:\/[A-G](?:#|b)?)?)\]/g,(_,c)=>'['+chord(c,n)+']').replace(/(^|[\s|])([A-G](?:#|b)?(?:m|maj|min|dim|aug|sus|add)?\d*)(?=($|[\s|–—-]))/gm,(_,a,c)=>a+chord(c,n))}
-function draw(){let n=live?.transpose||0;let raw=current?.lyrics_chords||'No lyrics/chords yet. Select Edit song to add them.';$('lyrics').innerHTML=esc(trans(raw,n)).replace(/\[([^\]]+)\]/g,'<span class="chord">[$1]</span>');$('key').textContent=current?.original_key?chord(current.original_key,n):'—';$('title').textContent=current?.title||'Select a song';$('artist').textContent=current?.artist||'';$('setname').textContent=active?.name||'Choose a playlist';$('notes').innerHTML=(live?.annotations||[]).map(x=>'<div class="note">'+esc(x.text)+'<div class="muted">'+esc(x.by)+'</div></div>').join('')||'No notes yet.';$('controller').textContent='Main controller: '+(live?.controller_user_id?(owner()?'Admin@Mart (You)':'Admin@Mart'):'Admin@Mart (will connect when Super Admin signs in)');['up','down','prev','next','edit','addnote'].forEach(id=>$(id).disabled=!owner());$('claim').hidden=true;$('release').hidden=true;$('status').textContent=live?.is_live?'● Live session':'● Team connected'}
+function draw(){let n=live?.transpose||0;let raw=current?.lyrics_chords||'No lyrics/chords yet. Select Edit song to add them.';$('lyrics').innerHTML=esc(trans(raw,n)).replace(/\[([^\]]+)\]/g,'<span class="chord">[$1]</span>');$('key').textContent=current?.original_key?chord(current.original_key,n):'—';$('title').textContent=current?.title||'Select a song';$('artist').textContent=current?.artist||'';$('setname').textContent=active?.name||'Choose a playlist';$('notes').innerHTML=(live?.annotations||[]).map(x=>'<div class="note">'+esc(x.text)+'<div class="muted">'+esc(x.by)+'</div></div>').join('')||'No notes yet.';$('controller').textContent='Main controller: '+(live?.controller_user_id?(owner()?'Admin@Mart (You)':'Admin@Mart'):'Admin@Mart (will connect when Super Admin signs in)');['up','down','prev','next','edit','addnote'].forEach(id=>$(id).disabled=!owner());$('claim').hidden=true;$('release').hidden=true;$('status').textContent=live?.is_live?'● Live session':'● Team connected';try{wxPost()}catch(e){console.error(e)}}
 function listsDraw(){$('playlists').innerHTML=lists.map(p=>'<div class="row" style="gap:5px"><button class="item '+(active?.id===p.id?'active':'')+'" data-p="'+p.id+'" style="flex:1">'+esc(p.name)+'<small>'+esc(p.event_date||'Playlist')+'</small></button>'+(isSuperAdmin()?'<button data-edit-p="'+p.id+'" title="Edit playlist" style="padding:7px 9px">Edit</button>':'')+'</div>').join('')||'<p class="muted">No playlists yet</p>';$('songlist').innerHTML=links.filter(x=>x.playlist_id===active?.id).map((x,i)=>{let s=songs.find(y=>y.id===x.song_id);return s?'<button class="item '+(current?.id===s.id?'active':'')+'" data-s="'+s.id+'">'+(i+1)+'. '+esc(s.title)+'<small>'+esc(s.artist)+'</small></button>':''}).join('')||'<p class="muted">No songs in this set</p>';$('playlists').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>chooseList(b.dataset.p));$('playlists').querySelectorAll('[data-edit-p]').forEach(b=>b.onclick=()=>editPlaylist(b.dataset.editP));$('songlist').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>chooseSong(b.dataset.s,true))}
 async function load(){let [a,b,c,d,e]=await Promise.all([db.from('worship_playlists').select('*').order('created_at'),db.from('worship_songs').select('*').order('title'),db.from('worship_playlist_songs').select('*').order('position'),db.from('worship_live_state').select('*').eq('id','main').single(),db.from('worship_playlist_name_options').select('*').order('name')]);let err=[a,b,c,d,e].find(x=>x.error);if(err){$('status').textContent='Database error: '+err.error.message;throw new Error(err.error.message)}lists=a.data;songs=b.data;links=c.data;live=d.data;playlistOptions=e.data||[];if(!active)active=lists.find(x=>x.id===live.playlist_id)||lists[0]||null;if(live.playlist_id)active=lists.find(x=>x.id===live.playlist_id)||active;if(live.song_id)current=songs.find(x=>x.id===live.song_id)||current;if(!current&&active){let l=links.find(x=>x.playlist_id===active.id);current=songs.find(x=>x.id===l?.song_id)||null}listsDraw();draw();if(!owner()&&live.scroll_position>0)window.scrollTo({top:live.scroll_position,behavior:'smooth'})}
 async function patch(v){if(!owner())return;let {error}=await db.from('worship_live_state').update({...v,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id','main');if(error)alert(error.message);else await load()}
@@ -85,5 +116,51 @@ $('bootstrap').onclick=async()=>{const bootstrap_token=$('bootstrapToken').value
 $('logout').onclick=()=>db.auth.signOut();
 async function enter(s){user=s?.user||null;$('auth').classList.toggle('hidden',!!user);$('app').classList.toggle('hidden',!user);$('logout').classList.toggle('hidden',!user);$('who').textContent=user?.user_metadata?.username||'Signed out';if(!user){if(channel)db.removeChannel(channel);return}if(isSuperAdmin()){const {error}=await db.from('worship_live_state').update({controller_user_id:user.id,is_live:true,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id','main');if(error){$('status').textContent='Controller setup failed: '+error.message;console.error(error)}}await load();if(channel)db.removeChannel(channel);channel=db.channel('worship-team-sync').on('postgres_changes',{event:'*',schema:'public',table:'worship_live_state'},load).on('postgres_changes',{event:'*',schema:'public',table:'worship_songs'},load).on('postgres_changes',{event:'*',schema:'public',table:'worship_playlists'},load).on('postgres_changes',{event:'*',schema:'public',table:'worship_playlist_songs'},load).subscribe(x=>{if(x==='SUBSCRIBED')$('status').textContent='● Realtime connected'})}
 let scrollTimer;window.addEventListener('scroll',()=>{if(owner()){clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>patch({scroll_position:window.scrollY}),250)}},{passive:true});
+/* ===== Stage tools: sections, chords-over-lyrics, tempo, click, guide, pad ===== */
+const WCH=/^[A-G][#b]?(?:m|maj|min|dim|aug|sus|add)?\d*(?:\/[A-G][#b]?)?$/,WSEC=/^\s*\[?\s*(intro|verse|pre-?chorus|chorus|bridge|interlude|instrumental|tag|outro|ending|refrain|turnaround|vamp)\b[^\]\n]*\]?:?\s*$/i;
+const WP={KEYS:['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'],ST:[{n:'Warm',t:['sawtooth','sine','triangle'],c:.55},{n:'Cool & Brisk',t:['triangle','sine','sine'],c:.85},{n:'Shimmer',t:['sine','sine','sine'],c:1}],FL:{'C#':'Db','D#':'Eb','G#':'Ab','A#':'Bb'}};
+const W={sid:null,sec:0,secs:[],play:0,loop:0,bpm:72,ts:'4/4',vol:{g:.8,c:.8},mute:{},solo:null,ac:null,key:null,si:0,pv:.5,fl:.6,on:0,pn:null,tm:null};
+const wchO=l=>{const t=l.trim();return!!t&&t.split(/[\s|]+/).every(x=>WCH.test(x)||/^[-–—x\d]+$/i.test(x))&&t.split(/[\s|]+/).some(x=>WCH.test(x))};
+function wxSecs(raw){const S=[];let c=null;raw.split('\n').forEach(l=>{if(WSEC.test(l)){c={n:l.replace(/[\[\]:]/g,'').trim(),L:[]};S.push(c)}else{if(!c){c={n:'',L:[]};S.push(c)}c.L.push(l)}});return S.filter(s=>s.n||s.L.some(l=>l.trim()))}
+function wxLine(l,n,ol){if(!l.trim())return'<div class="gap"></div>';
+ if(wchO(l)){const t=l.replace(/[^\s|]+/g,x=>WCH.test(x)?chord(x,n):x);return ol?'<div class="mono cl">'+esc(t)+'</div>':'<div class="cp">'+t.trim().split(/[\s|]+/).map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>'}
+ if(!/\[[^\]]+\]/.test(l))return'<div class="'+(ol?'mono':'tx')+'" style="white-space:pre-wrap">'+esc(l)+'</div>';
+ return'<div class="ln">'+l.split(/\[([^\]]+)\]/).reduce((a,p,i,arr)=>{if(i%2)return a;const c=i?arr[i-1]:'';return a+(c||p?'<span class="sg"><span class="ch">'+esc(c?(WCH.test(c)?chord(c,n):c):' ')+'</span><span class="tx">'+(esc(p)||'&nbsp;')+'</span></span>':'')},'')+'</div>'}
+function wxKey(){const k=current?.original_key;if(!k)return null;const r=(k.match(/^[A-G][#b]?/)||[''])[0];if(!r)return null;const x=chord(r,live?.transpose||0);return WP.FL[x]||x}
+function wxMeta(){try{return JSON.parse(localStorage.getItem('wx_'+current?.id))||{}}catch(_){return{}}}
+function wxPost(){if(!current){$('strip').innerHTML='';wxBpm();return}
+ const n=live?.transpose||0,raw=current.lyrics_chords||'',S=wxSecs(raw);W.secs=S;
+ if(W.sid!==current.id){W.sid=current.id;W.sec=0;wxStop();const m=wxMeta();W.bpm=m.bpm||72;W.ts=m.ts||'4/4'}
+ W.sec=Math.min(W.sec,Math.max(0,S.length-1));
+ if(raw){const ol=raw.split('\n').some(l=>wchO(l)&&!/\[/.test(l));$('lyrics').innerHTML=S.map((s,i)=>'<div class="sw'+(i==W.sec?' cur':'')+'" id="sw'+i+'">'+(s.n?'<span class="sp">'+esc(s.n)+'</span>':'')+s.L.map(l=>wxLine(l,n,ol)).join('')+'</div>').join('')}
+ const named=S.map((s,i)=>[s,i]).filter(x=>x[0].n);$('strip').innerHTML=named.map(x=>'<button role="tab" data-i="'+x[1]+'" class="'+(x[1]==W.sec?'on':'')+'">'+esc(x[0].n)+'</button>').join('');
+ wxBpm();const k=wxKey();if(k&&k!==W.key){W.key=k;if(W.on)wxPad()}wxKeys()}
+function wxMark(go){document.querySelectorAll('.sw').forEach((e,i)=>e.classList.toggle('cur',i==W.sec));document.querySelectorAll('#strip button').forEach(b=>b.classList.toggle('on',+b.dataset.i==W.sec));if(go){const e=$('sw'+W.sec);if(e)e.scrollIntoView({block:'center',behavior:'smooth'})}}
+function wxBpm(){$('bpmTile').textContent=W.bpm+' BPM  '+W.ts}
+$('strip').onclick=e=>{const b=e.target.closest('button');if(b){W.sec=+b.dataset.i;wxMark(1);wxSay()}};
+$('bpmTile').onclick=()=>{if(!current)return;modal('Tempo','<label>BPM<input id="fBpm" type="number" min="30" max="260" value="'+W.bpm+'"></label><label>Time signature<select id="fTs">'+['4/4','3/4','6/8','2/4'].map(t=>'<option'+(t==W.ts?' selected':'')+'>'+t+'</option>').join('')+'</select></label><p class="hint">Tempo is saved on this device for this song.</p>',async()=>{const b=+$('fBpm').value;if(b<30||b>260)throw new Error('Tempo must be between 30 and 260 BPM.');W.bpm=b;W.ts=$('fTs').value;localStorage.setItem('wx_'+current.id,JSON.stringify({bpm:b,ts:W.ts}));const p=W.play;wxStop();wxBpm();close();if(p)wxPlay()})};
+function wxAc(){if(!W.ac)W.ac=new(window.AudioContext||window.webkitAudioContext)();if(W.ac.state==='suspended')W.ac.resume();return W.ac}
+const wxV=k=>W.solo&&W.solo!==k?0:W.mute[k]?0:W.vol[k];
+function wxClk(t,acc){const v=wxV('c');if(!v)return;const a=W.ac,o=a.createOscillator(),g=a.createGain();o.frequency.value=acc?1600:1000;g.gain.setValueAtTime(v*.6,t);g.gain.exponentialRampToValueAtTime(.001,t+.06);o.connect(g).connect(a.destination);o.start(t);o.stop(t+.08)}
+function wxSay(){if(!W.play||!window.speechSynthesis||!wxV('g')||!W.secs[W.sec]?.n)return;const u=new SpeechSynthesisUtterance(W.secs[W.sec].n);u.volume=wxV('g');speechSynthesis.cancel();speechSynthesis.speak(u)}
+function wxAdv(){if(!W.play)return;if(!W.loop){if(W.sec+1<W.secs.length)W.sec++;else{wxStop();return}}wxMark(owner());wxSay()}
+function wxPlay(){if(W.play){wxStop();return}if(!current)return;const a=wxAc(),nb=parseInt(W.ts)||4,sub=W.ts==='6/8'?.5:1;W.play=1;W.beat=0;W.nt=a.currentTime+.1;$('play').textContent='■ Stop';wxMark(owner());wxSay();
+ W.tm=setInterval(()=>{while(W.nt<a.currentTime+.15){wxClk(W.nt,W.beat%nb===0);W.beat++;W.nt+=60/W.bpm*sub;if(W.beat%(nb*4)===0)setTimeout(wxAdv,Math.max(0,(W.nt-a.currentTime)*1000))}},25)}
+function wxStop(){clearInterval(W.tm);W.play=0;if($('play'))$('play').textContent='▶ Play';if(window.speechSynthesis)speechSynthesis.cancel()}
+function wxKeys(){$('keys').innerHTML=WP.KEYS.map(k=>'<button data-k="'+k+'" class="'+(W.on&&W.key===k?'on':'')+'">'+k+'</button>').join('');$('pon').classList.toggle('on',!!W.on);$('pname').textContent=WP.ST[W.si].n}
+function wxPad(){const a=wxAc(),old=W.pn;if(old){old.g.gain.cancelScheduledValues(a.currentTime);old.g.gain.setTargetAtTime(0,a.currentTime,.6);setTimeout(()=>old.os.forEach(o=>o.stop()),3500);W.pn=null}
+ const i=WP.KEYS.indexOf(W.key);if(!W.on||i<0)return;const f=65.41*Math.pow(2,i/12)*2,st=WP.ST[W.si],g=a.createGain(),fl=a.createBiquadFilter();fl.type='lowpass';g.gain.setValueAtTime(0,a.currentTime);g.gain.linearRampToValueAtTime(W.pv*.3,a.currentTime+2.5);
+ const os=[[1,0],[1.4983,1],[2,2],[.5,0]].map((r,j)=>{const o=a.createOscillator();o.type=st.t[r[1]];o.frequency.value=f*r[0];o.detune.value=(j-1.5)*5;o.connect(fl);o.start();return o});fl.connect(g).connect(a.destination);W.pn={os,g,fl};wxFlt()}
+function wxFlt(){const p=W.pn;if(!p)return;const a=W.ac,c=WP.ST[W.si].c;p.fl.frequency.setTargetAtTime(180+W.fl*W.fl*6000*c,a.currentTime,.1);p.g.gain.setTargetAtTime(W.pv*.3,a.currentTime,.2)}
+$('keys').onclick=e=>{const b=e.target.closest('button');if(!b)return;W.key=b.dataset.k;W.on=1;wxPad();wxKeys()};
+$('pon').onclick=()=>{W.on^=1;if(!W.key)W.key=wxKey()||'C';wxPad();wxKeys()};
+$('pstyle').onclick=()=>{W.si=(W.si+1)%WP.ST.length;wxPad();wxKeys()};
+$('pflt').oninput=e=>{W.fl=e.target.value/100;wxFlt()};$('pvol').oninput=e=>{W.pv=e.target.value/100;wxFlt()};
+$('gvol').oninput=e=>W.vol.g=e.target.value/100;$('cvol').oninput=e=>W.vol.c=e.target.value/100;
+document.querySelectorAll('.fd button[data-m]').forEach(b=>b.onclick=()=>{const k=b.dataset.m;W.mute[k]=!W.mute[k];b.classList.toggle('on',W.mute[k])});
+document.querySelectorAll('.fd button[data-s]').forEach(b=>b.onclick=()=>{const k=b.dataset.s;W.solo=W.solo===k?null:k;document.querySelectorAll('.fd button[data-s]').forEach(x=>x.classList.toggle('on',x.dataset.s===W.solo))});
+$('play').onclick=wxPlay;$('loop').onclick=e=>{W.loop^=1;e.currentTarget.classList.toggle('on',!!W.loop)};
+$('restart').onclick=()=>{W.sec=0;wxMark(1);if(W.play){wxStop();wxPlay()}};
+$('panic').onclick=()=>{wxStop();W.on=0;wxPad();wxKeys()};
 $('welcomeClose').onclick=()=>$('welcome').classList.remove('show');db.auth.onAuthStateChange((_e,s)=>enter(s));let {data:{session}}=await db.auth.getSession();await enter(session);if(session&&localStorage.getItem('jtn_worship_welcome')==='1'){$('welcome').classList.add('show');localStorage.removeItem('jtn_worship_welcome')};
 </script></body></html>
