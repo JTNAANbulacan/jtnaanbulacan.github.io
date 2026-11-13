@@ -138,8 +138,30 @@ h1{font-size:clamp(15px,2vw,19px);margin:0}h2{font-size:clamp(22px,3.4vw,32px);m
   .playbox-controls button{min-height:28px;padding:4px 5px;font-size:10px}
 }
 
-/* Playback controls and song-part buttons sit below the lyrics */
-.stage .playbox{position:static;top:auto;max-height:none;overflow:visible;overscroll-behavior:auto;margin-top:16px}
+/* Freeze playback controls and song parts at the bottom while lyrics scroll */
+.stage .playbox{
+  position:sticky;
+  bottom:10px;
+  top:auto;
+  z-index:20;
+  max-height:clamp(125px,25vh,205px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  margin-top:16px;
+  margin-bottom:8px;
+  background:#12103f;
+  border:1px solid #7770cf;
+  box-shadow:0 -8px 24px #05041dcc,0 5px 18px #05041d99;
+  scrollbar-width:thin;
+}
+@media(max-width:520px){
+  .stage .playbox{
+    bottom:7px;
+    max-height:clamp(112px,29svh,180px);
+    padding:7px;
+    border-radius:12px;
+  }
+}
 </style></head><body><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><button id="logout" class="hidden">Sign out</button></div></header>
 <section id="auth" class="panel auth"><h2>Welcome to your songbook</h2><p class="muted">Sign in or create your Worship Team account. No email or Gmail required.</p><label>Username<input id="username" autocomplete="username" placeholder="Your username (e.g. Juan123)"></label><br><label>Password<input id="pass" type="password" autocomplete="current-password" placeholder="At least 8 characters"></label><div class="tools"><button class="primary" id="login">Sign in</button><button id="signup">Create account</button></div><p class="hint" id="msg">New accounts are Members. Only the Super Admin can promote members to Admin.</p><details style="margin-top:12px"><summary style="cursor:pointer;color:var(--gold)">Initial Super Admin setup</summary><p class="hint">Use this one-time setup only for the owner account. Username is fixed as Admin@Mart.</p><label>One-time setup code<input id="bootstrapToken" autocomplete="off" placeholder="Setup code"></label><label>Choose Super Admin password<input id="bootstrapPass" type="password" autocomplete="new-password" placeholder="At least 8 characters"></label><button id="bootstrap" class="primary" style="margin-top:10px">Create Super Admin account</button></details></section>
 <div id="welcome" class="modal"><div class="panel" style="max-width:520px;text-align:center;padding:30px"><div style="font-size:42px;color:var(--gold)">♫</div><h2>Welcome to JTNAAN Worship Team Hub!</h2><p>Thank you for joining our Worship Team community. We’re grateful to have you with us as we serve together through music and worship. May God bless you and use your gifts to glorify Him!</p><button id="welcomeClose" class="primary">Let’s get started</button></div></div><div id="app" class="hidden"><div class="deck">
