@@ -1,5 +1,49 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101a18"><title>JTNAAN Worship Team Hub</title><style>
-:root{color-scheme:dark;--bg:#0d1513;--p:#17221f;--p2:#26372f;--line:#405248;--muted:#a9b9ae;--gold:#e9bd69;--txt:#f5f5ed}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 70% 0,#294438,transparent 45%),var(--bg);color:var(--txt);font:15px/1.5 system-ui}button,input,textarea{font:inherit}button{background:var(--p2);border:1px solid var(--line);color:var(--txt);padding:10px 14px;border-radius:11px;cursor:pointer}button.primary{background:var(--gold);color:#172019;font-weight:750}button:disabled{opacity:.4}input,textarea{width:100%;padding:11px;background:#101a17;border:1px solid var(--line);border-radius:10px;color:white}textarea{min-height:160px}.wrap{max-width:1300px;margin:auto;padding:18px}.top,.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.brand{display:flex;gap:12px;align-items:center}.logo{background:var(--gold);color:#152018;border-radius:13px;padding:10px;font-size:23px}.muted,.hint{color:var(--muted);font-size:13px}.panel{background:#17221fee;border:1px solid var(--line);border-radius:17px;padding:16px}.layout{display:grid;grid-template-columns:270px 1fr;gap:16px;margin-top:18px}.side{display:grid;gap:14px;align-content:start}.section{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}.list{display:grid;gap:6px}.item{width:100%;text-align:left;background:transparent;border-color:transparent}.item.active{background:#31483a;border-color:#607867}.item small{display:block;color:var(--muted)}h1{font-size:20px;margin:0}h2{font-size:clamp(25px,4vw,38px);margin:0}.pill{border:1px solid var(--line);border-radius:30px;padding:5px 10px;color:var(--muted);font-size:12px}.key{display:flex;align-items:center;gap:9px;border:1px solid var(--line);padding:7px;border-radius:13px}.key strong{font-size:22px;color:var(--gold)}.lyrics{white-space:pre-wrap;overflow-wrap:anywhere;font:600 clamp(17px,2vw,22px)/1.9 ui-monospace,monospace;min-height:300px;margin-top:24px}.chord{color:var(--gold);font-weight:900}.tools{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.note{background:#28382f;border-left:3px solid var(--gold);padding:10px;border-radius:8px;margin-top:8px}.auth{max-width:440px;margin:8vh auto}.modal{display:none;position:fixed;inset:0;background:#000b;z-index:3;place-items:center;padding:15px}.modal.show{display:grid}.modal .panel{width:min(600px,100%);display:grid;gap:12px;max-height:90vh;overflow:auto}.hidden{display:none!important}@media(max-width:760px){.wrap{padding:11px}.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.side .panel:last-child{grid-column:1/-1}.panel{padding:13px}}@media(max-width:420px){.side{grid-template-columns:1fr}.side .panel:last-child{grid-column:auto}}
+:root{color-scheme:dark;--bg:#0b0a3a;--card:#15145a;--card2:#1d1c6e;--gold:#f2a93b;--line:#3a3a9a;--muted:#b9bde6;--txt:#fff}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 90% 0,rgba(42,42,168,.5),transparent 48%),linear-gradient(180deg,#0b0a3a,#09082e);color:var(--txt);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}
+button{background:#ffffff12;border:1px solid var(--line);color:var(--txt);padding:9px 13px;border-radius:9px;cursor:pointer;transition:background .18s,border-color .18s}
+button:hover{background:#ffffff22;border-color:#7777d9}
+button.primary{background:var(--gold);border-color:var(--gold);color:#241a00;font-weight:800}
+button.primary:hover{background:#ffc15b}
+button:disabled{opacity:.4;cursor:not-allowed}
+input,textarea,select{width:100%;padding:10px 12px;margin-top:5px;background:#0b0a3a;border:1px solid var(--line);border-radius:9px;color:#fff;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px #f2a93b22}
+select option{background:#15145a;color:#fff}
+textarea{min-height:160px;resize:vertical}
+label{display:block;font-weight:600;color:#f4f2ff}
+.wrap{max-width:1400px;margin:auto;padding:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:10;margin:-18px -18px 0;padding:12px 18px;background:#0b0a3af7;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center;min-width:0}
+.logo{width:44px;height:44px;display:grid;place-items:center;flex:none;background:#fff;color:#241a00;border:2px solid var(--gold);border-radius:50%;font-size:24px;box-shadow:0 2px 10px #0006}
+.muted,.hint{color:var(--muted);font-size:13px}
+.panel{background:linear-gradient(145deg,#19185fef,#12114fee);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 8px 24px #0003}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;margin-top:18px}
+.side{display:grid;gap:14px;align-content:start}
+.section{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:750}
+.list{display:grid;gap:6px}
+.item{width:100%;text-align:left;background:transparent;border-color:transparent;white-space:normal}
+.item.active{background:#f2a93b20;border-color:var(--gold);color:#fff}
+.item small{display:block;color:var(--muted);font-size:12px}
+h1{font-size:clamp(16px,2vw,20px);margin:0;letter-spacing:.35px}
+h2{font-size:clamp(25px,4vw,38px);margin:0}
+.pill{border:1px solid var(--line);border-radius:30px;padding:5px 10px;color:var(--muted);font-size:12px;background:#ffffff09}
+.key{display:flex;align-items:center;gap:9px;border:1px solid var(--line);padding:7px;border-radius:10px;background:#0b0a3a66}
+.key strong{font-size:22px;color:var(--gold)}
+.lyrics{white-space:pre-wrap;overflow-wrap:anywhere;font:600 clamp(17px,2vw,22px)/1.9 ui-monospace,SFMono-Regular,Consolas,monospace;min-height:300px;margin-top:24px}
+.chord{color:var(--gold);font-weight:900}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+.note{background:#ffffff0d;border-left:3px solid var(--gold);padding:10px;border-radius:5px;margin-top:8px}
+.auth{max-width:460px;margin:8vh auto}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:1000001;place-items:center;padding:15px}
+.modal.show{display:grid}
+.modal .panel{width:min(600px,100%);display:grid;gap:12px;max-height:90vh;overflow:auto}
+.hidden{display:none!important}
+@media(max-width:760px){.wrap{padding:11px}.top{margin:-11px -11px 0;padding:9px 11px}.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.side .panel:last-child{grid-column:1/-1}.panel{padding:13px}}
+@media(max-width:480px){.side{grid-template-columns:1fr}.side .panel:last-child{grid-column:auto}.top{gap:8px}.brand{flex:1 1 100%}.top>.row{width:100%;justify-content:flex-end}.tools button{flex:1 1 auto}}
 </style></head><body><div class="wrap"><header class="top"><div class="brand"><div class="logo">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="who">Signed out</span><button id="logout" class="hidden">Sign out</button></div></header>
 <section id="auth" class="panel auth"><h2>Welcome to your songbook</h2><p class="muted">Sign in or create your Worship Team account. No email or Gmail required.</p><label>Username<input id="username" autocomplete="username" placeholder="Your username (e.g. Juan123)"></label><br><label>Password<input id="pass" type="password" autocomplete="current-password" placeholder="At least 8 characters"></label><div class="tools"><button class="primary" id="login">Sign in</button><button id="signup">Create account</button></div><p class="hint" id="msg">New accounts are Members. Only the Super Admin can promote members to Admin.</p><details style="margin-top:12px"><summary style="cursor:pointer;color:var(--gold)">Initial Super Admin setup</summary><p class="hint">Use this one-time setup only for the owner account. Username is fixed as Admin@Mart.</p><label>One-time setup code<input id="bootstrapToken" autocomplete="off" placeholder="Setup code"></label><label>Choose Super Admin password<input id="bootstrapPass" type="password" autocomplete="new-password" placeholder="At least 8 characters"></label><button id="bootstrap" class="primary" style="margin-top:10px">Create Super Admin account</button></details></section>
 <div id="welcome" class="modal"><div class="panel" style="max-width:520px;text-align:center;padding:30px"><div style="font-size:42px;color:var(--gold)">♫</div><h2>Welcome to JTNAAN Worship Team Hub!</h2><p>Thank you for joining our Worship Team community. We’re grateful to have you with us as we serve together through music and worship. May God bless you and use your gifts to glorify Him!</p><button id="welcomeClose" class="primary">Let’s get started</button></div></div><div id="app" class="hidden"><div class="layout"><aside class="side"><section class="panel"><div class="section">Playlists / sets</div><div id="playlists" class="list"></div><button id="newlist" style="width:100%;margin-top:10px">＋ New playlist</button></section><section class="panel"><div class="section">Songs in this set</div><div id="songlist" class="list"></div><button id="newsong" style="width:100%;margin-top:10px">＋ Add song</button></section><section class="panel"><div class="section">Live session</div><p id="controller" class="muted">No controller assigned</p><button id="claim" class="primary" style="width:100%">Become main controller</button><button id="release" style="width:100%;margin-top:8px">Release control</button><p class="hint">The controller leads song selection, key and scrolling for everyone.</p></section></aside>
