@@ -411,28 +411,39 @@ function tunerRenderStrings(){const preset=tunerPresets[$('tunerInstrument').val
 $('tunerInstrument').onchange=()=>{tunerTarget=0;tunerRenderStrings();};
 $('tunerStrings').onclick=e=>{const b=e.target.closest('[data-tuner-string]');if(!b)return;tunerTarget=+b.dataset.tunerString;tunerRenderStrings();};
 function tunerPitch(buf,sr){
- let rms=0;for(let i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);if(rms<.008)return null;
- const min=Math.max(2,Math.floor(sr/1000)),max=Math.min(Math.floor(sr/35),Math.floor(buf.length*.48));
- let best=-1,bestCorr=0;
- for(let lag=min;lag<=max;lag++){
-  let corr=0,n=0;
-  for(let i=0;i<buf.length-lag;i+=3){corr+=buf[i]*buf[i+lag];n++}
-  corr/=Math.max(1,n);
-  if(corr>bestCorr){bestCorr=corr;best=lag}
+ const size=buf.length,step=2;let mean=0;
+ for(let i=0;i<size;i+=step)mean+=buf[i];
+ mean/=Math.ceil(size/step);
+ let energy=0;for(let i=0;i<size;i+=step){const v=buf[i]-mean;energy+=v*v}
+ const rms=Math.sqrt(energy/Math.ceil(size/step));if(rms<.0025)return null;
+ const minLag=Math.max(2,Math.floor(sr/650)),maxLag=Math.min(Math.floor(sr/35),Math.floor((size/2)-2));
+ const diff=new Float32Array(maxLag+1);let running=0;
+ for(let lag=1;lag<=maxLag;lag++){
+  let sum=0,count=0;
+  for(let i=0;i<size-maxLag;i+=step){const a=buf[i]-mean,b=buf[i+lag]-mean,d=a-b;sum+=d*d;count++}
+  diff[lag]=sum/Math.max(1,count);
  }
- if(best<0||bestCorr<.12)return null;
- let refined=best;
- if(best>min&&best<max){
-  const corrAt=lag=>{let v=0,n=0;for(let i=0;i<buf.length-lag;i+=3){v+=buf[i]*buf[i+lag];n++}return v/Math.max(1,n)};
-  const left=corrAt(best-1),center=bestCorr,right=corrAt(best+1),den=left-2*center+right;
+ for(let lag=1;lag<=maxLag;lag++){running+=diff[lag];diff[lag]=running>0?diff[lag]*lag/running:1}
+ let chosen=-1;
+ for(let lag=minLag;lag<maxLag;lag++){
+  if(diff[lag]<.18){while(lag+1<maxLag&&diff[lag+1]<diff[lag])lag++;chosen=lag;break}
+ }
+ if(chosen<0){
+  let best=1;for(let lag=minLag;lag<=maxLag;lag++)if(diff[lag]<best){best=diff[lag];chosen=lag}
+  if(chosen<0||best>.32)return null;
+ }
+ let refined=chosen;
+ if(chosen>minLag&&chosen<maxLag){
+  const left=diff[chosen-1],center=diff[chosen],right=diff[chosen+1],den=left-2*center+right;
   if(Math.abs(den)>1e-9)refined+=.5*(left-right)/den;
  }
- return sr/refined;
+ const hz=sr/(refined*step);
+ return hz>=30&&hz<=700?hz:null;
 }
 let tunerLastTick=0;
- function tunerTick(now=0){if(!tunerCtx||!tunerAnalyser)return;tunerFrame=requestAnimationFrame(tunerTick);if(now-tunerLastTick<65)return;tunerLastTick=now;tunerAnalyser.getFloatTimeDomainData(tunerBuffer);const hz=tunerPitch(tunerBuffer,tunerCtx.sampleRate);if(hz){const midi=69+12*Math.log2(hz/440),near=Math.round(midi),names=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'],note=names[(near%12+12)%12]+(Math.floor(near/12)-1),target=tunerPresets[$('tunerInstrument').value][tunerTarget],offset=Math.round(1200*Math.log2(hz/target[1])),clipped=Math.max(-50,Math.min(50,offset));$('tunerNote').textContent=note;$('tunerFreq').textContent=hz.toFixed(1)+' Hz';$('tunerNeedle').style.left=(50+clipped)+'%';$('tunerCents').textContent=offset===0?'0 · IN TUNE':(offset>0?'+':'')+offset+' · '+(offset<0?'LOWER — TUNE UP':'HIGHER — TUNE DOWN');$('tunerCents').style.color=Math.abs(offset)<=2?'#86efac':'#fcd34d';$('tunerStatus').textContent='Listening · '+target[0]+' target'}else{$('tunerStatus').textContent='Listening…';$('tunerNote').textContent='—';$('tunerFreq').textContent='No clear pitch'}}
+ function tunerTick(now=0){if(!tunerCtx||!tunerAnalyser)return;tunerFrame=requestAnimationFrame(tunerTick);if(now-tunerLastTick<30)return;tunerLastTick=now;tunerAnalyser.getFloatTimeDomainData(tunerBuffer);const hz=tunerPitch(tunerBuffer,tunerCtx.sampleRate);if(hz){const midi=69+12*Math.log2(hz/440),near=Math.round(midi),names=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'],note=names[(near%12+12)%12]+(Math.floor(near/12)-1),target=tunerPresets[$('tunerInstrument').value][tunerTarget],offset=Math.round(1200*Math.log2(hz/target[1])),clipped=Math.max(-50,Math.min(50,offset));$('tunerNote').textContent=note;$('tunerFreq').textContent=hz.toFixed(1)+' Hz';$('tunerNeedle').style.left=(50+clipped)+'%';$('tunerCents').textContent=offset===0?'0 · IN TUNE':(offset>0?'+':'')+offset+' · '+(offset<0?'LOWER — TUNE UP':'HIGHER — TUNE DOWN');$('tunerCents').style.color=Math.abs(offset)<=2?'#86efac':'#fcd34d';$('tunerStatus').textContent='Listening · '+target[0]+' target'}else{$('tunerStatus').textContent='Listening…';$('tunerNote').textContent='—';$('tunerFreq').textContent='No clear pitch'}}
 let tunerAnalyser=null;
-$('tunerStart').onclick=async()=>{if(tunerStream){cancelAnimationFrame(tunerFrame);tunerStream.getTracks().forEach(t=>t.stop());tunerStream=null;tunerCtx?.close();tunerCtx=null;tunerAnalyser=null;$('tunerStart').textContent='Start tuner';$('tunerStatus').textContent='Tuner off';$('tunerNote').textContent='—';$('tunerFreq').textContent='0.0 Hz';$('tunerNeedle').style.left='50%';$('tunerCents').textContent='Play a string';return}try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Microphone access is unavailable. Open the site using HTTPS in a supported browser.');tunerStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)throw new Error('This browser does not support live audio analysis.');tunerCtx=new AudioCtx();if(tunerCtx.state==='suspended')await tunerCtx.resume();const src=tunerCtx.createMediaStreamSource(tunerStream);tunerAnalyser=tunerCtx.createAnalyser();tunerAnalyser.fftSize=4096;tunerAnalyser.smoothingTimeConstant=0;src.connect(tunerAnalyser);tunerBuffer=new Float32Array(tunerAnalyser.fftSize);tunerLastTick=0;$('tunerStart').textContent='Stop tuner';$('tunerStatus').textContent='Microphone on · Play a string';tunerTick()}catch(e){$('tunerStatus').textContent='Microphone unavailable';$('tunerStart').textContent='Start tuner';alert('Tuner could not start: '+e.message+' Please allow microphone access and use the HTTPS website.');if(tunerStream)tunerStream.getTracks().forEach(t=>t.stop());tunerStream=null;if(tunerCtx){tunerCtx.close();tunerCtx=null}}};
+$('tunerStart').onclick=async()=>{if(tunerStream){cancelAnimationFrame(tunerFrame);tunerStream.getTracks().forEach(t=>t.stop());tunerStream=null;tunerCtx?.close();tunerCtx=null;tunerAnalyser=null;$('tunerStart').textContent='Start tuner';$('tunerStatus').textContent='Tuner off';$('tunerNote').textContent='—';$('tunerFreq').textContent='0.0 Hz';$('tunerNeedle').style.left='50%';$('tunerCents').textContent='Play a string';return}try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Microphone access is unavailable. Open the site using HTTPS in a supported browser.');tunerStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)throw new Error('This browser does not support live audio analysis.');tunerCtx=new AudioCtx();if(tunerCtx.state==='suspended')await tunerCtx.resume();const src=tunerCtx.createMediaStreamSource(tunerStream);tunerAnalyser=tunerCtx.createAnalyser();tunerAnalyser.fftSize=8192;tunerAnalyser.smoothingTimeConstant=0;src.connect(tunerAnalyser);tunerBuffer=new Float32Array(tunerAnalyser.fftSize);tunerLastTick=0;$('tunerStart').textContent='Stop tuner';$('tunerStatus').textContent='Microphone on · Play a string';tunerTick()}catch(e){$('tunerStatus').textContent='Microphone unavailable';$('tunerStart').textContent='Start tuner';alert('Tuner could not start: '+e.message+' Please allow microphone access and use the HTTPS website.');if(tunerStream)tunerStream.getTracks().forEach(t=>t.stop());tunerStream=null;if(tunerCtx){tunerCtx.close();tunerCtx=null}}};
 tunerRenderStrings();
 
 function closeTunerPage(){document.body.classList.remove('tuner-page');$('tunerPage').classList.add('hidden');$('app').classList.remove('hidden');}
