@@ -236,13 +236,20 @@ function wxFitPart(index=W.sec){
  const target=parts[index];if(!target)return;
  const header=document.querySelector('.top'),lane=$('.playbox');
  const headerBottom=header?Math.max(0,header.getBoundingClientRect().bottom):0;
- const laneHeight=lane?lane.getBoundingClientRect().height:0;
- const available=Math.max(90,window.innerHeight-headerBottom-laneHeight-76);
+ const laneTop=lane?lane.getBoundingClientRect().top:window.innerHeight;
+ const available=Math.max(100,laneTop-headerBottom-34);
  const fullHeight=target.getBoundingClientRect().height;
- if(fullHeight>available){
-   const min=10,fit=Math.max(min,base*(available/fullHeight));
-   target.style.fontSize=fit+'px';
+ if(fullHeight<=available)return;
+ // Find the largest readable font size that lets this complete part fit
+ // between the header and the frozen playback controls.
+ let low=8,high=base,best=low;
+ for(let i=0;i<12;i++){
+   const mid=(low+high)/2;
+   target.style.fontSize=mid+'px';
+   if(target.getBoundingClientRect().height<=available){best=mid;low=mid}
+   else high=mid;
  }
+ target.style.fontSize=best+'px';
 }
 function wxMark(go){
  document.querySelectorAll('.sw').forEach((e,i)=>e.classList.toggle('cur',i==W.sec));
