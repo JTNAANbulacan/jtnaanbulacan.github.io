@@ -194,12 +194,14 @@ body.member-live-view #leaveLiveView{display:block}
 .tuner #tunerStrings button.on{background:#5b4bb7;border-color:#c4b5fd}
 @media(max-width:600px){body.member-live-view .stage{min-height:calc(100svh - 80px)}body.member-live-view .stage #lw{min-height:calc(100svh - 115px)}body.member-live-view .stage #lyrics{font-size:clamp(19px,5vw,28px)}body.member-live-view #leaveLiveView{top:8px;right:8px}}
 
-#tutorialLayer{position:fixed;inset:0;z-index:10000;pointer-events:none}
-#tutorialCard{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(560px,calc(100vw - 28px));background:#17112e;border:1px solid #c4b5fd;border-radius:18px;padding:18px;box-shadow:0 18px 60px #000b;pointer-events:auto;color:#fff}
+/* Tutorial spotlight sits above sticky app controls; the card always stays clickable. */
+#tutorialLayer{position:fixed;inset:0;z-index:1000002;pointer-events:none}
+#tutorialCard{position:fixed;z-index:1;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(560px,calc(100vw - 28px));max-height:min(42svh,320px);overflow-y:auto;background:#17112e;border:1px solid #c4b5fd;border-radius:18px;padding:18px;box-shadow:0 18px 60px #000b;pointer-events:auto;touch-action:pan-y;color:#fff}
 #tutorialCard h3{margin:0 0 7px;font-size:19px}#tutorialCard p{margin:0;color:#ddd6fe;line-height:1.55}
 #tutorialCard .tour-actions{display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:15px;flex-wrap:wrap}
-#tutorialCard .tour-actions button{min-width:82px}.tour-focus{position:relative!important;z-index:10002!important;box-shadow:0 0 0 4px #facc15,0 0 0 9999px #050311c9!important;border-radius:12px!important}
-@media(max-width:600px){#tutorialCard{bottom:max(10px,env(safe-area-inset-bottom));padding:15px}#tutorialCard h3{font-size:17px}}
+#tutorialCard .tour-actions button{min-width:82px;position:relative;z-index:2;pointer-events:auto;touch-action:manipulation}
+.tour-focus{position:relative!important;z-index:1000001!important;box-shadow:0 0 0 4px #facc15,0 0 0 9999px #050311c9!important;border-radius:12px!important}
+@media(max-width:600px){#tutorialCard{bottom:max(10px,env(safe-area-inset-bottom));max-height:45svh;padding:15px}#tutorialCard h3{font-size:17px}}
 #tunerOpen{white-space:nowrap}
 .tuner-page{max-width:720px;margin:24px auto;padding:clamp(12px,3vw,24px)}
 .tuner-page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
