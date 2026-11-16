@@ -2502,7 +2502,7 @@ function toggleDashboardCaption(id, button){
 function render(){
   const T = tabs();
   if(!T.includes(view)) view = T[0];
-  if(!window.jtRestoringLastView){
+  if(window.jtLastViewReady){
     try { localStorage.setItem("jt_last_view", view); } catch(e) {}
   }
   
@@ -5415,7 +5415,7 @@ async function initApp(){
     const availableViews = tabs();
     if(savedView && availableViews.includes(savedView)) view = savedView;
   } catch(e) {}
-  window.jtRestoringLastView = false;
+  window.jtLastViewReady = true;
   await loadDailyBibleContent(true);
   handleHashRoute();
 }
