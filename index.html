@@ -2502,6 +2502,9 @@ function toggleDashboardCaption(id, button){
 function render(){
   const T = tabs();
   if(!T.includes(view)) view = T[0];
+  if(!window.jtRestoringLastView){
+    try { localStorage.setItem("jt_last_view", view); } catch(e) {}
+  }
   
   $("#nav").innerHTML = `
     ${me ? `
@@ -5407,6 +5410,12 @@ async function initApp(){
   initSupabaseClient();
   await restoreAdminSession();
   await fetchAllFromCloud(true);
+  try {
+    const savedView = localStorage.getItem("jt_last_view");
+    const availableViews = tabs();
+    if(savedView && availableViews.includes(savedView)) view = savedView;
+  } catch(e) {}
+  window.jtRestoringLastView = false;
   await loadDailyBibleContent(true);
   handleHashRoute();
 }
