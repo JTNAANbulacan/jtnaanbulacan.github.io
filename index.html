@@ -2264,6 +2264,36 @@ function localDateTimeValue(value){
 }
 function isPublishedItem(item){return !item.publishAt || !isFinite(Date.parse(item.publishAt)) || Date.parse(item.publishAt)<=Date.now();}
 
+function normalizeMemberName(value){
+  return String(value||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ");
+}
+function memberNameEditDistance(a,b){
+  const row=Array.from({length:b.length+1},(_,i)=>i);
+  for(let i=1;i<=a.length;i++){let prev=row[0];row[0]=i;for(let j=1;j<=b.length;j++){const current=row[j];row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=current;}}
+  return row[b.length];
+}
+function memberNameSimilarity(a,b){
+  const na=normalizeMemberName(a),nb=normalizeMemberName(b);if(!na||!nb)return 0;if(na===nb)return 1;
+  const ca=na.replace(/ /g,""),cb=nb.replace(/ /g,"");
+  if(Math.min(ca.length,cb.length)>=5&&(ca.includes(cb)||cb.includes(ca)))return .9;
+  if(na.split(" ").sort().join(" ")===nb.split(" ").sort().join(" "))return .98;
+  return 1-memberNameEditDistance(na,nb)/Math.max(na.length,nb.length);
+}
+function findSimilarChurchMembers(name,excludeId=""){
+  const normalized=normalizeMemberName(name);if(normalized.length<4)return [];
+  return (D.members||[]).filter(member=>{
+    if(excludeId&&member.id===excludeId)return false;
+    const other=normalizeMemberName(member.name);if(other.length<4)return false;
+    const score=memberNameSimilarity(normalized,other),tokens=normalized.split(" "),otherTokens=other.split(" ");
+    const shared=tokens.filter(token=>otherTokens.some(t=>token===t||(Math.min(token.length,t.length)>=4&&(token.startsWith(t)||t.startsWith(token)))));
+    return score>=.78||(tokens.length>=2&&otherTokens.length>=2&&shared.length>=Math.min(tokens.length,otherTokens.length)-1);
+  }).sort((a,b)=>memberNameSimilarity(normalized,b.name)-memberNameSimilarity(normalized,a.name));
+}
+function checkMemberNameDuplicates(){
+  const input=$("#f_name"),hint=$("#member-duplicate-hint");if(!input||!hint)return;
+  const matches=findSimilarChurchMembers(input.value);if(!matches.length){hint.innerHTML="";return;}
+  hint.innerHTML="<div style=\"padding:10px 12px;border:1px solid #d9a441;border-radius:9px;background:rgba(217,164,65,.10);color:var(--tx)\"><b style=\"display:block;margin-bottom:5px\">⚠ Possible duplicate member name</b><div class=\"mu\" style=\"margin-bottom:5px\">Please check these similar existing names:</div>"+matches.slice(0,5).map(m=>"<div style=\"padding:3px 0;font-weight:600\">"+e(m.name)+"</div>").join("")+(matches.length>5?"<div class=\"mu\">And "+(matches.length-5)+" more possible match(es).</div>":"")+"<div class=\"mu\" style=\"font-size:.78rem;margin-top:5px\">You will be asked to confirm before saving.</div></div>";
+}
 function openFormModal(c, id=""){
   if(!can(c)) return alert("You do not have permission to edit this section.");
   const F = CF[c];
@@ -2278,7 +2308,8 @@ function openFormModal(c, id=""){
       ` : t === "t" ? `
         <textarea id="f_${k}" rows="3" placeholder="${l}">${e(x[k]||'')}</textarea>
       ` : `
-        <input id="f_${k}" type="${t||'text'}" value="${e(x[k]||'')}" placeholder="${l}">
+        <input id="f_${k}" type="${t||'text'}" value="${e(x[k]||'')}" placeholder="${l}" ${c === "members" && k === "name" ? "oninput=\"checkMemberNameDuplicates()\"":""}>
+        ${c === "members" && k === "name" ? "<div id=\"member-duplicate-hint\" style=\"margin-top:7px\"></div>" : ""}
       `}
     `).join('')}
     ${(F.multi || c === 'gallery') ? `
@@ -2300,6 +2331,15 @@ function openFormModal(c, id=""){
 
 async function saveFormData(c, id){
   if(!can(c)) return alert("You do not have permission to edit this section.");
+  if(c === "members"){
+    const nameInput = $("#f_name");
+    const possibleDuplicates = findSimilarChurchMembers(nameInput ? nameInput.value : "", id);
+    if(possibleDuplicates.length){
+      const matches = possibleDuplicates.slice(0,5).map(m => "• " + m.name).join("\n");
+      const more = possibleDuplicates.length > 5 ? "\n• and " + (possibleDuplicates.length - 5) + " more" : "";
+      if(!window.confirm("Possible duplicate member name detected!\n\nSimilar existing member(s):\n" + matches + more + "\n\nAre you sure you want to add this member anyway?")) return;
+    }
+  }
   const F = CF[c];
   const btn = $("#btn-save-form");
   if(btn){ btn.disabled = true; btn.textContent = "Uploading & Syncing..."; }
