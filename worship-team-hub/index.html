@@ -225,6 +225,49 @@ body.member-live-view #leaveLiveView{display:block}
 body.tuner-page .top,body.tuner-page #app,body.tuner-page #auth,body.tuner-page #leaveLiveView{display:none!important}
 body.tuner-page #tunerPage{display:block!important}
 @media(max-width:600px){.tuner-page{margin:8px auto;padding:10px}.tuner-page .tuner{min-height:calc(100svh - 95px)}.tuner-page-head{align-items:flex-start}}
+
+/* Give the bottom song-parts selector enough room and make every part button easy to tap. */
+.stage .playbox{
+  max-height:min(42vh,370px);
+  min-height:230px;
+  padding:12px;
+  gap:9px;
+  overflow-y:auto;
+  scroll-padding-bottom:14px;
+}
+.stage .playbox .parts-head{padding-top:3px;align-items:center;}
+.stage .playbox .part-buttons{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+  gap:8px;
+  max-height:190px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:3px 4px 12px 2px;
+  align-content:start;
+  scrollbar-width:thin;
+  overscroll-behavior:contain;
+}
+.stage .playbox .part-buttons button{
+  width:100%;
+  min-width:0;
+  min-height:46px;
+  padding:10px 9px;
+  font-size:clamp(12px,.85vw,14px);
+  line-height:1.25;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  touch-action:manipulation;
+}
+@media(max-width:900px){
+  .stage .playbox{max-height:min(44vh,390px);min-height:220px;}
+  .stage .playbox .part-buttons{max-height:175px;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));}
+}
+@media(max-width:520px){
+  .stage .playbox{max-height:min(48svh,390px);min-height:205px;padding:9px;}
+  .stage .playbox .part-buttons{max-height:150px;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding-bottom:12px;}
+  .stage .playbox .part-buttons button{min-height:44px;font-size:12px;padding:9px 7px;}
+}
 </style></head><body><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="logout" class="hidden">Sign out</button></div></header>
 <section id="auth" class="panel auth"><h2>Welcome to your songbook</h2><p class="muted">Sign in or create your Worship Team account. No email or Gmail required.</p><label>Username<input id="username" autocomplete="username" placeholder="Your username (e.g. Juan123)"></label><br><label>Password<input id="pass" type="password" autocomplete="current-password" placeholder="At least 8 characters"></label><div class="tools"><button class="primary" id="login">Sign in</button><button id="signup">Create account</button></div><p class="hint" id="msg">New accounts are Members. Only the Super Admin can promote members to Admin.</p></section>
 <section id="hubMaintenanceGate" class="panel auth hidden" style="max-width:680px;margin:10vh auto;text-align:center"><div style="font-size:44px;color:var(--gold)">🛠</div><h2>JTNAAN Worship Team Hub is Under Maintenance</h2><p id="hubMaintenanceMessage" style="font-size:16px;line-height:1.7">We are making improvements. Please check back soon.</p><p class="hint">The Worship Team Hub is temporarily unavailable to members.</p><button id="hubMaintenanceSignout" type="button" class="primary" hidden>Sign out</button><div id="hubMaintenanceLoginHint" class="hint">Super Admin? Sign in below to access the Hub and turn off Maintenance Mode.</div></section><div id="welcome" class="modal"><div class="panel" style="max-width:520px;text-align:center;padding:30px"><div style="font-size:42px;color:var(--gold)">♫</div><h2>Welcome to JTNAAN Worship Team Hub!</h2><p>Thank you for joining our Worship Team community. We’re grateful to have you with us as we serve together through music and worship. May God bless you and use your gifts to glorify Him!</p><button id="welcomeClose" class="primary">Let’s get started</button></div></div><div id="app" class="hidden"><div class="deck">
