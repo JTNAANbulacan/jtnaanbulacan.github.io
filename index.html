@@ -2291,11 +2291,12 @@ function findSimilarChurchMembers(name,excludeId=""){
 }
 function checkMemberNameDuplicates(){
   const input=$("#f_name"),hint=$("#member-duplicate-hint");if(!input||!hint)return;
-  const matches=findSimilarChurchMembers(input.value);if(!matches.length){hint.innerHTML="";return;}
+  const matches=findSimilarChurchMembers(input.value,window.memberDuplicateExcludeId||"");if(!matches.length){hint.innerHTML="";return;}
   hint.innerHTML="<div style=\"padding:10px 12px;border:1px solid #d9a441;border-radius:9px;background:rgba(217,164,65,.10);color:var(--tx)\"><b style=\"display:block;margin-bottom:5px\">⚠ Possible duplicate member name</b><div class=\"mu\" style=\"margin-bottom:5px\">Please check these similar existing names:</div>"+matches.slice(0,5).map(m=>"<div style=\"padding:3px 0;font-weight:600\">"+e(m.name)+"</div>").join("")+(matches.length>5?"<div class=\"mu\">And "+(matches.length-5)+" more possible match(es).</div>":"")+"<div class=\"mu\" style=\"font-size:.78rem;margin-top:5px\">You will be asked to confirm before saving.</div></div>";
 }
 function openFormModal(c, id=""){
   if(!can(c)) return alert("You do not have permission to edit this section.");
+  window.memberDuplicateExcludeId = c === "members" ? id : "";
   const F = CF[c];
   const x = (D[c]||[]).find(y => y.id === id) || {};
   $("#mb").innerHTML = `
