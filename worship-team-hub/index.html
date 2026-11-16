@@ -226,47 +226,51 @@ body.tuner-page .top,body.tuner-page #app,body.tuner-page #auth,body.tuner-page 
 body.tuner-page #tunerPage{display:block!important}
 @media(max-width:600px){.tuner-page{margin:8px auto;padding:10px}.tuner-page .tuner{min-height:calc(100svh - 95px)}.tuner-page-head{align-items:flex-start}}
 
-/* Give the bottom song-parts selector enough room and make every part button easy to tap. */
+/* Compact song-part buttons so all parts fit in the fixed bottom playback panel.
+   Keep the original horizontal wrapping layout; do not create a nested scroll list. */
 .stage .playbox{
-  max-height:min(42vh,370px);
-  min-height:230px;
-  padding:12px;
-  gap:9px;
-  overflow-y:auto;
-  scroll-padding-bottom:14px;
+  padding:8px;
+  gap:6px;
+  max-height:clamp(125px,25vh,205px);
+  overflow:visible;
 }
-.stage .playbox .parts-head{padding-top:3px;align-items:center;}
+.stage .playbox .playbox-controls{gap:4px}
+.stage .playbox .playbox-controls button{
+  min-height:34px;
+  padding:5px 6px;
+  font-size:11px;
+  line-height:1.1;
+}
+.stage .playbox .parts-head{margin-top:0;gap:6px;font-size:11px}
 .stage .playbox .part-buttons{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
-  gap:8px;
-  max-height:190px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding:3px 4px 12px 2px;
-  align-content:start;
-  scrollbar-width:thin;
-  overscroll-behavior:contain;
+  display:flex;
+  flex-wrap:wrap;
+  align-content:flex-start;
+  gap:4px 6px;
+  max-height:none;
+  overflow:visible;
+  padding:1px 2px 2px;
 }
 .stage .playbox .part-buttons button{
-  width:100%;
-  min-width:0;
-  min-height:46px;
-  padding:10px 9px;
-  font-size:clamp(12px,.85vw,14px);
-  line-height:1.25;
+  flex:1 1 88px;
+  min-width:72px;
+  width:auto;
+  min-height:31px;
+  padding:5px 6px;
+  font-size:11px;
+  line-height:1.12;
   white-space:normal;
   overflow-wrap:anywhere;
-  touch-action:manipulation;
 }
 @media(max-width:900px){
-  .stage .playbox{max-height:min(44vh,390px);min-height:220px;}
-  .stage .playbox .part-buttons{max-height:175px;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));}
+  .stage .playbox{padding:7px;gap:5px}
+  .stage .playbox .playbox-controls button{min-height:32px;padding:4px 5px;font-size:10px}
+  .stage .playbox .part-buttons{gap:4px}
+  .stage .playbox .part-buttons button{flex:1 1 82px;min-width:68px;min-height:30px;padding:4px 5px;font-size:10px}
 }
 @media(max-width:520px){
-  .stage .playbox{max-height:min(48svh,390px);min-height:205px;padding:9px;}
-  .stage .playbox .part-buttons{max-height:150px;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding-bottom:12px;}
-  .stage .playbox .part-buttons button{min-height:44px;font-size:12px;padding:9px 7px;}
+  .stage .playbox{padding:7px;gap:5px}
+  .stage .playbox .part-buttons button{flex:1 1 76px;min-width:65px;min-height:32px;font-size:10px}
 }
 </style></head><body><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="logout" class="hidden">Sign out</button></div></header>
 <section id="auth" class="panel auth"><h2>Welcome to your songbook</h2><p class="muted">Sign in or create your Worship Team account. No email or Gmail required.</p><label>Username<input id="username" autocomplete="username" placeholder="Your username (e.g. Juan123)"></label><br><label>Password<input id="pass" type="password" autocomplete="current-password" placeholder="At least 8 characters"></label><div class="tools"><button class="primary" id="login">Sign in</button><button id="signup">Create account</button></div><p class="hint" id="msg">New accounts are Members. Only the Super Admin can promote members to Admin.</p></section>
