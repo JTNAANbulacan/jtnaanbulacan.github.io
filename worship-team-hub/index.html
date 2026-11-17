@@ -496,19 +496,19 @@ body.wx-monitor .workspace-ribbon,body.wx-display .workspace-ribbon{display:none
 body.wx-monitor .stage .playbox{display:none!important}
 
 
-/* Lyrics layout: chord groups must not shrink into individual letters.
-   Keep normal words intact and let the browser wrap only at spaces. */
+/* Lyrics: keep chord labels attached to their lyric text, but let phrases
+   wrap naturally at spaces on narrow screens. Never split a word to fit. */
 #lyrics,#lyrics *{word-break:normal!important;hyphens:none!important}
-#lyrics .ln{display:flex;flex-wrap:wrap;align-items:flex-end;gap:0 2px;min-width:0;max-width:100%}
-#lyrics .sg{display:inline-flex;flex:0 0 auto;flex-direction:column;min-width:max-content;max-width:100%;box-sizing:border-box}
-#lyrics .tx{display:block;white-space:pre-wrap!important;overflow-wrap:break-word!important;word-break:normal!important;min-width:0;max-width:100%;box-sizing:border-box}
-#lyrics .ch{white-space:pre!important;overflow-wrap:normal!important;word-break:normal!important;max-width:100%}
+#lyrics .ln{display:block;min-width:0;max-width:100%;white-space:normal}
+#lyrics .sg{display:inline-flex;flex-direction:column;vertical-align:bottom;max-width:100%;min-width:0;box-sizing:border-box}
+#lyrics .ch{display:block;white-space:pre!important;overflow-wrap:normal!important;word-break:normal!important}
+#lyrics .tx{display:block;white-space:pre-wrap!important;overflow-wrap:normal!important;word-break:normal!important;min-width:0;max-width:100%;box-sizing:border-box}
 #lyrics .sw,#lyrics .cp{min-width:0;max-width:100%;box-sizing:border-box}
 @media(max-width:600px){
   #lyrics{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
-  #lyrics .ln{width:100%;max-width:100%;gap:0 1px}
-  #lyrics .sg{flex-shrink:0;max-width:100%}
-  #lyrics .tx{white-space:pre-wrap!important;overflow-wrap:break-word!important;word-break:normal!important}
+  #lyrics .ln{width:100%;max-width:100%;white-space:normal}
+  #lyrics .sg{max-width:100%;min-width:0}
+  #lyrics .tx{white-space:pre-wrap!important;overflow-wrap:normal!important;word-break:normal!important}
   #lyrics .ch{white-space:pre!important}
 }
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
