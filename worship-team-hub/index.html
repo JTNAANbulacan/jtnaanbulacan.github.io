@@ -632,13 +632,17 @@ const WP={KEYS:['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'],ST:[{n:'Wa
 const W={sid:null,sec:0,secs:[],play:0,loop:0,mode:localStorage.getItem('wx_mode')||'auto',bpm:72,ts:'4/4',vol:{g:.8,c:.8},mute:{},solo:null,ac:null,key:null,si:0,pv:.5,fl:.6,on:0,pn:null,tm:null};
 const wchO=l=>{const t=l.trim();return!!t&&t.split(/[\s|]+/).every(x=>WCH.test(x)||/^[-–—x\d]+$/i.test(x))&&t.split(/[\s|]+/).some(x=>WCH.test(x))};
 function wxSecs(raw){const S=[];let c=null;raw.split('\n').forEach(l=>{if(WSEC.test(l)){c={n:l.replace(/[\[\]:]/g,'').trim(),L:[]};S.push(c)}else{if(!c){c={n:'',L:[]};S.push(c)}c.L.push(l)}});return S.filter(s=>s.n||s.L.some(l=>l.trim()))}
+function wxWorkspaceAnchorBottom(){
+ const header=document.querySelector('.top'),ribbon=$('workspaceRibbon');
+ return Math.max(header?Math.max(0,header.getBoundingClientRect().bottom):0,ribbon&&!ribbon.classList.contains('hidden')?Math.max(0,ribbon.getBoundingClientRect().bottom):0);
+}
 function wxFitPart(index=W.sec){
  const root=$('lyrics'),parts=[...root.querySelectorAll('.sw')];if(!parts.length)return;
  const base=parseFloat(getComputedStyle(root).fontSize)||18;
  parts.forEach(p=>{p.style.fontSize=base+'px'});
  const target=parts[index];if(!target)return;
- const header=document.querySelector('.top'),lane=$('.playbox');
- const headerBottom=header?Math.max(0,header.getBoundingClientRect().bottom):0;
+ const lane=$('.playbox');
+ const headerBottom=wxWorkspaceAnchorBottom();
  const laneTop=lane?lane.getBoundingClientRect().top:window.innerHeight;
  const available=Math.max(100,laneTop-headerBottom-34);
  const fullHeight=target.getBoundingClientRect().height;
@@ -671,8 +675,9 @@ function wxMark(go){
    if(go){
      const e=$('sw'+W.sec);
      if(e){
-       const header=document.querySelector('.top'),headerBottom=header?header.getBoundingClientRect().bottom:0;
-       const top=e.getBoundingClientRect().top+window.scrollY-Math.max(12,headerBottom+16);
+       // Align every selected song part directly below the fixed header + workspace ribbon.
+       const anchorBottom=wxWorkspaceAnchorBottom();
+       const top=e.getBoundingClientRect().top+window.scrollY-anchorBottom-16;
        window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
      }
    }
