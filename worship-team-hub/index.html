@@ -495,6 +495,20 @@ body.wx-monitor .workspace-ribbon,body.wx-display .workspace-ribbon{display:none
 }
 body.wx-monitor .stage .playbox{display:none!important}
 
+
+/* Mobile lyrics: wrap long phrases inside chord groups instead of overflowing the screen. */
+.tx{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:normal;min-width:0;max-width:100%;box-sizing:border-box}
+.sg{min-width:0;max-width:100%;box-sizing:border-box}
+.ln{min-width:0;max-width:100%;box-sizing:border-box}
+@media(max-width:600px){
+  #lyrics{width:100%;max-width:100%;min-width:0;box-sizing:border-box;font-size:clamp(14px,4.2vw,20px);overflow-wrap:anywhere}
+  #lyrics .ln{display:flex;flex-wrap:wrap;align-items:flex-start;gap:0 2px}
+  #lyrics .sg{flex:0 1 auto;min-width:0;max-width:100%}
+  #lyrics .ch{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+  #lyrics .tx{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:normal;max-width:100%}
+  #lyrics .cp{max-width:100%;flex-wrap:wrap;overflow-wrap:anywhere}
+}
+
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
