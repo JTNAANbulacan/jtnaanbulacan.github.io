@@ -737,7 +737,11 @@ const ctl=()=>!!user&&live?.controller_user_id===user.id;
 Object.assign(W,{off:+localStorage.getItem('wx_off')||0,fm:localStorage.getItem('wx_fm')||'auto',z:+localStorage.getItem('wx_z')||1,follow:false,joined:false,joinCode:null,tool:null,col:'#facc15',pw:4,ann:[],tmp:{},annOk:0,flat:false,stageRole:localStorage.getItem('wx_stage_role')==='singer'?'singer':'instrumentalist'});
 document.documentElement.style.setProperty('--z',W.z);
 const cx=(c,n)=>{const x=chord(c,n);return W.flat?x.replace(/(^|\/)([CDFGA])#/g,(m,p,r)=>p+FLM[r]):x};
-function wxNorm(raw){const L=raw.replace(/\r/g,'').split('\n'),o=[];for(let i=0;i<L.length;i++){const l=L[i],nx=L[i+1];if(wchO(l)&&!/\[/.test(l)&&nx!==undefined&&nx.trim()&&!wchO(nx)&&!WSEC.test(nx)&&!/\[/.test(nx)){let ly=nx;const m=[...l.matchAll(/\S+/g)].filter(x=>WCH.test(x[0]));for(let j=m.length-1;j>=0;j--){const p=m[j].index;if(ly.length<p)ly=ly.padEnd(p,' ');ly=ly.slice(0,p)+'['+m[j][0]+']'+ly.slice(p)}o.push(ly);i++}else o.push(l)}return o.join('\n')}
+function wxNorm(raw){const L=raw.replace(/\r/g,'').split('\n'),o=[];for(let i=0;i<L.length;i++){const l=L[i],nx=L[i+1];if(wchO(l)&&!/\[/.test(l)&&nx!==undefined&&nx.trim()&&!wchO(nx)&&!WSEC.test(nx)&&!/\[/.test(nx)){let ly=nx;const m=[...l.matchAll(/\S+/g)].filter(x=>WCH.test(x[0]));for(let j=m.length-1;j>=0;j--){const p=m[j].index;if(ly.length<p)ly=ly.padEnd(p,' ');ly=ly.slice(0,p)+'['+m[j][0]+']'+ly.slice(p)}o.push(ly);i++}else o.push(l)}
+ // Repair accidental hard wraps that leave a single letter on its own line
+ // (for example "Y" + "ou're" or "your l" + "ove"). Keep ordinary line
+ // breaks, blank verse gaps, section labels, and chord rows unchanged.
+ const fixed=[];for(let i=0;i<o.length;i++){let line=o[i];while(i+1<o.length&&line.trim()&&!wchO(line)&&!WSEC.test(line)&&!/[\[\]]/.test(line)&&o[i+1].trim()&&!wchO(o[i+1])&&!WSEC.test(o[i+1])&&!/[\[\]]/.test(o[i+1])){const next=o[i+1];const tail=line.match(/(?:^|\s)([A-Za-z])$/),head=next.match(/^\s*([A-Za-z])/);if(!tail||!head)break;line+=next.replace(/^\s*/,'');i++}fixed.push(line)}return fixed.join('\n')}
 function wxLine(l,n){if(!l.trim())return'<div class="gap"></div>';
  if(wchO(l)){const t=l.replace(/[^\s|]+/g,x=>WCH.test(x)?cx(x,n):x);return'<div class="cp">'+t.trim().split(/[\s|]+/).map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>'}
  if(!/\[[^\]]+\]/.test(l))return'<div class="tx" style="white-space:pre-wrap">'+esc(l)+'</div>';
