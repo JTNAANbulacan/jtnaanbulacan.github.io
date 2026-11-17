@@ -496,23 +496,29 @@ body.wx-monitor .workspace-ribbon,body.wx-display .workspace-ribbon{display:none
 body.wx-monitor .stage .playbox{display:none!important}
 
 
-/* Keep lyric words intact and wrap at spaces within the available screen width. */
+/* Live and regular lyrics: natural inline wrapping, with each chord kept over its word. */
 #lyrics,#lyrics *{box-sizing:border-box;word-break:normal!important;overflow-wrap:normal!important;hyphens:none!important}
-#lyrics{width:100%;min-width:0;max-width:100%;font-size:calc(var(--fs)*var(--z,1))}
-#lyrics .sw{width:100%;min-width:0;max-width:100%}
-#lyrics .ln{display:flex;flex-wrap:wrap;align-items:flex-end;min-width:0;width:100%;max-width:100%;white-space:normal}
-#lyrics .sg{display:inline-flex;flex:0 0 auto;flex-direction:column;vertical-align:bottom;max-width:100%;white-space:nowrap}
-#lyrics .ch{display:block;white-space:pre!important;min-height:1.5em}
-#lyrics .tx{display:block;width:auto;white-space:nowrap!important;min-width:0;max-width:100%}
-#lyrics .lyric-space{display:block;flex:0 0 .28em;width:.28em}
-#lyrics .plain-line{display:block;width:100%;max-width:100%;min-width:0;white-space:normal!important}
-#lyrics .cp{min-width:0;max-width:100%;box-sizing:border-box}
+#lyrics{display:block;width:100%;min-width:0;max-width:100%;font-size:calc(var(--fs)*var(--z,1))}
+#lyrics .sw{display:block;width:100%;min-width:0;max-width:100%}
+#lyrics .ln{display:block;width:100%;min-width:0;max-width:100%;white-space:normal;line-height:inherit}
+#lyrics .sg{display:inline-grid;grid-template-rows:auto auto;vertical-align:bottom;white-space:nowrap;max-width:100%;margin:0;padding:0}
+#lyrics .ch{display:block;min-height:1.15em;line-height:1.15;white-space:pre!important;font-size:.8em}
+#lyrics .tx{display:block;width:auto;min-width:0;max-width:100%;white-space:nowrap!important;line-height:inherit}
+#lyrics .plain-line{display:block;width:100%;min-width:0;max-width:100%;white-space:normal!important}
+#lyrics .cp{min-width:0;max-width:100%}
 @media(max-width:600px){
- #lyrics{width:100%;max-width:100%;min-width:0;line-height:1.32;overflow-wrap:normal}
- #lyrics .ln{width:100%;max-width:100%;flex-wrap:wrap}
- #lyrics .sg{flex:0 0 auto;max-width:100%}
- #lyrics .plain-line{white-space:normal!important}
-}</style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
+ #lyrics{width:100%;max-width:100%;min-width:0;line-height:1.32}
+ #lyrics .ln,#lyrics .plain-line{width:100%;max-width:100%;white-space:normal!important}
+ #lyrics .sg{display:inline-grid;max-width:100%;vertical-align:bottom}
+}
+body.member-live-view .stage,
+body.member-live-view .stage #lw,
+body.member-live-view .stage #lyrics{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+body.member-live-view .stage #lyrics{font-size:clamp(19px,5vw,28px);line-height:1.5}
+body.member-live-view .stage #lyrics .ln{display:block;width:100%;max-width:100%;white-space:normal}
+body.member-live-view .stage #lyrics .sg{display:inline-grid;white-space:nowrap;vertical-align:bottom}
+body.member-live-view .stage #lyrics .tx{white-space:nowrap!important}
+</style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
   <button type="button" class="workspace-tab active" data-workspace-target="presentation" data-target-id="title">▣ <span>Presentation</span></button>
@@ -746,15 +752,14 @@ function wxNorm(raw){const L=raw.replace(/\r/g,'').split('\n'),o=[];for(let i=0;
 function wxLine(l,n){if(!l.trim())return'<div class="gap"></div>';
  if(wchO(l)){const t=l.replace(/[^\\s|]+/g,x=>WCH.test(x)?cx(x,n):x);return'<div class="cp">'+t.trim().split(/[\\s|]+/).map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>'}
  if(!/\\[[^\\]]+\\]/.test(l))return'<div class="tx plain-line">'+esc(l)+'</div>';
- // Render each complete lyric word as its own wrapping unit. The chord sits
- // above the first word in its chord segment; spaces remain normal break points.
+ // Keep each word intact as an inline chord/lyric pair. Ordinary spaces remain
+ // real text spaces, so the browser wraps the sentence naturally in live view.
  const parts=l.split(/\\[([^\\]]+)\\]/);let html='';
  for(let i=0;i<parts.length;i+=2){
    const chordText=i?parts[i-1]:'';const segment=parts[i]||'';
-   const words=segment.match(/\\s+|[^\\s]+/g)||[];
-   let first=true;
+   const words=segment.match(/\\s+|[^\\s]+/g)||[];let first=true;
    for(const token of words){
-     if(/^\\s+$/.test(token)){html+='<span class="lyric-space"> </span>';continue}
+     if(/^\\s+$/.test(token)){html+=token.replace(/\\s/g,' ');continue}
      const chord=first&&chordText?(WCH.test(chordText)?cx(chordText,n):chordText):'';
      html+='<span class="sg"><span class="ch">'+(chord?esc(chord):'&nbsp;')+'</span><span class="tx">'+esc(token)+'</span></span>';
      first=false;
