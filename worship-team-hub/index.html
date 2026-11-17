@@ -441,6 +441,20 @@ body.wx-monitor .workspace-ribbon,body.wx-display .workspace-ribbon{display:none
  .right-rail{width:100%;max-width:none}
 }
 
+/* Give lyrics/chords the full workspace before showing Presentation controls below. */
+@media(min-width:601px) and (max-width:1200px){
+ .deck{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"s" "l" "r" "c"!important;align-items:start}
+ .deck>.stage{grid-area:s!important;width:100%;min-width:0;max-width:none}
+ .deck>.cl-l{grid-area:l!important;position:static!important;width:100%;min-width:0;max-width:none}
+ .deck>.right-rail{grid-area:r!important;position:static!important;width:100%;max-width:none;max-height:none;overflow:visible;margin:0}
+ .deck>.cons{grid-area:c!important}
+}
+@media(max-width:600px){
+ .deck{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"s" "l" "r" "c"!important}
+ .deck>.stage,.deck>.cl-l,.deck>.right-rail{width:100%;min-width:0;max-width:none}
+ .deck>.cl-l,.deck>.right-rail{position:static!important}
+}
+
 /* Keep the playback dock fixed to the viewport bottom on desktop and mobile. */
 .stage .playbox{
   position:fixed!important;
