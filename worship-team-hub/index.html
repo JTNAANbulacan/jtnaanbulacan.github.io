@@ -217,7 +217,30 @@ body.member-live-view #leaveLiveView{display:block}
 .account-history-list td{padding:9px 6px;border-top:1px solid #ffffff18;vertical-align:middle}
 .account-status{display:inline-block;border-radius:20px;padding:2px 7px;font-size:10px;font-weight:800;text-transform:uppercase;white-space:nowrap}
 .account-status.active{background:#14532d;color:#bbf7d0}.account-status.pending{background:#713f12;color:#fde68a}.account-status.suspended,.account-status.disabled{background:#7f1d1d;color:#fecaca}
-@media(max-width:600px){.account-history-toggle{padding:7px 9px}.account-history-toggle span{display:none}.account-history-dropdown{right:-58px}}
+@media(max-width:600px){
+  .account-history-toggle{padding:7px 9px}
+  .account-history-toggle span{display:none}
+  /* Mobile: show Registered Accounts as a centered foreground panel,
+     not anchored off the header where it can be clipped by the side column. */
+  .account-history-dropdown{
+    position:fixed;
+    left:12px;
+    right:12px;
+    top:50%;
+    bottom:auto;
+    transform:translateY(-50%);
+    width:auto;
+    max-width:520px;
+    max-height:min(76svh,620px);
+    margin:0 auto;
+    z-index:1000010;
+    padding:14px;
+    border-radius:18px;
+    box-shadow:0 22px 70px #000e,0 0 0 9999px #050311b8;
+  }
+  .account-history-list{max-height:calc(min(76svh,620px) - 82px)}
+  .account-history-list th,.account-history-list td{padding:11px 8px;font-size:13px}
+}
 
 .tuner-page{max-width:720px;margin:24px auto;padding:clamp(12px,3vw,24px)}
 .tuner-page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
