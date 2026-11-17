@@ -476,6 +476,10 @@ body.wx-monitor .workspace-ribbon,body.wx-display .workspace-ribbon{display:none
   box-shadow:0 -8px 24px #05041dcc,0 5px 18px #05041d99;
 }
 .stage{padding-bottom:clamp(150px,28vh,235px)!important}
+/* Reserve real document space beneath song sections so the fixed dock never covers part headers. */
+.stage #lw{padding-bottom:clamp(210px,30vh,270px)!important;box-sizing:border-box}
+.stage #lyrics{scroll-margin-bottom:clamp(210px,30vh,270px)}
+
 @media(max-width:600px){
   .stage .playbox{
     width:calc(100vw - 14px);
