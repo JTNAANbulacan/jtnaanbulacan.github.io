@@ -440,6 +440,43 @@ body.wx-monitor .workspace-ribbon,body.wx-display .workspace-ribbon{display:none
  .stage{width:100%;min-width:0}
  .right-rail{width:100%;max-width:none}
 }
+
+/* Keep the playback dock fixed to the viewport bottom on desktop and mobile. */
+.stage .playbox{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:max(8px,env(safe-area-inset-bottom))!important;
+  top:auto!important;
+  transform:translateX(-50%);
+  width:min(calc(100vw - 28px),980px);
+  max-width:980px;
+  max-height:clamp(125px,26vh,210px);
+  margin:0!important;
+  z-index:1000!important;
+  box-sizing:border-box;
+  overflow-y:auto;
+  background:#12103f;
+  border:1px solid #7770cf;
+  border-radius:14px;
+  box-shadow:0 -8px 24px #05041dcc,0 5px 18px #05041d99;
+}
+.stage{padding-bottom:clamp(150px,28vh,235px)!important}
+@media(max-width:600px){
+  .stage .playbox{
+    width:calc(100vw - 14px);
+    max-height:clamp(112px,30svh,185px);
+    padding:7px;
+    border-radius:12px;
+  }
+  .stage{padding-bottom:calc(30svh + 36px)!important}
+}
+@media(max-width:380px){
+  .stage .playbox{width:calc(100vw - 10px);max-height:32svh}
+  .stage{padding-bottom:calc(32svh + 38px)!important}
+}
+body.wx-monitor .stage .playbox{display:none!important}
+
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
