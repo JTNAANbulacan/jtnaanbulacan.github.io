@@ -702,6 +702,13 @@ $('presOpenInstrumentalist').onclick=()=>wxOpenDisplay('instrumentalist','jtn-in
 $('presOpenMonitor').onclick=()=>{if(!live?.is_live||!ctl())return alert('Create or control a live session before opening the Live Monitor.');const w=window.open(location.pathname+'?wx_monitor=1','jtn-worship-monitor','popup=yes,width=1280,height=800');if(!w)alert('Your browser blocked the monitor window. Allow pop-ups for this site and try again.')};
 async function wxMonitorSlide(delta){if(!ctl()||!live?.is_live)return;const sec=(W.secs&&W.secs[W.sec])||null;if(!sec)return;const lines=sec.L.map(wxPlainLyrics).filter(Boolean),max=Math.max(0,Math.ceil(lines.length/2)-1),state={...wxPresentationState(),section_index:W.sec,slide_index:Math.max(0,Math.min(max,(Number(wxPresentationState().slide_index)||0)+delta)),blank:false,custom_slide:null};const {error}=await db.from('worship_live_sessions').update({presentation_state:state,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id',live.id);if(error)return alert(error.message);live.presentation_state=state}
 $('presPrevSlide').onclick=()=>wxMonitorSlide(-1);$('presNextSlide').onclick=()=>wxMonitorSlide(1);
+document.addEventListener('keydown',e=>{
+ if(WX_DISPLAY||!live?.is_live||!ctl()||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
+ const t=e.target,tag=(t?.tagName||'').toLowerCase();
+ if(['input','textarea','select','button'].includes(tag)||t?.isContentEditable)return;
+ if(e.key==='ArrowRight'){e.preventDefault();wxMonitorSlide(1)}
+ else if(e.key==='ArrowLeft'){e.preventDefault();wxMonitorSlide(-1)}
+});
 $('presBlank').onclick=async()=>{if(!ctl()||!live?.is_live)return alert('Start a live session first.');const s={...wxPresentationState(),blank:true};const {error}=await db.from('worship_live_sessions').update({presentation_state:s,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id',live.id);if(error)return alert(error.message);live.presentation_state=s;wxApplyBackdrop()};
 $('presUnblank').onclick=async()=>{if(!ctl()||!live?.is_live)return;const s={...wxPresentationState(),blank:false};const {error}=await db.from('worship_live_sessions').update({presentation_state:s,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id',live.id);if(error)return alert(error.message);live.presentation_state=s;wxApplyBackdrop()};
 $('presBrightness').oninput=e=>{presBrightness=+e.target.value;if(ctl()&&live?.is_live){const base=wxPresentationState(),key=(current?.id||'')+':'+W.sec,section_backdrops={...(base.section_backdrops||{})};if(section_backdrops[key])section_backdrops[key]={...section_backdrops[key],brightness:presBrightness};const s={...base,section_backdrops,brightness:presBrightness};live.presentation_state=s;wxSave({presentation_state:s})}wxApplyBackdrop()};
