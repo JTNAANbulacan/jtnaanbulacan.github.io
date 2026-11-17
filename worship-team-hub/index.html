@@ -335,19 +335,34 @@ body.tuner-page #tunerPage{display:block!important}
 #mobileRefreshHint.refreshing{background:#4b278e}
 @media(min-width:769px){#mobileRefreshHint{display:none}}
 \n#resetKey{white-space:nowrap;padding:7px 10px;font-size:12px;min-height:34px;border-radius:10px}\n@media(max-width:600px){#resetKey{padding:6px 8px;font-size:11px}}\n.account-history-list{max-height:300px;min-width:0;width:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;box-sizing:border-box}.account-history-list table{table-layout:fixed;min-width:0;width:100%;max-width:100%;border-collapse:collapse;font-size:12px}.account-history-list th,.account-history-list td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:normal;overflow-wrap:anywhere;box-sizing:border-box}.account-history-list th:first-child,.account-history-list td:first-child{width:auto}.account-history-list th:last-child,.account-history-list td:last-child{width:42px;text-align:center}.account-history-list th{position:sticky;top:0;background:#211a43;z-index:1}.account-member-name,.account-member-username{overflow-wrap:anywhere;word-break:break-word}.reset-member-password{background:#4a2028;border-color:#ef4444;color:#fecaca}.reset-member-password:hover{background:#702b38}
-/* Mobile: keep playback and song-part navigation reachable while scrolling lyrics */
+/* Mobile control dock: all song parts visible first, playback controls below */
 @media(max-width:600px){
-  .stage{padding-bottom:calc(30svh + 28px)}
+  .stage{padding-bottom:calc(43dvh + 24px)}
   .stage .playbox{
-    position:fixed;left:9px;right:9px;bottom:max(8px,env(safe-area-inset-bottom));
-    top:auto;width:auto;max-height:30svh;max-height:30dvh;z-index:999;
-    overflow-y:auto;overscroll-behavior:contain;margin:0;
-    padding:8px;background:#12103ff5;border:1px solid #9388ef;
+    position:fixed;left:8px;right:8px;bottom:max(7px,env(safe-area-inset-bottom));
+    top:auto;width:auto;max-height:46dvh;z-index:999;
+    display:flex;flex-direction:column;gap:5px;overflow-y:auto;overflow-x:hidden;
+    overscroll-behavior:contain;margin:0;padding:8px;
+    background:#12103ff7;border:1px solid #9388ef;
     box-shadow:0 -8px 28px #05041de8;border-radius:13px;
   }
-  .stage .playbox .parts-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:5px}
-  .stage #strip{position:relative;display:flex;flex-wrap:nowrap;gap:5px;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;overscroll-behavior-x:contain;padding:4px;margin:4px 0 0;}
-  .stage #strip button{flex:0 0 auto;min-height:42px;padding:9px 13px;font-size:12px;white-space:nowrap;touch-action:pan-x}
+  .stage .playbox .parts-head{order:1;display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0;font-size:11px}
+  .stage #strip{order:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;
+    width:100%;max-width:100%;overflow:visible;padding:0;margin:0;background:transparent;
+    scrollbar-width:none;}
+  .stage #strip button{width:100%;min-width:0;min-height:38px;padding:5px 3px;
+    border:1px solid #8b5cf688;border-radius:8px;font-size:11px;line-height:1.15;
+    white-space:normal;overflow-wrap:anywhere;touch-action:manipulation;}
+  .stage .playbox-head{order:3;margin-top:3px}
+  .stage .playbox-controls{order:4;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+  .stage .playbox-controls button{min-width:0;min-height:34px;padding:5px 3px;font-size:10px;line-height:1.15;white-space:normal}
+  body.song-focus-mode .top{display:none!important}
+  body.song-focus-mode .stage>.stg,
+  body.song-focus-mode .stage>#dtools,
+  body.song-focus-mode .stage>#stageRoleBar{display:none!important}
+  body.song-focus-mode .stage{padding-top:8px;padding-bottom:calc(48dvh + 24px)}
+  body.song-focus-mode .stage .playbox{max-height:48dvh}
+  body.song-focus-mode .stage .playbox-head{display:none}
 }
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <section id="auth" class="panel auth"><h2>Welcome to your songbook</h2><p class="muted">Sign in or create your Worship Team account. No email or Gmail required.</p><label>Username<input id="username" autocomplete="username" placeholder="Your username (e.g. Juan123)"></label><br><label>Password<input id="pass" type="password" autocomplete="current-password" placeholder="At least 8 characters"></label><div class="tools"><button class="primary" id="login">Sign in</button><button id="signup">Create account</button></div><button id="forgotPasswordToggle" type="button" style="margin-top:10px;padding:4px 0;background:transparent;border:0;color:var(--gold);text-decoration:underline;box-shadow:none">Forgot password?</button><p id="forgotPasswordHelp" class="hint hidden" style="margin:6px 0 10px">For account security, password resets are handled by the Super Admin. Contact Admin@Mart and request a temporary password reset. The Super Admin can reset your account from Registered Accounts; you’ll be required to create a new password before entering the Hub.</p><p class="hint" id="msg">New accounts are Members. Only the Super Admin can promote members to Admin.</p></section>
@@ -529,9 +544,9 @@ const wxV=k=>W.solo&&W.solo!==k?0:W.mute[k]?0:W.vol[k];
 function wxClk(t,acc){const v=wxV('c');if(!v)return;const a=W.ac,o=a.createOscillator(),g=a.createGain();o.frequency.value=acc?1600:1000;g.gain.setValueAtTime(v*.6,t);g.gain.exponentialRampToValueAtTime(.001,t+.06);o.connect(g).connect(a.destination);o.start(t);o.stop(t+.08)}
 function wxSay(){if(!W.play||!window.speechSynthesis||!wxV('g')||!W.secs[W.sec]?.n)return;const u=new SpeechSynthesisUtterance(W.secs[W.sec].n);u.volume=wxV('g');speechSynthesis.cancel();speechSynthesis.speak(u)}
 function wxAdv(){if(!W.play||W.mode!=='auto')return;if(!W.loop){if(W.sec+1<W.secs.length)W.sec++;else{wxStop();return}}wxMark(owner());wxSay()}
-async function wxPlay(){if(W.play){wxStop();return}if(!current)return;let a;try{a=wxAc();if(a.state==='suspended')await a.resume();if(a.state!=='running')throw new Error('Tap Play again to enable audio in your browser.')}catch(e){console.error('Playback audio error:',e);alert('Playback sound could not start: '+e.message+' Check your device volume and browser sound settings.');return}const nb=parseInt(W.ts)||4,sub=W.ts==='6/8'?.5:1;W.play=1;W.beat=0;W.nt=a.currentTime+.1;$('play').textContent='■ Stop';wxModeUI();wxMark(owner());wxSay();
+async function wxPlay(){if(W.play){wxStop();return}if(!current)return;let a;try{a=wxAc();if(a.state==='suspended')await a.resume();if(a.state!=='running')throw new Error('Tap Play again to enable audio in your browser.')}catch(e){console.error('Playback audio error:',e);alert('Playback sound could not start: '+e.message+' Check your device volume and browser sound settings.');return}const nb=parseInt(W.ts)||4,sub=W.ts==='6/8'?.5:1;W.play=1;document.body.classList.add('song-focus-mode');W.beat=0;W.nt=a.currentTime+.1;$('play').textContent='■ Stop';wxModeUI();wxMark(owner());wxSay();
  W.tm=setInterval(()=>{while(W.nt<a.currentTime+.15){wxClk(W.nt,W.beat%nb===0);W.beat++;W.nt+=60/W.bpm*sub;if(W.beat%(nb*4)===0)setTimeout(wxAdv,Math.max(0,(W.nt-a.currentTime)*1000))}},25)}
-function wxStop(){clearInterval(W.tm);W.play=0;if($('play')){$('play').textContent='▶ Play';$('play').classList.remove('playing')}if(window.speechSynthesis)speechSynthesis.cancel()}
+function wxStop(){clearInterval(W.tm);W.play=0;document.body.classList.remove('song-focus-mode');if($('play')){$('play').textContent='▶ Play';$('play').classList.remove('playing')}if(window.speechSynthesis)speechSynthesis.cancel()}
 function wxModeUI(){const a=W.mode==='auto';$('manualMode').classList.toggle('on',!a);$('autoMode').classList.toggle('on',a);$('playModeLabel').textContent=a?'Automatic progression':'Manual section control';$('play').classList.toggle('playing',!!W.play);$('metMute').classList.toggle('muted',!!W.mute.c);$('metMute').textContent=W.mute.c?'🔕 Metronome muted':'🔔 Metronome on';$('metMute').setAttribute('aria-pressed',String(!!W.mute.c))}
 function wxMode(m){W.mode=m;localStorage.setItem('wx_mode',m);wxModeUI()}
 function wxSectionStep(d){if(!current||!W.secs.length)return;const named=W.secs.map((s,i)=>({s,i})).filter(x=>x.s.n);if(!named.length)return;const at=named.findIndex(x=>x.i===W.sec);const next=Math.max(0,Math.min(named.length-1,(at<0?0:at)+d));W.sec=named[next].i;wxMark(true);wxSay()}
