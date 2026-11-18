@@ -741,7 +741,7 @@ body.wx-monitor #lw:fullscreen #monitorFullscreen,body.wx-monitor #lw:-webkit-fu
 #lw:fullscreen,#lw:-webkit-full-screen{width:100vw!important;height:100svh!important;min-height:100svh!important;max-height:100svh!important;max-width:100vw!important;margin:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;box-sizing:border-box!important}
 #lw:fullscreen #lyrics,#lw:-webkit-full-screen #lyrics{width:100%!important;height:100%!important;min-height:100%!important;max-height:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important}
 #lw:fullscreen #presBackdropLayer,#lw:fullscreen #presBackdropShade,#lw:-webkit-full-screen #presBackdropLayer,#lw:-webkit-full-screen #presBackdropShade{position:absolute!important;inset:0!important}
-</style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
+#dtools{display:none!important}</style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
   <button type="button" class="workspace-tab active" data-workspace-target="presentation" data-target-id="title">▣ <span>Presentation</span></button>
@@ -1320,12 +1320,9 @@ $('workspaceVocals').onclick=()=>$('presOpenVocals').click();
 (function(){const $=id=>document.getElementById(id),q=s=>document.querySelector(s);
 const top=q('.top'),rib=$('workspaceRibbon');if(top&&rib&&top.children.length>1)top.insertBefore(rib,top.children[1]);
 const sl=$('songlist');if(sl){const h=sl.parentElement.querySelector('.section');if(h)h.innerHTML='Service Order <span id="soCount">0</span>'}
-const stg=q('main.stage .stg');if(stg)stg.insertAdjacentHTML('afterend','<div id="slideTools"><input id="slideSearch" type="search" placeholder="Search slides…"><button id="gridBtn" class="on" type="button">▦</button><button id="listBtn" type="button">☰</button></div><div id="slideGrid"></div>');
+
 const rail=q('.right-rail');if(rail)rail.insertAdjacentHTML('afterbegin','<section class="panel live-card"><span class="livebadge">● LIVE</span><div id="liveSlide" class="mxs big"></div></section><section class="panel live-card"><div class="section">▶ Next Slide</div><div id="nextSlide" class="mxs"></div></section>');
-function filter(){const v=($('slideSearch')?.value||'').toLowerCase();document.querySelectorAll('#slideGrid .mxs').forEach(x=>x.style.display=x.textContent.toLowerCase().includes(v)?'':'none')}
-function refresh(){const g=$('slideGrid');if(!g)return;const sw=[...document.querySelectorAll('#lyrics .sw')];let cur=sw.findIndex(x=>x.classList.contains('cur'));if(cur<0)cur=0;
-g.innerHTML=sw.map((s,i)=>'<div class="mxs'+(i==cur?' cur':'')+'" data-i="'+i+'"><b class="n">'+(i+1)+'</b>'+s.innerHTML+'</div>').join('')||'<p class="muted">Select a song to see its slides.</p>';
-const set=(el,s,m)=>{if(el)el.innerHTML=s?s.innerHTML:'<span class="muted">'+m+'</span>'};
+function refresh(){const sw=[...document.querySelectorAll('#lyrics .sw')];let cur=sw.findIndex(x=>x.classList.contains('cur'));if(cur<0)cur=0;
 const liveEl=$('liveSlide');
 if(liveEl){
  if(sw[cur]){
@@ -1334,14 +1331,12 @@ if(liveEl){
   liveEl.innerHTML=lyricsOnly.innerHTML;
  }else liveEl.innerHTML='<span class="muted">No slide</span>';
 }
-set($('nextSlide'),sw[cur+1],'End of song');
-const c=$('soCount');if(c)c.textContent=$('songlist')?$('songlist').children.length:0;filter()}
+const next=$('nextSlide');if(next)next.innerHTML=sw[cur+1]?sw[cur+1].innerHTML:'<span class="muted">End of song</span>';
+const c=$('soCount');if(c)c.textContent=$('songlist')?$('songlist').children.length:0}
 let t;const later=()=>{clearTimeout(t);t=setTimeout(refresh,80)};
 const ly=$('lyrics');if(ly)new MutationObserver(later).observe(ly,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
 if(sl)new MutationObserver(later).observe(sl,{childList:true});
-document.addEventListener('click',e=>{const c=e.target.closest('#slideGrid .mxs');if(c){const i=c.dataset.i,b=document.querySelector('#strip button[data-i="'+i+'"]');if(b)b.click();else{const s=$('sw'+i);if(s)s.scrollIntoView({behavior:'smooth',block:'center'})}}
-const id=e.target.id;if(id=='gridBtn'||id=='listBtn'){$('slideGrid').classList.toggle('list',id=='listBtn');$('gridBtn').classList.toggle('on',id=='gridBtn');$('listBtn').classList.toggle('on',id=='listBtn')}});
-document.addEventListener('input',e=>{if(e.target.id=='slideSearch')filter()});refresh()})();
+refresh()})();
 </script><script>
 (function(){const $=id=>document.getElementById(id),q=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
