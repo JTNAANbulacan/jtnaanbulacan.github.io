@@ -67,12 +67,15 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
 }
 
 /* Reuse the selected presentation background in every slide thumbnail and preview. */
-.thumb,.preview{position:relative;isolation:isolate;background-color:#090817;background-size:cover;background-position:center}
-.thumb .preview-bg,.preview .preview-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;border-radius:inherit;background-position:center;background-size:cover}
-.thumb .preview-bg video,.preview .preview-bg video{width:100%;height:100%;object-fit:cover}
-.thumb:after,.preview:after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#0003,#0008)}
-.thumb .thumb-copy,.preview .preview-copy{position:relative;z-index:1;white-space:pre-wrap;text-align:center;overflow-wrap:anywhere;text-shadow:0 2px 8px #000,0 0 16px #000b}
-.thumb .n{z-index:2}
+.thumb,.preview{position:relative;isolation:isolate;z-index:0;background-color:#090817;background-size:cover;background-position:center}
+/* Keep every backdrop layer strictly inside the preview and out of the controls' hit area. */
+.thumb .preview-bg,.preview .preview-bg{position:absolute;inset:0;z-index:0;pointer-events:none!important;overflow:hidden;border-radius:inherit;background-position:center;background-size:cover}
+.thumb .preview-bg video,.preview .preview-bg video{width:100%;height:100%;object-fit:cover;pointer-events:none!important}
+.thumb:after,.preview:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,#0003,#0008)}
+.thumb .thumb-copy,.preview .preview-copy{position:relative;z-index:2;white-space:pre-wrap;text-align:center;overflow-wrap:anywhere;text-shadow:0 2px 8px #000,0 0 16px #000b}
+.thumb .n{z-index:3}
+.controls{position:relative;z-index:5;isolation:isolate}
+.controls button{position:relative;z-index:6;pointer-events:auto}
 </style></head><body>
 <header class="top"><div class="brand">♫ JTNAAN <span style="color:#c4b5fd">PRESENTER</span></div><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
