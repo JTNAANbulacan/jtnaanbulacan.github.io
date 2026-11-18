@@ -76,6 +76,7 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
 .thumb .n{z-index:3}
 .controls{position:relative;z-index:5;isolation:isolate}
 .controls button{position:relative;z-index:6;pointer-events:auto}
+.audience-reminder{font-size:clamp(8px,.72vw,10px)!important;line-height:1.2!important;white-space:nowrap!important;max-width:100%;overflow:hidden;text-overflow:clip;letter-spacing:-.02em;margin:5px 0!important}
 </style></head><body>
 <header class="top"><div class="brand">♫ JTNAAN <span style="color:#c4b5fd">PRESENTER</span></div><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
@@ -95,7 +96,7 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
 <div class="hint" id="stockStatus">Curated worship and spiritual imagery loads automatically. Search for cross, sunrise, clouds, mountains, church, Bible, or nature.</div>
 <div id="stockGallery" class="stockgrid"><div class="empty">Your free background gallery will appear here.</div></div>
 </div>
-<div class="body hide" id="tool-display"><div class="toolbar"><button id="openDisplay2" class="primary">▣ Open Audience / Projector Display</button><button id="openVocalist">🎤 Open Vocalist View</button><button id="openInstrumentalist">🎸 Open Instrumentalist View</button></div><div class="toolbar"><button id="blank2">Blank screen</button><button id="unblank">Show presentation</button></div><p class="hint">The audience display uses the same live session and two-line slide layout as the Worship Hub monitor. Open it on the projector computer or a second screen.</p><div class="hint" id="displayInfo"></div></div>
+<div class="body hide" id="tool-display"><div class="toolbar"><button id="openDisplay2" class="primary">▣ Open Audience / Projector Display</button><button id="openVocalist">🎤 Open Vocalist View</button><button id="openInstrumentalist">🎸 Open Instrumentalist View</button></div><div class="toolbar"><button id="blank2">Blank screen</button><button id="unblank">Show presentation</button></div><p class="hint audience-reminder">The audience display uses the same live session and two-line slide layout as the Worship Hub monitor. Open it on the projector computer or a second screen.</p><div class="hint" id="displayInfo"></div></div>
 </section>
 </main>
 <div id="switchSongDialog" class="modal hide"><div class="dialog"><div class="toolbar" style="justify-content:space-between"><h2>Switch service song</h2><button id="closeSwitchSong">✕</button></div><p class="hint">Choose a song already in the current service playlist. This changes the live song for everyone when you are controlling a session.</p><input id="switchSongSearch" placeholder="Search songs in this service"><div id="switchSongList" style="max-height:55vh;overflow:auto"></div></div></div>
