@@ -841,7 +841,7 @@ function wxFitPart(index=W.sec){
  const base=parseFloat(getComputedStyle(root).fontSize)||18;
  parts.forEach(p=>{p.style.fontSize=base+'px'});
  const target=parts[index];if(!target)return;
- const lane=$('.playbox');
+ const lane=document.querySelector('.playbox');
  const headerBottom=wxWorkspaceAnchorBottom();
  const laneTop=lane?lane.getBoundingClientRect().top:window.innerHeight;
  const available=Math.max(100,laneTop-headerBottom-34);
