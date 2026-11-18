@@ -706,6 +706,14 @@ body.wx-monitor #lyrics,body.wx-display #lyrics{width:100%;height:100%;min-heigh
 body.wx-display #lyrics{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:5% 7%;line-height:1.25}
 body.wx-display .wx-instrument-line .ch{color:var(--ch,#facc15);font-weight:850}
 body.wx-display .wx-instrument-line .tx{color:var(--lyc,#fff)}
+
+/* Balanced, readable 2-line presentation layout with responsive fit-to-box sizing. */
+body.wx-monitor #lyrics,body.wx-display #lyrics{box-sizing:border-box;padding:6% 7%;gap:.42em;overflow:hidden;}
+body.wx-monitor .wx-slide-line,body.wx-display .wx-slide-line{width:100%;max-width:100%;text-wrap:balance;overflow-wrap:anywhere;word-break:normal;}
+body.wx-display .wx-instrument-line .ln{width:100%;max-width:100%;white-space:normal;}
+body.wx-display .wx-instrument-line .sg{white-space:normal;max-width:100%;}
+body.wx-display .wx-instrument-line .tx{white-space:normal!important;overflow-wrap:anywhere;}
+body.wx-display .wx-instrument-line .ch{white-space:nowrap;}
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
@@ -1015,6 +1023,27 @@ function wxSyncedSlideContent(st,kind){
  if(kind==='instrumentalist')return shown.map(line=>'<div class="wx-slide-line wx-instrument-line">'+wxLine(line,(live?.transpose||0))+'</div>').join('');
  return shown.map(line=>'<div class="wx-slide-line">'+esc(wxPlainLyrics(line))+'</div>').join('');
 }
+let wxFitObserver=null,wxFitResizeBound=false,wxFitFrame=0;
+function wxFitSyncedText(root){
+ if(!root||!root.isConnected)return;
+ if(!wxFitResizeBound){
+  wxFitResizeBound=true;
+  window.addEventListener('resize',()=>wxFitSyncedText(root),{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(()=>wxFitSyncedText(root),80),{passive:true});
+  if('ResizeObserver'in window){wxFitObserver=new ResizeObserver(()=>wxFitSyncedText(root));wxFitObserver.observe(root);}
+ }
+ if(wxFitFrame)cancelAnimationFrame(wxFitFrame);
+ wxFitFrame=requestAnimationFrame(()=>{
+  wxFitFrame=0;
+  if(!root.isConnected||!root.clientWidth||!root.clientHeight)return;
+  const max=Math.min(88,Math.max(30,Math.min(window.innerWidth*.075,window.innerHeight*.22)));
+  const min=18;
+  let size=max;
+  root.style.fontSize=size+'px';
+  const overflows=()=>root.scrollHeight>root.clientHeight+2||root.scrollWidth>root.clientWidth+2;
+  while(size>min&&overflows()){size=Math.max(min,size-1);root.style.fontSize=size+'px';}
+ });
+}
 function wxSyncedOutputRender(kind){
  if((kind==='monitor'&&!WX_MONITOR)||(kind!=='monitor'&&!WX_DISPLAY)||!$('lyrics'))return;
  const st=wxPresentationState(),root=$('lyrics'),logo=$('presMonitorLogo'),logoSrc=localStorage.getItem('wx_logo')||'';
@@ -1039,16 +1068,11 @@ function wxSyncedOutputRender(kind){
  root.style.visibility='visible';
  if(kind==='instrumentalist')wxApplyDisplayColors();
  if(st.custom_slide?.type==='countdown'||st.custom_slide){
-  let size=Math.min(72,Math.max(24,Math.min(window.innerWidth*.065,window.innerHeight*.18)));
-  root.style.fontSize=size+'px';
+  root.style.fontSize=Math.min(72,Math.max(24,Math.min(window.innerWidth*.065,window.innerHeight*.18)))+'px';
  }else{
-  let size=Math.min(88,Math.max(24,Math.min(window.innerWidth*.075,window.innerHeight*.22)));
-  root.style.fontSize=size+'px';
+  root.style.fontSize=Math.min(88,Math.max(30,Math.min(window.innerWidth*.075,window.innerHeight*.22)))+'px';
  }
- requestAnimationFrame(()=>{
-  let size=parseFloat(root.style.fontSize)||48;
-  while(size>22&&[...root.children].some(el=>el.scrollWidth>root.clientWidth-8||el.scrollHeight>root.clientHeight-20)){size-=2;root.style.fontSize=size+'px'}
- });
+ wxFitSyncedText(root);
 }
 function wxMonitorRender(){wxSyncedOutputRender('monitor')}
 function wxDisplayRender(){wxSyncedOutputRender(WX_DISPLAY==='instrumentalist'?'instrumentalist':'vocalist')}
