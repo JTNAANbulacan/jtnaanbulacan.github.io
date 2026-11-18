@@ -875,14 +875,24 @@ const WP={KEYS:['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'],ST:[{n:'Wa
 const W={sid:null,sec:0,secs:[],play:0,loop:0,mode:localStorage.getItem('wx_mode')||'auto',bpm:72,ts:'4/4',vol:{g:.8,c:.8},mute:{},solo:null,ac:null,key:null,si:0,pv:.5,fl:.6,on:0,pn:null,tm:null};
 const wchO=l=>{const t=l.trim();return!!t&&t.split(/[\s|]+/).every(x=>WCH.test(x)||/^[-–—x\d]+$/i.test(x))&&t.split(/[\s|]+/).some(x=>WCH.test(x))};
 function wxSecs(raw){
- // Treat the entire song as one continuous lyric flow. Verse/Chorus/Bridge headings
- // are intentionally ignored so slide boundaries always fall after two lyric lines.
- const lines=String(raw||'').replace(/\r\n?/g,'\n').split('\n');
- const lyrics=lines.filter(line=>line.trim()&&!WSEC.test(line)&&wxPlainLyrics(line));
- const slides=[];
- for(let i=0;i<lyrics.length;i+=2)slides.push({n:'',L:lyrics.slice(i,i+2),announce:false});
- // Keep a visible slide for genuinely instrumental/chord-only songs rather than
- // presenting an empty song to the worship team.
+ // Keep an explicit Intro as its own opening slide. It is shown to instrumentalists
+ // as chords, while vocalist and congregation displays intentionally show backdrop only.
+ const lines=String(raw||'').replace(/\r\n?/g,'\n').split('\n'),slides=[],lyrics=[];
+ const flushLyrics=()=>{for(let i=0;i<lyrics.length;i+=2)slides.push({n:'',L:lyrics.slice(i,i+2),announce:false});lyrics.length=0};
+ for(let i=0;i<lines.length;i++){
+  const line=lines[i],isIntro=/^\s*(?:\[\s*intro\s*\]|intro\s*:?)\s*$/i.test(line);
+  if(isIntro){
+   flushLyrics();
+   const intro=[];
+   while(i+1<lines.length&&!WSEC.test(lines[i+1])){i++;if(lines[i].trim())intro.push(lines[i])}
+   if(intro.length)slides.push({n:'Intro',L:intro,announce:false,type:'intro'});
+   continue;
+  }
+  if(WSEC.test(line))continue;
+  if(line.trim()&&wxPlainLyrics(line))lyrics.push(line);
+ }
+ flushLyrics();
+ // Keep a visible slide for genuinely instrumental/chord-only songs without an Intro heading.
  if(!slides.length){const instrumental=lines.filter(line=>line.trim()&&!WSEC.test(line));if(instrumental.length)slides.push({n:'',L:instrumental.slice(0,2),announce:false});}
  return slides.map((slide,i)=>({...slide,number:i+1}));
 }
@@ -1052,6 +1062,10 @@ function wxPlainLyrics(line){let s=String(line||'').replace(/\[[^\]]+\]/g,'').re
 function wxSyncedSlideContent(st,kind){
  const slideIndex=Math.max(0,Math.min((W.secs||[]).length-1,Number(st.section_index??W.sec)||0)),slide=(W.secs||[])[slideIndex]||null;
  if(!slide)return '<div class="wx-monitor-empty">Waiting for the worship leader…</div>';
+ if(slide.type==='intro'){
+  if(kind!=='instrumentalist')return '';
+  return slide.L.map(line=>'<div class="wx-slide-line wx-instrument-line">'+wxLine(line,(live?.transpose||0))+'</div>').join('');
+ }
  const shown=slide.L.filter(line=>wxPlainLyrics(line)).slice(0,2);
  if(!shown.length)return '<div class="wx-monitor-empty">Instrumental</div>';
  if(kind==='instrumentalist')return shown.map(line=>'<div class="wx-slide-line wx-instrument-line">'+wxLine(line,(live?.transpose||0))+'</div>').join('');
