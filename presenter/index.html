@@ -108,6 +108,32 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
  .library-controls button{font-size:10px;padding:5px 3px}
  #libraryResults{min-height:60px}
 }
+
+/* Final service panel sizing override: keep the service controls above the library. */
+@media(min-width:1051px){
+ .layout{grid-template-columns:minmax(330px,360px) minmax(300px,1fr) minmax(330px,1.05fr)!important}
+}
+.service-panel{display:flex!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important}
+.service-panel>.service-body{display:flex!important;flex:0 0 auto!important;min-height:max-content!important;width:100%;position:relative;z-index:1}
+.service-panel>.library-panel{display:flex!important;flex:1 1 0!important;min-height:0!important;overflow:hidden!important;width:100%;position:relative;z-index:0}
+.service-panel>.library-panel>.library-controls{display:grid!important;grid-template-columns:minmax(0,1.25fr) minmax(0,.65fr) minmax(0,.55fr) minmax(0,.7fr)!important;gap:5px!important;width:100%;min-width:0}
+.service-panel .library-controls>*{min-width:0!important;max-width:100%!important}
+.service-panel .library-controls input{width:100%!important;min-width:0!important;font-size:11px!important}
+.service-panel .library-controls button{width:100%!important;min-width:0!important;padding:6px 3px!important;font-size:10px!important;letter-spacing:-.03em}
+.service-panel>.library-panel>#libraryResults{display:block!important;flex:1 1 0!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important}
+.service-panel>.service-body>.session-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;width:100%;min-width:0}
+.service-panel>.service-body>.session-actions button{width:100%;min-width:0!important;max-width:100%;overflow-wrap:anywhere}
+@media(max-width:1050px){
+ .layout{grid-template-columns:minmax(290px,340px) minmax(260px,1fr)!important}
+ .service-panel>.library-panel{min-height:150px!important}
+}
+@media(max-width:620px){
+ .layout{grid-template-columns:minmax(0,1fr)!important}
+ .service-panel>.service-body{padding:8px!important}
+ .service-panel>.library-panel{min-height:140px!important}
+ .service-panel>.library-panel>.library-controls{grid-template-columns:minmax(0,1fr) repeat(3,minmax(0,.48fr))!important}
+ .service-panel .library-controls button{font-size:9px!important}
+}
 </style></head><body>
 <header class="top"><div class="brand">♫ JTNAAN <span style="color:#c4b5fd">PRESENTER</span></div><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
