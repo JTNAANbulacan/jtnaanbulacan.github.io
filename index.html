@@ -4648,14 +4648,14 @@ function membersv(){
   <div style="overflow-x:auto">
     <table style="width:100%;border-collapse:collapse;background:var(--card)">
       <thead><tr style="border-bottom:2px solid var(--bd)">
-        <th style="text-align:left;padding:10px 8px;color:var(--pr)">#</th>
+        <th style="text-align:center;padding:10px 8px;color:var(--pr);white-space:nowrap;width:1%;min-width:42px">#</th>
         <th style="text-align:left;padding:10px 8px;color:var(--pr)">Name (A–Z)</th>
         <th style="text-align:left;padding:10px 8px;color:var(--pr)">Ministry</th>
         ${can("members")?`<th style="text-align:center;padding:10px 8px;color:var(--pr)">Actions</th>`:''}
       </tr></thead>
       <tbody>
         ${L.map((m,i)=>`<tr style="border-bottom:1px solid var(--bd)">
-          <td style="padding:10px 8px" class="mu">${i+1}</td>
+          <td style="padding:10px 8px;text-align:center;white-space:nowrap;width:1%;min-width:42px" class="mu">${i+1}</td>
           <td style="padding:10px 8px"><b>${e(m.name)}</b></td>
           <td style="padding:10px 8px">${e(m.ministry)}</td>
           ${can("members")?`<td style="padding:8px;text-align:center;white-space:nowrap">
