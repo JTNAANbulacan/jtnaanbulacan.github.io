@@ -1324,7 +1324,25 @@ function wxOpenDisplay(kind,name){if(!live?.is_live||!ctl())return alert('Create
 
 $('presOpenInstrumentalist').onclick=()=>wxOpenDisplay('instrumentalist','jtn-worship-instrumentalist');
 $('presOpenVocals').onclick=()=>wxOpenDisplay('vocalist','jtn-worship-vocals-monitor');
-async function wxMonitorSlide(delta){if(!ctl()||!live?.is_live)return;const fresh=wxSecs(wxNorm(current?.lyrics_chords||''));if(fresh.length)W.secs=fresh;if(!W.secs.length)return;const target=Math.max(0,Math.min(W.secs.length-1,W.sec+delta));if(target===W.sec)return;const state={...wxPresentationState(),section_index:target,slide_index:0,blank:false,custom_slide:null},scroll_position=target*1000;const {error}=await db.from('worship_live_sessions').update({presentation_state:state,scroll_position,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id',live.id);if(error)return alert(error.message);W.sec=target;live.presentation_state=state;live.scroll_position=scroll_position;wxMark(false);const el=$('sw'+target);if(el){const top=el.getBoundingClientRect().top+window.scrollY-wxWorkspaceAnchorBottom()-16;window.scrollTo({top:Math.max(0,top),behavior:'smooth'})}}
+async function wxMonitorSlide(delta){
+ if(!ctl()||!live?.is_live)return;
+ const fresh=wxSecs(wxNorm(current?.lyrics_chords||''));
+ if(fresh.length)W.secs=fresh;
+ if(!W.secs.length)return;
+ const target=Math.max(0,Math.min(W.secs.length-1,W.sec+delta));
+ if(target===W.sec)return;
+ const state={...wxPresentationState(),section_index:target,slide_index:0,blank:false,custom_slide:null};
+ const scroll_position=target*1000;
+ const {error}=await db.from('worship_live_sessions').update({presentation_state:state,scroll_position,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id',live.id);
+ if(error)return alert(error.message);
+ W.sec=target;
+ live.presentation_state=state;
+ live.scroll_position=scroll_position;
+ // Update the selected slide and its synced displays without scrolling the controller page.
+ wxMark(false);
+ if(WX_MONITOR)wxMonitorRender();
+ if(WX_DISPLAY)wxDisplayRender();
+}
 $('presPrevSlide').onclick=()=>wxMonitorSlide(-1);$('presNextSlide').onclick=()=>wxMonitorSlide(1);
 document.addEventListener('keydown',e=>{
  if(WX_DISPLAY||!live?.is_live||!ctl()||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
