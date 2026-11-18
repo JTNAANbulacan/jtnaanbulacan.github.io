@@ -1066,7 +1066,7 @@ function wxSyncedSlideContent(st,kind){
  const slideIndex=Math.max(0,Math.min((W.secs||[]).length-1,Number(st.section_index??W.sec)||0)),slide=(W.secs||[])[slideIndex]||null;
  if(!slide)return '<div class="wx-monitor-empty">Waiting for the worship leader…</div>';
  const edits=st.slide_edits||{},songKey=(current?.id||'')+':'+slideIndex;
- const makeLine=(line,index,instrument=false)=>{const key=songKey+':'+index,edit=edits[key]||{},plain=wxPlainLyrics(line),text=edit.text??plain,size=Number(edit.size)||0,style=size?' style="font-size:'+Math.max(12,Math.min(120,size))+'px"':'';return '<div class="wx-slide-line'+(instrument?' wx-instrument-line':'')+'" data-wx-line="'+index+'"'+style+'>'+(instrument&&!edit.text?wxLine(line,(live?.transpose||0)):esc(text))+'</div>'};
+ const makeLine=(line,index,instrument=false)=>{const key=songKey+':'+index,edit=edits[key]||{},plain=wxPlainLyrics(line),text=edit.text??plain,size=Number(edit.size)||0,style=size?' style="font-size:'+Math.max(12,Math.min(120,size))+'px"':'';const chordTokens=instrument&&edit.text?(String(line).match(/\[([^\]]+)\]/g)||[]).map(x=>x.slice(1,-1)).filter(x=>WCH.test(x)):[];const content=instrument&&!edit.text?wxLine(line,(live?.transpose||0)):instrument&&chordTokens.length?'<div class="cp">'+chordTokens.map(c=>'<span>'+esc(chord(c,live?.transpose||0))+'</span>').join('')+'</div><div class="tx">'+esc(text)+'</div>':esc(text);return '<div class="wx-slide-line'+(instrument?' wx-instrument-line':'')+'" data-wx-line="'+index+'"'+style+'>'+content+'</div>'};
  if(slide.type==='intro'){
   if(kind!=='instrumentalist')return '';
   return slide.L.map((line,i)=>makeLine(line,i,true)).join('');
