@@ -733,6 +733,11 @@ body.wx-display .wx-instrument-line .ch{white-space:nowrap;}
 .stage .playbox .playbox-head{order:3;margin-top:3px}
 .stage .playbox .playbox-controls{order:4}
 .sw .sp{display:inline-block;margin:4px 0 7px;padding:3px 10px;border-radius:7px;background:#ffffff12;font-size:10px;letter-spacing:.08em}
+
+/* Fullscreen is limited to the presentation canvas: lyrics plus selected background. */
+#lw:fullscreen,#lw:-webkit-full-screen{width:100vw!important;height:100svh!important;min-height:100svh!important;max-height:100svh!important;max-width:100vw!important;margin:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;box-sizing:border-box!important}
+#lw:fullscreen #lyrics,#lw:-webkit-full-screen #lyrics{width:100%!important;height:100%!important;min-height:100%!important;max-height:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important}
+#lw:fullscreen #presBackdropLayer,#lw:fullscreen #presBackdropShade,#lw:-webkit-full-screen #presBackdropLayer,#lw:-webkit-full-screen #presBackdropShade{position:absolute!important;inset:0!important}
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
@@ -1268,7 +1273,16 @@ const rail=q('.right-rail');if(rail)rail.insertAdjacentHTML('afterbegin','<secti
 function filter(){const v=($('slideSearch')?.value||'').toLowerCase();document.querySelectorAll('#slideGrid .mxs').forEach(x=>x.style.display=x.textContent.toLowerCase().includes(v)?'':'none')}
 function refresh(){const g=$('slideGrid');if(!g)return;const sw=[...document.querySelectorAll('#lyrics .sw')];let cur=sw.findIndex(x=>x.classList.contains('cur'));if(cur<0)cur=0;
 g.innerHTML=sw.map((s,i)=>'<div class="mxs'+(i==cur?' cur':'')+'" data-i="'+i+'"><b class="n">'+(i+1)+'</b>'+s.innerHTML+'</div>').join('')||'<p class="muted">Select a song to see its slides.</p>';
-const set=(el,s,m)=>{if(el)el.innerHTML=s?s.innerHTML:'<span class="muted">'+m+'</span>'};set($('liveSlide'),sw[cur],'No slide');set($('nextSlide'),sw[cur+1],'End of song');
+const set=(el,s,m)=>{if(el)el.innerHTML=s?s.innerHTML:'<span class="muted">'+m+'</span>'};
+const liveEl=$('liveSlide');
+if(liveEl){
+ if(sw[cur]){
+  const lyricsOnly=sw[cur].cloneNode(true);
+  lyricsOnly.querySelectorAll('.ch,.cp,.chord,.sp').forEach(x=>x.remove());
+  liveEl.innerHTML=lyricsOnly.innerHTML;
+ }else liveEl.innerHTML='<span class="muted">No slide</span>';
+}
+set($('nextSlide'),sw[cur+1],'End of song');
 const c=$('soCount');if(c)c.textContent=$('songlist')?$('songlist').children.length:0;filter()}
 let t;const later=()=>{clearTimeout(t);t=setTimeout(refresh,80)};
 const ly=$('lyrics');if(ly)new MutationObserver(later).observe(ly,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
@@ -1288,7 +1302,7 @@ $('mxCur').textContent=(sw.length?Math.max(cur,0)+1:0)+' / '+sw.length;const b=$
 const f=$('mxFlow');if(f)f.innerHTML=[...document.querySelectorAll('#songlist .item')].map((it,i)=>'<div class="fl'+(it.classList.contains('active')?' on':'')+'" data-fi="'+i+'"><i></i><span>'+esc(it.firstChild?it.firstChild.textContent:'')+'</span><small>'+esc(it.querySelector('small')?it.querySelector('small').textContent:'')+'</small></div>').join('')||'<p class="muted">No songs yet.</p>'}
 let t;const later=()=>{clearTimeout(t);t=setTimeout(upd,120)},o={childList:true,subtree:true,attributes:true,attributeFilter:['class']};
 [$('lyrics'),$('songlist'),$('bpmTile')].forEach(e=>e&&new MutationObserver(later).observe(e,o));
-document.addEventListener('click',e=>{const fs=e.target.closest('[data-fullscreen]');if(fs){const el=document.documentElement;if(!document.fullscreenElement&&el.requestFullscreen)el.requestFullscreen().catch(()=>alert('Full-screen mode is unavailable in this browser.'));else if(document.exitFullscreen)document.exitFullscreen().catch(()=>{});return}const g=e.target.closest('[data-go]');if(g){const x=$(g.dataset.go);if(x)x.click();return}
+document.addEventListener('click',e=>{const fs=e.target.closest('[data-fullscreen]');if(fs){const el=$('lw');if(document.fullscreenElement){if(document.exitFullscreen)document.exitFullscreen().catch(()=>{});return}const enter=el?.requestFullscreen||el?.webkitRequestFullscreen;if(enter){const result=enter.call(el);if(result?.catch)result.catch(()=>alert('Full-screen mode is unavailable in this browser.'));}else alert('Full-screen mode is unavailable in this browser.');return}const g=e.target.closest('[data-go]');if(g){const x=$(g.dataset.go);if(x)x.click();return}
 const s=e.target.closest('[data-scroll]');if(s){const x=q(s.dataset.scroll);if(x)x.scrollIntoView({behavior:'smooth',block:'center'});return}
 const f=e.target.closest('[data-fi]');if(f){const it=document.querySelectorAll('#songlist .item')[+f.dataset.fi];if(it)it.click()}});
 $('mxTheme').onchange=e=>{document.body.dataset.mx=e.target.value};
