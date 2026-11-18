@@ -1334,6 +1334,9 @@ async function wxMonitorSlide(delta){
  const fresh=wxSecs(wxNorm(current?.lyrics_chords||''));
  if(fresh.length)W.secs=fresh;
  if(!W.secs.length)return;
+ // Ignore any pending scroll-position update while a deliberate slide command is being applied.
+ W.partSyncUntil=Date.now()+1800;
+ if(W.sct){clearTimeout(W.sct);W.sct=0}
  const target=Math.max(0,Math.min(W.secs.length-1,W.sec+delta));
  if(target===W.sec)return;
  const state={...wxPresentationState(),section_index:target,slide_index:0,blank:false,custom_slide:null};
