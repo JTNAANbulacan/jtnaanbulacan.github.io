@@ -51,18 +51,18 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
 }
 
 .stockgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-top:10px;max-height:390px;overflow:auto}.stockcard{min-width:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#100d25}.stockcard img,.stockcard video{width:100%;height:94px;object-fit:cover;display:block;background:#080616}.stockcard .stockmeta{padding:7px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}.stockcard strong{display:block;color:var(--text);font-size:12px;margin-bottom:4px}.stockcard button{width:100%;border-radius:0;border:0;border-top:1px solid var(--line)}.stockcard a{color:#c4b5fd}@media(max-width:620px){.stockgrid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:260px}}/* Give the tool workspace more room, especially Backgrounds, without hiding the presenter controls. */
-.layout{grid-template-rows:minmax(0,1fr) minmax(250px,38vh)!important}
-.layout>.panel:nth-child(4) .body{max-height:calc(38vh - 48px)!important;min-height:210px;overflow:auto}
+.layout{grid-template-rows:minmax(0,1fr) minmax(205px,27vh)!important}
+.layout>.panel:nth-child(4) .body{max-height:calc(27vh - 48px)!important;min-height:175px;overflow:auto}
 .layout>.panel:nth-child(4){min-height:0}
 #tool-background{padding:14px}
 #tool-background .stockgrid{max-height:clamp(220px,32vh,420px)}
 @media(max-width:1050px){
- .layout{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(220px,32vh)!important}
- .layout>.panel:nth-child(4) .body{max-height:calc(32vh - 48px)!important;min-height:180px}
+ .layout{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(190px,26vh)!important}
+ .layout>.panel:nth-child(4) .body{max-height:calc(26vh - 48px)!important;min-height:160px}
 }
 @media(max-width:620px){
- .layout{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(190px,26vh)!important}
- .layout>.panel:nth-child(4) .body{max-height:calc(26vh - 42px)!important;min-height:160px;padding:10px}
+ .layout{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(175px,22vh)!important}
+ .layout>.panel:nth-child(4) .body{max-height:calc(22vh - 42px)!important;min-height:145px;padding:10px}
  .layout>.panel:nth-child(4) .stockgrid{max-height:210px}
 }
 </style></head><body>
