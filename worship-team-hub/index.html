@@ -1372,6 +1372,46 @@ document.querySelectorAll('[data-workspace-target]').forEach(btn=>btn.addEventLi
 $('workspaceNewSong').onclick=()=>$('newsong').click();
 $('workspaceInstrumentalist').onclick=()=>$('presOpenInstrumentalist').click();
 $('workspaceVocals').onclick=()=>$('presOpenVocals').click();
+
+/* Center controller canvas: use the module's live slide data so lyrics and chords stay in sync. */
+(()=>{
+ const root=$('lw'),lyrics=$('lyrics');
+ if(!root||!lyrics||window.wxControllerPreviewInstalled)return;
+ window.wxControllerPreviewInstalled=true;
+ const preview=document.createElement('div');
+ preview.id='wxControllerPresentation';
+ preview.setAttribute('aria-label','Live presentation preview');
+ root.insertBefore(preview,lyrics.nextSibling);
+ lyrics.classList.add('wx-controller-source');
+ function updateControllerPresentation(){
+  try{
+   W.secs=wxSecs(wxNorm(current?.lyrics_chords||''));
+   if(!Number.isFinite(W.sec))W.sec=0;
+   W.sec=Math.max(0,Math.min(Math.max(0,W.secs.length-1),W.sec));
+   const state=wxPresentationState();
+   const slideState={...state,section_index:W.sec};
+   const html=wxSyncedSlideContent(slideState,'instrumentalist');
+   if(preview.innerHTML!==html)preview.innerHTML=html;
+   preview.style.visibility=state.blank?'hidden':'visible';
+   let size=Math.min(88,Math.max(24,Math.min(window.innerWidth*.075,window.innerHeight*.20)));
+   preview.style.fontSize=size+'px';
+   while(size>12&&(preview.scrollHeight>preview.clientHeight+2||preview.scrollWidth>preview.clientWidth+2)){
+    size-=2;preview.style.fontSize=size+'px';
+   }
+  }catch(error){console.error('Controller presentation preview:',error)}
+ }
+ const originalDraw=draw;
+ draw=function(){const result=originalDraw.apply(this,arguments);updateControllerPresentation();return result};
+ const originalMark=wxMark;
+ wxMark=function(){const result=originalMark.apply(this,arguments);updateControllerPresentation();return result};
+ const originalBackdrop=wxApplyBackdrop;
+ wxApplyBackdrop=function(){const result=originalBackdrop.apply(this,arguments);updateControllerPresentation();return result};
+ const originalLiveSync=liveSync;
+ liveSync=async function(){const result=await originalLiveSync.apply(this,arguments);updateControllerPresentation();return result};
+ window.addEventListener('resize',updateControllerPresentation,{passive:true});
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateControllerPresentation()});
+ updateControllerPresentation();
+})();
 </script><script>
 (function(){
  const $=id=>document.getElementById(id),q=s=>document.querySelector(s);
@@ -1551,46 +1591,5 @@ if(typeof wxApplyBackdrop==='function'&&!window.wxBgMotionWrapped){
  const original=wxApplyBackdrop;window.wxBgMotionWrapped=true;
  wxApplyBackdrop=function(){original();const st=typeof wxPresentationState==='function'?wxPresentationState():{},b=st.backdrop,layer=$('presBackdropLayer');if(!layer)return;layer.style.animation='none';if(b?.type==='gradient'&&b.css){layer.style.backgroundSize=b.motion?'220% 220%':'cover';if(b.motion){void layer.offsetWidth;layer.style.animation=b.motion}}};
 }
-})();
-</script><script id="wxControllerLivePreviewFix">
-(()=>{
-'use strict';
-const root=document.getElementById('lw'),lyrics=document.getElementById('lyrics');
-if(!root||!lyrics||window.wxControllerPreviewInstalled)return;
-window.wxControllerPreviewInstalled=true;
-const preview=document.createElement('div');preview.id='wxControllerPresentation';preview.setAttribute('aria-label','Live presentation preview');root.insertBefore(preview,lyrics.nextSibling);lyrics.classList.add('wx-controller-source');
-function update(){
- try{
-  if(typeof wxSecs==='function'&&typeof wxNorm==='function'&&typeof current!=='undefined'){
-   const raw=current?.lyrics_chords||'';
-   W.secs=wxSecs(wxNorm(raw));
-   if(!Number.isFinite(W.sec))W.sec=0;
-   W.sec=Math.max(0,Math.min(Math.max(0,W.secs.length-1),W.sec));
-  }
-  const liveState=typeof wxPresentationState==='function'?wxPresentationState():{};
-  const st={...liveState,section_index:(typeof W!=='undefined'&&Number.isFinite(W.sec))?W.sec:Number(liveState.section_index)||0};
-  const html=typeof wxSyncedSlideContent==='function'?wxSyncedSlideContent(st,'vocalist'):'';
-  if(preview.innerHTML!==html)preview.innerHTML=html;
-  if(st.blank){preview.style.visibility='hidden'}else{preview.style.visibility='visible'}
-  const lines=preview.querySelectorAll('.wx-slide-line');
-  let size=Math.min(88,Math.max(24,Math.min(window.innerWidth*.075,window.innerHeight*.20)));
-  preview.style.fontSize=size+'px';
-  // Fit the two-line preview inside the widescreen canvas.
-  while(size>12&&(preview.scrollHeight>preview.clientHeight+2||preview.scrollWidth>preview.clientWidth+2)){
-   size-=2;preview.style.fontSize=size+'px';
-  }
- }catch(e){console.error('Controller presentation preview:',e)}
-}
-const oldDraw=draw;
-draw=function(){const result=oldDraw.apply(this,arguments);update();return result};
-const oldMark=wxMark;
-wxMark=function(){const result=oldMark.apply(this,arguments);update();return result};
-const oldApply=wxApplyBackdrop;
-if(typeof oldApply==='function')wxApplyBackdrop=function(){const result=oldApply.apply(this,arguments);update();return result};
-const oldSync=liveSync;
-liveSync=async function(){const result=await oldSync.apply(this,arguments);update();return result};
-window.addEventListener('resize',update,{passive:true});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)update()});
-update();
 })();
 </script></body></html>
