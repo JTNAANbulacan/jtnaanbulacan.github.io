@@ -1546,7 +1546,7 @@ upd()})();
    const shade=document.createElement('div');shade.className='wx-thumb-shade';
    const number=document.createElement('span');number.className='wx-thumb-number';number.textContent=String(index+1);
    const content=document.createElement('div');content.className='wx-thumb-content';
-   const clone=slide.cloneNode(true);clone.classList.remove('cur');clone.removeAttribute('id');clone.querySelectorAll('.sp').forEach(x=>x.remove());
+   const clone=slide.cloneNode(true);clone.classList.remove('cur');clone.removeAttribute('id');clone.style.opacity='1';clone.style.margin='0';clone.style.padding='0';clone.style.border='0';clone.style.background='transparent';clone.style.boxShadow='none';clone.style.width='100%';clone.querySelectorAll('.sp').forEach(x=>x.remove());
    // Mirror the monitor's centered layout while retaining the chord-over-lyric formatting.
    clone.querySelectorAll('*').forEach(el=>{el.style.textAlign='center';});
    content.appendChild(clone);
@@ -1569,6 +1569,7 @@ upd()})();
  const lyrics=$('lyrics');
  if(lyrics)new MutationObserver(schedule).observe(lyrics,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
  const strip=$('strip');if(strip)new MutationObserver(schedule).observe(strip,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+ ['presBackdropLayer','presBackdropShade'].forEach(id=>{const el=$(id);if(el)new MutationObserver(schedule).observe(el,{childList:true,attributes:true,attributeFilter:['style','class']})});
  const railObserver=new MutationObserver(()=>{if(!panel.isConnected){rail.insertBefore(panel,rail.firstChild);schedule()}});
  railObserver.observe(rail,{childList:true});
  document.addEventListener('wx-presentation-updated',schedule);
