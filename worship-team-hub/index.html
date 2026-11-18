@@ -630,6 +630,37 @@ input:focus,textarea:focus,select:focus{border-color:#2995ff;box-shadow:0 0 0 3p
  .playbox{position:relative;top:auto}
 }
 
+
+/* ===== JTNAAN Worship Team Hub – Presentation layout (mockup) ===== */
+body{background:radial-gradient(900px 420px at 88% -6%,#3a2bd8aa,transparent 62%),radial-gradient(700px 420px at 0 0,#0b2a7a88,transparent 60%),#060a1f!important}
+.top{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;background:#070c24f2!important;border-bottom:1px solid #26305c!important}
+.brand h1{font-size:20px;line-height:1.05;letter-spacing:.4px}
+.top .workspace-ribbon{display:flex;align-items:center;gap:10px;margin:0;padding:0;border:0;background:transparent;box-shadow:none;overflow-x:auto;scrollbar-width:none}
+.top .workspace-ribbon.hidden{display:none!important}
+.workspace-tabs{display:flex;gap:6px;flex-wrap:nowrap}
+.workspace-tab{padding:10px 14px;border-radius:12px;background:#ffffff0c;border:1px solid #2a3560;color:#dbe5ff;font-weight:600;white-space:nowrap}
+.workspace-tab.active{background:linear-gradient(180deg,#2f7bff,#1f5bd6);border-color:#6ea0ff;color:#fff;box-shadow:0 0 18px #2f7bff66}
+.workspace-label{display:none}.workspace-commands{display:flex;gap:6px}.workspace-commands button{white-space:nowrap}
+#status::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:#22c55e;margin-right:7px;box-shadow:0 0 8px #22c55e}
+.panel{background:linear-gradient(180deg,#0f1736,#0a1029)!important;border:1px solid #26305c!important;border-radius:16px!important}
+.primary{background:linear-gradient(180deg,#2f7bff,#1f5bd6)!important;border-color:#6ea0ff!important;color:#fff!important}
+.deck{grid-template-columns:270px minmax(0,1fr) 330px!important;column-gap:14px}
+.right-rail{max-width:330px!important}
+.cl-l>.panel:has(#songlist){order:-1}
+#soCount{display:inline-block;margin-left:8px;padding:1px 9px;border-radius:999px;background:#2f7bff;color:#fff;font-size:12px}
+#songlist{counter-reset:so}#songlist .item{counter-increment:so;border-radius:10px;border-bottom:0;margin:3px 0}
+#songlist .item::before{content:counter(so) ". ";color:#8fb0ff;font-weight:800}
+#songlist .item.on,#songlist .item.active{background:linear-gradient(180deg,#2f7bff,#1f5bd6)}
+#slideTools{display:flex;gap:8px;margin:12px 0}#slideTools input{flex:1;min-width:0;background:#0a1029;border:1px solid #26305c;border-radius:12px;padding:10px 12px;color:#fff}
+#slideTools button{border-radius:12px;padding:8px 14px}#slideTools button.on{background:#2f7bff;border-color:#6ea0ff}
+#slideGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:14px}#slideGrid.list{grid-template-columns:1fr}
+.mxs{position:relative;min-height:120px;border-radius:12px;border:2px solid #2b3a78;padding:34px 10px 12px;cursor:pointer;overflow:hidden;color:#fff;text-align:center;font-weight:800;text-transform:uppercase;font-size:13px;background:radial-gradient(circle at 82% 28%,#ff7a3c77,transparent 38%),linear-gradient(160deg,#2b1a8f,#0b1240 62%,#3a1166)}
+.mxs.cur{border-color:#2f7bff;box-shadow:0 0 0 2px #2f7bff55,0 0 22px #2f7bff88}
+.mxs .n{position:absolute;left:8px;top:8px;background:#0b1240cc;border:1px solid #3b4a90;border-radius:8px;padding:2px 9px;font-size:13px}
+.mxs .sp{display:none}.mxs .ln{display:flex;flex-wrap:wrap;justify-content:center}.mxs .ch{color:#ffd23f}.mxs .tx{color:#fff}
+.live-card{padding:12px!important;position:relative}.livebadge{position:absolute;left:14px;top:14px;z-index:2;background:#dc2626;color:#fff;border-radius:8px;padding:3px 10px;font-weight:800;font-size:12px}
+.mxs.big{min-height:170px;padding-top:40px;font-size:15px;cursor:default}
+@media(max-width:900px){.top{grid-template-columns:1fr!important}.deck{grid-template-columns:1fr!important}.right-rail{max-width:none!important}#slideGrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
@@ -1123,4 +1154,21 @@ document.querySelectorAll('[data-workspace-target]').forEach(btn=>btn.addEventLi
 }));
 $('workspaceNewSong').onclick=()=>$('newsong').click();
 $('workspaceLiveMonitor').onclick=()=>$('presOpenMonitor').click();
+</script><script>
+(function(){const $=id=>document.getElementById(id),q=s=>document.querySelector(s);
+const top=q('.top'),rib=$('workspaceRibbon');if(top&&rib&&top.children.length>1)top.insertBefore(rib,top.children[1]);
+const sl=$('songlist');if(sl){const h=sl.parentElement.querySelector('.section');if(h)h.innerHTML='Service Order <span id="soCount">0</span>'}
+const stg=q('main.stage .stg');if(stg)stg.insertAdjacentHTML('afterend','<div id="slideTools"><input id="slideSearch" type="search" placeholder="Search slides…"><button id="gridBtn" class="on" type="button">▦</button><button id="listBtn" type="button">☰</button></div><div id="slideGrid"></div>');
+const rail=q('.right-rail');if(rail)rail.insertAdjacentHTML('afterbegin','<section class="panel live-card"><span class="livebadge">● LIVE</span><div id="liveSlide" class="mxs big"></div></section><section class="panel live-card"><div class="section">▶ Next Slide</div><div id="nextSlide" class="mxs"></div></section>');
+function filter(){const v=($('slideSearch')?.value||'').toLowerCase();document.querySelectorAll('#slideGrid .mxs').forEach(x=>x.style.display=x.textContent.toLowerCase().includes(v)?'':'none')}
+function refresh(){const g=$('slideGrid');if(!g)return;const sw=[...document.querySelectorAll('#lyrics .sw')];let cur=sw.findIndex(x=>x.classList.contains('cur'));if(cur<0)cur=0;
+g.innerHTML=sw.map((s,i)=>'<div class="mxs'+(i==cur?' cur':'')+'" data-i="'+i+'"><b class="n">'+(i+1)+'</b>'+s.innerHTML+'</div>').join('')||'<p class="muted">Select a song to see its slides.</p>';
+const set=(el,s,m)=>{if(el)el.innerHTML=s?s.innerHTML:'<span class="muted">'+m+'</span>'};set($('liveSlide'),sw[cur],'No slide');set($('nextSlide'),sw[cur+1],'End of song');
+const c=$('soCount');if(c)c.textContent=$('songlist')?$('songlist').children.length:0;filter()}
+let t;const later=()=>{clearTimeout(t);t=setTimeout(refresh,80)};
+const ly=$('lyrics');if(ly)new MutationObserver(later).observe(ly,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+if(sl)new MutationObserver(later).observe(sl,{childList:true});
+document.addEventListener('click',e=>{const c=e.target.closest('#slideGrid .mxs');if(c){const i=c.dataset.i,b=document.querySelector('#strip button[data-i="'+i+'"]');if(b)b.click();else{const s=$('sw'+i);if(s)s.scrollIntoView({behavior:'smooth',block:'center'})}}
+const id=e.target.id;if(id=='gridBtn'||id=='listBtn'){$('slideGrid').classList.toggle('list',id=='listBtn');$('gridBtn').classList.toggle('on',id=='gridBtn');$('listBtn').classList.toggle('on',id=='listBtn')}});
+document.addEventListener('input',e=>{if(e.target.id=='slideSearch')filter()});refresh()})();
 </script></body></html>
