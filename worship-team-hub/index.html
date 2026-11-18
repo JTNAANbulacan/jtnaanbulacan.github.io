@@ -1464,4 +1464,116 @@ upd()})();
  window.addEventListener('load',applyStyles);
 })();
 </script>
+
+<style id="wxSongSlideGridStyles">
+/* Three-column miniature monitor previews for every slide in the selected song */
+#wxSongSlideGridPanel{padding:10px!important;min-width:0}
+#wxSongSlideGridPanel .wx-grid-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+#wxSongSlideGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;min-width:0}
+.wx-song-thumb{position:relative;display:grid;place-items:center;aspect-ratio:16/9;min-width:0;overflow:hidden;border:1px solid #38516d;border-radius:8px;background:#050d1b;cursor:pointer;padding:4px;color:#fff;isolation:isolate}
+.wx-song-thumb:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+.wx-song-thumb.is-live{border:2px solid #22c55e;box-shadow:0 0 0 1px #22c55e55,0 0 12px #22c55e44}
+.wx-song-thumb .wx-thumb-backdrop,.wx-song-thumb .wx-thumb-shade{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.wx-song-thumb .wx-thumb-backdrop{background-position:center;background-size:cover}
+.wx-song-thumb .wx-thumb-shade{background:linear-gradient(180deg,#0008,#0009)}
+.wx-song-thumb .wx-thumb-number{position:absolute;left:4px;top:3px;padding:1px 4px;border-radius:4px;background:#071426c9;color:#dbeafe;font-size:8px;font-weight:800;line-height:1.3;z-index:3}
+.wx-song-thumb .wx-thumb-content{width:100%;max-width:100%;max-height:100%;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;font-size:clamp(6px,.62vw,9px);line-height:1.2;font-weight:750;text-shadow:0 1px 4px #000,0 0 8px #000}
+.wx-song-thumb .wx-thumb-content .sp{display:none!important}
+.wx-song-thumb .wx-thumb-content .ln{width:100%;justify-content:center;align-items:center;flex-wrap:wrap;margin:0}
+.wx-song-thumb .wx-thumb-content .sg{max-width:100%;min-width:0}
+.wx-song-thumb .wx-thumb-content .ch{font-size:.78em;min-height:1.1em;padding-right:.25em;color:var(--ch,#ffd84d)}
+.wx-song-thumb .wx-thumb-content .tx{color:var(--lyc,#fff);white-space:normal!important;overflow-wrap:anywhere}
+.wx-song-thumb .wx-thumb-content .cp{justify-content:center;margin:0;gap:2px}
+.wx-song-thumb .wx-thumb-content .cp span{font-size:.78em;padding:0 3px}
+.wx-song-thumb .wx-thumb-content .gap{height:1px}
+.wx-song-thumb .wx-thumb-empty{font-size:8px;color:#e2e8f0;text-align:center}
+.wx-song-thumb.is-live:after{content:"LIVE";position:absolute;right:4px;top:3px;border-radius:4px;padding:1px 4px;background:#15803d;color:#fff;font-size:7px;font-weight:900;z-index:3}
+#wxSongSlideGridPanel .wx-grid-count{font-size:10px;color:#9eb2ca;white-space:nowrap}
+@media(max-width:900px){#wxSongSlideGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.wx-song-thumb .wx-thumb-content{font-size:clamp(8px,1.7vw,12px)}}
+@media(max-width:520px){#wxSongSlideGridPanel{padding:9px!important}#wxSongSlideGrid{gap:6px}.wx-song-thumb{border-radius:7px;padding:3px}.wx-song-thumb .wx-thumb-content{font-size:clamp(7px,2.15vw,10px)}}
+</style>
+<script id="wxSongSlideGridScript">
+(function(){
+ const $=id=>document.getElementById(id);
+ const rail=document.querySelector('.right-rail');
+ if(!rail)return;
+ // Replace only the two old LIVE/NEXT preview cards; keep Notes, Service Flow and Quick Controls.
+ ['liveSlide','nextSlide'].forEach(id=>{const el=$(id);if(el){const card=el.closest('section.live-card')||el.closest('.panel');if(card)card.remove()}});
+ let panel=$('wxSongSlideGridPanel');
+ if(!panel){
+  panel=document.createElement('section');panel.id='wxSongSlideGridPanel';panel.className='panel';
+  panel.innerHTML='<div class="wx-grid-heading"><div class="section">All song slides</div><span class="wx-grid-count" id="wxSongSlideGridCount">0 slides</span></div><div id="wxSongSlideGrid" aria-label="Song slide previews"></div>';
+  rail.insertBefore(panel,rail.firstChild);
+ }
+ const host=$('wxSongSlideGrid');
+ if(!host)return;
+ function stateForSlide(index){
+  let st={};
+  try{if(typeof wxPresentationState==='function')st=wxPresentationState()||{};else if(typeof live!=='undefined'&&live?.presentation_state)st=live.presentation_state||{}}catch(_){}
+  const songId=(typeof current!=='undefined'&&current?.id)||'';
+  const key=songId+':'+index;
+  const specific=st.section_backdrops?.[key]||{};
+  return {...st,...specific};
+ }
+ function backdropParts(index){
+  const st=stateForSlide(index),b=st.backdrop||null;
+  let image='';
+  if(b?.type==='gradient'&&b.css)image=b.css;
+  else if(b?.url&&b.type!=='video')image='url("'+String(b.url).replace(/["\\]/g,'')+'")';
+  const brightness=Math.max(30,Math.min(130,Number(st.brightness??100)));
+  const saturation=Math.max(50,Math.min(150,Number(st.saturation??100)));
+  const blur=Math.max(0,Math.min(12,Number(st.blur??0)));
+  const opacity=Math.max(.2,Math.min(1,Number(st.opacity??1)));
+  const dim=Math.max(0,Math.min(90,Number(st.dim??45)))/100;
+  const shade=st.blank?'#000':(st.vignette?'radial-gradient(ellipse at center,transparent 20%,rgba(0,0,0,.62) 100%),linear-gradient(180deg,rgba(0,0,0,'+dim+'),rgba(0,0,0,'+Math.min(.92,dim+.18)+'))':'linear-gradient(180deg,rgba(0,0,0,'+dim+'),rgba(0,0,0,'+Math.min(.92,dim+.18)+'))');
+  return {image,filter:'brightness('+brightness+'%) saturate('+saturation+'%) blur('+blur+'px)',opacity,shade,blank:!!st.blank};
+ }
+ function currentIndex(){
+  const slides=[...document.querySelectorAll('#lyrics .sw')];
+  let i=slides.findIndex(x=>x.classList.contains('cur'));
+  if(i<0&&typeof W!=='undefined')i=Number(W.sec)||0;
+  return Math.max(0,i);
+ }
+ function render(){
+  const slides=[...document.querySelectorAll('#lyrics .sw')];
+  const active=currentIndex();
+  const count=$('wxSongSlideGridCount');if(count)count.textContent=slides.length+' slides';
+  host.replaceChildren();
+  if(!slides.length){const empty=document.createElement('div');empty.className='muted';empty.textContent='Select a song to see its slides.';host.appendChild(empty);return}
+  slides.forEach((slide,index)=>{
+   const card=document.createElement('button');card.type='button';card.className='wx-song-thumb'+(index===active?' is-live':'');card.setAttribute('aria-label','Show slide '+(index+1));card.setAttribute('aria-pressed',String(index===active));
+   const bg=document.createElement('div');bg.className='wx-thumb-backdrop';
+   const shade=document.createElement('div');shade.className='wx-thumb-shade';
+   const number=document.createElement('span');number.className='wx-thumb-number';number.textContent=String(index+1);
+   const content=document.createElement('div');content.className='wx-thumb-content';
+   const clone=slide.cloneNode(true);clone.classList.remove('cur');clone.removeAttribute('id');clone.querySelectorAll('.sp').forEach(x=>x.remove());
+   // Mirror the monitor's centered layout while retaining the chord-over-lyric formatting.
+   clone.querySelectorAll('*').forEach(el=>{el.style.textAlign='center';});
+   content.appendChild(clone);
+   const bgStyle=backdropParts(index);
+   bg.style.backgroundImage=bgStyle.image||'linear-gradient(145deg,#142b46,#050d1b)';
+   bg.style.filter=bgStyle.filter;bg.style.opacity=String(bgStyle.opacity);
+   shade.style.background=bgStyle.shade;
+   if(bgStyle.blank){content.style.visibility='hidden'}
+   card.append(bg,shade,number,content);
+   card.addEventListener('click',()=>{
+    const nav=document.querySelector('#strip button[data-i="'+index+'"]');
+    if(nav)nav.click();
+    else if(typeof W!=='undefined'&&typeof wxMark==='function'){W.sec=index;wxMark(true)}
+   });
+   host.appendChild(card);
+  });
+ }
+ let timer=0;
+ const schedule=()=>{clearTimeout(timer);timer=setTimeout(render,70)};
+ const lyrics=$('lyrics');
+ if(lyrics)new MutationObserver(schedule).observe(lyrics,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+ const strip=$('strip');if(strip)new MutationObserver(schedule).observe(strip,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+ const railObserver=new MutationObserver(()=>{if(!panel.isConnected){rail.insertBefore(panel,rail.firstChild);schedule()}});
+ railObserver.observe(rail,{childList:true});
+ document.addEventListener('wx-presentation-updated',schedule);
+ render();
+})();
+</script>
+
 </body></html>
