@@ -800,6 +800,72 @@ body:not(.wx-monitor):not(.wx-display) .right-rail>.live-card{display:block!impo
 #wxControllerPresentation .wx-monitor-empty{font-size:clamp(16px,2vw,30px);color:#ffffffc9;text-align:center}
 #wxControllerPresentation[hidden]{display:none!important}
 body.wx-monitor #wxControllerPresentation,body.wx-display #wxControllerPresentation{display:none!important}
+</style><style id="wxFrozenTitleAndCenterFit">
+/* Keep the song title anchored above the presentation canvas and size both as one centered unit. */
+.stage{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ justify-content:flex-start!important;
+ overflow:visible!important;
+ min-width:0!important;
+}
+.stage>.stg{
+ position:sticky!important;
+ top:8px!important;
+ z-index:40!important;
+ flex:0 0 auto!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:10px!important;
+ flex-wrap:nowrap!important;
+ width:100%!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+ margin:0 auto 10px!important;
+ padding:10px 12px!important;
+ border:1px solid #315276!important;
+ border-radius:12px!important;
+ background:linear-gradient(145deg,#102744f5,#0a192cf5)!important;
+ box-shadow:0 6px 18px #0005!important;
+}
+.stage>.stg>div:first-child{min-width:0!important;flex:1 1 auto!important}
+.stage>.stg #title{
+ display:block!important;
+ margin:0!important;
+ max-width:100%!important;
+ font-size:clamp(18px,2vw,29px)!important;
+ line-height:1.15!important;
+ overflow-wrap:anywhere!important;
+}
+.stage>.stg #setname,.stage>.stg #artist{font-size:clamp(10px,.9vw,13px)!important;line-height:1.2!important}
+.stage>.stg .tools{flex:0 0 auto!important;max-width:48%!important;gap:5px!important;flex-wrap:wrap!important;justify-content:flex-end!important}
+.stage>.stg .tools button{min-height:32px!important;padding:5px 8px!important;font-size:11px!important}
+.stage #lw{
+ flex:0 0 auto!important;
+ width:100%!important;
+ height:auto!important;
+ aspect-ratio:16/9!important;
+ min-height:0!important;
+ max-height:min(68vh,calc(100svh - 170px))!important;
+ margin:0 auto 12px!important;
+ box-sizing:border-box!important;
+}
+.stage #wxControllerPresentation{inset:0!important}
+@media(max-width:700px){
+ .stage>.stg{top:4px!important;gap:6px!important;padding:8px!important;margin-bottom:8px!important}
+ .stage>.stg #title{font-size:clamp(16px,4.4vw,23px)!important}
+ .stage>.stg #setname,.stage>.stg #artist{font-size:10px!important}
+ .stage>.stg .tools{max-width:42%!important;gap:3px!important}
+ .stage>.stg .tools button{min-height:29px!important;padding:4px 6px!important;font-size:10px!important}
+ .stage #lw{max-height:calc(100svh - 135px)!important}
+}
+@media(max-width:420px){
+ .stage>.stg{align-items:flex-start!important}
+ .stage>.stg .tools{max-width:40%!important}
+ .stage>.stg .tools button{padding:4px 5px!important}
+}
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
