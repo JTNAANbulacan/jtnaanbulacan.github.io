@@ -50,7 +50,22 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
  .layout>.panel:nth-child(4) .body{max-height:90px}
 }
 
-.stockgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-top:10px;max-height:390px;overflow:auto}.stockcard{min-width:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#100d25}.stockcard img,.stockcard video{width:100%;height:94px;object-fit:cover;display:block;background:#080616}.stockcard .stockmeta{padding:7px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}.stockcard strong{display:block;color:var(--text);font-size:12px;margin-bottom:4px}.stockcard button{width:100%;border-radius:0;border:0;border-top:1px solid var(--line)}.stockcard a{color:#c4b5fd}@media(max-width:620px){.stockgrid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:260px}}</style></head><body>
+.stockgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-top:10px;max-height:390px;overflow:auto}.stockcard{min-width:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#100d25}.stockcard img,.stockcard video{width:100%;height:94px;object-fit:cover;display:block;background:#080616}.stockcard .stockmeta{padding:7px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}.stockcard strong{display:block;color:var(--text);font-size:12px;margin-bottom:4px}.stockcard button{width:100%;border-radius:0;border:0;border-top:1px solid var(--line)}.stockcard a{color:#c4b5fd}@media(max-width:620px){.stockgrid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:260px}}/* Give the tool workspace more room, especially Backgrounds, without hiding the presenter controls. */
+.layout{grid-template-rows:minmax(0,1fr) minmax(250px,38vh)!important}
+.layout>.panel:nth-child(4) .body{max-height:calc(38vh - 48px)!important;min-height:210px;overflow:auto}
+.layout>.panel:nth-child(4){min-height:0}
+#tool-background{padding:14px}
+#tool-background .stockgrid{max-height:clamp(220px,32vh,420px)}
+@media(max-width:1050px){
+ .layout{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(220px,32vh)!important}
+ .layout>.panel:nth-child(4) .body{max-height:calc(32vh - 48px)!important;min-height:180px}
+}
+@media(max-width:620px){
+ .layout{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(190px,26vh)!important}
+ .layout>.panel:nth-child(4) .body{max-height:calc(26vh - 42px)!important;min-height:160px;padding:10px}
+ .layout>.panel:nth-child(4) .stockgrid{max-height:210px}
+}
+</style></head><body>
 <header class="top"><div class="brand">♫ JTNAAN <span style="color:#c4b5fd">PRESENTER</span></div><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
 <section class="panel"><div class="head">SERVICE ORDER <span id="songcount" class="status">—</span></div><div class="body"><label>Service playlist<select id="playlistSelect"><option value="">Loading playlists…</option></select></label><div class="toolbar"><button id="startLive" class="good">● Start Live Session</button><button id="endLive" class="danger" disabled>End Session</button></div><div class="toolbar"><button id="addSong" disabled>＋ Add song</button><button id="refresh">↻ Refresh</button></div><input id="songSearch" class="search" placeholder="Search songs in this service…" aria-label="Search service songs"><div id="serviceSongs" class="scroll"><div class="empty">Loading service order…</div></div></div><div class="subpanel"><div class="head" style="padding:0 0 8px;border:0">SONG LIBRARY <span id="libraryCount" class="status">Loading…</span></div><input id="librarySearch" placeholder="Find a song to add…"><div id="libraryResults" class="scroll" style="max-height:190px"><div class="empty">Search the shared song library.</div></div></div></section>
