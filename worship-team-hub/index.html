@@ -1556,10 +1556,7 @@ if(typeof wxApplyBackdrop==='function'&&!window.wxBgMotionWrapped){
 (()=>{
 'use strict';
 const root=document.getElementById('lw'),lyrics=document.getElementById('lyrics');
-if(!root||!lyrics||!window.wxControllerPreviewInstalled!==true){
- if(!root||!lyrics)return;
-}
-if(window.wxControllerPreviewInstalled)return;
+if(!root||!lyrics||window.wxControllerPreviewInstalled)return;
 window.wxControllerPreviewInstalled=true;
 const preview=document.createElement('div');preview.id='wxControllerPresentation';preview.setAttribute('aria-label','Live presentation preview');root.insertBefore(preview,lyrics.nextSibling);lyrics.classList.add('wx-controller-source');
 function update(){
