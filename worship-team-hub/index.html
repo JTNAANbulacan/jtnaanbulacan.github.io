@@ -1065,16 +1065,41 @@ function wxPlainLyrics(line){let s=String(line||'').replace(/\[[^\]]+\]/g,'').re
 function wxSyncedSlideContent(st,kind){
  const slideIndex=Math.max(0,Math.min((W.secs||[]).length-1,Number(st.section_index??W.sec)||0)),slide=(W.secs||[])[slideIndex]||null;
  if(!slide)return '<div class="wx-monitor-empty">Waiting for the worship leader…</div>';
+ const edits=st.slide_edits||{},songKey=(current?.id||'')+':'+slideIndex;
+ const makeLine=(line,index,instrument=false)=>{const key=songKey+':'+index,edit=edits[key]||{},plain=wxPlainLyrics(line),text=edit.text??plain,size=Number(edit.size)||0,style=size?' style="font-size:'+Math.max(12,Math.min(120,size))+'px"':'';return '<div class="wx-slide-line'+(instrument?' wx-instrument-line':'')+'" data-wx-line="'+index+'"'+style+'>'+(instrument&&!edit.text?wxLine(line,(live?.transpose||0)):esc(text))+'</div>'};
  if(slide.type==='intro'){
   if(kind!=='instrumentalist')return '';
-  return slide.L.map(line=>'<div class="wx-slide-line wx-instrument-line">'+wxLine(line,(live?.transpose||0))+'</div>').join('');
+  return slide.L.map((line,i)=>makeLine(line,i,true)).join('');
  }
- const shown=slide.L.filter(line=>wxPlainLyrics(line)).slice(0,2);
+ const shown=slide.L.map((line,i)=>({line,i})).filter(x=>wxPlainLyrics(x.line)).slice(0,2);
  if(!shown.length)return '<div class="wx-monitor-empty">Instrumental</div>';
- if(kind==='instrumentalist')return shown.map(line=>'<div class="wx-slide-line wx-instrument-line">'+wxLine(line,(live?.transpose||0))+'</div>').join('');
- return shown.map(line=>'<div class="wx-slide-line">'+esc(wxPlainLyrics(line))+'</div>').join('');
+ return shown.map(x=>makeLine(x.line,x.i,kind==='instrumentalist')).join('');
 }
-let wxFitObserver=null,wxFitResizeBound=false,wxFitFrame=0;
+function wxInstallLyricEditor(){
+ if(wxInstallLyricEditor.done)return;wxInstallLyricEditor.done=true;
+ document.addEventListener('click',async e=>{
+  const line=e.target.closest('#lyrics .wx-slide-line');
+  if(!line||(!WX_DISPLAY&&!WX_MONITOR)||!ctl()||!live?.is_live||!current)return;
+  const index=Number(line.dataset.wxLine);if(!Number.isInteger(index))return;
+  const st=wxPresentationState(),section=Math.max(0,Number(st.section_index??W.sec)||0),key=current.id+':'+section+':'+index,old=st.slide_edits?.[key]||{};
+  const original=(W.secs?.[section]?.L||[])[index]||'',shown=old.text??wxPlainLyrics(original);
+  const next=prompt('Edit this lyric line:',shown);if(next===null)return;
+  const sizeInput=prompt('Font size in pixels (12–120). Leave blank for automatic size:',old.size?String(old.size):'');
+  if(sizeInput===null)return;
+  const size=sizeInput.trim()===''?null:Number(sizeInput);
+  if(size!==null&&(!Number.isFinite(size)||size<12||size>120))return alert('Please enter a font size from 12 to 120, or leave it blank.');
+  const slide_edits={...(st.slide_edits||{})};
+  slide_edits[key]={text:next.trim(),...(size?{size}:{})};
+  if(!next.trim())delete slide_edits[key].text;
+  if(!Object.keys(slide_edits[key]).length)delete slide_edits[key];
+  const updated={...st,slide_edits};
+  const {error}=await db.from('worship_live_sessions').update({presentation_state:updated,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id',live.id);
+  if(error){alert('Could not save lyric edit: '+error.message);return}
+  live.presentation_state=updated;wxMonitorRender();wxDisplayRender();
+ });
+}
+wxInstallLyricEditor();
+.wx-slide-line{cursor:pointer}body.wx-display .wx-slide-line,body.wx-monitor .wx-slide-line{cursor:pointer}body.wx-display .wx-slide-line:hover,body.wx-monitor .wx-slide-line:hover{outline:1px dashed #facc15;outline-offset:5px}\nlet wxFitObserver=null,wxFitResizeBound=false,wxFitFrame=0;
 function wxFitSyncedText(root){
  if(!root||!root.isConnected)return;
  if(!wxFitResizeBound){
