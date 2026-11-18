@@ -791,6 +791,15 @@ body:not(.wx-monitor):not(.wx-display) .right-rail>.live-card{display:block!impo
 @keyframes wxBgBreathe{0%,100%{opacity:.78}50%{opacity:1}}
 @media(max-width:700px){.stage #lw{min-height:230px;max-height:54vh;border-radius:11px}.wx-bg-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:330px}.stage #lyrics{padding:5%}}
 @media(prefers-reduced-motion:reduce){#presBackdropLayer{animation:none!important}}
+</style><style id="wxControllerLivePreviewStyles">
+/* The controller's center canvas mirrors the exact two-line vocalist monitor output. */
+#lw{position:relative}
+#lw #lyrics.wx-controller-source{opacity:0!important;pointer-events:auto}
+#wxControllerPresentation{position:absolute;z-index:2;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:.18em;padding:5% 7%;box-sizing:border-box;overflow:hidden;text-align:center;color:#fff;font-weight:750;line-height:1.28;text-shadow:0 3px 14px #000d,0 1px 3px #000;pointer-events:none}
+#wxControllerPresentation .wx-slide-line{width:100%;max-width:100%;text-align:center;overflow-wrap:break-word;white-space:normal}
+#wxControllerPresentation .wx-monitor-empty{font-size:clamp(16px,2vw,30px);color:#ffffffc9;text-align:center}
+#wxControllerPresentation[hidden]{display:none!important}
+body.wx-monitor #wxControllerPresentation,body.wx-display #wxControllerPresentation{display:none!important}
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Account list and current status</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="logout" class="hidden">Sign out</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
@@ -1542,5 +1551,49 @@ if(typeof wxApplyBackdrop==='function'&&!window.wxBgMotionWrapped){
  const original=wxApplyBackdrop;window.wxBgMotionWrapped=true;
  wxApplyBackdrop=function(){original();const st=typeof wxPresentationState==='function'?wxPresentationState():{},b=st.backdrop,layer=$('presBackdropLayer');if(!layer)return;layer.style.animation='none';if(b?.type==='gradient'&&b.css){layer.style.backgroundSize=b.motion?'220% 220%':'cover';if(b.motion){void layer.offsetWidth;layer.style.animation=b.motion}}};
 }
+})();
+</script><script id="wxControllerLivePreviewFix">
+(()=>{
+'use strict';
+const root=document.getElementById('lw'),lyrics=document.getElementById('lyrics');
+if(!root||!lyrics||!window.wxControllerPreviewInstalled!==true){
+ if(!root||!lyrics)return;
+}
+if(window.wxControllerPreviewInstalled)return;
+window.wxControllerPreviewInstalled=true;
+const preview=document.createElement('div');preview.id='wxControllerPresentation';preview.setAttribute('aria-label','Live presentation preview');root.insertBefore(preview,lyrics.nextSibling);lyrics.classList.add('wx-controller-source');
+function update(){
+ try{
+  if(typeof wxSecs==='function'&&typeof wxNorm==='function'&&typeof current!=='undefined'){
+   const raw=current?.lyrics_chords||'';
+   W.secs=wxSecs(wxNorm(raw));
+   if(!Number.isFinite(W.sec))W.sec=0;
+   W.sec=Math.max(0,Math.min(Math.max(0,W.secs.length-1),W.sec));
+  }
+  const liveState=typeof wxPresentationState==='function'?wxPresentationState():{};
+  const st={...liveState,section_index:(typeof W!=='undefined'&&Number.isFinite(W.sec))?W.sec:Number(liveState.section_index)||0};
+  const html=typeof wxSyncedSlideContent==='function'?wxSyncedSlideContent(st,'vocalist'):'';
+  if(preview.innerHTML!==html)preview.innerHTML=html;
+  if(st.blank){preview.style.visibility='hidden'}else{preview.style.visibility='visible'}
+  const lines=preview.querySelectorAll('.wx-slide-line');
+  let size=Math.min(88,Math.max(24,Math.min(window.innerWidth*.075,window.innerHeight*.20)));
+  preview.style.fontSize=size+'px';
+  // Fit the two-line preview inside the widescreen canvas.
+  while(size>12&&(preview.scrollHeight>preview.clientHeight+2||preview.scrollWidth>preview.clientWidth+2)){
+   size-=2;preview.style.fontSize=size+'px';
+  }
+ }catch(e){console.error('Controller presentation preview:',e)}
+}
+const oldDraw=draw;
+draw=function(){const result=oldDraw.apply(this,arguments);update();return result};
+const oldMark=wxMark;
+wxMark=function(){const result=oldMark.apply(this,arguments);update();return result};
+const oldApply=wxApplyBackdrop;
+if(typeof oldApply==='function')wxApplyBackdrop=function(){const result=oldApply.apply(this,arguments);update();return result};
+const oldSync=liveSync;
+liveSync=async function(){const result=await oldSync.apply(this,arguments);update();return result};
+window.addEventListener('resize',update,{passive:true});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)update()});
+update();
 })();
 </script></body></html>
