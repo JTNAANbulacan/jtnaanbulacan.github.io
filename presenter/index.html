@@ -161,6 +161,14 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
  .service-panel .library-controls button{font-size:9px!important}
 }
 
+/* Let the complete Service Order panel scroll independently to reveal every tool and the Song Library. */
+.service-panel{min-height:0!important;max-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#7662b5 #17132b}
+.service-panel>.head{position:sticky;top:0;z-index:8;background:var(--panel)}
+.service-panel>.library-panel{flex:0 0 auto!important;min-height:300px!important;overflow:visible!important}
+.service-panel>.library-panel>#libraryResults{flex:0 0 auto!important;height:clamp(150px,28vh,320px)!important;min-height:120px!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important}
+@media(max-width:1050px){.service-panel{max-height:min(76vh,760px)!important}.service-panel>.library-panel{min-height:280px!important}}
+@media(max-width:620px){.service-panel{max-height:72vh!important}.service-panel>.library-panel{min-height:260px!important}.service-panel>.library-panel>#libraryResults{height:220px!important}}
+
 /* Adjustable desktop workspace. Splitters sit in the gutters and never cover panel content. */
 @media(min-width:1051px){
  .layout{position:relative;grid-template-columns:minmax(300px,var(--ws-left,.9fr)) minmax(300px,var(--ws-center,1.45fr)) minmax(320px,var(--ws-right,1.5fr))!important;grid-template-rows:minmax(0,1fr) var(--ws-tools-height,27vh)!important}
