@@ -612,7 +612,27 @@ body.member-live-view #memberSessionControls .member-leave-session{flex:0 0 auto
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 const db=createClient('https://uykbhdbtyghdnfhgpctv.supabase.co','sb_publishable_caMA2wvJb-jUh36Loqz8XQ_2h-oUYFk');
-const $=x=>document.getElementById(x);const WX_PARAMS=new URLSearchParams(location.search);const WX_MONITOR=WX_PARAMS.has('wx_monitor');const WX_DISPLAY=WX_PARAMS.get('wx_display')||'';const WX_JOIN_CODE=WX_PARAMS.get('wx_join')||'';const WX_JOIN_ROLE=WX_PARAMS.get('wx_role')||'instrumentalist';let wxJoinApplied=false;let user=null,verifiedAccountRole=null,lists=[],songs=[],links=[],live=null,liveId=localStorage.getItem('wx_live_id')||null,active=null,current=null,saveFn=null,channel=null;
+const $=x=>document.getElementById(x);
+$('login').onclick=async()=>{
+ const username=$('username').value.trim(),password=$('pass').value,button=$('login'),message=$('msg');
+ if(!username||!password){message.textContent='Enter both your username and password.';return}
+ button.disabled=true;button.textContent='Signing in…';message.textContent='Connecting securely…';
+ try{
+  if(!navigator.onLine)throw new Error('Your device appears to be offline. Connect to the internet and try again.');
+  const {data,error}=await db.functions.invoke('worship-auth',{body:{action:'login',username,password}});
+  if(error||data?.error)throw new Error(data?.error||error.message||'Could not reach the sign-in service.');
+  if(!data?.session?.access_token||!data?.session?.refresh_token)throw new Error('The sign-in service did not return a valid session. Please try again.');
+  const {data:sessionData,error:sessionError}=await db.auth.setSession({access_token:data.session.access_token,refresh_token:data.session.refresh_token});
+  if(sessionError)throw sessionError;
+  if(!sessionData?.session?.user)throw new Error('Authentication completed but no active session was returned. Please try again.');
+  message.textContent='Signed in. Opening your workspace…';
+  location.reload();
+ }catch(e){
+  message.textContent='Sign-in failed: '+(e?.message||'Please check your connection and try again.');
+  console.error('Worship Hub sign-in failed:',e);
+  button.disabled=false;button.textContent='Sign in';
+ }
+};const WX_PARAMS=new URLSearchParams(location.search);const WX_MONITOR=WX_PARAMS.has('wx_monitor');const WX_DISPLAY=WX_PARAMS.get('wx_display')||'';const WX_JOIN_CODE=WX_PARAMS.get('wx_join')||'';const WX_JOIN_ROLE=WX_PARAMS.get('wx_role')||'instrumentalist';let wxJoinApplied=false;let user=null,verifiedAccountRole=null,lists=[],songs=[],links=[],live=null,liveId=localStorage.getItem('wx_live_id')||null,active=null,current=null,saveFn=null,channel=null;
 const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const isSuperAdmin=()=>!!user&&user.app_metadata?.role==='super_admin';
 let hubMaintenance={enabled:false,notice:'The JTNAAN Worship Team Hub is temporarily under maintenance. Please check back soon.'};
@@ -693,7 +713,6 @@ async function move(n){let a=links.filter(x=>x.playlist_id===active?.id),i=a.fin
 $('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);
 $('addnote').onclick=()=>{if(!user||!live?.is_live)return alert('Start or join an active live session first.');modal('Add stage note','<label>Note<input id="fNote" placeholder="Bridge x2, then quiet verse"></label>',async()=>{let text=$('fNote').value.trim();if(text){const m={id:wxId(),text:text.slice(0,240),by:user.user_metadata?.username||'Team member',ts:Date.now()};live.annotations=[...(live.annotations||[]).filter(x=>!x.t),m,...W.ann];wxSend({k:'note',m});if(ctl())await wxSave({annotations:live.annotations});draw()}close()})};
 $('focus').onclick=()=>{$('lyrics').style.fontSize=$('lyrics').style.fontSize?'':'clamp(24px,3vw,32px)'};
-$('login').onclick=async()=>{const username=$('username').value.trim(),password=$('pass').value,button=$('login');if(!username||!password){$('msg').textContent='Enter both your username and password.';return}button.disabled=true;button.textContent='Signing in…';$('msg').textContent='Connecting securely…';try{if(!navigator.onLine)throw new Error('Your device appears to be offline. Connect to the internet and try again.');const {data,error}=await db.functions.invoke('worship-auth',{body:{action:'login',username,password}});if(error||data?.error)throw new Error(data?.error||error.message||'Could not reach the sign-in service.');if(!data?.session?.access_token||!data?.session?.refresh_token)throw new Error('The sign-in service did not return a valid session. Please try again.');verifiedAccountRole=data?.user?.role||null;const {data:sessionData,error:sessionError}=await db.auth.setSession({access_token:data.session.access_token,refresh_token:data.session.refresh_token});if(sessionError)throw sessionError;if(!sessionData?.session?.user)throw new Error('Authentication completed but no active session was returned. Please try again.');enteredId=sessionData.session.user.id;await enter(sessionData.session);$('msg').textContent='Signed in successfully.';if(localStorage.getItem('jtn_worship_tutorial_pending')===(sessionData.session.user.user_metadata?.username||'').toLowerCase()){$('welcome').classList.remove('show');localStorage.removeItem('jtn_worship_welcome');tourStart()}else if(localStorage.getItem('jtn_worship_welcome')==='1'){$('welcome').classList.add('show');localStorage.removeItem('jtn_worship_welcome')}}catch(e){$('msg').textContent='Sign-in failed: '+(e?.message||'Please check your connection and try again.');console.error('Worship Hub sign-in failed:',e)}finally{button.disabled=false;button.textContent='Sign in'}};
 $('forgotPasswordToggle').onclick=()=>{$('forgotPasswordHelp').classList.toggle('hidden')};
 $('signup').onclick=async()=>{const username=$('username').value.trim(),password=$('pass').value;if(!username||!password){$('msg').textContent='Enter a username and password.';return}if(password.length<8){$('msg').textContent='Password must be at least 8 characters.';return}$('signup').disabled=true;$('msg').textContent='Creating your account…';try{const {data,error}=await db.functions.invoke('worship-auth',{body:{action:'register',username,password}});if(error||data?.error){$('msg').textContent='Registration failed: '+(data?.error||error.message);return}localStorage.setItem('jtn_worship_welcome','1');localStorage.setItem('jtn_worship_tutorial_pending',username.toLowerCase());$('msg').textContent=data.message+' You can now sign in.';$('pass').value=''}catch(e){$('msg').textContent='Registration error: '+e.message}finally{$('signup').disabled=false}};
 $('hubMaintenanceToggle').onclick=()=>saveHubMaintenance(!hubMaintenance.enabled);$('hubMaintenanceSave').onclick=()=>saveHubMaintenance(hubMaintenance.enabled);$('hubMaintenanceSignout').onclick=()=>db.auth.signOut();$('refreshAccountHistory').onclick=loadAccountHistory;
