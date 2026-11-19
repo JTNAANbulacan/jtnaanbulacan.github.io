@@ -1,0 +1,13 @@
+{
+  "name": "JTNAAN Worship Team Hub",
+  "short_name": "JTNAAN Hub",
+  "start_url": "/worship-team-hub/portal/",
+  "scope": "/worship-team-hub/",
+  "display": "standalone",
+  "background_color": "#090e20",
+  "theme_color": "#0b1024",
+  "icons": [
+    {"src": "../worship-team-hub-icon.webp", "sizes": "192x192", "type": "image/webp"},
+    {"src": "../worship-team-hub-icon.webp", "sizes": "512x512", "type": "image/webp"}
+  ]
+}
