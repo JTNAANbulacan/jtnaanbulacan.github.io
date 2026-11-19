@@ -11,7 +11,7 @@ const cors = {
 };
 const reply = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: cors });
 const ALLOWED = new Set([
-  "hub_live_session", "hub_song_library", "hub_lyrics_display", "hub_setlist",
+  "hub_live_session", "hub_song_library", "hub_add_song", "hub_lyrics_display", "hub_setlist",
   "hub_chords_view", "hub_instrument_tuner", "hub_countdown_timer",
   "hub_background_layout", "hub_settings_customization",
   "presenter_song_presentation", "presenter_presentation_controls",
