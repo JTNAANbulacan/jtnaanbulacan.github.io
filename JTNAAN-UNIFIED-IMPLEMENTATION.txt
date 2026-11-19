@@ -1,7 +1,29 @@
-JTNAAN unified workspace implementation
-- Original code is retained in /worship-team-hub/ and /presenter/.
-- New portal entry: /worship-team-hub/portal/
-- Portal login reuses the existing worship-auth login/register actions and Supabase session.
-- The Hub and Presenter are loaded in separate embedded workspaces; their live display routes remain unchanged.
-- Granular account permissions are defined in supabase/worship-permissions.sql and supabase/functions/worship-access/index.ts.
-- The SQL and new edge function are source-only until separately reviewed and deployed. No production database or function was changed by this repository update.
+JTNAAN Worship Team Hub — isolated implementation
+Repository: JTNAANbulacan/jtnaanbulacan.github.io
+Development branch: development/jtnaan-unified-hub
+Original snapshot: backup/pre-jtnaan-unification-2026-11-20
+
+New main portal route: /worship-team-hub/portal/
+The existing /worship-team-hub/ entry now routes to the portal for normal visits.
+Legacy login/reset route: /worship-team-hub/?legacy=1
+Audience monitor, vocalist, instrumentalist and join-code query routes remain on the original Hub page.
+
+Preservation:
+- Existing Hub and Presenter source remain in place and are embedded as separate workspaces.
+- Both use the existing Supabase project, authentication and live-session tables.
+- Existing church logo URL, songs, accounts, settings and storage objects were not altered.
+- No production database migration or Edge Function was deployed.
+- No changes were made to main.
+
+Before deploying the development branch:
+1. Take a current Supabase database backup and verify it can be restored.
+2. Review and apply supabase/worship-permissions.sql. It backfills active existing members with their previous operational access and leaves newly registered accounts with no operational permissions.
+3. Deploy supabase/functions/worship-access/index.ts as the worship-access Edge Function. The config explicitly requires a valid JWT.
+4. Deploy the static site from the development branch only after steps 2–3 are complete.
+5. Test login, temporary-password reset, registration, Super Admin account management, each permission, Hub and Presenter live control, monitor/vocalist/instrumentalist views, background selection and sign out.
+6. Only after verification should the development branch be merged into main.
+
+Rollback:
+- The original repository snapshot is preserved in backup/pre-jtnaan-unification-2026-11-20.
+- To restore the original website, return the Pages source to main or restore the backup snapshot.
+- Do not roll back Supabase by deleting accounts or storage objects. Any later database rollback must be a reviewed migration that preserves new user records and uploads.
