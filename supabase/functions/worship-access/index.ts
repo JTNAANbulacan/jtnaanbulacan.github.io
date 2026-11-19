@@ -85,7 +85,10 @@ Deno.serve(async req => {
       if (authUpdateError) return reply({ error: authUpdateError.message }, 400);
       const { error: accountUpdateError } = await admin.from("worship_accounts")
         .update({ nickname: nickname || null }).eq("user_id", targetId);
-      if (accountUpdateError) return reply({ error: "The profile metadata changed but the account record did not. Please review this member." }, 500);
+      if (accountUpdateError) {
+        await admin.auth.admin.updateUserById(targetId, { user_metadata: authTarget.user.user_metadata || {} });
+        return reply({ error: "Could not save the nickname. The previous profile metadata was restored." }, 500);
+      }
       return reply({ ok: true, targetUserId: targetId, nickname });
     }
     return reply({ error: "Unknown action." }, 400);
