@@ -1,2 +1,5 @@
 [functions.generate-daily-bible]
 verify_jwt = false
+
+[functions.worship-access]
+verify_jwt = true
