@@ -84,7 +84,7 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
 .service-body label{margin:0;min-width:0}
 .service-body select{height:46px;font-size:14px;margin-top:5px}
 .selected-song-label{margin-top:2px!important}
-.session-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:8px 0 0}
+.session-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:8px 0 0}
 .session-actions button{min-width:0;min-height:48px;padding:8px 5px;white-space:normal;line-height:1.15;font-size:12px}
 .session-actions #startLive{background:#14532d;border-color:#22c55e}
 .session-actions #endLive{background:#581c2b;border-color:#ef4444}
@@ -100,7 +100,7 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
 @media(max-width:620px){
  .service-body{padding:8px;gap:5px}
  .service-body select{height:44px}
- .session-actions{gap:5px;margin-top:5px}
+ .session-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:5px}
  .session-actions button{min-height:46px;font-size:11px}
  .library-panel{padding:8px}
  .library-controls{grid-template-columns:minmax(0,1fr) repeat(3,minmax(58px,.42fr));gap:5px}
@@ -228,7 +228,7 @@ async function makeCode(){for(let i=0;i<10;i++){const code=String(100000+Math.fl
 async function startLive(){if(!user)return;try{const code=await makeCode();const {data,error}=await db.from('worship_live_sessions').insert({controller_user_id:user.id,updated_by:user.id,is_live:true,session_code:code,scroll_position:0,annotations:[],song_index:0,transpose:0,playlist_id:$('playlistSelect').value||null,song_id:selected?.id||null,presentation_state:{section_index:0,slide_index:0,blank:false,custom_slide:null}}).select('*').single();if(error)throw error;live=data;localStorage.setItem('wx_live_id',data.id);setStatus('Live session started. Team join code: '+code);render();subscribeLive()}catch(e){setStatus('Could not start live session: '+(e.message||e))}}
 async function joinLiveSession(){
  const code=$('joinSessionCode').value.trim(),role=$('joinSessionRole').value;
- if(!/^\\d{6}$/.test(code)){$('joinSessionStatus').textContent='Enter the six-digit session code.';return}
+ if(!/^\d{6}$/.test(code)){$('joinSessionStatus').textContent='Enter the six-digit session code.';return}
  const btn=$('confirmJoinSession');btn.disabled=true;$('joinSessionStatus').textContent='Checking session…';
  try{
   const {data,error}=await db.from('worship_live_sessions').select('id,session_code,is_live').eq('session_code',code).eq('is_live',true).maybeSingle();
