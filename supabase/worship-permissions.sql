@@ -51,6 +51,7 @@ using (
     or public.worship_has_permission('hub_live_session')
     or public.worship_has_permission('hub_lyrics_display')
     or public.worship_has_permission('hub_chords_view')
+    or public.worship_has_permission('hub_setlist')
     or public.worship_has_permission('presenter_song_presentation')
   )
 );
@@ -64,6 +65,8 @@ using (
     public.worship_has_permission('hub_setlist')
     or public.worship_has_permission('hub_live_session')
     or public.worship_has_permission('hub_song_library')
+    or public.worship_has_permission('hub_lyrics_display')
+    or public.worship_has_permission('hub_chords_view')
     or public.worship_has_permission('presenter_song_presentation')
   )
 );
