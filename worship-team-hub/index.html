@@ -674,6 +674,7 @@ $('forcedPasswordSignout').onclick=()=>db.auth.signOut();const historyDropdown=$
 async function joinFromStartCode(){
  if(!WX_JOIN_CODE||wxJoinApplied)return;
  wxJoinApplied=true;
+ $('appChooser').classList.add('hidden');$('app').classList.remove('hidden');$('workspaceRibbon').classList.add('hidden');$('switchWorkspace').classList.add('hidden');
  if(!/^\d{6}$/.test(WX_JOIN_CODE)){ $('status').textContent='Invalid session code. Return to Presenter and enter all six digits.';return }
  const {data,error}=await db.from('worship_live_sessions').select('*').eq('session_code',WX_JOIN_CODE).eq('is_live',true).maybeSingle();
  if(error)throw new Error('Could not join session: '+error.message);
