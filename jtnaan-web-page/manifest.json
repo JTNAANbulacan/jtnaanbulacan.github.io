@@ -1,0 +1,42 @@
+{
+  "name": "JTNAAN Bulacan",
+  "short_name": "JTNAAN App",
+  "description": "Church management system with daily devotions, interactive bible trivia and quiz, comments, emoticon reactions, member directory, attendance, funds, ministries, and community engagement for JTNAAN Bulacan.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "theme_color": "#0b0a3a",
+  "background_color": "#0b0a3a",
+  "icons": [
+    {
+      "src": "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://sbrnofctchqotcjteqxr.supabase.co/storage/v1/object/public/church-media/logos/1793983354477_sfwmg.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
