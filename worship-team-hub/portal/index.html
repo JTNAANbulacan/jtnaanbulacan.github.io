@@ -131,8 +131,8 @@ let session=null,user=null,accounts=[],settings={},activeWorkspace='';
 const isSuperAdmin=()=>user?.app_metadata?.role==='super_admin';
 const userPermissions=()=>Array.isArray(user?.app_metadata?.permissions)?user.app_metadata.permissions:[];
 const hasPermission=key=>isSuperAdmin()||userPermissions().includes(key);
-const canHub=()=>isSuperAdmin()||userPermissions().some(x=>x.startsWith('hub_'));
-const canPresenter=()=>isSuperAdmin()||userPermissions().some(x=>x.startsWith('presenter_'));
+const canHub=()=>isSuperAdmin()||['hub_live_session','hub_song_library','hub_lyrics_display','hub_setlist','hub_chords_view'].some(hasPermission);
+const canPresenter=()=>hasPermission('presenter_song_presentation');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setAuthMessage(s){$('authMessage').textContent=s||''}
 function showAuth(message){session=null;user=null;$('appShell').hidden=true;$('workspaceScreen').hidden=true;$('authScreen').hidden=false;$('password').value='';setAuthMessage(message||'')}
