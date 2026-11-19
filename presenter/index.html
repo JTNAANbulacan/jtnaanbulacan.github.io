@@ -237,6 +237,28 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
  .dialog .toolbar button{min-height:42px}
  .workspace-splitter{display:none!important}
 }
+
+/* Service Order controls: keep every action visible and prevent labels from escaping buttons. */
+.service-panel,.service-panel *{box-sizing:border-box}
+.service-panel>.service-body{width:100%;min-width:0;overflow:visible}
+.service-body .manage-row{display:grid;grid-template-columns:minmax(0,1fr) 42px 42px;align-items:end;gap:6px;width:100%;min-width:0}
+.service-body .manage-row label{display:block;width:100%;min-width:0;overflow:hidden}
+.service-body .manage-row select{display:block;width:100%;max-width:100%;min-width:0}
+.service-body .manage-row>button{width:42px;min-width:42px;max-width:42px;height:42px;min-height:42px;padding:4px;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.service-body .song-manage-row{grid-template-columns:minmax(0,1fr) 42px}
+.service-body .session-actions{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px;width:100%;min-width:0}
+.service-body .session-actions button{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;max-width:100%;min-height:48px;height:auto;padding:8px 5px;white-space:normal;overflow-wrap:anywhere;word-break:normal;text-align:center;line-height:1.2;font-size:clamp(10px,1vw,12px)}
+.service-panel>.library-panel{min-width:0}
+.service-panel>.library-panel>.library-controls{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+.service-panel .library-controls input{grid-column:1/-1;width:100%;min-width:0}
+.service-panel .library-controls button{width:100%;min-width:0;max-width:100%;min-height:40px;height:auto;padding:7px 5px!important;white-space:normal!important;overflow-wrap:anywhere;word-break:normal;text-align:center;line-height:1.15;font-size:clamp(10px,1vw,12px)!important;letter-spacing:0!important}
+@media(max-width:620px){
+ .service-body .session-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .service-body .session-actions button{font-size:11px;min-height:44px}
+ .service-panel>.library-panel>.library-controls{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .service-panel .library-controls button{font-size:11px!important}
+}
+
 </style></head><body>
 <header class="top"><div class="brand">♫ JTNAAN <span style="color:#c4b5fd">PRESENTER</span></div><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><span id="sessionCodeDisplay" class="session-code-display" hidden>JOIN CODE <strong id="sessionCodeValue">------</strong><button id="copySessionCode" type="button" title="Copy session code">Copy</button></span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="layoutSettings" title="Adjust workspace panels">⚙ Layout</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
