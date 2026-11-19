@@ -1,0 +1,39 @@
+JTNAAN Worship Team Hub — isolated implementation
+Repository: JTNAANbulacan/jtnaanbulacan.github.io
+Development branch: development/jtnaan-unified-hub
+Original website snapshot: backup/pre-jtnaan-unification-2026-11-20
+
+New main portal route: /worship-team-hub/portal/
+The existing /worship-team-hub/ entry routes to the portal for normal visits.
+Legacy login/reset route: /worship-team-hub/?legacy=1
+Audience monitor, vocalist, instrumentalist and join-code query routes remain on the original Hub page.
+
+Preservation:
+- Existing Hub and Presenter source remain in place and are embedded as separate workspaces.
+- Both use the existing Supabase project, authentication and live-session tables.
+- Existing church logo URL, songs, accounts, settings and storage objects were not altered by the site changes.
+- No changes were made to the main website branch.
+- The original website backup branch remains available.
+
+Supabase backend setup completed on 2026-11-20:
+- Created private rollback snapshot schema: jtnaan_rollback_20261120.
+- Snapshot contains original worship account rows, auth user metadata, affected public RLS policies, and the prior permission/admin function definitions.
+- Applied migration jtnaan_unified_workspace_permissions.
+- Added public.worship_has_permission(text), using trusted app_metadata claims.
+- Backfilled the 8 active non-Super-Admin accounts with their previous operational access (13 permission keys each); the Super Admin account retains unrestricted access.
+- Verified all 8 member account rows and app_metadata permission arrays match.
+- Deployed worship-access Edge Function version 1 with verify_jwt enabled.
+- Edge Function authorizes account changes only for the existing Admin@Mart Super Admin account.
+- Existing maintenance flag was left unchanged.
+- Existing songs, sessions, assets, storage objects and account identities were not deleted.
+
+Before public website deployment:
+1. Deploy the static site from development/jtnaan-unified-hub to a preview/staging environment, not main.
+2. Test login, temporary-password reset, registration, Super Admin account management, every permission, Hub and Presenter live control, monitor/vocalist/instrumentalist views, backgrounds, settings, and sign out in a real browser.
+3. Verify realtime lyric/chord synchronization under multiple signed-in test accounts.
+4. Confirm existing maintenance behavior is intentional before changing its flag.
+5. Only after the complete browser test passes should the development branch be merged into main.
+
+Rollback:
+- Original website: return Pages source to main or restore backup/pre-jtnaan-unification-2026-11-20.
+- Supabase snapshot: private schema jtnaan_rollback_20261120 contains the pre-migration records and policies for review. Do not restore it by blindly replacing live data; use a reviewed forward migration if rollback is needed so new user records and uploads are preserved.
