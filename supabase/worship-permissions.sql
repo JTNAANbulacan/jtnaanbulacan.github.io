@@ -29,6 +29,7 @@ begin
   update public.worship_accounts
      set sections = legacy_permissions
    where role <> 'super_admin'
+     and status = 'active'
      and coalesce(cardinality(sections), 0) = 0;
 
   update auth.users u
@@ -38,6 +39,7 @@ begin
     from public.worship_accounts a
    where a.user_id = u.id
      and a.role <> 'super_admin'
+     and a.status = 'active'
      and coalesce(cardinality(a.sections), 0) > 0;
 end $$;
 
