@@ -14,7 +14,7 @@ label{display:block;font-weight:600}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:10;margin:-14px -14px 12px;padding:10px 14px;background:#0b0820f2;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{display:flex;gap:12px;align-items:center;min-width:0}
-.logo{overflow:hidden;width:42px;height:42px;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,#8b5cf6,#6d28d9);border-radius:12px;font-size:22px}
+.logo{overflow:hidden;width:42px;height:42px;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,#8b5cf6,#6d28d9);border:1px solid #111;border-radius:50%;box-sizing:border-box;font-size:22px}
 .muted,.hint{color:var(--mu);font-size:13px}
 .panel{background:var(--p1);border:1px solid var(--line);border-radius:16px;padding:14px}
 .section{font-size:12px;color:var(--mu);margin-bottom:8px;font-weight:700}
@@ -84,7 +84,7 @@ h1{font-size:clamp(15px,2vw,19px);margin:0}h2{font-size:clamp(22px,3.4vw,32px);m
 #dtools button{padding:7px 11px;font-size:13px}#dtools button.on{background:var(--pu);border-color:#c4b5fd}
 #dtools .sc{width:28px;height:28px;border-radius:50%;padding:0;border:3px solid transparent}#dtools .sc.on{border-color:#fff}
 .fz .cl-l,.fz .notesc{display:none}.fz .deck{grid-template-columns:1fr;grid-template-areas:"s" "c"}
-.logo img{width:100%;height:100%;object-fit:cover;display:block}.logo.edit{cursor:pointer;outline:2px dashed #c4b5fd88;outline-offset:2px}
+.logo img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}.logo.edit{cursor:pointer;outline:2px dashed #c4b5fd88;outline-offset:2px}
 
 /* Compact responsive frozen playback lane */
 .playbox{
