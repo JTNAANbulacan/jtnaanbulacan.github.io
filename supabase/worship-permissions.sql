@@ -75,6 +75,8 @@ using (
   coalesce((select auth.jwt() -> 'app_metadata' ->> 'status'), 'active') = 'active'
   and (
     public.worship_has_permission('hub_setlist')
+    or public.worship_has_permission('hub_live_session')
+    or public.worship_has_permission('hub_song_library')
     or public.worship_has_permission('presenter_song_presentation')
   )
 );
@@ -128,7 +130,6 @@ with check (
   )
   and (
     public.worship_has_permission('hub_live_session')
-    or public.worship_has_permission('presenter_song_presentation')
     or public.worship_has_permission('presenter_presentation_controls')
   )
 );
@@ -141,7 +142,6 @@ using (
   and (
     public.worship_has_permission('hub_background_layout')
     or public.worship_has_permission('presenter_background_layout')
-    or public.worship_has_permission('presenter_song_presentation')
   )
 );
 
