@@ -48,6 +48,9 @@ using (
   coalesce((select auth.jwt() -> 'app_metadata' ->> 'status'), 'active') = 'active'
   and (
     public.worship_has_permission('hub_song_library')
+    or public.worship_has_permission('hub_live_session')
+    or public.worship_has_permission('hub_lyrics_display')
+    or public.worship_has_permission('hub_chords_view')
     or public.worship_has_permission('presenter_song_presentation')
   )
 );
@@ -59,6 +62,8 @@ using (
   coalesce((select auth.jwt() -> 'app_metadata' ->> 'status'), 'active') = 'active'
   and (
     public.worship_has_permission('hub_setlist')
+    or public.worship_has_permission('hub_live_session')
+    or public.worship_has_permission('hub_song_library')
     or public.worship_has_permission('presenter_song_presentation')
   )
 );
@@ -82,6 +87,7 @@ using (
   and (
     public.worship_has_permission('hub_live_session')
     or public.worship_has_permission('hub_lyrics_display')
+    or public.worship_has_permission('hub_chords_view')
     or public.worship_has_permission('presenter_song_presentation')
     or public.worship_has_permission('presenter_presentation_controls')
   )
@@ -95,7 +101,7 @@ with check (
   and controller_user_id = (select auth.uid())
   and (
     public.worship_has_permission('hub_live_session')
-    or public.worship_has_permission('presenter_song_presentation')
+    or (public.worship_has_permission('presenter_song_presentation') and public.worship_has_permission('presenter_presentation_controls'))
   )
 );
 
@@ -110,7 +116,6 @@ using (
   )
   and (
     public.worship_has_permission('hub_live_session')
-    or public.worship_has_permission('presenter_song_presentation')
     or public.worship_has_permission('presenter_presentation_controls')
   )
 )
