@@ -894,6 +894,7 @@ function wxMonitorRender(){
   if(!WX_MONITOR||!$('lyrics'))return;
   document.body.classList.add('wx-monitor');
   const st=wxPresentationState();
+  if(st.custom_slide?.type==='countdown')wxStartCountdownTicker();
   wxApplyBackdrop();
   const root=$('lyrics'),logo=$('presMonitorLogo'),logoSrc=localStorage.getItem('wx_logo')||'';wxApplyLyricEffect(root,st);
   if(logo)logo.innerHTML=st.show_logo&&logoSrc?'<img src="'+logoSrc+'" alt="">':'';
