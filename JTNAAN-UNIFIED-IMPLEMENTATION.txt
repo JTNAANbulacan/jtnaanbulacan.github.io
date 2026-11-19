@@ -1,0 +1,7 @@
+JTNAAN unified workspace implementation
+- Original code is retained in /worship-team-hub/ and /presenter/.
+- New portal entry: /worship-team-hub/portal/
+- Portal login reuses the existing worship-auth login/register actions and Supabase session.
+- The Hub and Presenter are loaded in separate embedded workspaces; their live display routes remain unchanged.
+- Granular account permissions are defined in supabase/worship-permissions.sql and supabase/functions/worship-access/index.ts.
+- The SQL and new edge function are source-only until separately reviewed and deployed. No production database or function was changed by this repository update.
