@@ -940,21 +940,32 @@ function wxMonitorRender(){
   root.style.fontSize=size+'px';
   requestAnimationFrame(()=>{while(size>24&&[...root.children].some(el=>el.scrollWidth>root.clientWidth-8||el.scrollHeight>root.clientHeight-20)){size-=2;root.style.fontSize=size+'px'}});
 }
-// Keep the projector countdown tied to wall-clock time, independent of the 2.5-second session refresh.
-let wxCountdownLastText='';
+// Drive the audience countdown from the display's animation frame clock, not the
+// 2.5-second live-session poll or a throttled interval timer.
+let wxCountdownLastText='',wxCountdownFrame=0;
 function wxTickCountdown(){
- if(!WX_MONITOR)return;
+ if(!WX_MONITOR){wxCountdownFrame=0;return}
  const d=wxPresentationState().custom_slide;
- if(d?.type!=='countdown'){wxCountdownLastText='';return}
+ if(d?.type!=='countdown'){
+  wxCountdownLastText='';
+  wxCountdownFrame=0;
+  return;
+ }
  const end=Number(d.started_at)+Number(d.duration)*1000;
- if(!Number.isFinite(end))return;
- const remain=Math.max(0,Math.ceil((end-Date.now())/1000));
- const text=String(Math.floor(remain/60)).padStart(2,'0')+':'+String(remain%60).padStart(2,'0');
- if(text===wxCountdownLastText)return;
- const node=$('lyrics')?.querySelector('.wx-countdown-number');
- if(node){node.textContent=text;wxCountdownLastText=text}
+ if(Number.isFinite(end)){
+  const remain=Math.max(0,Math.ceil((end-Date.now())/1000));
+  const value=String(Math.floor(remain/60)).padStart(2,'0')+':'+String(remain%60).padStart(2,'0');
+  const node=$('lyrics')?.querySelector('.wx-countdown-number');
+  if(node&&node.textContent!==value)node.textContent=value;
+  wxCountdownLastText=value;
+ }
+ wxCountdownFrame=requestAnimationFrame(wxTickCountdown);
 }
-setInterval(wxTickCountdown,100);
+function wxStartCountdownTicker(){
+ if(WX_MONITOR&&!wxCountdownFrame)wxCountdownFrame=requestAnimationFrame(wxTickCountdown);
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)wxStartCountdownTicker()});
+wxStartCountdownTicker();
 async function wxLoadAssets(){if(!user)return;const {data,error}=await db.from('worship_presentation_assets').select('*').order('created_at',{ascending:false});if(error){$('presMediaList').innerHTML='<span class="muted">Media library unavailable: '+esc(error.message)+'</span>';return}presAssets=data||[];wxRenderAssets()}
 function wxRenderAssets(){const host=$('presMediaList');if(!host)return;if(!presAssets.length){host.innerHTML='<span class="muted">No uploaded backdrops yet.</span>';return}host.innerHTML=presAssets.map(a=>{const {data}=db.storage.from('worship-backdrops').getPublicUrl(a.storage_path),url=data.publicUrl,preview=a.asset_type==='video'?'<video src="'+esc(url)+'" muted playsinline></video>':'<img src="'+esc(url)+'" alt="">';return '<div class="pres-media-item">'+preview+'<div class="meta"><strong>'+esc(a.title)+'</strong><br>'+esc(a.category)+' · '+a.asset_type.toUpperCase()+'</div><div style="display:grid;gap:5px"><button type="button" data-pres-use="'+esc(a.id)+'">Use</button>'+(isAdmin()?'<button type="button" data-pres-delete="'+esc(a.id)+'">Delete</button>':'')+'</div></div>'}).join('')}
 async function wxSetBackdrop(asset){if(!ctl()||!live?.is_live)return alert('Start a live session first. The selected backdrop is synchronized through that session.');const {data}=db.storage.from('worship-backdrops').getPublicUrl(asset.storage_path),base=wxPresentationState(),section_backdrops={...(base.section_backdrops||{})};if(current)delete section_backdrops[current.id+':'+W.sec];const state={...base,section_backdrops,backdrop:{id:asset.id,url:data.publicUrl,type:asset.asset_type},blank:false,slide_index:0,custom_slide:null};const {error}=await db.from('worship_live_sessions').update({presentation_state:state,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id',live.id);if(error)return alert('Could not apply backdrop: '+error.message);live.presentation_state=state;wxApplyBackdrop();$('presUploadStatus').textContent='Backdrop applied to the live presentation.'}
