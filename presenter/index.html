@@ -274,6 +274,15 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
 .asset-library-name{font-size:10px;line-height:1.2;font-weight:750;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:24px}
 .asset-library-meta{font-size:9px;line-height:1.2;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:620px){.asset-library-split{grid-template-columns:minmax(0,1fr)}.asset-library-scroll{grid-template-columns:repeat(3,minmax(0,1fr));max-height:190px}.asset-library-pane{padding:6px}}
+
+/* Match uploaded still/video preview cards to the Recently Used Background tiles. */
+.asset-library-split{grid-template-columns:minmax(0,1fr);gap:12px}
+.asset-library-pane{width:100%;padding:8px}
+.asset-library-scroll{grid-template-columns:repeat(3,minmax(0,1fr));max-height:220px;min-height:0;gap:8px}
+.asset-library-card{gap:5px;padding:5px;border-radius:9px}
+.asset-library-thumb{height:56px;aspect-ratio:auto}
+.asset-library-name{font-size:10px;min-height:24px}
+
 </style></head><body>
 <header class="top"><button id="brandLogoControl" class="brand brand-logo-control" type="button" disabled title="Church logo"><img id="churchLogoImage" class="brand-logo-image" alt="Church logo" hidden><span id="brandMusicFallback" class="brand-logo-fallback">♫</span><span>JTNAAN <span style="color:#c4b5fd">PRESENTER</span></span></button><input id="churchLogoUpload" class="brand-upload-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><span id="sessionCodeDisplay" class="session-code-display" hidden>JOIN CODE <strong id="sessionCodeValue">------</strong><button id="copySessionCode" type="button" title="Copy session code">Copy</button></span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="layoutSettings" title="Adjust workspace panels">⚙ Layout</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
