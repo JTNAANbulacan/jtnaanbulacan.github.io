@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090e20">
+<title>Install JTNAAN Worship Team Hub</title>
+<style>
+:root{color-scheme:dark;--bg:#090e20;--panel:#121d38;--line:#29395e;--gold:#e6b85c;--text:#f5f4fb;--muted:#aab4cb;--purple:#9670ed}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 420px at 100% 0,#4c1d9555,transparent 60%),var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:#f5d78f}button{font:inherit;cursor:pointer;border:1px solid var(--gold);border-radius:12px;padding:11px 16px;background:var(--gold);color:#171326;font-weight:750}
+.wrap{max-width:1000px;margin:auto;padding:24px 16px 60px}.brand{display:flex;align-items:center;gap:14px;margin:8px 0 32px}.brand img{width:64px;height:64px;object-fit:contain;border-radius:50%;background:#fff}.brand strong{display:block;font-size:19px}.brand span,.muted{color:var(--muted)}.hero,.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,4vw,30px);margin:16px 0}.eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:800}h1{font-size:clamp(30px,6vw,48px);line-height:1.12;margin:8px 0 14px}h2{margin:4px 0 10px;font-size:22px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.secondary{background:transparent;color:var(--text);border-color:var(--line)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.tile{background:#0c142b;border:1px solid var(--line);border-radius:14px;padding:16px}.tile h3{margin:0 0 7px}.step{padding:13px 0;border-top:1px solid #ffffff18}.step:first-of-type{border-top:0}details{background:#0c142b;border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin:10px 0}summary{cursor:pointer;font-weight:750}summary::marker{color:var(--gold)}.note{border-left:3px solid var(--gold);padding:10px 14px;background:#e6b85c12;border-radius:8px;color:#e7e2f5}.status{display:inline-block;padding:4px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:12px}.footer{color:var(--muted);font-size:13px;margin-top:30px}
+</style>
+</head>
+<body><main class="wrap">
+<header class="brand"><img src="https://uykbhdbtyghdnfhgpctv.supabase.co/storage/v1/object/public/church-branding/church-logo.jpg" alt="Official JTNAAN logo"><div><strong>JTNAAN Worship Team Hub</strong><span>Official installation and learning center</span></div></header>
+<section class="hero"><div class="eyebrow">Install JTNAAN</div><h1>Your worship tools, one tap away.</h1><p class="muted">Install JTNAAN on your laptop, desktop, tablet or phone for a dedicated app window and quick access. You can explore these instructions without signing in.</p><div class="actions"><a href="/worship-team-hub/portal/"><button type="button">Open JTNAAN Hub</button></a><button class="secondary" id="installButton" type="button">Show install instructions</button></div><p id="deviceHint" class="note" aria-live="polite" style="margin-top:18px">Detecting your device…</p></section>
+<section class="card"><div class="eyebrow">Installation guide</div><h2 id="deviceTitle">Choose your device</h2><div class="grid">
+<article class="tile"><h3>Windows</h3><p>Open the JTNAAN Hub in Chrome or Edge. Select the install icon in the address bar, or open the browser menu and choose <b>Install JTNAAN Worship Team Hub</b> if offered.</p></article>
+<article class="tile"><h3>macOS</h3><p>Open the JTNAAN Hub in a supported version of Chrome or Edge and use the install option in the address bar or browser menu. Safari users can add a website shortcut from the Share menu where supported.</p></article>
+<article class="tile"><h3>Android</h3><p>Open the JTNAAN Hub in Chrome. Tap the three-dot menu and choose <b>Install app</b> or <b>Add to Home screen</b>, then follow the prompts.</p></article>
+<article class="tile"><h3>iPhone / iPad</h3><p>Open the JTNAAN Hub in Safari. Tap <b>Share</b>, scroll the sheet and choose <b>Add to Home Screen</b>, then tap Add.</p></article>
+</div><p class="note">Installation creates an app-like shortcut. Full offline use and laptop-hosted local sessions are being added in staged releases; do not assume the current installed version can yet run every feature without internet.</p></section>
+<section class="card"><div class="eyebrow">Tutorials · no login required</div><h2>Learn JTNAAN step by step</h2>
+<details><summary>1. Install JTNAAN on your device</summary><div class="step">Open <a href="/worship-team-hub/portal/">JTNAAN Hub</a> in your device's supported browser, then follow the matching Windows, macOS, Android or iPhone/iPad steps above. If the browser does not show an install option, use its Add to Home Screen or Create Shortcut option.</div></details>
+<details><summary>2. Understand Offline Mode</summary><div class="step">Offline support is being introduced in phases. The current web app still relies on its online account and cloud services for shared data and live synchronization. Wait for the offline-ready release notice before relying on it during a service without internet.</div></details>
+<details><summary>3. Join a Worship Session</summary><div class="step">Open the app, sign in with your existing authorized account, then select the available Presenter or Worship Hub workspace. Local Wi-Fi/hotspot joining with a session QR code or code will be enabled in a future local-session release.</div></details>
+<details><summary>4. Understand automatic updates and patch numbers</summary><div class="step">The planned release numbering starts at Application Patch 1.0, followed by 1.1, 1.2 and so on. Content updates such as new songs and media will use a separate Content Patch number. The automatic update service is not active yet; updates will be announced when published.</div></details>
+<details><summary>5. Use Presenter</summary><div class="step">From the app dashboard, open Live Session and choose Presenter if your account has permission. Prepare song slides, Scripture, backgrounds and presentation controls. Use the workspace's Home control to return to the dashboard.</div></details>
+<details><summary>6. Use Worship Team Hub</summary><div class="step">From Live Session, choose Worship Hub if your account has permission. Use the song library, setlist, lyrics, chords, vocalist and instrumentalist views, monitors and tuner available to your role.</div></details>
+</section>
+<section class="card"><div class="eyebrow">Release information</div><h2>Updates and version history</h2><p class="muted">The patch management service is part of the upcoming rollout. This page will show installed version, previous version, release date, update status and release notes once the update service is connected.</p><div class="grid"><div class="tile"><h3>Application patch</h3><span class="status">Planned · 1.0 baseline</span><p class="muted">App features and fixes.</p></div><div class="tile"><h3>Content patch</h3><span class="status">Separate version track</span><p class="muted">Songs, lyrics, chords and media.</p></div></div></section>
+<p class="footer">JTNAAN Bulacan · Keep the official JTNAAN logo and current workspace identity unchanged.</p>
+</main>
+<script>
+(function(){
+ const ua=navigator.userAgent||"", platform=navigator.platform||"";
+ let device="your device",hint="Open JTNAAN Hub in the browser you normally use, then follow the instructions for your device.";
+ if(/iPhone|iPad|iPod/i.test(ua)){device="iPhone / iPad";hint="On iPhone or iPad, open JTNAAN Hub in Safari, tap Share, then Add to Home Screen."}
+ else if(/Android/i.test(ua)){device="Android";hint="On Android, open JTNAAN Hub in Chrome, tap ⋮, then Install app or Add to Home screen."}
+ else if(/Mac/i.test(platform)||/Macintosh/i.test(ua)){device="macOS";hint="On macOS, use Chrome or Edge and choose Install app from the browser menu when available."}
+ else if(/Win/i.test(platform)||/Windows/i.test(ua)){device="Windows";hint="On Windows, use Chrome or Edge and choose Install JTNAAN from the address bar or browser menu."}
+ document.getElementById("deviceTitle").textContent="Instructions for "+device;
+ document.getElementById("deviceHint").textContent=hint;
+ document.getElementById("installButton").addEventListener("click",function(){document.querySelector(".card").scrollIntoView({behavior:"smooth"});});
+})();
+</script>
+</body></html>
