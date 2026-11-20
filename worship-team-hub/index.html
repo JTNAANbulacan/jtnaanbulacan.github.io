@@ -934,7 +934,9 @@ function wxDisplayRender(){
   if(st.custom_slide?.type==='countdown'){
    const d=st.custom_slide,remain=Math.max(0,Math.ceil((Number(d.started_at)+Number(d.duration)*1000-Date.now())/1000));
    html='<div class="wx-custom-title">'+esc(d.title||'Get Ready')+'</div><div class="wx-countdown-number">'+String(Math.floor(remain/60)).padStart(2,'0')+':'+String(remain%60).padStart(2,'0')+'</div>';
-  }else if(st.custom_slide){
+  }else if(st.custom_slide?.type==='service_flow'){
+   html='<div class="wx-custom-body">'+esc(st.custom_slide.body||'')+'</div>';
+   }else if(st.custom_slide){
    html='<div class="wx-custom-title">'+esc(st.custom_slide.title||'')+'</div><div class="wx-custom-body">'+esc(st.custom_slide.type==='scripture'?wxCleanBibleText(st.custom_slide.body):(st.custom_slide.body||''))+'</div>';
   }else{
    const idx=Math.min(Math.max(0,(W.secs||[]).length-1),Math.max(0,Number(st.section_index??W.sec)||0));
@@ -968,7 +970,9 @@ function wxMonitorRender(){
    }else if(st.custom_slide?.type==='service_document'){
     const d=st.custom_slide,n=Math.max(1,Number(d.page_index)||0)+1,url=d.format==='pdf'?d.url+'#page='+n+'&toolbar=0&navpanes=0':'https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(d.url)+'&wdSlideIndex='+n;
     html='<iframe title="'+esc(d.title||'Service document')+'" src="'+url+'" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff" allowfullscreen></iframe>';
-   }else if(st.custom_slide){
+   }else if(st.custom_slide?.type==='service_flow'){
+    html='<div class="wx-custom-body">'+esc(st.custom_slide.body||'')+'</div>';
+    }else if(st.custom_slide){
     html='<div class="wx-custom-title">'+esc(st.custom_slide.title||'')+'</div><div class="wx-custom-body">'+esc(st.custom_slide.type==='scripture'?wxCleanBibleText(st.custom_slide.body):(st.custom_slide.body||''))+'</div>';
    }else{
     const sectionIndex=Math.min(Math.max(0,(W.secs||[]).length-1),Math.max(0,Number(st.section_index??W.sec)||0)),sec=(W.secs&&W.secs[sectionIndex])||null;
