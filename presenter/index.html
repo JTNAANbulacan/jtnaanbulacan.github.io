@@ -282,6 +282,34 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
 .asset-library-scroll{max-height:220px}
 .asset-library-scroll .preset-swatch img,.asset-library-scroll .preset-swatch video{display:block;width:100%;height:100%;object-fit:cover}
 
+
+/* Workspace resize fix: let the Slides / Scripture / Text / Countdown / Backgrounds /
+   Stage & Display workspace consume the full grid row created by its draggable border. */
+.layout>.panel:nth-child(4){
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+.layout>.panel:nth-child(4)>.tabs{
+  flex:0 0 auto!important;
+  min-height:0;
+}
+.layout>.panel:nth-child(4)>.body{
+  flex:1 1 auto!important;
+  width:100%;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:auto!important;
+  overscroll-behavior:contain;
+}
+/* Tablet: make the lower workspace row follow the same draggable height variable. */
+@media(min-width:621px) and (max-width:1050px){
+  .layout{
+    grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(175px,var(--ws-tools-height,26vh))!important;
+  }
+}
 </style></head><body>
 <header class="top"><button id="brandLogoControl" class="brand brand-logo-control" type="button" disabled title="Church logo"><img id="churchLogoImage" class="brand-logo-image" alt="Church logo" hidden><span id="brandMusicFallback" class="brand-logo-fallback">♫</span><span>JTNAAN <span style="color:#c4b5fd">PRESENTER</span></span></button><input id="churchLogoUpload" class="brand-upload-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><span id="sessionCodeDisplay" class="session-code-display" hidden>JOIN CODE <strong id="sessionCodeValue">------</strong><button id="copySessionCode" type="button" title="Copy session code">Copy</button></span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="layoutSettings" title="Adjust workspace panels">⚙ Layout</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
