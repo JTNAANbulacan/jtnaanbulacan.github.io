@@ -319,6 +319,45 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
   overscroll-behavior:contain;
   scrollbar-gutter:stable;
 }
+
+/* Service Order: scroll the complete left panel so every service and library control stays reachable. */
+.service-panel{
+  max-height:calc(100dvh - 86px)!important;
+  min-height:0!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+  -webkit-overflow-scrolling:touch;
+}
+.service-panel>.service-body{
+  flex:0 0 auto!important;
+  min-height:max-content!important;
+  overflow:visible!important;
+}
+.service-panel>.library-panel{
+  flex:0 0 auto!important;
+  min-height:0!important;
+  overflow:visible!important;
+}
+.service-panel>.library-panel>#libraryResults{
+  flex:0 0 auto!important;
+  min-height:100px!important;
+  max-height:clamp(160px,32vh,320px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+@media(max-width:620px){
+  .service-panel{
+    max-height:none!important;
+    overflow:visible!important;
+    scrollbar-gutter:auto;
+  }
+  .service-panel>.library-panel{overflow:visible!important}
+  .service-panel>.library-panel>#libraryResults{
+    max-height:280px!important;
+  }
+}
 </style></head><body>
 <header class="top"><button id="brandLogoControl" class="brand brand-logo-control" type="button" disabled title="Church logo"><img id="churchLogoImage" class="brand-logo-image" alt="Church logo" hidden><span id="brandMusicFallback" class="brand-logo-fallback">♫</span><span>JTNAAN <span style="color:#c4b5fd">PRESENTER</span></span></button><input id="churchLogoUpload" class="brand-upload-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><span id="sessionCodeDisplay" class="session-code-display" hidden>JOIN CODE <strong id="sessionCodeValue">------</strong><button id="copySessionCode" type="button" title="Copy session code">Copy</button></span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="layoutSettings" title="Adjust workspace panels">⚙ Layout</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
