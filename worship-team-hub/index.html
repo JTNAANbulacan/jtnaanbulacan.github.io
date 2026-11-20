@@ -758,24 +758,18 @@ function wxMark(go){
  document.querySelectorAll('.sw').forEach((e,i)=>e.classList.toggle('cur',i==W.sec));
  document.querySelectorAll('#strip button').forEach(b=>b.classList.toggle('on',+b.dataset.i==W.sec));
  if(go&&ctl()&&live?.is_live){
-   // A part-button/section change is a discrete command: publish it immediately,
-   // even when the target is already on screen and no scroll event would fire.
-   const v=Math.max(0,W.sec)*1000;
-   // A selected part is authoritative. Discard any older scroll debounce/save
-   // so it cannot publish a stale section after this explicit selection.
-   clearTimeout(W.sct);W.sct=0;
-   clearTimeout(W.ss);W.ss=0;
+   // The presenter's explicit part selection is the sync command.
+   clearTimeout(W.sct);W.sct=0;clearTimeout(W.ss);W.ss=0;
    W.partSyncUntil=Date.now()+1600;
-   if(live)live.scroll_position=v;
-   wxSend({k:'sc',v,at:Date.now()});
-   wxSave({scroll_position:v,presentation_state:{...(live?.presentation_state||{}),section_index:W.sec,slide_index:0,custom_slide:null}});
+   const state={...(live?.presentation_state||{}),section_index:W.sec,slide_index:0,custom_slide:null};
+   wxSend({k:'part',section_index:W.sec,at:Date.now()});
+   wxSave({presentation_state:state});
  }
  requestAnimationFrame(()=>{
    wxFitPart(W.sec);
    if(go){
      const e=$('sw'+W.sec);
      if(e){
-       // Align every selected song part directly below the fixed header + workspace ribbon.
        const anchorBottom=wxWorkspaceAnchorBottom();
        const top=e.getBoundingClientRect().top+window.scrollY-anchorBottom-16;
        window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
@@ -850,14 +844,13 @@ async function liveSync(snapshot=null){if(!live?.id)return;let data=snapshot;if(
  if(data.song_id!==pv?.song_id){const s=data.song_id?songs.find(x=>x.id===data.song_id):null;if(data.song_id&&!s){await load();return}current=s;W.sid=null;W.sec=0;wxStop();window.scrollTo({top:0,behavior:'auto'});}
  listsDraw();draw();if(W.follow)wxFollow()}
 function wxPos(){const y=window.scrollY+90;let s=0,fr=0;document.querySelectorAll('.sw').forEach((e,i)=>{const t=e.getBoundingClientRect().top+window.scrollY;if(t<=y){s=i;fr=Math.min(1,Math.max(0,(y-t)/Math.max(1,e.offsetHeight)))}});return s*1000+Math.round(fr*999)}
-function wxApply(v){const idx=Math.floor(v/1000),e=$('sw'+idx);if(!e)return;if(idx!==W.sec){W.sec=idx;wxMark(false)}const t=e.getBoundingClientRect().top+window.scrollY+((v%1000)/999)*e.offsetHeight-90;window.scrollTo({top:Math.max(0,t),behavior:'auto'})}
-function wxFollow(){if((ctl()&&!WX_DISPLAY)||!W.follow||!live)return;wxApply(live.scroll_position||0)}
+function wxFollow(){if((ctl()&&!WX_DISPLAY)||!W.follow||!live)return;const idx=Math.max(0,Number(wxPresentationState().section_index)||0);if(idx!==W.sec){W.sec=idx;wxMark(true)}}
 setInterval(()=>{if(user&&(W.follow||WX_MONITOR||WX_DISPLAY)&&live?.is_live)liveSync()},2500);
 
 /* Mobile pull-to-refresh: only starts at the top edge, so normal song scrolling is untouched. */
 (()=>{let startY=0,delta=0,tracking=false,busy=false;const hint=$('mobileRefreshHint');const mobile=()=>window.matchMedia('(max-width: 768px)').matches;const blocked=()=>!!document.querySelector('.modal.show')||document.body.classList.contains('no-scroll');document.addEventListener('touchstart',e=>{if(!mobile()||busy||blocked()||window.scrollY>2||e.touches.length!==1)return;startY=e.touches[0].clientY;delta=0;tracking=startY<100},{passive:true});document.addEventListener('touchmove',e=>{if(!tracking||busy||!e.touches.length)return;delta=Math.max(0,e.touches[0].clientY-startY);if(delta>8){hint.classList.add('show');hint.textContent=delta>78?'↻ Release to refresh':'↓ Pull down to refresh';if(delta>78)e.preventDefault()}},{passive:false});document.addEventListener('touchend',async()=>{if(!tracking)return;tracking=false;if(delta>78&&!busy){busy=true;hint.classList.add('show','refreshing');hint.textContent='↻ Refreshing…';try{if(user){await load();if(isSuperAdmin())await loadAccountHistory();$('status').textContent='● Realtime connected'}else{const {data:{session}}=await db.auth.getSession();await enter(session)}hint.textContent='✓ Updated'}catch(err){hint.textContent='Could not refresh';console.error('Pull-to-refresh failed:',err)}await new Promise(r=>setTimeout(r,650));hint.classList.remove('show','refreshing');busy=false}else{hint.classList.remove('show');hint.classList.remove('refreshing')}delta=0},{passive:true});document.addEventListener('touchcancel',()=>{tracking=false;delta=0;hint.classList.remove('show','refreshing')},{passive:true})})();
-window.addEventListener('scroll',()=>{if(!ctl()||!current||W.sct||Date.now()<(W.partSyncUntil||0))return;W.sct=setTimeout(()=>{W.sct=0;if(Date.now()<(W.partSyncUntil||0))return;const v=wxPos();if(live)live.scroll_position=v;wxSend({k:'sc',v,at:Date.now()});clearTimeout(W.ss);W.ss=setTimeout(()=>wxSave({scroll_position:v}),350)},60)},{passive:true});
-function wxRecv(p){if(!p)return;if(['pt','mk','un','cl','note'].includes(p.k)&&!live?.is_live)return;if(p.k==='state'){if(WX_MONITOR||WX_DISPLAY||(!ctl()&&W.follow))liveSync(p.row||null);return}if(p.k==='pt'){const t=W.tmp[p.m.id]||(W.tmp[p.m.id]={...p.m,pts:[]});t.pts.push(...p.m.pts);wxRender();return}if(p.k==='mk'){delete W.tmp[p.m.id];if(!W.ann.some(x=>x.id===p.m.id))W.ann.push(p.m);wxRender();if(ctl())wxPersist();return}if(p.k==='un'){W.ann=W.ann.filter(x=>x.id!==p.id);wxRender();if(ctl())wxPersist();return}if(p.k==='cl'){W.ann=W.ann.filter(x=>x.song!==p.song);wxRender();if(ctl())wxPersist();return}if(p.k==='note'){live.annotations=[...(live?.annotations||[]).filter(x=>!x.t&&!W.ann.some(a=>a.id===x.id)),p.m,...W.ann];draw();if(ctl())wxSave({annotations:live.annotations});return}if(ctl())return;if(p.k==='sc'&&W.follow){if(live)live.scroll_position=p.v;wxApply(p.v)}}
+
+function wxRecv(p){if(!p)return;if(['pt','mk','un','cl','note'].includes(p.k)&&!live?.is_live)return;if(p.k==='state'){if(WX_MONITOR||WX_DISPLAY||(!ctl()&&W.follow))liveSync(p.row||null);return}if(p.k==='pt'){const t=W.tmp[p.m.id]||(W.tmp[p.m.id]={...p.m,pts:[]});t.pts.push(...p.m.pts);wxRender();return}if(p.k==='mk'){delete W.tmp[p.m.id];if(!W.ann.some(x=>x.id===p.m.id))W.ann.push(p.m);wxRender();if(ctl())wxPersist();return}if(p.k==='un'){W.ann=W.ann.filter(x=>x.id!==p.id);wxRender();if(ctl())wxPersist();return}if(p.k==='cl'){W.ann=W.ann.filter(x=>x.song!==p.song);wxRender();if(ctl())wxPersist();return}if(p.k==='note'){live.annotations=[...(live?.annotations||[]).filter(x=>!x.t&&!W.ann.some(a=>a.id===x.id)),p.m,...W.ann];draw();if(ctl())wxSave({annotations:live.annotations});return}if(ctl())return;if(p.k==='part'&&W.follow){const idx=Math.max(0,Number(p.section_index)||0);if(idx!==W.sec){W.sec=idx;wxMark(true)}return}}
 /* drawing layer (anchored to each section so it lines up on any screen size) */
 const cv=$('cv'),c2=cv.getContext('2d'),wxId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);let dr=null;
 function wxSize(){const r=$('lw');if(!r)return;const d=window.devicePixelRatio||1,w=r.clientWidth,h=r.clientHeight;cv.width=w*d;cv.height=h*d;cv.style.width=w+'px';cv.style.height=h+'px';c2.setTransform(d,0,0,d,0,0);wxRender();wxFitPart(W.sec)}
