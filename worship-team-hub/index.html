@@ -557,6 +557,8 @@ body.member-live-view #memberSessionControls .member-leave-session{flex:0 0 auto
  body.member-live-view #memberSessionControls .member-leave-session{flex:1.05 1 0}
 }
 body.wx-no-lyrics #lyrics{visibility:hidden!important}body.wx-no-chords #lyrics .ch{display:none!important}
+
+.wx-service-document{display:block;width:100%;height:100%;min-height:100%;border:0;background:#fff}
 </style></head><body><div id="mobileRefreshHint" aria-live="polite">↓ Pull down to refresh</div><button id="leaveLiveView" type="button">Leave live view</button><div class="wrap"><header class="top"><div class="brand"><div class="logo" id="logo" role="button" tabindex="0">♫</div><div><h1>JTNAAN Worship Team Hub</h1><div class="muted">One team · One songbook · In sync</div></div></div><div class="row"><span class="pill" id="status">Connecting…</span><span class="pill" id="online">👥 1</span><span class="pill" id="who">Signed out</span><div id="accountHistoryWrap" class="account-history-wrap hidden"><button id="accountHistoryToggle" type="button" class="account-history-toggle" aria-expanded="false" aria-controls="accountHistoryDropdown" title="Registered accounts" aria-label="Registered accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/></svg><span>Registered</span></button><div id="accountHistoryDropdown" class="account-history-dropdown hidden"><div class="account-history-head"><div><strong>Registered Accounts</strong><small>Only nicknames and account statuses are visible</small></div><button id="refreshAccountHistory" type="button" aria-label="Refresh registered accounts">↻</button></div><div id="accountHistory" class="account-history-list"><span class="muted">Loading registered accounts…</span></div></div></div><button id="tunerOpen" type="button">🎸 Tuner</button><button id="accountOpen" type="button" class="hidden" title="Account settings" aria-label="Account settings">👤 Account</button><button id="switchWorkspace" class="hidden" type="button">⇄ Switch App</button><button id="logout" class="hidden">Sign out</button></div><div id="memberSessionControls" class="member-session-controls-bar" aria-label="Live session controls"><button id="memberLeaveSession" type="button" class="member-leave-session">↩ Leave Session</button><button id="memberViewInstrumentalist" type="button" aria-pressed="true">🎸 Instrumentalist</button><button id="memberViewSinger" type="button" aria-pressed="false">🎤 Vocals</button></div></header>
 <nav id="workspaceRibbon" class="workspace-ribbon hidden" aria-label="Worship presentation workspaces">
  <div class="workspace-tabs" role="tablist" aria-label="Workspace sections">
@@ -939,6 +941,12 @@ function wxMonitorRender(){
    if(st.custom_slide?.type==='countdown'){
     const d=st.custom_slide,remain=Math.max(0,Math.ceil((Number(d.started_at)+Number(d.duration)*1000-Date.now())/1000)),mm=String(Math.floor(remain/60)).padStart(2,'0'),ss=String(remain%60).padStart(2,'0');
     html='<div class="wx-custom-title">'+esc(d.title||'Get Ready')+'</div><div class="wx-countdown-number">'+mm+':'+ss+'</div>';
+   }else if(st.custom_slide?.type==='service_flow'){
+    html='<div class="wx-custom-body">'+esc(st.custom_slide.body||'')+'</div>';
+   }else if(st.custom_slide?.type==='service_document'){
+    const d=st.custom_slide,n=Math.max(1,Number(d.page_index)||0)+1;
+    const url=d.format==='pdf'?String(d.url||'')+'#page='+n+'&toolbar=0&navpanes=0':'https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(String(d.url||''))+'&wdSlideIndex='+n;
+    html='<iframe class="wx-service-document" title="Service presentation" src="'+esc(url)+'" allow="fullscreen" loading="eager"></iframe>';
    }else if(st.custom_slide){
     html='<div class="wx-custom-title">'+esc(st.custom_slide.title||'')+'</div><div class="wx-custom-body">'+esc(st.custom_slide.type==='scripture'?wxCleanBibleText(st.custom_slide.body):(st.custom_slide.body||''))+'</div>';
    }else{
@@ -957,6 +965,7 @@ function wxMonitorRender(){
   root.style.visibility='visible';
    if(st.custom_slide?.type==='countdown'){const node=root.querySelector('.wx-countdown-number');if(node){const base=Math.max(48,Math.min(260,window.innerWidth*.14,window.innerHeight*.26));node.style.fontSize=Math.max(24,Math.min(420,base*countdownScale))+'px'}}
   if(st.custom_slide?.type==='countdown')return;
+  if(st.custom_slide?.type==='service_document'){root.style.fontSize='';return}
   if(st.custom_slide){
    // Give Scripture the largest readable type that fits the full projector canvas.
    // The compact reference/title stays proportional while the verse gets the space.
