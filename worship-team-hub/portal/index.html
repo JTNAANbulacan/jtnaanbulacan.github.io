@@ -161,6 +161,15 @@ bindPrefs();applyPrefs({theme:'dark',font:'system',scale:1,autoSave:true,motion:
 window.addEventListener('message',e=>{if(e.origin!==location.origin)return;if(e.data?.type==='jtnaan:home')closeWorkspace();if(e.data?.type==='jtnaan:signed-out')showAuth('You have been signed out.')});
 db.auth.onAuthStateChange((event,next)=>{if(event==='SIGNED_OUT'){showAuth('Your session has ended. Please sign in again.');return}if(next?.user){session=next;user=next.user;if(user.app_metadata?.must_change_password===true){setTimeout(()=>db.auth.signOut().then(()=>location.replace('/worship-team-hub/?legacy=1')),0);return}if(!$('workspaceScreen').hidden||!$('appShell').hidden)return;showApp();applyPrefs(readPrefs())}});
 const {data:{session:existing},error:sessionError}=await db.auth.getSession();if(!sessionError&&existing?.user){let current=existing;const {data:refreshed,error:refreshError}=await db.auth.refreshSession();if(!refreshError&&refreshed?.session)current=refreshed.session;session=current;user=current.user;if(user.app_metadata?.must_change_password===true){await db.auth.signOut();location.replace('/worship-team-hub/?legacy=1')}else{showApp();applyPrefs(readPrefs())}}else showAuth();
+
+/* Installable app shell: cache only public navigation shell, never account/API data. */
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/worship-team-hub/sw.js', { scope: '/worship-team-hub/' })
+      .then(registration => { registration.update().catch(() => {}); })
+      .catch(error => console.warn('JTNAAN app shell could not be registered:', error));
+  }, { once: true });
+}
 </script>
 </body>
 </html>
