@@ -949,7 +949,7 @@ function wxDisplayRender(){
   }
  }
  if(root.innerHTML!==html)root.innerHTML=html;
- root.style.visibility=st.blank?'hidden':'visible';
+ root.style.visibility='visible';
 }
 function wxMonitorRender(){
   if(!WX_MONITOR||!$('lyrics'))return;
@@ -986,8 +986,8 @@ function wxMonitorRender(){
    root.classList.remove('wx-transition-fade','wx-transition-dissolve','wx-transition-zoom');
    if(['fade','dissolve','zoom'].includes(st.transition))root.classList.add('wx-transition-'+st.transition);
   }
-  if(st.blank){root.style.visibility='hidden';return}
   root.style.visibility='visible';
+  if(st.blank)return;
   if(st.custom_slide?.type==='countdown')return;
   if(st.custom_slide){
    // Give Scripture the largest readable type that fits the full projector canvas.
