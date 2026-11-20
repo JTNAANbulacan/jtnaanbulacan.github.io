@@ -359,6 +359,67 @@ body{height:100vh;height:100dvh;display:flex;flex-direction:column}
     max-height:280px!important;
   }
 }
+
+/* Keep the Stage & Display workspace large enough to reach every control. */
+@media(min-width:1051px){
+  .layout{
+    grid-template-rows:minmax(0,1fr) minmax(260px,max(var(--ws-tools-height,38vh),260px))!important;
+  }
+}
+@media(min-width:621px) and (max-width:1050px){
+  .layout{
+    grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(260px,max(var(--ws-tools-height,38vh),260px))!important;
+  }
+}
+.layout>.panel:nth-child(4){
+  min-height:260px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+.layout>.panel:nth-child(4)>.tabs{
+  flex:0 0 auto!important;
+  position:relative;
+  z-index:2;
+}
+.layout>.panel:nth-child(4)>.body:not(.hide){
+  display:block!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+  -webkit-overflow-scrolling:touch;
+}
+#tool-display .toolbar{
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+}
+#tool-display .toolbar button{
+  flex:1 1 190px;
+  min-height:42px;
+  white-space:normal;
+}
+#tool-display .text-size-panel{
+  min-width:0;
+  margin-top:10px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+}
+@media(max-width:620px){
+  .layout{
+    grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(280px,max(var(--ws-tools-height,38vh),280px))!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+  }
+  .layout>.panel:nth-child(4){min-height:280px!important}
+  .layout>.panel:nth-child(4)>.body:not(.hide){max-height:none!important}
+}
 </style></head><body>
 <header class="top"><button id="brandLogoControl" class="brand brand-logo-control" type="button" disabled title="Church logo"><img id="churchLogoImage" class="brand-logo-image" alt="Church logo" hidden><span id="brandMusicFallback" class="brand-logo-fallback">♫</span><span>JTNAAN <span style="color:#c4b5fd">PRESENTER</span></span></button><input id="churchLogoUpload" class="brand-upload-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="topright"><span id="who" class="status">Connecting…</span><span id="liveBadge" class="badge">OFFLINE</span><span id="sessionCodeDisplay" class="session-code-display" hidden>JOIN CODE <strong id="sessionCodeValue">------</strong><button id="copySessionCode" type="button" title="Copy session code">Copy</button></span><button id="openDisplay">▣ Open Audience Display</button><button id="fullscreen" title="Toggle full screen">⛶ Full screen</button><button id="layoutSettings" title="Adjust workspace panels">⚙ Layout</button><button id="back">⇄ Switch App</button><button id="signout">Sign out</button></div></header>
 <main class="layout">
