@@ -992,11 +992,12 @@ function wxRenderServiceDocument(root,st){
  }
  root.style.visibility='visible';
 }
+function wxRenderServiceMedia(root,st){const d=st.custom_slide,key=String(d.url||'')+'|'+String(d.media_type||'image');let media=root.querySelector('[data-wx-service-media]');if(!media||root.dataset.wxServiceMediaKey!==key){root.innerHTML='';media=d.media_type==='video'?document.createElement('video'):document.createElement('img');media.dataset.wxServiceMedia='1';media.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000';if(media.tagName==='VIDEO'){media.autoplay=true;media.loop=true;media.muted=true;media.playsInline=true;media.setAttribute('playsinline','');media.setAttribute('webkit-playsinline','');media.controls=false;media.preload='auto'}else{media.alt=d.title||'Service Flow image'}root.appendChild(media);root.dataset.wxServiceMediaKey=key;media.src=d.url;if(media.tagName==='VIDEO'){const play=media.play();if(play&&typeof play.catch==='function')play.catch(()=>{})}root.classList.remove('wx-transition-fade','wx-transition-dissolve','wx-transition-zoom');if(['fade','dissolve','zoom'].includes(st.transition))root.classList.add('wx-transition-'+st.transition)}root.style.visibility='visible'}
 function wxDisplayRender(){
  if(!WX_DISPLAY||!$('lyrics'))return;
  const st=wxPresentationState(),root=$('lyrics');
- if(!st.blank&&st.custom_slide?.type==='service_document'){wxRenderServiceDocument(root,st);return}
- if(root.dataset.wxServiceDocumentKey)root.dataset.wxServiceDocumentKey='';
+ if(!st.blank&&st.custom_slide?.type==='service_media'){wxRenderServiceMedia(root,st);return}if(!st.blank&&st.custom_slide?.type==='service_media'){wxRenderServiceMedia(root,st);return}if(!st.blank&&st.custom_slide?.type==='service_document'){wxRenderServiceDocument(root,st);return}
+ if(root.dataset.wxServiceDocumentKey)root.dataset.wxServiceDocumentKey='';if(root.dataset.wxServiceMediaKey)root.dataset.wxServiceMediaKey='';
  let html='';
  if(!st.blank){
   if(st.custom_slide?.type==='countdown'){
