@@ -978,9 +978,25 @@ function wxPlainLyrics(line){let s=String(line||'').replace(/\[[^\]]+\]/g,'').re
 /* Instrumentalist and vocalist displays follow the exact presenter slide index.
    Keep two lyric lines per slide; wxLine retains chord placement for instrumentalists,
    while the existing singer-view CSS hides chord elements. */
+function wxRenderServiceDocument(root,st){
+ const d=st.custom_slide,n=Math.max(1,Number(d.page_index)||0)+1;
+ const url=d.format==='pdf'?d.url+'#page='+n+'&toolbar=0&navpanes=0':'https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(d.url)+'&wdSlideIndex='+n;
+ const key=String(d.url||'')+'|'+String(d.format||'')+'|'+n;
+ let frame=root.querySelector('iframe[data-wx-service-document]');
+ if(!frame||root.dataset.wxServiceDocumentKey!==key){
+  root.innerHTML='';frame=document.createElement('iframe');frame.dataset.wxServiceDocument='1';
+  frame.title=d.title||'Service document';frame.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff';frame.allowFullscreen=true;
+  root.appendChild(frame);root.dataset.wxServiceDocumentKey=key;frame.src=url;
+  root.classList.remove('wx-transition-fade','wx-transition-dissolve','wx-transition-zoom');
+  if(['fade','dissolve','zoom'].includes(st.transition))root.classList.add('wx-transition-'+st.transition);
+ }
+ root.style.visibility='visible';
+}
 function wxDisplayRender(){
  if(!WX_DISPLAY||!$('lyrics'))return;
  const st=wxPresentationState(),root=$('lyrics');
+ if(!st.blank&&st.custom_slide?.type==='service_document'){wxRenderServiceDocument(root,st);return}
+ if(root.dataset.wxServiceDocumentKey)root.dataset.wxServiceDocumentKey='';
  let html='';
  if(!st.blank){
   if(st.custom_slide?.type==='countdown'){
@@ -1013,15 +1029,14 @@ function wxMonitorRender(){
   if(st.custom_slide?.type==='countdown')wxStartCountdownTicker();
   wxApplyBackdrop();
   const root=$('lyrics'),logo=$('presMonitorLogo'),logoSrc=localStorage.getItem('wx_logo')||'';wxApplyLyricEffect(root,st);
+  if(!st.blank&&st.custom_slide?.type==='service_document'){wxRenderServiceDocument(root,st);return}
+  if(root.dataset.wxServiceDocumentKey)root.dataset.wxServiceDocumentKey='';
   if(logo)logo.innerHTML=st.show_logo&&logoSrc?'<img src="'+logoSrc+'" alt="">':'';
   let html='';
   if(!st.blank){
    if(st.custom_slide?.type==='countdown'){
     const d=st.custom_slide,remain=Math.max(0,Math.ceil((Number(d.started_at)+Number(d.duration)*1000-Date.now())/1000)),mm=String(Math.floor(remain/60)).padStart(2,'0'),ss=String(remain%60).padStart(2,'0');
     html='<div class="wx-custom-title">'+esc(d.title||'Get Ready')+'</div><div class="wx-countdown-number">'+mm+':'+ss+'</div>';
-   }else if(st.custom_slide?.type==='service_document'){
-    const d=st.custom_slide,n=Math.max(1,Number(d.page_index)||0)+1,url=d.format==='pdf'?d.url+'#page='+n+'&toolbar=0&navpanes=0':'https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(d.url)+'&wdSlideIndex='+n;
-    html='<iframe title="'+esc(d.title||'Service document')+'" src="'+url+'" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff" allowfullscreen></iframe>';
    }else if(st.custom_slide?.type==='service_document'){
     const d=st.custom_slide,n=Math.max(1,Number(d.page_index)||0)+1,url=d.format==='pdf'?d.url+'#page='+n+'&toolbar=0&navpanes=0':'https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(d.url)+'&wdSlideIndex='+n;
     html='<iframe title="'+esc(d.title||'Service document')+'" src="'+url+'" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff" allowfullscreen></iframe>';
